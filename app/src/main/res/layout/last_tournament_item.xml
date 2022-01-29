@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/current_tm_card"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginEnd="15dp"
+    app:cardCornerRadius="2dp"
+    app:cardBackgroundColor="@color/white_alphaed"
+    android:layout_marginTop="10dp"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingVertical="10dp"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:gravity="center"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/name_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/orbitron_semibold"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                tools:text="HR vs OF" />
+
+            <TextView
+                android:id="@+id/time_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/montserrat_regular"
+                android:textColor="@color/black"
+                android:textSize="13sp"
+                android:gravity="center"
+                tools:text="18/01/2022 \n 21h" />
+
+
+
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="1dp"
+            android:layout_height="50dp"
+            android:background="@color/black"
+            android:layout_marginVertical="5dp"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_weight="1.5"
+            android:layout_marginHorizontal="10dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:fontFamily="@font/montserrat_regular"
+                android:layout_height="wrap_content"
+                android:text="Total"
+                android:textSize="13sp"
+                android:textColor="@color/black"
+                android:id="@+id/current_tm_tracks"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:textColor="@color/black"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:fontFamily="@font/orbitron_semibold"
+                tools:text="133"
+                android:id="@+id/total_score_tv" />
+
+
+
+        </LinearLayout>
+
+
+
+
+
+    </LinearLayout>
+
+
+
+
+
+</androidx.cardview.widget.CardView>

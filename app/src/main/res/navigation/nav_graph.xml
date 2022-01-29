@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/homeFragment"
+    android:id="@+id/nav_graph">
+
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="fr.harmoniamk.statsmk.fragment.HomeFragment"
+        tools:layout="@layout/fragment_home"
+        android:label="HomeFragment">
+
+        <action
+            android:id="@+id/add_fragment"
+            app:destination="@id/addTournamentFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right"/>
+
+        <action
+            android:id="@+id/goto_current"
+            app:destination="@id/currentTournamentFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right">
+
+            <argument
+                android:name="tournament"
+                app:argType="fr.harmoniamk.statsmk.database.model.Tournament"
+                app:nullable="false"/>
+
+        </action>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/addTournamentFragment"
+        android:name="fr.harmoniamk.statsmk.fragment.AddTournamentFragment"
+        tools:layout="@layout/fragment_add_tournament"
+        android:label="AddTournamentFragment"/>
+
+
+    <fragment
+        android:id="@+id/currentTournamentFragment"
+        android:name="fr.harmoniamk.statsmk.fragment.CurrentTournamentFragment"
+        tools:layout="@layout/fragment_current_tournament"
+        android:label="CurrentTournamentFragment">
+
+        <action
+            android:id="@+id/add_track"
+            app:destination="@id/addTrackFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right">
+
+            <argument
+                android:name="tmId"
+                app:argType="integer"/>
+
+        </action>
+
+        <action
+            android:id="@+id/edit_track"
+            app:destination="@id/editTrackFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right">
+
+            <argument
+                android:name="track"
+                app:argType="fr.harmoniamk.statsmk.database.model.PlayedTrack"
+                app:nullable="true"/>
+
+        </action>
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/addTrackFragment"
+        android:name="fr.harmoniamk.statsmk.fragment.AddTrackFragment"
+        tools:layout="@layout/fragment_add_track"
+        android:label="AddTrackFragment"/>
+
+    <fragment
+        android:id="@+id/editTrackFragment"
+        android:name="fr.harmoniamk.statsmk.fragment.EditTrackFragment"
+        tools:layout="@layout/fragment_edit_track"
+        android:label="EditTrackFragment"/>
+
+
+</navigation>

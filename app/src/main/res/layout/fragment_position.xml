@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:background="@color/waluigi"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:fontFamily="@font/montserrat_bold"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:paddingVertical="15dp"
+        android:layout_marginVertical="10dp"
+        android:text="Position"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginHorizontal="10dp"
+        android:background="@color/white"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/pos1"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:autoSizeTextType="uniform"
+            android:fontFamily="@font/mk_position"
+            android:text="1."
+            android:textSize="110sp"
+            android:textColor="@color/white"
+            android:layout_weight="1"
+            tools:targetApi="o" />
+        <TextView
+            android:id="@+id/pos2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:autoSizeTextType="uniform"
+            android:gravity="center"
+            android:fontFamily="@font/mk_position"
+            android:text="2."
+            android:textSize="110sp"
+            android:textColor="@color/white"
+            android:layout_weight="1"
+            tools:targetApi="o" />
+        <TextView
+            android:id="@+id/pos3"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:fontFamily="@font/mk_position"
+            android:autoSizeTextType="uniform"
+            android:text="3."
+            android:textSize="110sp"
+            android:textColor="@color/white"
+            android:layout_weight="1"
+            tools:targetApi="o" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/pos4"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:autoSizeTextType="uniform"
+            android:fontFamily="@font/mk_position"
+            android:text="4."
+            android:textSize="110sp"
+            android:textColor="@color/white"
+            android:layout_weight="1"
+            tools:targetApi="o" />
+        <TextView
+            android:id="@+id/pos5"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:autoSizeTextType="uniform"
+            android:gravity="center"
+            android:fontFamily="@font/mk_position"
+            android:text="5."
+            android:textSize="110sp"
+            android:textColor="@color/white"
+            android:layout_weight="1"
+            tools:targetApi="o" />
+        <TextView
+            android:id="@+id/pos6"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:fontFamily="@font/mk_position"
+            android:autoSizeTextType="uniform"
+            android:text="6."
+            android:textSize="110sp"
+            android:textColor="@color/white"
+            android:layout_weight="1"
+            tools:targetApi="o" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/pos7"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:autoSizeTextType="uniform"
+            android:fontFamily="@font/mk_position"
+            android:text="7."
+            android:textSize="110sp"
+            android:textColor="@color/white"
+            android:layout_weight="1"
+            tools:targetApi="o" />
+        <TextView
+            android:id="@+id/pos8"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:autoSizeTextType="uniform"
+            android:gravity="center"
+            android:fontFamily="@font/mk_position"
+            android:text="8."
+            android:textSize="110sp"
+            android:textColor="@color/white"
+            android:layout_weight="1"
+            tools:targetApi="o" />
+        <TextView
+            android:id="@+id/pos9"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:fontFamily="@font/mk_position"
+            android:autoSizeTextType="uniform"
+            android:text="9."
+            android:textSize="110sp"
+            android:textColor="@color/white"
+            android:layout_weight="1"
+            tools:targetApi="o" />
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <TextView
+            android:id="@+id/pos10"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:autoSizeTextType="uniform"
+            android:fontFamily="@font/mk_position"
+            android:text="10."
+            android:textSize="110sp"
+            android:textColor="@color/white"
+            android:layout_weight="1"
+            tools:targetApi="o" />
+        <TextView
+            android:id="@+id/pos11"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:autoSizeTextType="uniform"
+            android:gravity="center"
+            android:fontFamily="@font/mk_position"
+            android:text="11."
+            android:textSize="110sp"
+            android:textColor="@color/white"
+            android:layout_weight="1"
+            tools:targetApi="o" />
+        <TextView
+            android:id="@+id/pos12"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:fontFamily="@font/mk_position"
+            android:autoSizeTextType="uniform"
+            android:text="12."
+            android:textSize="110sp"
+            android:textColor="@color/white"
+            android:layout_weight="1"
+            tools:targetApi="o" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

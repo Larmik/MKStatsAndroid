@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="10dp"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:textColor="@color/white"
+        android:fontFamily="@font/roboto"
+        android:text="Circuit sélectionné"/>
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/track_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="2dp"
+        android:layout_marginBottom="20dp"
+        app:cardBackgroundColor="@color/white_alphaed"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="60dp"
+                android:background="@drawable/rounded_bg"
+                android:scaleType="fitXY"
+                tools:src="@drawable/bc"
+                android:id="@+id/track_iv"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:layout_marginStart="15dp"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <TextView
+                    android:textSize="16sp"
+                    tools:text="Bowser Castle"
+                    android:maxLines="1"
+                    android:autoSizeTextType="uniform"
+                    android:textColor="@color/black"
+                    android:layout_width="match_parent"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:layout_marginBottom="10dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/name"
+                    tools:targetApi="o" />
+
+                <TextView
+                    tools:text="BC"
+                    android:textColor="@color/black"
+                    android:fontFamily="@font/orbitron_semibold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/shortname"/>
+
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:scaleType="fitXY"
+                tools:src="@drawable/special"
+                android:layout_marginEnd="10dp"
+                android:id="@+id/cup_iv"/>
+        </LinearLayout>
+
+
+    </androidx.cardview.widget.CardView>
+
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="10dp"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:textColor="@color/white"
+        android:fontFamily="@font/roboto"
+        android:text="Position"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textSize="120sp"
+        android:textColor="@color/white"
+        android:id="@+id/pos_tv"
+        android:fontFamily="@font/mk_position"
+        android:text="12."/>
+
+</LinearLayout>

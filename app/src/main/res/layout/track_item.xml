@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="2dp"
+    app:cardBackgroundColor="@color/white_alphaed"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_marginTop="15dp"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="60dp"
+            android:background="@drawable/rounded_bg"
+            android:scaleType="fitXY"
+            tools:src="@drawable/bc"
+            android:id="@+id/track_iv"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"
+            android:layout_marginStart="15dp"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <TextView
+                android:textSize="16sp"
+                tools:text="Bowser Castle"
+                android:maxLines="1"
+                android:autoSizeTextType="uniform"
+                android:textColor="@color/black"
+                android:layout_width="match_parent"
+                android:fontFamily="@font/montserrat_bold"
+                android:layout_marginBottom="10dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/name"
+                tools:targetApi="o" />
+
+            <TextView
+                tools:text="BC"
+                android:textColor="@color/black"
+                android:fontFamily="@font/orbitron_semibold"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/shortname"/>
+
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:scaleType="fitXY"
+            tools:src="@drawable/special"
+            android:layout_marginEnd="10dp"
+            android:id="@+id/cup_iv"/>
+    </LinearLayout>
+
+
+</androidx.cardview.widget.CardView>

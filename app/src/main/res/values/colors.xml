@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#CC03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="mario">#BBE0102F</color>
+    <color name="luigi">#BB08A936</color>
+    <color name="peach">#BBF096BE</color>
+    <color name="yoshi">#BB708921</color>
+    <color name="toad">#BB17419A</color>
+    <color name="daisy">#BBEE830A</color>
+    <color name="wario">#BBF5DA0F</color>
+    <color name="waluigi">#BB5D2E8E</color>
+    <color name="bowser">#BBF8BE10</color>
+    <color name="boo">#BB95A4AE</color>
+    <color name="dk">#BB742607</color>
+    <color name="harmonie">#BB81D5C9</color>
+    <color name="waluigi_second">#BB02010A</color>
+    <color name="white_alphaed">#BBFFFFFF</color>
+</resources>
