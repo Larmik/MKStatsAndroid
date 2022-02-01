@@ -3,14 +3,20 @@ package fr.harmoniamk.statsmk.fragment
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.tabs.TabLayoutMediator
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.adapter.HomePagerAdapter
 import fr.harmoniamk.statsmk.databinding.FragmentHomeBinding
+import fr.harmoniamk.statsmk.extension.backPressedDispatcher
+import fr.harmoniamk.statsmk.viewModel.HomeViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 @ExperimentalCoroutinesApi
 @FlowPreview
@@ -18,6 +24,7 @@ import kotlinx.coroutines.FlowPreview
 class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private val binding: FragmentHomeBinding by viewBinding()
+    private val viewModel: HomeViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -28,5 +35,14 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         TabLayoutMediator(binding.tablayout, binding.homepager) { tab, position ->
             tab.text = adapter.getTabTitle(position)
         }.attach()
+
+        viewModel.bind(adapter.backToFirstPage, requireActivity().backPressedDispatcher(viewLifecycleOwner))
+        viewModel.sharedClose
+            .onEach { requireActivity().finish() }
+            .launchIn(lifecycleScope)
+        viewModel.sharedBackToFirstPage
+            .onEach { binding.homepager.currentItem = 0 }
+            .launchIn(lifecycleScope)
+
     }
 }

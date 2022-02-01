@@ -4,7 +4,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
-import fr.harmoniamk.statsmk.database.model.Tournament
+import fr.harmoniamk.statsmk.database.room.model.Tournament
 import fr.harmoniamk.statsmk.datasource.TournamentDataSource
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview

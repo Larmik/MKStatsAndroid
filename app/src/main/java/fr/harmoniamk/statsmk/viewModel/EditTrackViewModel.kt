@@ -3,7 +3,7 @@ package fr.harmoniamk.statsmk.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.harmoniamk.statsmk.database.model.PlayedTrack
+import fr.harmoniamk.statsmk.database.room.model.PlayedTrack
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.repository.PlayedTrackRepositoryInterface
 import fr.harmoniamk.statsmk.repository.TournamentRepositoryInterface

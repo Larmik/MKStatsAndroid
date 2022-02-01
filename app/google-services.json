@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "527204567365",
+    "firebase_url": "https://stats-mk-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "stats-mk",
+    "storage_bucket": "stats-mk.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:527204567365:android:2c1c7141803004c270162c",
+        "android_client_info": {
+          "package_name": "fr.harmoniamk.statsmk"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "527204567365-tvamm38dmrsprsp09tmdv19j1fhpap27.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBPY-DiXrdUgTwxrEiW9p2_UYA7DVKRREc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "527204567365-tvamm38dmrsprsp09tmdv19j1fhpap27.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

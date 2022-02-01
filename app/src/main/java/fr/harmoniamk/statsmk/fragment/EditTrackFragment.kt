@@ -10,7 +10,7 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.adapter.EditTrackPagerAdapter
-import fr.harmoniamk.statsmk.database.model.PlayedTrack
+import fr.harmoniamk.statsmk.database.room.model.PlayedTrack
 import fr.harmoniamk.statsmk.databinding.FragmentEditTrackBinding
 import fr.harmoniamk.statsmk.extension.backPressedDispatcher
 import fr.harmoniamk.statsmk.viewModel.EditTrackViewModel

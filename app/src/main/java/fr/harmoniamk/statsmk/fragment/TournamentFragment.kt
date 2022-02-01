@@ -14,7 +14,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.adapter.BestTournamentAdapter
 import fr.harmoniamk.statsmk.adapter.LastTournamentAdapter
-import fr.harmoniamk.statsmk.database.model.Tournament
+import fr.harmoniamk.statsmk.database.room.model.Tournament
 import fr.harmoniamk.statsmk.databinding.FragmentTournamentsBinding
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.viewModel.TournamentViewModel

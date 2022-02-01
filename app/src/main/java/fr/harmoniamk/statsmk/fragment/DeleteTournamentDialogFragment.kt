@@ -11,7 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
-import fr.harmoniamk.statsmk.database.model.Tournament
+import fr.harmoniamk.statsmk.database.room.model.Tournament
 import fr.harmoniamk.statsmk.databinding.DeleteTournamentDialogFragmentBinding
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.clicks

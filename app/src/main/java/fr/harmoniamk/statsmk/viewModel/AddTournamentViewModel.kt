@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.R
-import fr.harmoniamk.statsmk.database.model.Tournament
+import fr.harmoniamk.statsmk.database.room.model.Tournament
 import fr.harmoniamk.statsmk.repository.TournamentRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview

@@ -12,17 +12,22 @@
         <entry key="app/src/main/res/layout/delete_tournament_dialog_fragment.xml" value="0.325" />
         <entry key="app/src/main/res/layout/fragment_add_tournament.xml" value="0.3890625" />
         <entry key="app/src/main/res/layout/fragment_add_track.xml" value="0.2203125" />
+        <entry key="app/src/main/res/layout/fragment_add_user.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/fragment_connect_user.xml" value="0.22" />
         <entry key="app/src/main/res/layout/fragment_current_tournament.xml" value="0.33" />
         <entry key="app/src/main/res/layout/fragment_edit_current_track.xml" value="0.2942708333333333" />
         <entry key="app/src/main/res/layout/fragment_edit_track.xml" value="0.3098958333333333" />
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.2203125" />
         <entry key="app/src/main/res/layout/fragment_position.xml" value="0.2203125" />
+        <entry key="app/src/main/res/layout/fragment_settings.xml" value="0.3890625" />
         <entry key="app/src/main/res/layout/fragment_time_trial.xml" value="0.2203125" />
         <entry key="app/src/main/res/layout/fragment_tournaments.xml" value="0.33" />
         <entry key="app/src/main/res/layout/fragment_track_list.xml" value="0.2203125" />
+        <entry key="app/src/main/res/layout/fragment_welcome.xml" value="0.3890625" />
         <entry key="app/src/main/res/layout/last_tournament_item.xml" value="0.4036458333333333" />
         <entry key="app/src/main/res/layout/tournament_item.xml" value="0.4036458333333333" />
         <entry key="app/src/main/res/layout/track_item.xml" value="0.2203125" />
+        <entry key="app/src/main/res/layout/user_item.xml" value="0.3098958333333333" />
       </map>
     </option>
   </component>

@@ -1,19 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:orientation="vertical"
     android:padding="15dp"
     android:gravity="center"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
         android:orientation="vertical"
-        android:gravity="center"
-        android:id="@+id/no_team_layout">
+        android:layout_weight="1">
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="10dp"
+            android:gravity="center"
+            android:fontFamily="@font/montserrat_regular"
+            android:textColor="@color/white"
+            android:text="Entrez un nom ou un pseudo. Dans le cas où vous jouez en équipe, il servira à vous identifier."
+            android:layout_marginBottom="15dp" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:background="@drawable/rounded_bg"
+            android:layout_marginBottom="15dp"
+            android:gravity="center"
+            android:id="@+id/username_et"
+            android:backgroundTint="@color/white_alphaed"
+            android:layout_marginHorizontal="40dp" />
 
         <TextView
             android:layout_width="match_parent"
@@ -22,7 +39,7 @@
             android:layout_marginBottom="15dp"
             android:textColor="@color/white"
             android:fontFamily="@font/montserrat_regular"
-            android:text="Vous n'avez encore aucune équipe. Pour pouvoir participer aux tournois, commencez par rentrer le code de votre équipe."
+            android:text="Choisissez un code d'accès à quatre chiffres. Notez-le quelque part : Il sera utile pour retrouver vos données en cas de désinstallation."
             android:gravity="center"
             android:layout_gravity="bottom"/>
 
@@ -30,16 +47,15 @@
             android:layout_width="match_parent"
             android:layout_height="70dp"
             android:background="@drawable/rounded_bg"
-            android:layout_marginVertical="35dp"
-            android:id="@+id/team_code_et"
+            android:layout_marginBottom="15dp"
+            android:id="@+id/code_et"
             android:gravity="center"
             android:inputType="numberPassword"
             android:backgroundTint="@color/white_alphaed"
             android:layout_marginHorizontal="40dp" />
 
-
-
     </LinearLayout>
+
 
     <TextView
         android:layout_width="match_parent"
@@ -48,48 +64,23 @@
         android:background="@drawable/rounded_bg"
         android:backgroundTint="@color/waluigi_second"
         android:textColor="@color/white"
+        android:layout_marginBottom="10dp"
         android:id="@+id/next_btn"
         android:textSize="18sp"
-        android:visibility="invisible"
+        android:text="Suivant"
         android:textAllCaps="true"
         android:gravity="center"
         android:layout_gravity="bottom"/>
 
-<!--
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingVertical="10dp"
-        android:id="@+id/name_et"/>
-
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingVertical="10dp"
-        android:id="@+id/test_btn"
-        android:text="Test write"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/name_rv"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        android:orientation="vertical"/>
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingVertical="10dp"
-        android:id="@+id/team_et"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingVertical="10dp"
-        android:id="@+id/test_teambtn"
-        android:text="Test write"/>
-
-        -->
-
-
+        android:textColor="@color/white"
+        android:id="@+id/already_sub_btn"
+        android:textSize="18sp"
+        android:text="J'ai déjà un code"
+        android:gravity="center"
+        android:layout_gravity="bottom"/>
 
 </LinearLayout>

@@ -3,7 +3,7 @@ package fr.harmoniamk.statsmk.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import fr.harmoniamk.statsmk.database.model.Tournament
+import fr.harmoniamk.statsmk.database.room.model.Tournament
 import fr.harmoniamk.statsmk.databinding.LastTournamentItemBinding
 import fr.harmoniamk.statsmk.extension.clicks
 import kotlinx.coroutines.CoroutineScope

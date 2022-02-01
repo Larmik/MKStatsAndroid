@@ -3,7 +3,6 @@ package fr.harmoniamk.statsmk.adapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import fr.harmoniamk.statsmk.database.model.PlayedTrack
 import fr.harmoniamk.statsmk.fragment.EditCurrentTrackFragment
 import fr.harmoniamk.statsmk.fragment.PositionFragment
 import fr.harmoniamk.statsmk.fragment.TrackListFragment

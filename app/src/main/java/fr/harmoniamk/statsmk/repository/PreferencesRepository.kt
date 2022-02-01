@@ -16,6 +16,7 @@ import javax.inject.Inject
 @FlowPreview
 interface PreferencesRepositoryInterface {
     var hasCurrentTournament: Boolean
+    var isConnected: Boolean
 
 }
 
@@ -39,4 +40,7 @@ class PreferencesRepository @Inject constructor(
     override var hasCurrentTournament: Boolean
         get() = preferences.getBoolean("hasCurrentTournament", false)
         set(value) = preferences.edit().putBoolean("hasCurrentTournament", value).apply()
+    override var isConnected: Boolean
+        get() = preferences.getBoolean("isConnected", false)
+        set(value) = preferences.edit().putBoolean("isConnected", value).apply()
 }
