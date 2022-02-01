@@ -39,13 +39,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         TabLayoutMediator(binding.tablayout, binding.homepager) { tab, position ->
             tab.text = adapter.getTabTitle(position)
         }.attach()
-
-        viewModel.bind(adapter.backToFirstPage, requireActivity().backPressedDispatcher(viewLifecycleOwner))
+        viewModel.bind(requireActivity().backPressedDispatcher(viewLifecycleOwner))
         viewModel.sharedClose
             .onEach { requireActivity().finish() }
-            .launchIn(lifecycleScope)
-        viewModel.sharedBackToFirstPage
-            .onEach { binding.homepager.currentItem = 0 }
             .launchIn(lifecycleScope)
     }
 }

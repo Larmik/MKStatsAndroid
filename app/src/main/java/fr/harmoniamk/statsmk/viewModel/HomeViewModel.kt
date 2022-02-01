@@ -12,13 +12,10 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor() : ViewModel() {
 
-    private val _sharedBackToFirstPage = MutableSharedFlow<Unit>()
     private val _sharedClose = MutableSharedFlow<Unit>()
-    val sharedBackToFirstPage = _sharedBackToFirstPage.asSharedFlow()
     val sharedClose = _sharedClose.asSharedFlow()
 
-    fun bind(onDisconnect: Flow<Unit>, onBack: Flow<Unit>) {
-        onDisconnect.bind(_sharedBackToFirstPage, viewModelScope)
+    fun bind(onBack: Flow<Unit>) {
         onBack.bind(_sharedClose, viewModelScope)
     }
 
