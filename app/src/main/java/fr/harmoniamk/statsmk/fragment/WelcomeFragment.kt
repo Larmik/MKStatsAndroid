@@ -33,9 +33,9 @@ class WelcomeFragment : Fragment(R.layout.fragment_welcome) {
         binding.welcomepager.currentItem = 0
         binding.welcomepager.isUserInputEnabled = false
 
-        viewModel.bind(adapter.onNext, adapter.onFinish)
+        viewModel.bind(adapter.onFinish, adapter.onNoCode)
 
-        viewModel.sharedNext
+        viewModel.sharedNoCode
             .onEach { binding.welcomepager.currentItem = 1 }
             .launchIn(lifecycleScope)
 

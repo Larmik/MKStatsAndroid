@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="vertical"
+        android:gravity="center"
         android:layout_weight="1">
 
         <TextView
@@ -69,17 +70,6 @@
         android:textSize="18sp"
         android:text="Suivant"
         android:textAllCaps="true"
-        android:gravity="center"
-        android:layout_gravity="bottom"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingVertical="10dp"
-        android:textColor="@color/white"
-        android:id="@+id/already_sub_btn"
-        android:textSize="18sp"
-        android:text="J'ai déjà un code"
         android:gravity="center"
         android:layout_gravity="bottom"/>
 

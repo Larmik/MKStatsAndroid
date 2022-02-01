@@ -22,7 +22,7 @@ import kotlinx.coroutines.flow.onEach
 @FlowPreview
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
-class ConnectUserFragment(val onFinish: MutableSharedFlow<Unit>): Fragment(R.layout.fragment_connect_user) {
+class ConnectUserFragment(val onFinish: MutableSharedFlow<Unit>, val onNoCode: MutableSharedFlow<Unit>): Fragment(R.layout.fragment_connect_user) {
 
     private val binding: FragmentConnectUserBinding by viewBinding()
     private val viewModel: ConnectUserViewModel by viewModels()
@@ -31,7 +31,8 @@ class ConnectUserFragment(val onFinish: MutableSharedFlow<Unit>): Fragment(R.lay
         super.onViewCreated(view, savedInstanceState)
         viewModel.bind(
             binding.nameCodeEt.onTextChanged(),
-            binding.nameNextBtn.clicks()
+            binding.nameNextBtn.clicks(),
+            binding.alreadySubBtn.clicks()
         )
 
         viewModel.sharedUser
@@ -44,6 +45,7 @@ class ConnectUserFragment(val onFinish: MutableSharedFlow<Unit>): Fragment(R.lay
             }.launchIn(lifecycleScope)
 
         viewModel.sharedNext.bind(onFinish, lifecycleScope)
+        viewModel.sharedNoCode.bind(onNoCode, lifecycleScope)
     }
 
 }

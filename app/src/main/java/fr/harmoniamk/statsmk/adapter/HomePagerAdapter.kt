@@ -1,29 +1,29 @@
 package fr.harmoniamk.statsmk.adapter
 
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import fr.harmoniamk.statsmk.enums.MainSections
+import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.fragment.SettingsFragment
+import fr.harmoniamk.statsmk.fragment.TimeTrialFragment
+import fr.harmoniamk.statsmk.fragment.TournamentFragment
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.MutableSharedFlow
 
 @FlowPreview
 @ExperimentalCoroutinesApi
 class HomePagerAdapter(val fa: FragmentActivity) : FragmentStateAdapter(fa) {
 
-    val backToFirstPage = MutableSharedFlow<Unit>()
+    fun getTabTitle(position: Int): String = fa.getString(when (position) {
+        0 -> R.string.tournament
+        1 -> R.string.team_war
+        else -> R.string.settings
+    })
 
-    fun getTabTitle(position: Int): String {
-        return fa.getString(MainSections.values()[position].label)
-    }
+    override fun getItemCount() = 3
 
-    override fun getItemCount(): Int {
-        return MainSections.values().size
-    }
-
-    override fun createFragment(position: Int): Fragment {
-        return MainSections.values()[position].fragment
+    override fun createFragment(position: Int) = when (position) {
+        0 -> TournamentFragment()
+        1 -> TimeTrialFragment()
+        else -> SettingsFragment()
     }
 }

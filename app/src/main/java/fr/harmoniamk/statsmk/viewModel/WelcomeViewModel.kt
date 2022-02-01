@@ -9,14 +9,15 @@ import kotlinx.coroutines.flow.asSharedFlow
 
 class WelcomeViewModel : ViewModel() {
 
-    private val _sharedNext = MutableSharedFlow<Unit>()
     private val _sharedFinish = MutableSharedFlow<Unit>()
-    val sharedNext = _sharedNext.asSharedFlow()
-    val sharedFinish = _sharedFinish.asSharedFlow()
+    private val _sharedNoCode = MutableSharedFlow<Unit>()
 
-    fun bind(onNext: Flow<Unit>, onfinish: Flow<Unit>) {
-        onNext.bind(_sharedNext, viewModelScope)
-        onfinish.bind(_sharedFinish, viewModelScope)
+    val sharedFinish = _sharedFinish.asSharedFlow()
+    val sharedNoCode = _sharedNoCode.asSharedFlow()
+
+    fun bind(onFinish: Flow<Unit>, onNoCode: Flow<Unit>) {
+        onFinish.bind(_sharedFinish, viewModelScope)
+        onNoCode.bind(_sharedNoCode, viewModelScope)
     }
 
 }

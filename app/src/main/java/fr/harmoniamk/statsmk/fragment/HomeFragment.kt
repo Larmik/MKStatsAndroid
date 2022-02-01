@@ -1,7 +1,9 @@
 package fr.harmoniamk.statsmk.fragment
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -28,6 +30,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val inputManager = requireActivity().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputManager.hideSoftInputFromWindow(binding.root.windowToken, 0)
         val adapter = HomePagerAdapter(requireActivity())
         binding.homepager.adapter = adapter
         binding.homepager.currentItem = 0
@@ -43,6 +47,5 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         viewModel.sharedBackToFirstPage
             .onEach { binding.homepager.currentItem = 0 }
             .launchIn(lifecycleScope)
-
     }
 }

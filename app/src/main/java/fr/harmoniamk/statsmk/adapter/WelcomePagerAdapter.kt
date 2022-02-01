@@ -13,13 +13,13 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 @ExperimentalCoroutinesApi
 class WelcomePagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
 
-    val onNext = MutableSharedFlow<Unit>()
     val onFinish = MutableSharedFlow<Unit>()
+    val onNoCode = MutableSharedFlow<Unit>()
 
     override fun getItemCount() = 2
 
     override fun createFragment(position: Int): Fragment = when (position) {
-        0 -> AddUserFragment(onNext)
-        else -> ConnectUserFragment(onFinish)
+        0 -> ConnectUserFragment(onFinish, onNoCode)
+        else -> AddUserFragment(onFinish)
     }
 }

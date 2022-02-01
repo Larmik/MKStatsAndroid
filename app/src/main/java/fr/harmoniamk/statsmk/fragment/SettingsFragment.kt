@@ -31,7 +31,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         viewModel.bind(binding.logoutLayout.clicks())
         viewModel.sharedDisconnect
             .filter { findNavController().currentDestination?.id == R.id.homeFragment }
-            .onEach { findNavController().popBackStack(R.id.welcomeFragment, false) }
+            .onEach { findNavController().navigate(HomeFragmentDirections.backToWelcome()) }
             .launchIn(lifecycleScope)
     }
 }

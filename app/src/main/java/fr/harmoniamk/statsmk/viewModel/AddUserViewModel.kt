@@ -4,12 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.database.firebase.model.User
-import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
@@ -19,11 +17,9 @@ import javax.inject.Inject
 class AddUserViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface) : ViewModel() {
 
     private val _sharedNext = MutableSharedFlow<Unit>()
-    private val _sharedIsConnected = MutableSharedFlow<Unit>()
     val sharedNext = _sharedNext.asSharedFlow()
-    val sharedIsConnected = _sharedIsConnected.asSharedFlow()
 
-    fun bind(onName: Flow<String>, onCode: Flow<String>, onNext: Flow<Unit>, onAlreadySub: Flow<Unit>) {
+    fun bind(onName: Flow<String>, onCode: Flow<String>, onNext: Flow<Unit>) {
 
         var name: String? = null
         var code: String? = null
@@ -32,15 +28,12 @@ class AddUserViewModel @Inject constructor(private val firebaseRepository: Fireb
         onCode.onEach { code = it }.launchIn(viewModelScope)
 
         onNext
-            .filter {
-                name != null && code != null
-            }
+            .filter { name != null && code != null }
             .flatMapLatest { firebaseRepository.writeNewObject("users", User(name = name, accessCode = code, team = -1)) }
             .onEach {
                 preferencesRepository.isConnected = true
                 _sharedNext.emit(Unit)
             }.launchIn(viewModelScope)
-        onAlreadySub.bind(_sharedNext, viewModelScope)
 
     }
 

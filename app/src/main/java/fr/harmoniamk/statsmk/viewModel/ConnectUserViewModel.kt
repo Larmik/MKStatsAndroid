@@ -19,11 +19,13 @@ class ConnectUserViewModel @Inject constructor(private val firebaseRepository: F
 
     private val _sharedUser = MutableSharedFlow<User?>()
     private val _sharedNext = MutableSharedFlow<Unit>()
+    private val _sharedNoCode = MutableSharedFlow<Unit>()
 
     val sharedUser = _sharedUser.asSharedFlow()
     val sharedNext = _sharedNext.asSharedFlow()
+    val sharedNoCode = _sharedNoCode.asSharedFlow()
 
-    fun bind(onCodeName: Flow<String>, onNameNextClick: Flow<Unit>) {
+    fun bind(onCodeName: Flow<String>, onNameNextClick: Flow<Unit>, onNoCodeClick: Flow<Unit>) {
         var codeName: String? = null
         onCodeName
             .onEach { codeName = it }
@@ -36,5 +38,6 @@ class ConnectUserViewModel @Inject constructor(private val firebaseRepository: F
         onNameNextClick
             .onEach { preferencesRepository.isConnected = true }
             .bind(_sharedNext, viewModelScope)
+        onNoCodeClick.bind(_sharedNoCode, viewModelScope)
     }
 }

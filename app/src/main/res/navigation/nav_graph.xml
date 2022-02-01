@@ -22,11 +22,11 @@
         <action
             android:id="@+id/back_to_welcome"
             app:destination="@id/welcomeFragment"
-            app:popUpTo="@id/homeFragment"
-            app:enterAnim="@anim/enter_from_left"
-            app:exitAnim="@anim/exit_to_right"
-            app:popEnterAnim="@anim/enter_from_right"
-            app:popExitAnim="@anim/exit_to_left"/>
+            app:popUpTo="@id/nav_graph"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right"/>
 
 
         <action
