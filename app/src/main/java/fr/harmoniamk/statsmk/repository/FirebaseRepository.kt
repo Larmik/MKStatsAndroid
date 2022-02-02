@@ -9,7 +9,6 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
-import fr.harmoniamk.statsmk.database.firebase.model.FirebaseObject
 import fr.harmoniamk.statsmk.database.firebase.model.Team
 import fr.harmoniamk.statsmk.database.firebase.model.User
 import kotlinx.coroutines.ExperimentalCoroutinesApi
