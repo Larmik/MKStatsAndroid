@@ -11,8 +11,7 @@
         android:layout_height="0dp"
         android:orientation="vertical"
         android:gravity="center"
-        android:layout_weight="1">
-
+        android:layout_weight="4">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -20,7 +19,8 @@
             android:gravity="center"
             android:fontFamily="@font/montserrat_regular"
             android:textColor="@color/white"
-            android:text="Entrez un nom ou un pseudo. Dans le cas où vous jouez en équipe, il servira à vous identifier."
+            android:textSize="16sp"
+            android:text="Veuillez saisir votre nom ou votre pseudo."
             android:layout_marginBottom="15dp" />
 
         <EditText
@@ -30,17 +30,25 @@
             android:layout_marginBottom="15dp"
             android:gravity="center"
             android:id="@+id/username_et"
+            android:hint="Nom"
             android:backgroundTint="@color/white_alphaed"
             android:layout_marginHorizontal="40dp" />
+    </LinearLayout>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:layout_weight="4">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingVertical="10dp"
             android:layout_marginBottom="15dp"
+            android:textSize="16sp"
             android:textColor="@color/white"
             android:fontFamily="@font/montserrat_regular"
-            android:text="Choisissez un code d'accès à quatre chiffres. Notez-le quelque part : Il sera utile pour retrouver vos données en cas de désinstallation."
+            android:text="Choisissez un code d'accès à quatre chiffres. \n \n Notez-le quelque part : Il vous sera utile pour accéder à nouveau à l'application et à vos données en cas de déconnexion ou de désinstallation."
             android:gravity="center"
             android:layout_gravity="bottom"/>
 
@@ -51,26 +59,41 @@
             android:layout_marginBottom="15dp"
             android:id="@+id/code_et"
             android:gravity="center"
+            android:hint="Code d'accès"
+            android:maxLength="4"
             android:inputType="numberPassword"
             android:backgroundTint="@color/white_alphaed"
             android:layout_marginHorizontal="40dp" />
 
     </LinearLayout>
 
-
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingVertical="10dp"
-        android:background="@drawable/rounded_bg"
-        android:backgroundTint="@color/waluigi_second"
-        android:textColor="@color/white"
-        android:layout_marginBottom="10dp"
-        android:id="@+id/next_btn"
-        android:textSize="18sp"
-        android:text="Suivant"
-        android:textAllCaps="true"
+        android:layout_height="0dp"
+        android:orientation="vertical"
         android:gravity="center"
-        android:layout_gravity="bottom"/>
+        android:layout_weight="1">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="10dp"
+            android:background="@drawable/rounded_bg"
+            android:backgroundTint="@color/waluigi_second"
+            android:textColor="@color/white"
+            android:layout_marginBottom="10dp"
+            android:id="@+id/next_btn"
+            android:textSize="18sp"
+            android:text="Suivant"
+            android:textAllCaps="true"
+            android:gravity="center"
+            android:layout_gravity="bottom"/>
+
+
+
+    </LinearLayout>
+
+
+
 
 </LinearLayout>

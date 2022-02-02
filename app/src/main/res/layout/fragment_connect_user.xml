@@ -22,7 +22,7 @@
             android:layout_marginBottom="15dp"
             android:textColor="@color/white"
             android:fontFamily="@font/montserrat_regular"
-            android:textSize="16sp"
+            android:textSize="18sp"
             android:text="Entrez votre code personnel :"
             android:gravity="center"/>
 
@@ -40,28 +40,14 @@
 
 
 
-        <TextView
-            android:visibility="invisible"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingVertical="10dp"
-            android:background="@drawable/rounded_bg"
-            android:backgroundTint="@color/waluigi_second"
-            android:textColor="@color/white"
-            android:id="@+id/name_next_btn"
-            android:textSize="18sp"
-            android:text="Continuer en tant que"
-            android:textAllCaps="true"
-            android:gravity="center"
-            android:layout_marginBottom="15dp"
-            android:layout_gravity="bottom"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingVertical="10dp"
         android:textColor="@color/white"
         android:id="@+id/already_sub_btn"
-        android:textSize="18sp"
+        android:textSize="14sp"
+        android:fontFamily="@font/montserrat_regular"
         android:text="Pas encore de code ?"
         android:gravity="center"
         android:layout_gravity="bottom"/>

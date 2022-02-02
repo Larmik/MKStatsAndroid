@@ -3,11 +3,14 @@ package fr.harmoniamk.statsmk.repository
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.preference.PreferenceManager
+import com.google.gson.Gson
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
+import fr.harmoniamk.statsmk.database.firebase.model.Team
+import fr.harmoniamk.statsmk.database.firebase.model.User
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
@@ -16,7 +19,8 @@ import javax.inject.Inject
 @FlowPreview
 interface PreferencesRepositoryInterface {
     var hasCurrentTournament: Boolean
-    var isConnected: Boolean
+    var currentUser: User?
+    var currentTeam: Team?
 
 }
 
@@ -40,7 +44,12 @@ class PreferencesRepository @Inject constructor(
     override var hasCurrentTournament: Boolean
         get() = preferences.getBoolean("hasCurrentTournament", false)
         set(value) = preferences.edit().putBoolean("hasCurrentTournament", value).apply()
-    override var isConnected: Boolean
-        get() = preferences.getBoolean("isConnected", false)
-        set(value) = preferences.edit().putBoolean("isConnected", value).apply()
+
+    override var currentUser: User?
+        get() = Gson().fromJson(preferences.getString("currentUser", null), User::class.java)
+        set(value) = preferences.edit().putString("currentUser", Gson().toJson(value)).apply()
+    override var currentTeam: Team?
+        get() = Gson().fromJson(preferences.getString("currentTeam", null), Team::class.java)
+        set(value) = preferences.edit().putString("currentTeam", Gson().toJson(value)).apply()
+
 }

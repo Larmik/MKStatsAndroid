@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="fr.harmoniamk.statsmk.fragment.HomeFragment"
+        android:name="fr.harmoniamk.statsmk.features.home.HomeFragment"
         tools:layout="@layout/fragment_home"
         android:label="HomeFragment">
 
@@ -48,14 +48,14 @@
 
     <fragment
         android:id="@+id/addTournamentFragment"
-        android:name="fr.harmoniamk.statsmk.fragment.AddTournamentFragment"
+        android:name="fr.harmoniamk.statsmk.features.addTournament.AddTournamentFragment"
         tools:layout="@layout/fragment_add_tournament"
         android:label="AddTournamentFragment"/>
 
 
     <fragment
         android:id="@+id/currentTournamentFragment"
-        android:name="fr.harmoniamk.statsmk.fragment.CurrentTournamentFragment"
+        android:name="fr.harmoniamk.statsmk.features.currentTournament.fragment.CurrentTournamentFragment"
         tools:layout="@layout/fragment_current_tournament"
         android:label="CurrentTournamentFragment">
 
@@ -92,19 +92,19 @@
 
     <fragment
         android:id="@+id/addTrackFragment"
-        android:name="fr.harmoniamk.statsmk.fragment.AddTrackFragment"
+        android:name="fr.harmoniamk.statsmk.features.addTrack.AddTrackFragment"
         tools:layout="@layout/fragment_add_track"
         android:label="AddTrackFragment"/>
 
     <fragment
         android:id="@+id/editTrackFragment"
-        android:name="fr.harmoniamk.statsmk.fragment.EditTrackFragment"
+        android:name="fr.harmoniamk.statsmk.features.editTrack.fragment.EditTrackFragment"
         tools:layout="@layout/fragment_edit_track"
         android:label="EditTrackFragment"/>
 
     <fragment
         android:id="@+id/welcomeFragment"
-        android:name="fr.harmoniamk.statsmk.fragment.WelcomeFragment"
+        android:name="fr.harmoniamk.statsmk.features.welcome.fragment.WelcomeFragment"
         tools:layout="@layout/fragment_welcome"
         android:label="WelcomeFragment">
 

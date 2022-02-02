@@ -22,10 +22,12 @@ import kotlinx.coroutines.isActive
 import javax.inject.Inject
 
 interface FirebaseRepositoryInterface{
-    fun writeNewObject(objectName: String, obj: FirebaseObject): Flow<Unit>
+    fun writeUser(user: User): Flow<Unit>
 
     fun getUsers(): Flow<List<User>>
     fun getTeams(): Flow<List<Team>>
+
+    fun getTeam(id: String): Flow<Team?>
 
     fun listenToUsers(): Flow<List<User>>
     fun listenToTeams(): Flow<List<Team>>
@@ -46,15 +48,16 @@ class FirebaseRepository @Inject constructor() : FirebaseRepositoryInterface {
 
     private val database  = Firebase.database.reference
 
-    override fun writeNewObject(objectName: String, obj: FirebaseObject) = flow {
-        database.child(objectName).child(obj.mid.toString()).setValue(obj)
+    override fun writeUser(user: User) = flow {
+        database.child("users").child(user.mid.toString()).setValue(user)
         emit(Unit)
     }
+
 
     override fun listenToUsers(): Flow<List<User>> = callbackFlow {
         val postListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val users: List<User> = dataSnapshot.child("users").children.map { it.value as Map<*, *> }.map { User(name = it.get("name").toString()) }
+                val users: List<User> = dataSnapshot.child("users").children.map { it.value as Map<*, *> }.map { User(mid = it.get("mid").toString(), name = it.get("name").toString()) }
                 if (isActive) offer(users)
             }
 
@@ -70,9 +73,10 @@ class FirebaseRepository @Inject constructor() : FirebaseRepositoryInterface {
             val users: List<User> = snapshot.children
                 .map { it.value as Map<*, *> }
                 .map { User(
+                    mid = it["mid"].toString(),
                     name = it["name"].toString(),
                     accessCode = it["accessCode"].toString(),
-                    team = it["team"].toString().toInt()
+                    team = it["team"].toString()
                 ) }
             if (isActive) offer(users)
         }
@@ -84,6 +88,7 @@ class FirebaseRepository @Inject constructor() : FirebaseRepositoryInterface {
             val teams: List<Team> = snapshot.children
                 .map { it.value as Map<*, *> }
                 .map { Team(
+                    mid = it["mid"].toString(),
                     name = it["name"].toString(),
                     shortName = it["shortName"].toString(),
                     accessCode = it["accessCode"].toString()
@@ -93,11 +98,25 @@ class FirebaseRepository @Inject constructor() : FirebaseRepositoryInterface {
         awaitClose {  }
     }
 
+    override fun getTeam(id: String): Flow<Team?> = callbackFlow {
+        database.child("teams").child(id).get().addOnSuccessListener { snapshot ->
+            val map = (snapshot.value as? Map<*,*>)
+                if (isActive) offer(if (map == null) null else Team(mid = map["mid"].toString(), accessCode = map["accessCode"].toString(), name = map["name"].toString(), shortName = map["shortName"].toString()))
+
+        }
+        awaitClose {  }
+    }
+
     override fun listenToTeams(): Flow<List<Team>> = callbackFlow {
         val postListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val users: List<Team> = dataSnapshot.child("teams").children.map { it.value as Map<*, *> }.map { Team(name = it.get("name").toString()) }
-                if (isActive) offer(users)
+                val teams: List<Team> = dataSnapshot.child("teams").children.map { it.value as Map<*, *> }.map {  Team(
+                    mid = it["mid"].toString(),
+                    name = it["name"].toString(),
+                    shortName = it["shortName"].toString(),
+                    accessCode = it["accessCode"].toString()
+                )  }
+                if (isActive) offer(teams)
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
