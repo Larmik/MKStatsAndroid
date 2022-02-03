@@ -28,6 +28,14 @@
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right"/>
 
+        <action
+            android:id="@+id/create_war"
+            app:destination="@id/addWarFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right"/>
+
 
         <action
             android:id="@+id/goto_current"
@@ -95,6 +103,12 @@
         android:name="fr.harmoniamk.statsmk.features.addTrack.AddTrackFragment"
         tools:layout="@layout/fragment_add_track"
         android:label="AddTrackFragment"/>
+
+    <fragment
+        android:id="@+id/addWarFragment"
+        android:name="fr.harmoniamk.statsmk.features.addWar.fragment.AddWarFragment"
+        tools:layout="@layout/fragment_add_war"
+        android:label="AddWarFragment"/>
 
     <fragment
         android:id="@+id/editTrackFragment"

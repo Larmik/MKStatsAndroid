@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.database.firebase.model.Team
+import fr.harmoniamk.statsmk.database.firebase.model.War
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
@@ -20,11 +21,15 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
 
     private val _sharedTeam = MutableSharedFlow<Team?>()
     private val _sharedHasTeam = MutableSharedFlow<Team?>()
+    private val _sharedCreateWar = MutableSharedFlow<Unit>()
+    private val _sharedCurrentWar = MutableSharedFlow<War>()
 
     val sharedTeam = _sharedTeam.asSharedFlow()
     val sharedHasTeam = _sharedHasTeam.asSharedFlow()
+    val sharedCreateWar = _sharedCreateWar.asSharedFlow()
+    val sharedCurrentWar = _sharedCurrentWar.asSharedFlow()
 
-    fun bind(onCodeTeam: Flow<String>, onTeamClick: Flow<Unit>) {
+    fun bind(onCodeTeam: Flow<String>, onTeamClick: Flow<Unit>, onCreateWar: Flow<Unit>) {
 
         var codeTeam: String? = null
         var chosenTeam: String? = null
@@ -53,6 +58,14 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
             .onEach { preferencesRepository.currentTeam = it }
             .onEach { _sharedHasTeam.emit(it) }
             .launchIn(viewModelScope)
+
+        onCreateWar.bind(_sharedCreateWar, viewModelScope)
+
+        firebaseRepository.listenToWars()
+            .mapNotNull { it.singleOrNull { war -> war.teamHost == preferencesRepository.currentTeam?.mid } }
+            .bind(_sharedCurrentWar, viewModelScope)
+
+
     }
 
 }

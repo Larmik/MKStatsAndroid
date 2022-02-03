@@ -103,6 +103,7 @@
 
             <LinearLayout
                 android:visibility="gone"
+                tools:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -173,14 +174,6 @@
 
                             <TextView
                                 android:layout_width="wrap_content"
-                                android:fontFamily="@font/montserrat_regular"
-                                android:layout_height="wrap_content"
-                                tools:text="20 courses - Miroir"
-                                android:textColor="@color/white"
-                                android:layout_marginBottom="5dp"
-                                android:id="@+id/current_war_infos"/>
-                            <TextView
-                                android:layout_width="wrap_content"
                                 android:textColor="@color/white"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/montserrat_regular"
@@ -212,6 +205,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingTop="15dp"
+                tools:visibility="gone"
                 android:id="@+id/create_war_layout">
 
                 <TextView

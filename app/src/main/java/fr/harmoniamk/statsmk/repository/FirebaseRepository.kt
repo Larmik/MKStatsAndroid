@@ -11,6 +11,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
 import fr.harmoniamk.statsmk.database.firebase.model.Team
 import fr.harmoniamk.statsmk.database.firebase.model.User
+import fr.harmoniamk.statsmk.database.firebase.model.War
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.awaitClose
@@ -22,6 +23,7 @@ import javax.inject.Inject
 
 interface FirebaseRepositoryInterface{
     fun writeUser(user: User): Flow<Unit>
+    fun writeWar(war: War): Flow<Unit>
 
     fun getUsers(): Flow<List<User>>
     fun getTeams(): Flow<List<Team>>
@@ -30,6 +32,7 @@ interface FirebaseRepositoryInterface{
 
     fun listenToUsers(): Flow<List<User>>
     fun listenToTeams(): Flow<List<Team>>
+    fun listenToWars(): Flow<List<War>>
 }
 
 @FlowPreview
@@ -49,6 +52,11 @@ class FirebaseRepository @Inject constructor() : FirebaseRepositoryInterface {
 
     override fun writeUser(user: User) = flow {
         database.child("users").child(user.mid.toString()).setValue(user)
+        emit(Unit)
+    }
+
+    override fun writeWar(war: War) = flow {
+        database.child("wars").child(war.mid.toString()).setValue(war)
         emit(Unit)
     }
 
@@ -116,6 +124,31 @@ class FirebaseRepository @Inject constructor() : FirebaseRepositoryInterface {
                     accessCode = it["accessCode"].toString()
                 )  }
                 if (isActive) offer(teams)
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+            }
+        }
+        database.addValueEventListener(postListener)
+        awaitClose {  }
+    }
+
+    override fun listenToWars(): Flow<List<War>> = callbackFlow {
+        val postListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val wars: List<War> = dataSnapshot.child("wars").children.map { it.value as Map<*, *> }.map {  War(
+                    mid = it["mid"].toString(),
+                    name = it["name"].toString(),
+                    playerHostId = it["playerHostId"].toString(),
+                    teamOpponent = it["teamOpponent"].toString(),
+                    scoreOpponent = it["scoreOpponent"].toString().toInt(),
+                    teamHost = it["teamHost"].toString(),
+                    scoreHost = it["scoreHost"].toString().toInt(),
+                    createdDate = it["createdDate"].toString(),
+                    updatedDate = it["updatedDate"].toString()
+
+                )  }
+                if (isActive) offer(wars)
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
