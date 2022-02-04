@@ -11,6 +11,7 @@ import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import fr.harmoniamk.statsmk.database.firebase.model.Team
 import fr.harmoniamk.statsmk.database.firebase.model.User
+import fr.harmoniamk.statsmk.database.firebase.model.War
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject

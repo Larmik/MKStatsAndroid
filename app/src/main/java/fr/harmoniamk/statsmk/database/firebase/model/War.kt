@@ -1,6 +1,5 @@
 package fr.harmoniamk.statsmk.database.firebase.model
 
-import com.google.firebase.database.IgnoreExtraProperties
 
 const val TOTAL_TRACKS = 12
 const val TOTAL_WAR_SCORE = 984

@@ -5,6 +5,7 @@
     app:startDestination="@id/homeFragment"
     android:id="@+id/nav_graph">
 
+
     <fragment
         android:id="@+id/homeFragment"
         android:name="fr.harmoniamk.statsmk.features.home.HomeFragment"
@@ -14,6 +15,13 @@
         <action
             android:id="@+id/add_fragment"
             app:destination="@id/addTournamentFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right"/>
+        <action
+            android:id="@+id/go_to_waiting_players"
+            app:destination="@id/waitPlayersFragment"
             app:enterAnim="@anim/enter_from_right"
             app:exitAnim="@anim/exit_to_left"
             app:popEnterAnim="@anim/enter_from_left"
@@ -59,7 +67,6 @@
         android:name="fr.harmoniamk.statsmk.features.addTournament.AddTournamentFragment"
         tools:layout="@layout/fragment_add_tournament"
         android:label="AddTournamentFragment"/>
-
 
     <fragment
         android:id="@+id/currentTournamentFragment"
@@ -130,7 +137,16 @@
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right"/>
 
+
+
     </fragment>
+
+
+    <fragment
+        android:id="@+id/waitPlayersFragment"
+        android:name="fr.harmoniamk.statsmk.features.addWar.fragment.WaitPlayersFragment"
+        tools:layout="@layout/fragment_wait_players"
+        android:label="WaitPlayersFragment"/>
 
 
 </navigation>

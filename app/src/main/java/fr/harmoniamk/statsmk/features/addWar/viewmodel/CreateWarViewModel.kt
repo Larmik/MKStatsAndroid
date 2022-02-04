@@ -44,16 +44,23 @@ class CreateWarViewModel @Inject constructor(private val firebaseRepository: Fir
 
         onCreateWar
             .mapNotNull { chosenOpponent?.mid }
-            .map { War(
-                mid = System.currentTimeMillis().toString(),
-                name = warName,
-                teamHost = preferencesRepository.currentTeam?.mid,
-                playerHostId = preferencesRepository.currentUser?.mid,
-                teamOpponent = it,
-                createdDate = date,
-                updatedDate = date)
+            .map {
+                val war = War(
+                    mid = System.currentTimeMillis().toString(),
+                    name = warName,
+                    teamHost = preferencesRepository.currentTeam?.mid,
+                    playerHostId = preferencesRepository.currentUser?.mid,
+                    teamOpponent = it,
+                    createdDate = date,
+                    updatedDate = date)
+                preferencesRepository.currentUser = preferencesRepository.currentUser.apply {
+                    this?.currentWar = war.mid
+                }
+                war
             }
             .flatMapLatest { firebaseRepository.writeWar(it) }
+            .mapNotNull { preferencesRepository.currentUser }
+            .flatMapLatest { firebaseRepository.writeUser(it) }
             .bind(_sharedStarted, viewModelScope)
     }
 }

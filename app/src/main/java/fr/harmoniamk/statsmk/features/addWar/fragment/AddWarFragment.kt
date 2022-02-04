@@ -5,6 +5,7 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentAddWarBinding
@@ -12,6 +13,7 @@ import fr.harmoniamk.statsmk.features.addWar.adapter.AddWarPagerAdapter
 import fr.harmoniamk.statsmk.features.addWar.viewmodel.AddWarViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -28,10 +30,16 @@ class AddWarFragment : Fragment(R.layout.fragment_add_war) {
         binding.addWarPager.isUserInputEnabled = false
         binding.addWarPager.adapter = adapter
         binding.addWarPager.currentItem = 0
-        viewModel.bind(adapter.onCreateWar)
+        viewModel.bind(adapter.onCreateWar, adapter.onWarBegin)
         viewModel.sharedGoToWait
             .onEach { binding.addWarPager.currentItem = 1 }
             .launchIn(lifecycleScope)
+
+        viewModel.sharedGoToCurrentWar
+            .filter { findNavController().currentDestination?.id == R.id.addWarFragment }
+            .onEach {
+                //TODO redirect to current war
+            }.launchIn(lifecycleScope)
 
     }
 

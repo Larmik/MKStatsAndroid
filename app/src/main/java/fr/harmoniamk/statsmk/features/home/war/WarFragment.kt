@@ -1,9 +1,7 @@
 package fr.harmoniamk.statsmk.features.home.war
 
-import android.content.Context
 import android.os.Bundle
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -13,7 +11,6 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.database.firebase.model.TOTAL_TRACKS
-import fr.harmoniamk.statsmk.database.firebase.model.War
 import fr.harmoniamk.statsmk.databinding.FragmentWarBinding
 import fr.harmoniamk.statsmk.extension.clicks
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -34,7 +31,7 @@ class WarFragment : Fragment(R.layout.fragment_war) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.bind(binding.teamCodeEt.onTextChanged(), binding.nextBtn.clicks(), binding.createWarBtn.clicks())
+        viewModel.bind(binding.teamCodeEt.onTextChanged(), binding.nextBtn.clicks(), binding.createWarBtn.clicks(), binding.currentWarCard.clicks())
 
         viewModel.sharedTeam
             .onEach {
@@ -67,6 +64,11 @@ class WarFragment : Fragment(R.layout.fragment_war) {
                 binding.currentWarRemaining.text = "Courses jouées: ${it.trackPlayed}/${TOTAL_TRACKS}"
                 binding.currentWarScore.text = "Score: ${it.scoreHost} - ${it.scoreOpponent}"
             }.launchIn(lifecycleScope)
+
+        viewModel.sharedCurrentWarClick
+            .filter { findNavController().currentDestination?.id == R.id.homeFragment }
+            .onEach { findNavController().navigate(HomeFragmentDirections.goToWaitingPlayers()) }
+            .launchIn(lifecycleScope)
 
     }
 

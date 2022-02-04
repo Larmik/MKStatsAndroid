@@ -27,8 +27,10 @@ interface FirebaseRepositoryInterface{
 
     fun getUsers(): Flow<List<User>>
     fun getTeams(): Flow<List<Team>>
+    fun getWars(): Flow<List<War>>
 
     fun getTeam(id: String): Flow<Team?>
+    fun getWar(id: String): Flow<War?>
 
     fun listenToUsers(): Flow<List<User>>
     fun listenToTeams(): Flow<List<Team>>
@@ -64,7 +66,14 @@ class FirebaseRepository @Inject constructor() : FirebaseRepositoryInterface {
     override fun listenToUsers(): Flow<List<User>> = callbackFlow {
         val postListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val users: List<User> = dataSnapshot.child("users").children.map { it.value as Map<*, *> }.map { User(mid = it.get("mid").toString(), name = it.get("name").toString()) }
+                val users: List<User> = dataSnapshot.child("users").children
+                    .map { it.value as Map<*, *> }
+                    .map { User(
+                        mid = it["mid"].toString(),
+                        name = it["name"].toString(),
+                        team = it["team"].toString(),
+                        currentWar = it["currentWar"].toString())
+                    }
                 if (isActive) offer(users)
             }
 
@@ -105,14 +114,61 @@ class FirebaseRepository @Inject constructor() : FirebaseRepositoryInterface {
         awaitClose {  }
     }
 
-    override fun getTeam(id: String): Flow<Team?> = callbackFlow {
-        database.child("teams").child(id).get().addOnSuccessListener { snapshot ->
-            val map = (snapshot.value as? Map<*,*>)
-                if (isActive) offer(if (map == null) null else Team(mid = map["mid"].toString(), accessCode = map["accessCode"].toString(), name = map["name"].toString(), shortName = map["shortName"].toString()))
-
+    override fun getWars(): Flow<List<War>> = callbackFlow {
+        database.child("wars").get().addOnSuccessListener { snapshot ->
+            val wars: List<War> = snapshot.children
+                .map { it.value as Map<*, *> }
+                .map {map -> War(
+                    mid = map["mid"].toString(),
+                    playerHostId = map["playerHostId"].toString(),
+                    name = map["name"].toString(),
+                    teamHost = map["teamHost"].toString(),
+                    scoreHost = map["scoreHost"].toString().toInt(),
+                    teamOpponent = map["teamOpponent"].toString(),
+                    scoreOpponent = map["scoreOpponent"].toString().toInt(),
+                    updatedDate = map["updatedDate"].toString(),
+                    createdDate = map["createdDate"].toString())
+                }
+            if (isActive) offer(wars)
         }
         awaitClose {  }
     }
+
+    override fun getTeam(id: String): Flow<Team?> = callbackFlow {
+        database.child("teams").child(id).get().addOnSuccessListener { snapshot ->
+            val map = (snapshot.value as? Map<*,*>)
+                if (isActive) offer(
+                    if (map == null) null
+                    else Team(
+                        mid = map["mid"].toString(),
+                        accessCode = map["accessCode"].toString(),
+                        name = map["name"].toString(),
+                        shortName = map["shortName"].toString())
+                )
+        }
+        awaitClose {  }
+    }
+
+    override fun getWar(id: String): Flow<War?> = callbackFlow {
+        database.child("wars").child(id).get().addOnSuccessListener { snapshot ->
+            val map = (snapshot.value as? Map<*,*>)
+            if (isActive) offer(
+                if (map == null) null
+                else War(
+                    mid = map["mid"].toString(),
+                    name = map["name"].toString(),
+                    playerHostId = map["playerHostId"].toString(),
+                    teamOpponent = map["teamOpponent"].toString(),
+                    scoreOpponent = map["scoreOpponent"].toString().toInt(),
+                    teamHost = map["teamHost"].toString(),
+                    scoreHost = map["scoreHost"].toString().toInt(),
+                    createdDate = map["createdDate"].toString(),
+                    updatedDate = map["updatedDate"].toString()
+                ))
+        }
+        awaitClose {  }
+    }
+
 
     override fun listenToTeams(): Flow<List<Team>> = callbackFlow {
         val postListener = object : ValueEventListener {
