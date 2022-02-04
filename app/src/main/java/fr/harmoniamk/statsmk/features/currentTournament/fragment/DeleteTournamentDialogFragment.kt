@@ -33,6 +33,7 @@ class DeleteTournamentDialogFragment(val tm: Tournament) : AppCompatDialogFragme
 
     private val _sharedClose = MutableSharedFlow<Unit>()
     private val _sharedTmDeleted = MutableSharedFlow<Unit>()
+
     val sharedTmDeleted = _sharedTmDeleted.asSharedFlow()
     val sharedClose = _sharedClose.asSharedFlow()
 
@@ -52,11 +53,10 @@ class DeleteTournamentDialogFragment(val tm: Tournament) : AppCompatDialogFragme
             onBack = binding.cancelBtn.clicks()
         )
         viewModel.onDismiss.bind(_sharedClose, lifecycleScope)
-        viewModel.onTournamentDeleted
-            .onEach {
-                dismissAllowingStateLoss()
-                _sharedTmDeleted.emit(Unit)
-            }.launchIn(lifecycleScope)
+        viewModel.onTournamentDeleted.onEach {
+            dismissAllowingStateLoss()
+            _sharedTmDeleted.emit(Unit)
+        }.launchIn(lifecycleScope)
     }
 
     override fun onStart() {

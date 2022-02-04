@@ -18,5 +18,11 @@ data class War(
 ) {
 
     val trackPlayed = (TOTAL_TRACKS - ( TOTAL_WAR_SCORE - ( scoreHost + scoreOpponent)) / TOTAL_TRACK_SCORE)
-    val isOver = trackPlayed == 12
+    val isOver = trackPlayed == TOTAL_TRACKS
+
+    val displayedState: String
+        get() = if (isOver) "War terminée" else "Tournoi en cours (${trackPlayed}/${TOTAL_TRACKS})"
+
+    val scoreLabel: String
+        get() = "Score: $scoreHost - $scoreOpponent"
 }

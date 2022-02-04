@@ -22,7 +22,6 @@ interface PreferencesRepositoryInterface {
     var hasCurrentTournament: Boolean
     var currentUser: User?
     var currentTeam: Team?
-
 }
 
 @FlowPreview
@@ -45,12 +44,10 @@ class PreferencesRepository @Inject constructor(
     override var hasCurrentTournament: Boolean
         get() = preferences.getBoolean("hasCurrentTournament", false)
         set(value) = preferences.edit().putBoolean("hasCurrentTournament", value).apply()
-
     override var currentUser: User?
         get() = Gson().fromJson(preferences.getString("currentUser", null), User::class.java)
         set(value) = preferences.edit().putString("currentUser", Gson().toJson(value)).apply()
     override var currentTeam: Team?
         get() = Gson().fromJson(preferences.getString("currentTeam", null), Team::class.java)
         set(value) = preferences.edit().putString("currentTeam", Gson().toJson(value)).apply()
-
 }

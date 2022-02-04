@@ -52,7 +52,6 @@ class AddTournamentViewModel @Inject constructor(private val tournamentRepositor
             .flatMapLatest { tournamentRepository.insert(it) }
             .onEach { _sharedClose.emit(Unit) }
             .launchIn(viewModelScope)
-
     }
 
     private fun idToValue(id: Int) = when (id) {
@@ -66,6 +65,4 @@ class AddTournamentViewModel @Inject constructor(private val tournamentRepositor
         R.id.gp6 -> 24
         else -> 1
     }
-
-
 }

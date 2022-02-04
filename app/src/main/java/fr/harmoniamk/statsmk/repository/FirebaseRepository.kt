@@ -62,7 +62,6 @@ class FirebaseRepository @Inject constructor() : FirebaseRepositoryInterface {
         emit(Unit)
     }
 
-
     override fun listenToUsers(): Flow<List<User>> = callbackFlow {
         val postListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -168,7 +167,6 @@ class FirebaseRepository @Inject constructor() : FirebaseRepositoryInterface {
         }
         awaitClose {  }
     }
-
 
     override fun listenToTeams(): Flow<List<Team>> = callbackFlow {
         val postListener = object : ValueEventListener {

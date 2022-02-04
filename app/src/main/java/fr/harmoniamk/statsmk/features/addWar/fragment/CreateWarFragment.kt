@@ -32,17 +32,17 @@ class CreateWarFragment(val onCreateWar: MutableSharedFlow<Unit>) : Fragment(R.l
         val adapter = TeamListAdapter()
         binding.teamRv.adapter = adapter
         viewModel.bind(adapter.onTeamClick, binding.startWarBtn.clicks())
-        viewModel.sharedTeams
-            .onEach { adapter.addTeams(it) }
-            .launchIn(lifecycleScope)
-        viewModel.sharedStarted.bind(onCreateWar, lifecycleScope)
-        viewModel.sharedTeamSelected
-            .onEach {
+
+        viewModel.sharedTeams.onEach {
+            adapter.addTeams(it)
+        }.launchIn(lifecycleScope)
+
+        viewModel.sharedTeamSelected.onEach {
                 binding.createWarLayout.visibility = View.VISIBLE
                 binding.startWarBtn.text = it
-            }
-            .launchIn(lifecycleScope)
+            }.launchIn(lifecycleScope)
 
+        viewModel.sharedStarted.bind(onCreateWar, lifecycleScope)
     }
 
 }

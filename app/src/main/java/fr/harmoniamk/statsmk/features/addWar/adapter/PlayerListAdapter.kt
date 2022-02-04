@@ -8,18 +8,13 @@ import fr.harmoniamk.statsmk.databinding.PlayerItemBinding
 
 class PlayerListAdapter(val items: MutableList<User> = mutableListOf()) : RecyclerView.Adapter<PlayerListAdapter.PlayerViewHolder>() {
 
-    class PlayerViewHolder(val binding: PlayerItemBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: User) {
-            binding.name.text = item.name
-        }
-    }
+    class PlayerViewHolder(val binding: PlayerItemBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlayerViewHolder =
         PlayerViewHolder(PlayerItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
     override fun onBindViewHolder(holder: PlayerViewHolder, position: Int) {
-        val item = items[position]
-        holder.bind(item)
+        holder.binding.name.text = items[position].name
     }
 
     override fun getItemCount() = items.size
@@ -29,6 +24,5 @@ class PlayerListAdapter(val items: MutableList<User> = mutableListOf()) : Recycl
         items.clear()
         items.addAll(players)
         notifyItemRangeInserted(0, itemCount)
-
     }
 }

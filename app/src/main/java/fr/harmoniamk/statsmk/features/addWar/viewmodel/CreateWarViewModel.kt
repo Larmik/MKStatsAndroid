@@ -32,15 +32,16 @@ class CreateWarViewModel @Inject constructor(private val firebaseRepository: Fir
         val date = SimpleDateFormat("dd/MM/yyyy - HH'h'mm", Locale.FRANCE).format(Date())
         var chosenOpponent: Team? = null
         var warName: String? = null
-        firebaseRepository.getTeams()
-            .map { it.filterNot { team -> team.mid == preferencesRepository.currentTeam?.mid } }
-            .bind(_sharedTeams, viewModelScope)
-        onTeamClick
-            .onEach {
-                chosenOpponent = it
-                warName = "${preferencesRepository.currentTeam?.shortName} - ${it.shortName}"
-                _sharedTeamSelected.emit("Démarrer $warName" )
-            }.launchIn(viewModelScope)
+
+        firebaseRepository.getTeams().map {
+            it.filterNot { team -> team.mid == preferencesRepository.currentTeam?.mid }
+        }.bind(_sharedTeams, viewModelScope)
+
+        onTeamClick.onEach {
+            chosenOpponent = it
+            warName = "${preferencesRepository.currentTeam?.shortName} - ${it.shortName}"
+            _sharedTeamSelected.emit("Démarrer $warName" )
+        }.launchIn(viewModelScope)
 
         onCreateWar
             .mapNotNull { chosenOpponent?.mid }

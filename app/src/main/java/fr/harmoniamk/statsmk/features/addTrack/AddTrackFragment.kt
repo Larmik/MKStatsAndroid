@@ -50,7 +50,6 @@ class AddTrackFragment : Fragment(R.layout.fragment_add_track) {
                 .onEach { findNavController().popBackStack() }
                 .launchIn(lifecycleScope)
         }
-
     }
 
 }

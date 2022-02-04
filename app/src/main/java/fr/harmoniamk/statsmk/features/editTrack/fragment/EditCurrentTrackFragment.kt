@@ -37,12 +37,10 @@ class EditCurrentTrackFragment(val trackId: Int, val onMapEdit: MutableSharedFlo
         )
         viewModel.sharedTrackClick.bind(onMapEdit, lifecycleScope)
         viewModel.sharedPositionClick.bind(onPositionEdit, lifecycleScope)
-        viewModel.sharedTrack
-            .filterNotNull()
-            .onEach {
-                bindMap(Maps.values()[it.trackIndex])
-                binding.posTv.text = it.displayedPos
-            }.launchIn(lifecycleScope)
+        viewModel.sharedTrack.onEach {
+            bindMap(Maps.values()[it.trackIndex])
+            binding.posTv.text = it.displayedPos
+        }.launchIn(lifecycleScope)
     }
 
     private fun bindMap(track: Maps) {

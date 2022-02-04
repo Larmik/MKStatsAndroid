@@ -31,14 +31,19 @@ class WarFragment : Fragment(R.layout.fragment_war) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.bind(binding.teamCodeEt.onTextChanged(), binding.nextBtn.clicks(), binding.createWarBtn.clicks(), binding.currentWarCard.clicks())
+        viewModel.bind(
+            onCodeTeam = binding.teamCodeEt.onTextChanged(),
+            onTeamClick = binding.nextBtn.clicks(),
+            onCreateWar = binding.createWarBtn.clicks(),
+            onCurrentWarClick = binding.currentWarCard.clicks()
+        )
 
         viewModel.sharedTeam
             .onEach {
                 binding.nextBtn.visibility = View.INVISIBLE
                 it?.let {
                     binding.nextBtn.visibility = View.VISIBLE
-                    binding.nextBtn.text = "Intégrer ${it.name} (${it.shortName})"
+                    binding.nextBtn.text = it.integrationLabel
                 }
             }
             .launchIn(lifecycleScope)
@@ -61,8 +66,8 @@ class WarFragment : Fragment(R.layout.fragment_war) {
                 binding.currentWarLayout.isVisible = true
                 binding.nameTv.text = it.name
                 binding.timeTv.text = it.createdDate
-                binding.currentWarRemaining.text = "Courses jouées: ${it.trackPlayed}/${TOTAL_TRACKS}"
-                binding.currentWarScore.text = "Score: ${it.scoreHost} - ${it.scoreOpponent}"
+                binding.currentWarRemaining.text = it.displayedState
+                binding.currentWarScore.text = it.scoreLabel
             }.launchIn(lifecycleScope)
 
         viewModel.sharedCurrentWarClick

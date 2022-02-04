@@ -41,28 +41,35 @@ class CurrentTournamentFragment : Fragment(R.layout.fragment_current_tournament)
         super.onViewCreated(view, savedInstanceState)
         val adapter = CurrentTrackAdapter()
         binding.currentTracksRv.adapter = adapter
-
         tournament?.let { tm ->
             binding.tmTitleTv.text = tm.name
             binding.tmDateTv.text = tm.createdDate
             binding.tmInfosTv.text = tm.infos
             binding.scoreTv.text = tm.points.toString()
-            viewModel.bind(tm.mid, binding.nextTrackBtn.clicks(), binding.stopBtn.clicks(), adapter.sharedTrackToEdit)
+
+            viewModel.bind(
+                tmId = tm.mid,
+                onAddTrackClick = binding.nextTrackBtn.clicks(),
+                onCancel = binding.stopBtn.clicks(),
+                onTrackEdit = adapter.sharedTrackToEdit
+            )
+
             viewModel.sharedAddTrack
                 .filter { findNavController().currentDestination?.id == R.id.currentTournamentFragment }
                 .onEach { findNavController().navigate(CurrentTournamentFragmentDirections.addTrack(tm.mid)) }
                 .launchIn(lifecycleScope)
+
             viewModel.sharedTracks
                 .filter { lifecycle.currentState == Lifecycle.State.RESUMED && lifecycleScope.isActive }
                 .onEach {
                     val isOver = it.size == tm.trackCount
-                    binding.currentTmTv.text =
-                        if (isOver) "Tournoi terminé" else "Tournoi en cours (${it.size}/${tm.trackCount})"
+                    binding.currentTmTv.text = tm.displayedState(it.size)
                     binding.nextTrackBtn.isVisible = !isOver
                     binding.stopBtn.isVisible = !isOver
                     binding.playedLabel.isVisible = it.isNotEmpty()
                     adapter.addTracks(it)
                 }.launchIn(lifecycleScope)
+
             viewModel.sharedScore
                 .filter { lifecycle.currentState == Lifecycle.State.RESUMED && lifecycleScope.isActive }
                 .onEach { binding.scoreTv.text = it.toString() }

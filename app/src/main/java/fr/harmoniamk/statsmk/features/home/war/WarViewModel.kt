@@ -76,7 +76,6 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
             .flatMapLatest { firebaseRepository.writeUser(it) }
             .mapNotNull { war }
             .bind(_sharedCurrentWarClick, viewModelScope)
-
     }
 
 }

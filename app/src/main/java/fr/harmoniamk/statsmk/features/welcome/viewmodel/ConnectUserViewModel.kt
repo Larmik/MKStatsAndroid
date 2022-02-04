@@ -17,7 +17,6 @@ import javax.inject.Inject
 @HiltViewModel
 class ConnectUserViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface) : ViewModel() {
 
-    private val _sharedUser = MutableSharedFlow<User?>()
     private val _sharedNext = MutableSharedFlow<Unit>()
     private val _sharedNoCode = MutableSharedFlow<Unit>()
 

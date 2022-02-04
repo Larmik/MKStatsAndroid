@@ -22,7 +22,6 @@ interface TournamentRepositoryInterface {
     fun getbyId(id: Int): Flow<Tournament?>
     fun incrementTrackNumber(id: Int): Flow<Unit>
     fun incrementTops(id: Int): Flow<Unit>
-
 }
 
 @FlowPreview

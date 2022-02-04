@@ -29,12 +29,10 @@ class AddTrackViewModel @Inject constructor(
 
         var chosenTrack = -1
 
-        onTrackAdded
-            .onEach {
-                chosenTrack = it
-                _sharedGoToPos.emit(Unit)
-            }
-            .launchIn(viewModelScope)
+        onTrackAdded.onEach {
+            chosenTrack = it
+            _sharedGoToPos.emit(Unit)
+        }.launchIn(viewModelScope)
 
         onPositionAdded
             .map { PlayedTrack(trackIndex = chosenTrack, position = it, tmId = tournamentId) }

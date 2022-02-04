@@ -17,22 +17,18 @@ import javax.inject.Inject
 @HiltViewModel
 class WaitPlayersViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface) : ViewModel() {
 
-    private val _sharedAllPlayers = MutableSharedFlow<Unit>()
     private val _sharedOnlinePlayers = MutableSharedFlow<List<User>>()
     private val  _sharedBack = MutableSharedFlow<Unit>()
     private val  _sharedWarName = MutableSharedFlow<String>()
-    val sharedAllPlayers = _sharedAllPlayers.asSharedFlow()
+
     val sharedOnlinePlayers = _sharedOnlinePlayers.asSharedFlow()
     val sharedBack = _sharedBack.asSharedFlow()
     val sharedWarName = _sharedWarName.asSharedFlow()
 
     fun bind(onBackPress: Flow<Unit>) {
-        firebaseRepository.listenToUsers()
-            .map {
-                it.filter { user -> user.currentWar == preferencesRepository.currentUser?.currentWar }
-            }
-            .onEach { if (it.size == 2) _sharedAllPlayers.emit(Unit) }
-            .bind(_sharedOnlinePlayers, viewModelScope)
+        firebaseRepository.listenToUsers().map {
+            it.filter { user -> user.currentWar == preferencesRepository.currentUser?.currentWar }
+        }.bind(_sharedOnlinePlayers, viewModelScope)
 
         flowOf(preferencesRepository.currentUser?.currentWar)
             .filterNotNull()
@@ -40,10 +36,7 @@ class WaitPlayersViewModel @Inject constructor(private val firebaseRepository: F
             .mapNotNull { it?.name }
             .bind(_sharedWarName, viewModelScope)
 
-
         onBackPress.bind(_sharedBack, viewModelScope)
-
-
     }
 
 }

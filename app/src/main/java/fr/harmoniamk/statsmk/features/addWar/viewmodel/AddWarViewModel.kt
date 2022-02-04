@@ -11,6 +11,7 @@ class AddWarViewModel : ViewModel() {
 
     private val _sharedGoToWait = MutableSharedFlow<Unit>()
     private val _sharedGoToCurrentWar = MutableSharedFlow<Unit>()
+
     val sharedGoToWait = _sharedGoToWait.asSharedFlow()
     val sharedGoToCurrentWar = _sharedGoToCurrentWar.asSharedFlow()
 

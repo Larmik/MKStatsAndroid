@@ -29,14 +29,19 @@ class AddUserViewModel @Inject constructor(private val firebaseRepository: Fireb
 
         onNext
             .filter { name != null && code != null }
-            .flatMapLatest { firebaseRepository.writeUser(User(mid = System.currentTimeMillis().toString(), name = name, accessCode = code, team = "-1", currentWar = "-1")) }
+            .flatMapLatest { firebaseRepository.writeUser(
+                User(
+                    mid = System.currentTimeMillis().toString(),
+                    name = name,
+                    accessCode = code,
+                    team = "-1",
+                    currentWar = "-1")) }
             .flatMapLatest { firebaseRepository.getUsers() }
             .map { it.singleOrNull { user -> user.accessCode == code } }
             .onEach {
                 preferencesRepository.currentUser = it
                 _sharedNext.emit(Unit)
             }.launchIn(viewModelScope)
-
     }
 
 }

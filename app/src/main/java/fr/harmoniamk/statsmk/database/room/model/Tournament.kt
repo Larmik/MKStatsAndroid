@@ -39,4 +39,7 @@ data class Tournament(
     val displayedScore: String = "Score: $points"
 
     fun displayedRemaining(played: Int): String = "Courses jouées: $played/$trackCount"
+
+    fun displayedState(played: Int): String = if (played == trackCount) "Tournoi terminé" else "Tournoi en cours (${played}/${trackCount})"
+
 }

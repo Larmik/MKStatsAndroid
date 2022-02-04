@@ -48,7 +48,6 @@ class CurrentTrackAdapter(val items: MutableList<PlayedTrack> = mutableListOf())
             .launchIn(this)
     }
 
-
     override fun getItemCount() = items.size
 
     fun addTracks(tracks: List<PlayedTrack>) {

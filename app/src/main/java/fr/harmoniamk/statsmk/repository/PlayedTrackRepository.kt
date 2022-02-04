@@ -42,5 +42,4 @@ class PlayedTrackRepository @Inject constructor(private val dataSource: PlayedTr
     override fun insert(track: PlayedTrack): Flow<Unit> = dataSource.insert(track)
     override fun updatePosition(id: Int, newPos: Int): Flow<Unit> = dataSource.updatePosition(id, newPos)
     override fun updateTrack(id: Int, newTrack: Int): Flow<Unit> = dataSource.updateTrack(id, newTrack)
-
 }

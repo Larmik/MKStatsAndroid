@@ -26,7 +26,7 @@ import kotlinx.coroutines.flow.onEach
 @ExperimentalCoroutinesApi
 @FlowPreview
 @AndroidEntryPoint
-class WaitPlayersFragment(): Fragment(R.layout.fragment_wait_players) {
+class WaitPlayersFragment: Fragment(R.layout.fragment_wait_players) {
 
     private val binding: FragmentWaitPlayersBinding by viewBinding()
     private val viewModel: WaitPlayersViewModel by viewModels()
@@ -35,19 +35,19 @@ class WaitPlayersFragment(): Fragment(R.layout.fragment_wait_players) {
         super.onViewCreated(view, savedInstanceState)
         val adapter = PlayerListAdapter()
         binding.playersRv.adapter = adapter
-
         viewModel.bind(requireActivity().backPressedDispatcher(viewLifecycleOwner))
-        viewModel.sharedOnlinePlayers
-            .onEach { adapter.addOrRemovePlayers(it) }
-            .launchIn(lifecycleScope)
-        //viewModel.sharedAllPlayers.bind(onWarBegin, lifecycleScope)
-        viewModel.sharedBack
-            .onEach {
-                Toast.makeText(requireContext(), "On verra ça plus tard", Toast.LENGTH_SHORT).show()
-            }.launchIn(lifecycleScope)
-        viewModel.sharedWarName
-            .onEach { binding.warNameTv.text = it }
-            .launchIn(lifecycleScope)
+
+        viewModel.sharedOnlinePlayers.onEach {
+            adapter.addOrRemovePlayers(it)
+        }.launchIn(lifecycleScope)
+
+        viewModel.sharedBack.onEach {
+            Toast.makeText(requireContext(), "On verra ça plus tard", Toast.LENGTH_SHORT).show()
+        }.launchIn(lifecycleScope)
+
+        viewModel.sharedWarName.onEach {
+            binding.warNameTv.text = it
+        }.launchIn(lifecycleScope)
 
     }
 

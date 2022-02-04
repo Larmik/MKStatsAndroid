@@ -25,7 +25,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(this.binding.root)
-        //PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean("isConnected", false).apply()
         val isConnected = Gson().fromJson(preferences.getString("currentUser", null), User::class.java) != null
         val navGraph = navController.navInflater.inflate(R.navigation.nav_graph)
         val destination = if (isConnected) R.id.homeFragment else R.id.welcomeFragment
