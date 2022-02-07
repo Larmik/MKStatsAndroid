@@ -14,12 +14,16 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 class AddWarPagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
 
     val onCreateWar = MutableSharedFlow<Unit>()
-    val onWarBegin = MutableSharedFlow<Unit>()
+    val onWarQuit = MutableSharedFlow<Unit>()
 
     override fun getItemCount() = 2
 
     override fun createFragment(position: Int): Fragment = when (position) {
         0 -> CreateWarFragment(onCreateWar)
-        else -> WaitPlayersFragment()
+        else -> {
+            val fragment = WaitPlayersFragment()
+            fragment.onWarQuit = onWarQuit
+            fragment
+        }
     }
 }

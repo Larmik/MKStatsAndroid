@@ -11,12 +11,15 @@ class AddWarViewModel : ViewModel() {
 
     private val _sharedGoToWait = MutableSharedFlow<Unit>()
     private val _sharedGoToCurrentWar = MutableSharedFlow<Unit>()
+    private val _sharedBack = MutableSharedFlow<Unit>()
 
     val sharedGoToWait = _sharedGoToWait.asSharedFlow()
     val sharedGoToCurrentWar = _sharedGoToCurrentWar.asSharedFlow()
+    val sharedBack = _sharedBack.asSharedFlow()
 
-    fun bind(onCreateWar: Flow<Unit>, onWarBegin: Flow<Unit>) {
+
+    fun bind(onCreateWar: Flow<Unit>, onWarQuit: Flow<Unit>) {
         onCreateWar.bind(_sharedGoToWait, viewModelScope)
-        onWarBegin.bind(_sharedGoToCurrentWar, viewModelScope)
+        onWarQuit.bind(_sharedBack, viewModelScope)
     }
 }

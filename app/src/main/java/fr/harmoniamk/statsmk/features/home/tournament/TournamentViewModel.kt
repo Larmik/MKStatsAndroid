@@ -43,7 +43,7 @@ class TournamentViewModel @Inject constructor(
             .mapNotNull { it.filter { tm -> tm.isOver } }
             .shareIn(viewModelScope, SharingStarted.Eagerly)
 
-        tournaments.map { list -> list.sortedByDescending { it.createdDate } }
+        tournaments.map { list -> list.sortedBy { it.createdDate } }
             .bind(_sharedLastTournaments, viewModelScope)
         tournaments.filter { it.size >= 3 }
             .mapNotNull { list -> list.sortedWith(compareBy<Tournament> { it.ratio }.thenBy { it.points }).reversed().subList(0, 3) }

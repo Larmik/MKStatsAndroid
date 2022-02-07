@@ -30,16 +30,19 @@ class AddWarFragment : Fragment(R.layout.fragment_add_war) {
         binding.addWarPager.isUserInputEnabled = false
         binding.addWarPager.adapter = adapter
         binding.addWarPager.currentItem = 0
-        viewModel.bind(adapter.onCreateWar, adapter.onWarBegin)
+        viewModel.bind(adapter.onCreateWar, adapter.onWarQuit)
         viewModel.sharedGoToWait
             .onEach { binding.addWarPager.currentItem = 1 }
             .launchIn(lifecycleScope)
 
         viewModel.sharedGoToCurrentWar
             .filter { findNavController().currentDestination?.id == R.id.addWarFragment }
-            .onEach {
-                //TODO redirect to current war
-            }.launchIn(lifecycleScope)
+            .onEach { /*TODO redirect to current war*/ }
+            .launchIn(lifecycleScope)
+        viewModel.sharedBack
+            .filter { findNavController().currentDestination?.id == R.id.addWarFragment }
+            .onEach { findNavController().popBackStack() }
+            .launchIn(lifecycleScope)
 
     }
 

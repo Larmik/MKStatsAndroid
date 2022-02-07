@@ -30,6 +30,7 @@
         <entry key="app/src/main/res/layout/fragment_welcome.xml" value="0.3890625" />
         <entry key="app/src/main/res/layout/last_tournament_item.xml" value="0.4036458333333333" />
         <entry key="app/src/main/res/layout/player_item.xml" value="0.3890625" />
+        <entry key="app/src/main/res/layout/quit_war_dialog_fragment.xml" value="0.23072916666666668" />
         <entry key="app/src/main/res/layout/team_item.xml" value="0.22083333333333333" />
         <entry key="app/src/main/res/layout/tournament_item.xml" value="0.4036458333333333" />
         <entry key="app/src/main/res/layout/track_item.xml" value="0.2203125" />

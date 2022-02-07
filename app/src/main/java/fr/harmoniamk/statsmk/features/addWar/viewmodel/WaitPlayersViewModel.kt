@@ -19,10 +19,14 @@ class WaitPlayersViewModel @Inject constructor(private val firebaseRepository: F
 
     private val _sharedOnlinePlayers = MutableSharedFlow<List<User>>()
     private val  _sharedBack = MutableSharedFlow<Unit>()
+    private val  _sharedQuit = MutableSharedFlow<Unit>()
+    private val  _sharedCancel = MutableSharedFlow<Unit>()
     private val  _sharedWarName = MutableSharedFlow<String>()
 
     val sharedOnlinePlayers = _sharedOnlinePlayers.asSharedFlow()
     val sharedBack = _sharedBack.asSharedFlow()
+    val sharedQuit = _sharedQuit.asSharedFlow()
+    val sharedCancel = _sharedCancel.asSharedFlow()
     val sharedWarName = _sharedWarName.asSharedFlow()
 
     fun bind(onBackPress: Flow<Unit>) {
@@ -37,6 +41,11 @@ class WaitPlayersViewModel @Inject constructor(private val firebaseRepository: F
             .bind(_sharedWarName, viewModelScope)
 
         onBackPress.bind(_sharedBack, viewModelScope)
+    }
+
+    fun bindDialog(onQuit: Flow<Unit>, onBack: Flow<Unit>) {
+        onQuit.bind(_sharedQuit, viewModelScope)
+        onBack.bind(_sharedCancel, viewModelScope)
     }
 
 }

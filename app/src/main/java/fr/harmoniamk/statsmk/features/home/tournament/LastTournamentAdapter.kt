@@ -28,7 +28,7 @@ class LastTournamentAdapter(val items: MutableList<Tournament> = mutableListOf()
         fun bind(tournament: Tournament) {
             binding.nameTv.text = tournament.name
             binding.totalScoreTv.text = tournament.points.toString()
-            binding.timeTv.text = tournament.updatedDate.replace("-", "\n")
+            binding.timeTv.text = tournament.createdDate.replace("-", "\n")
         }
     }
 

@@ -12,7 +12,7 @@
         android:layout_marginBottom="32dp"
         android:fontFamily="@font/montserrat_regular"
         android:gravity="center"
-        android:text="Êtes-vous sûr de vouloir annuler ce tournoi ? Ses données seront perdues et vous ne le retrouverez pas dans votre liste de tournois jouées ni vos statistiques."
+        android:text="Êtes-vous sûr de vouloir quitter la session ?"
         android:textColor="@color/waluigi_second"
         android:textSize="14sp" />
 
@@ -22,7 +22,7 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/delete_tm_btn"
+            android:id="@+id/quit_war_btn"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="10dp"
@@ -32,7 +32,7 @@
             android:gravity="center"
             android:backgroundTint="@color/waluigi_second"
             android:padding="10dp"
-            android:text="Annuler le tournoi"
+            android:text="Quitter la session"
             android:textAllCaps="true"
             android:textColor="@color/white"
             android:textSize="15sp" />

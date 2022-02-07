@@ -1,4 +1,4 @@
-package fr.harmoniamk.statsmk.features.currentTournament.fragment
+package fr.harmoniamk.statsmk
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,12 +10,9 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
-import fr.harmoniamk.statsmk.R
-import fr.harmoniamk.statsmk.database.room.model.Tournament
-import fr.harmoniamk.statsmk.databinding.DeleteTournamentDialogFragmentBinding
+import fr.harmoniamk.statsmk.databinding.QuitWarDialogFragmentBinding
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.clicks
-import fr.harmoniamk.statsmk.features.currentTournament.viewmodel.DeleteTournamentViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -23,18 +20,18 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-@FlowPreview
 @ExperimentalCoroutinesApi
+@FlowPreview
 @AndroidEntryPoint
-class DeleteTournamentDialogFragment(val tm: Tournament) : AppCompatDialogFragment() {
+class QuitWarDialogFragment() : AppCompatDialogFragment() {
 
-    private val binding: DeleteTournamentDialogFragmentBinding by viewBinding()
-    private val viewModel: DeleteTournamentViewModel by viewModels()
+    private val binding: QuitWarDialogFragmentBinding by viewBinding()
+    private val viewModel: QuitWarViewModel by viewModels()
 
     private val _sharedClose = MutableSharedFlow<Unit>()
-    private val _sharedTmDeleted = MutableSharedFlow<Unit>()
+    private val _sharedWarLeft = MutableSharedFlow<Unit>()
 
-    val sharedTmDeleted = _sharedTmDeleted.asSharedFlow()
+    val sharedWarLeft = _sharedWarLeft.asSharedFlow()
     val sharedClose = _sharedClose.asSharedFlow()
 
     override fun onCreateView(
@@ -42,20 +39,19 @@ class DeleteTournamentDialogFragment(val tm: Tournament) : AppCompatDialogFragme
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View = inflater.inflate(
-        R.layout.delete_tournament_dialog_fragment, container, false
+        R.layout.quit_war_dialog_fragment, container, false
     )
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.bind(
-            tm = tm,
-            onDelete = binding.deleteTmBtn.clicks(),
+            onQuit = binding.quitWarBtn.clicks(),
             onBack = binding.cancelBtn.clicks()
         )
         viewModel.onDismiss.bind(_sharedClose, lifecycleScope)
-        viewModel.onTournamentDeleted.onEach {
+        viewModel.onWarQuit.onEach {
             dismissAllowingStateLoss()
-            _sharedTmDeleted.emit(Unit)
+            _sharedWarLeft.emit(Unit)
         }.launchIn(lifecycleScope)
     }
 
