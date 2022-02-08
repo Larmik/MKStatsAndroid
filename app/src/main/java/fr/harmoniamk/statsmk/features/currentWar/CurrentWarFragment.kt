@@ -83,7 +83,9 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
 
         viewModel.sharedGoToPos
             .filter { findNavController().currentDestination?.id == R.id.currentWarFragment }
-            .onEach { findNavController().navigate(CurrentWarFragmentDirections.enterPositions(it)) }
+            .onEach {
+                findNavController().navigate(CurrentWarFragmentDirections.enterPositions(it, warId = war?.mid))
+            }
             .launchIn(lifecycleScope)
 
 

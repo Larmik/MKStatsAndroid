@@ -148,17 +148,21 @@
         <action
             android:id="@+id/back_to_current_war"
             app:destination="@id/currentWarFragment"
-            app:popUpTo="@id/nav_graph"
-            app:popUpToInclusive="true"
             app:enterAnim="@anim/enter_from_left"
             app:exitAnim="@anim/exit_to_right"
             app:popEnterAnim="@anim/enter_from_right"
             app:popExitAnim="@anim/exit_to_left"/>
         <action
+            android:id="@+id/back_to_wars"
+            app:destination="@id/homeFragment"
+            app:enterAnim="@anim/enter_from_left"
+            app:exitAnim="@anim/exit_to_right"
+            app:popEnterAnim="@anim/enter_from_right"
+            app:popExitAnim="@anim/exit_to_left"/>
+
+        <action
             android:id="@+id/back_to_current_tm"
             app:destination="@id/currentTournamentFragment"
-            app:popUpTo="@id/nav_graph"
-            app:popUpToInclusive="true"
             app:enterAnim="@anim/enter_from_left"
             app:exitAnim="@anim/exit_to_right"
             app:popEnterAnim="@anim/enter_from_right"
@@ -263,6 +267,10 @@
             <argument
                 android:name="track"
                 app:argType="integer"/>
+            <argument
+                android:name="warId"
+                app:nullable="true"
+                app:argType="string"/>
 
         </action>
     </fragment>

@@ -48,7 +48,9 @@ class TrackListFragment(val onTrack: MutableSharedFlow<Int>? = null) :
 
         viewModel.sharedGoToPos
             .filter { findNavController().currentDestination?.id == R.id.trackListFragment }
-            .onEach { findNavController().navigate(TrackListFragmentDirections.enterPositions(track = it, tmId = tmId, warId = warId)) }
+            .onEach {
+                findNavController().navigate(TrackListFragmentDirections.enterPositions(track = it, tmId = tmId, warId = warId))
+            }
             .launchIn(lifecycleScope)
 
     }

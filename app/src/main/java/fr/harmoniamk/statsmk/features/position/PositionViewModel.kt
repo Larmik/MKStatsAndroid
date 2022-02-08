@@ -5,8 +5,10 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.database.firebase.model.WarTrack
 import fr.harmoniamk.statsmk.database.room.model.PlayedTrack
+import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PlayedTrackRepositoryInterface
+import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import fr.harmoniamk.statsmk.repository.TournamentRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -19,15 +21,23 @@ import javax.inject.Inject
 class PositionViewModel @Inject constructor(
     private val playedTrackRepository: PlayedTrackRepositoryInterface,
     private val tournamentRepository: TournamentRepositoryInterface,
+    private val preferencesRepository: PreferencesRepositoryInterface,
     private val firebaseRepository: FirebaseRepositoryInterface
 ) : ViewModel() {
 
     private val _sharedPos = MutableSharedFlow<Int>()
-    val sharedPos = _sharedPos.asSharedFlow()
-
 
     private val _validateTrack = MutableSharedFlow<Unit>()
+    private val _sharedBack = MutableSharedFlow<Unit>()
+    private val _sharedQuit = MutableSharedFlow<Unit>()
+    private val _sharedCancel = MutableSharedFlow<Unit>()
+    private val _sharedWaitingDialog = MutableSharedFlow<Boolean>()
+
     val validateTrack = _validateTrack.asSharedFlow()
+    val sharedBack = _sharedBack.asSharedFlow()
+    val sharedQuit = _sharedQuit.asSharedFlow()
+    val sharedCancel = _sharedCancel.asSharedFlow()
+    val sharedWaitingDialog = _sharedWaitingDialog.asSharedFlow()
 
 
     fun bind(
@@ -43,7 +53,8 @@ class PositionViewModel @Inject constructor(
         onPos9: Flow<Unit>,
         onPos10: Flow<Unit>,
         onPos11: Flow<Unit>,
-        onPos12: Flow<Unit>
+        onPos12: Flow<Unit>,
+        onBack: Flow<Unit>
     ) {
 
 
@@ -76,5 +87,17 @@ class PositionViewModel @Inject constructor(
                 .launchIn(viewModelScope)
         }
 
+        warId?.let {
+            onBack.bind(_sharedBack, viewModelScope)
+            firebaseRepository.listenToUsers()
+                .mapNotNull { it.filter { user -> user.currentWar == preferencesRepository.currentUser?.currentWar }.size != 2 }
+                .bind(_sharedWaitingDialog, viewModelScope)
+        }
+
+    }
+
+    fun bindDialog(onQuit: Flow<Unit>, onBack: Flow<Unit>) {
+        onQuit.bind(_sharedQuit, viewModelScope)
+        onBack.bind(_sharedCancel, viewModelScope)
     }
 }
