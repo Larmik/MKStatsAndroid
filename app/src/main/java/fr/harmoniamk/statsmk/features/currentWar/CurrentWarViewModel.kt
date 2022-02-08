@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.database.firebase.model.War
+import fr.harmoniamk.statsmk.database.firebase.model.WarTrack
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
@@ -24,7 +25,7 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
     private val  _sharedCancel = MutableSharedFlow<Unit>()
     private val  _sharedWaitingPlayers = MutableSharedFlow<Unit>()
     private val _sharedSelectTrack = MutableSharedFlow<Unit>()
-    private val _sharedGoToPos = MutableSharedFlow<Int>()
+    private val _sharedGoToPos = MutableSharedFlow<WarTrack>()
 
     val sharedHost = _sharedHost.asSharedFlow()
     val sharedCurrentWar = _sharedCurrentWar.asSharedFlow()
@@ -58,7 +59,7 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
         }
 
         firebaseRepository.listenToWarTracks()
-            .mapNotNull { it.filter { track -> track.warId == preferencesRepository.currentUser?.currentWar }.lastOrNull()?.trackIndex }
+            .mapNotNull { it.filter { track -> track.warId == preferencesRepository.currentUser?.currentWar }.lastOrNull() }
             .bind(_sharedGoToPos, viewModelScope)
 
     }

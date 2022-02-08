@@ -3,6 +3,7 @@ package fr.harmoniamk.statsmk.features.position
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import fr.harmoniamk.statsmk.database.firebase.model.WarPosition
 import fr.harmoniamk.statsmk.database.firebase.model.WarTrack
 import fr.harmoniamk.statsmk.database.room.model.PlayedTrack
 import fr.harmoniamk.statsmk.extension.bind
@@ -32,16 +33,18 @@ class PositionViewModel @Inject constructor(
     private val _sharedQuit = MutableSharedFlow<Unit>()
     private val _sharedCancel = MutableSharedFlow<Unit>()
     private val _sharedWaitingDialog = MutableSharedFlow<Boolean>()
+    private val _sharedGoToResult = MutableSharedFlow<Unit>()
 
     val validateTrack = _validateTrack.asSharedFlow()
     val sharedBack = _sharedBack.asSharedFlow()
     val sharedQuit = _sharedQuit.asSharedFlow()
     val sharedCancel = _sharedCancel.asSharedFlow()
     val sharedWaitingDialog = _sharedWaitingDialog.asSharedFlow()
+    val sharedGoToResult = _sharedGoToResult.asSharedFlow()
 
 
     fun bind(
-        tournamentId: Int? = null, warId: String? = null, chosenTrack: Int,
+        tournamentId: Int? = null, warTrackId: String? = null, chosenTrack: Int,
         onPos1: Flow<Unit>,
         onPos2: Flow<Unit>,
         onPos3: Flow<Unit>,
@@ -87,11 +90,15 @@ class PositionViewModel @Inject constructor(
                 .launchIn(viewModelScope)
         }
 
-        warId?.let {
+        warTrackId?.let { id ->
             onBack.bind(_sharedBack, viewModelScope)
             firebaseRepository.listenToUsers()
                 .mapNotNull { it.filter { user -> user.currentWar == preferencesRepository.currentUser?.currentWar }.size != 2 }
                 .bind(_sharedWaitingDialog, viewModelScope)
+            _sharedPos
+                .map { WarPosition(mid = System.currentTimeMillis().toString(), warTrackId = id, position = it, playerId = preferencesRepository.currentUser?.mid) }
+                .flatMapLatest { firebaseRepository.writeWarPosition(it) }
+                .bind(_sharedGoToResult, viewModelScope)
         }
 
     }

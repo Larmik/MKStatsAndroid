@@ -33,14 +33,14 @@ class PositionFragment : Fragment(R.layout.fragment_position) {
     private val viewModel: PositionViewModel by viewModels()
     private var track: Int? = null
     private var tmId: Int? = null
-    private var warId: String? = null
+    private var warTrackId: String? = null
     private val dialogFragment = ProgressDialogFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         tmId = arguments?.getInt("tmId")
         track = arguments?.getInt("track")
-        warId = arguments?.getString("warId")
+        warTrackId = arguments?.getString("warTrackId")
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -53,7 +53,7 @@ class PositionFragment : Fragment(R.layout.fragment_position) {
             binding.name.setText(map.label)
             viewModel.bind(
                 tournamentId = tmId,
-                warId = warId,
+                warTrackId = warTrackId,
                 chosenTrack = it,
                 onPos1 = binding.pos1.clicks(),
                 onPos2 = binding.pos2.clicks(),
@@ -75,7 +75,7 @@ class PositionFragment : Fragment(R.layout.fragment_position) {
             .filter { findNavController().currentDestination?.id == R.id.positionFragment }
             .onEach { when {
                 tmId != null -> findNavController().popBackStack()
-                warId != null -> findNavController().navigate(PositionFragmentDirections.backToCurrentWar())
+                warTrackId != null -> findNavController().navigate(PositionFragmentDirections.backToCurrentWar())
             } }
             .launchIn(lifecycleScope)
 

@@ -268,7 +268,7 @@
                 android:name="track"
                 app:argType="integer"/>
             <argument
-                android:name="warId"
+                android:name="warTrackId"
                 app:nullable="true"
                 app:argType="string"/>
 

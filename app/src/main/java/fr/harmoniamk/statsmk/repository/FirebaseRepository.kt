@@ -9,10 +9,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
-import fr.harmoniamk.statsmk.database.firebase.model.Team
-import fr.harmoniamk.statsmk.database.firebase.model.User
-import fr.harmoniamk.statsmk.database.firebase.model.War
-import fr.harmoniamk.statsmk.database.firebase.model.WarTrack
+import fr.harmoniamk.statsmk.database.firebase.model.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.awaitClose
@@ -26,6 +23,7 @@ interface FirebaseRepositoryInterface{
     fun writeUser(user: User): Flow<Unit>
     fun writeWar(war: War): Flow<Unit>
     fun writeWarTrack(track: WarTrack): Flow<Unit>
+    fun writeWarPosition(position: WarPosition): Flow<Unit>
 
     fun getUsers(): Flow<List<User>>
     fun getTeams(): Flow<List<Team>>
@@ -67,6 +65,11 @@ class FirebaseRepository @Inject constructor() : FirebaseRepositoryInterface {
 
     override fun writeWarTrack(track: WarTrack): Flow<Unit> = flow {
         database.child("warTracks").child(track.mid.toString()).setValue(track)
+        emit(Unit)
+    }
+
+    override fun writeWarPosition(position: WarPosition): Flow<Unit> = flow {
+        database.child("warPositions").child(position.mid.toString()).setValue(position)
         emit(Unit)
     }
 
