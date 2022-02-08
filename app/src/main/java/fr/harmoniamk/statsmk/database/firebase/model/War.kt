@@ -22,6 +22,10 @@ data class War(
 
     val displayedState: String
         get() = if (isOver) "War terminée" else "Tournoi en cours (${trackPlayed}/${TOTAL_TRACKS})"
+    val displayedScore: String
+        get() = "$scoreHost - $scoreOpponent"
+    val displayedDiff: String
+        get() = "${scoreHost-scoreOpponent}"
 
     val scoreLabel: String
         get() = "Score: $scoreHost - $scoreOpponent"

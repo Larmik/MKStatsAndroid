@@ -12,6 +12,7 @@ import dagger.hilt.android.components.ApplicationComponent
 import fr.harmoniamk.statsmk.database.firebase.model.Team
 import fr.harmoniamk.statsmk.database.firebase.model.User
 import fr.harmoniamk.statsmk.database.firebase.model.War
+import fr.harmoniamk.statsmk.database.firebase.model.WarTrack
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.awaitClose
@@ -24,6 +25,7 @@ import javax.inject.Inject
 interface FirebaseRepositoryInterface{
     fun writeUser(user: User): Flow<Unit>
     fun writeWar(war: War): Flow<Unit>
+    fun writeWarTrack(track: WarTrack): Flow<Unit>
 
     fun getUsers(): Flow<List<User>>
     fun getTeams(): Flow<List<Team>>
@@ -35,6 +37,7 @@ interface FirebaseRepositoryInterface{
     fun listenToUsers(): Flow<List<User>>
     fun listenToTeams(): Flow<List<Team>>
     fun listenToWars(): Flow<List<War>>
+    fun listenToWarTracks(): Flow<List<WarTrack>>
 }
 
 @FlowPreview
@@ -59,6 +62,11 @@ class FirebaseRepository @Inject constructor() : FirebaseRepositoryInterface {
 
     override fun writeWar(war: War) = flow {
         database.child("wars").child(war.mid.toString()).setValue(war)
+        emit(Unit)
+    }
+
+    override fun writeWarTrack(track: WarTrack): Flow<Unit> = flow {
+        database.child("warTracks").child(track.mid.toString()).setValue(track)
         emit(Unit)
     }
 
@@ -203,6 +211,25 @@ class FirebaseRepository @Inject constructor() : FirebaseRepositoryInterface {
 
                 )  }
                 if (isActive) offer(wars)
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+            }
+        }
+        database.addValueEventListener(postListener)
+        awaitClose {  }
+    }
+
+    override fun listenToWarTracks(): Flow<List<WarTrack>> = callbackFlow {
+        val postListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val tracks: List<WarTrack> = dataSnapshot.child("warTracks").children.map { it.value as Map<*, *> }.map {  WarTrack(
+                    mid = it["mid"].toString(),
+                    warId = it["warId"].toString(),
+                    trackIndex = it["trackIndex"].toString().toInt()
+
+                )  }
+                if (isActive) offer(tracks)
             }
 
             override fun onCancelled(databaseError: DatabaseError) {

@@ -7,18 +7,23 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
+import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentAddWarBinding
-import fr.harmoniamk.statsmk.features.addWar.adapter.AddWarPagerAdapter
+import fr.harmoniamk.statsmk.extension.bind
+import fr.harmoniamk.statsmk.extension.clicks
+import fr.harmoniamk.statsmk.features.addWar.adapter.TeamListAdapter
 import fr.harmoniamk.statsmk.features.addWar.viewmodel.AddWarViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 @FlowPreview
 @ExperimentalCoroutinesApi
+@AndroidEntryPoint
 class AddWarFragment : Fragment(R.layout.fragment_add_war) {
 
     private val binding: FragmentAddWarBinding by viewBinding()
@@ -26,24 +31,23 @@ class AddWarFragment : Fragment(R.layout.fragment_add_war) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val adapter = AddWarPagerAdapter(requireActivity())
-        binding.addWarPager.isUserInputEnabled = false
-        binding.addWarPager.adapter = adapter
-        binding.addWarPager.currentItem = 0
-        viewModel.bind(adapter.onCreateWar, adapter.onWarQuit)
-        viewModel.sharedGoToWait
-            .onEach { binding.addWarPager.currentItem = 1 }
-            .launchIn(lifecycleScope)
+        val adapter = TeamListAdapter()
+        binding.teamRv.adapter = adapter
+        viewModel.bind(adapter.onTeamClick, binding.startWarBtn.clicks())
 
-        viewModel.sharedGoToCurrentWar
-            .filter { findNavController().currentDestination?.id == R.id.addWarFragment }
-            .onEach { /*TODO redirect to current war*/ }
-            .launchIn(lifecycleScope)
-        viewModel.sharedBack
+        viewModel.sharedTeams.onEach {
+            adapter.addTeams(it)
+        }.launchIn(lifecycleScope)
+
+        viewModel.sharedTeamSelected.onEach {
+            binding.createWarLayout.visibility = View.VISIBLE
+            binding.startWarBtn.text = it
+        }.launchIn(lifecycleScope)
+
+        viewModel.sharedStarted
             .filter { findNavController().currentDestination?.id == R.id.addWarFragment }
             .onEach { findNavController().popBackStack() }
             .launchIn(lifecycleScope)
-
     }
 
 }

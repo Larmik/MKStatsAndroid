@@ -30,8 +30,6 @@ class WaitPlayersFragment: Fragment(R.layout.fragment_wait_players) {
     private val binding: FragmentWaitPlayersBinding by viewBinding()
     private val viewModel: WaitPlayersViewModel by viewModels()
 
-    var onWarQuit = MutableSharedFlow<Unit>()
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val adapter = PlayerListAdapter()
@@ -42,7 +40,8 @@ class WaitPlayersFragment: Fragment(R.layout.fragment_wait_players) {
             adapter.addOrRemovePlayers(it)
         }.launchIn(lifecycleScope)
 
-        viewModel.sharedBack.onEach {
+        viewModel.sharedBack
+            .onEach {
             val dialog = QuitWarDialogFragment()
             viewModel.bindDialog(dialog.sharedWarLeft, dialog.sharedClose)
             if (!dialog.isAdded) dialog.show(childFragmentManager, null)
@@ -53,14 +52,18 @@ class WaitPlayersFragment: Fragment(R.layout.fragment_wait_players) {
         }.launchIn(lifecycleScope)
 
         viewModel.sharedQuit
-            .filter { findNavController().currentDestination?.id == R.id.waitPlayersFragment ||
-                        findNavController().currentDestination?.id == R.id.addWarFragment}
-            .onEach { findNavController().popBackStack() }
+            .filter { findNavController().currentDestination?.id == R.id.waitPlayersFragment }
+            .onEach { findNavController().navigate(WaitPlayersFragmentDirections.backToWars()) }
             .launchIn(lifecycleScope)
 
         viewModel.sharedWarName.onEach {
             binding.warNameTv.text = it
         }.launchIn(lifecycleScope)
+
+        viewModel.sharedGoToCurrent
+            .filter { findNavController().currentDestination?.id == R.id.waitPlayersFragment }
+            .onEach { findNavController().navigate(WaitPlayersFragmentDirections.goToCurrent()) }
+            .launchIn(lifecycleScope)
 
     }
 

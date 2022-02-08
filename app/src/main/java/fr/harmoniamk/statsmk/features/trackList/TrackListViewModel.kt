@@ -4,25 +4,35 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.MainApplication
+import fr.harmoniamk.statsmk.database.firebase.model.WarTrack
+import fr.harmoniamk.statsmk.database.room.model.PlayedTrack
 import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.extension.bind
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.map
+import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
+import fr.harmoniamk.statsmk.repository.PlayedTrackRepositoryInterface
+import fr.harmoniamk.statsmk.repository.TournamentRepositoryInterface
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.*
 import java.util.*
 import javax.inject.Inject
 
+@FlowPreview
+@ExperimentalCoroutinesApi
 @HiltViewModel
-class TrackListViewModel @Inject constructor() : ViewModel() {
+class TrackListViewModel @Inject constructor(private val playedTrackRepository: PlayedTrackRepositoryInterface,
+                                             private val tournamentRepository: TournamentRepositoryInterface,
+                                             private val firebaseRepository: FirebaseRepositoryInterface
+) : ViewModel() {
 
     private val _sharedSearchedItems = MutableSharedFlow<List<Maps>>()
-    private val _sharedClick = MutableSharedFlow<Int>()
+    private val _sharedGoToPos = MutableSharedFlow<Int>()
 
     val sharedSearchedItems = _sharedSearchedItems.asSharedFlow()
-    val sharedClick = _sharedClick.asSharedFlow()
+    val sharedGoToPos = _sharedGoToPos.asSharedFlow()
 
-    fun bind(onSearch: Flow<String>, onItemClick: Flow<Maps>) {
+    fun bind(tournamentId: Int? = null, warId: String? = null, onTrackAdded: Flow<Int>, onSearch: Flow<String>) {
+        var chosenTrack = -1
 
         onSearch
             .map { searched ->
@@ -35,7 +45,24 @@ class TrackListViewModel @Inject constructor() : ViewModel() {
             }
             .bind(_sharedSearchedItems, viewModelScope)
 
-        onItemClick.map { it.ordinal }.bind(_sharedClick, viewModelScope)
+        tournamentId?.let {
+            onTrackAdded.onEach {
+                chosenTrack = it
+                _sharedGoToPos.emit(it)
+            }.launchIn(viewModelScope)
+        }
+
+        warId?.let { id ->
+            onTrackAdded
+                .onEach { chosenTrack = it }
+                .map { WarTrack(mid = System.currentTimeMillis().toString(), warId = id, trackIndex = it) }
+                .flatMapLatest {
+                    firebaseRepository.writeWarTrack(it)
+                }
+                .onEach { _sharedGoToPos.emit(chosenTrack) }
+                .launchIn(viewModelScope)
+        }
+
     }
 
 }

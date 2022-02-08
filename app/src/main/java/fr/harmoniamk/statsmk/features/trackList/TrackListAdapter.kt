@@ -19,7 +19,7 @@ import kotlin.coroutines.CoroutineContext
 class TrackListAdapter(val items: MutableList<Maps> = Maps.values().toMutableList()) :
     RecyclerView.Adapter<TrackListAdapter.TrackListViewHolder>(), CoroutineScope {
 
-    val _sharedClick = MutableSharedFlow<Maps>()
+    private val _sharedClick = MutableSharedFlow<Int>()
     val sharedClick = _sharedClick.asSharedFlow()
 
     @ExperimentalCoroutinesApi
@@ -43,7 +43,7 @@ class TrackListAdapter(val items: MutableList<Maps> = Maps.values().toMutableLis
         val track = items[position]
         holder.bind(track)
         holder.binding.root.clicks()
-            .onEach { _sharedClick.emit(track) }
+            .onEach { _sharedClick.emit(track.ordinal) }
             .launchIn(this)
     }
 

@@ -21,4 +21,14 @@
     <color name="harmonie">#BB81D5C9</color>
     <color name="waluigi_second">#BB02010A</color>
     <color name="white_alphaed">#BBFFFFFF</color>
+    <color name="pos_1">#D4AF37</color>
+    <color name="pos_2">#C0C0C0</color>
+    <color name="pos_3">#C49C48</color>
+    <color name="pos_4">#F1B04C</color>
+    <color name="pos_5">#EE9F27</color>
+    <color name="pos_6_7">#EC9006</color>
+    <color name="pos_8">#E88504</color>
+    <color name="pos_9_10">#E27602</color>
+    <color name="pos_11">#DC6601</color>
+    <color name="pos_12">#D24E01</color>
 </resources>

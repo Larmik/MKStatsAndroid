@@ -19,11 +19,10 @@ class EditTrackPagerAdapter(val trackId: Int, fa: FragmentActivity) : FragmentSt
     val onPositionClick = MutableSharedFlow<Unit>()
     val onPositionEdit = MutableSharedFlow<Int>()
 
-    override fun getItemCount() = 3
+    override fun getItemCount() = 2
 
     override fun createFragment(position: Int): Fragment = when (position) {
         0 -> EditCurrentTrackFragment(trackId, onMapClick, onPositionClick)
-        1 -> TrackListFragment(onMapEdit)
-        else -> PositionFragment(onPositionEdit)
+        else -> TrackListFragment(onMapEdit)
     }
 }

@@ -22,17 +22,21 @@ class WaitPlayersViewModel @Inject constructor(private val firebaseRepository: F
     private val  _sharedQuit = MutableSharedFlow<Unit>()
     private val  _sharedCancel = MutableSharedFlow<Unit>()
     private val  _sharedWarName = MutableSharedFlow<String>()
+    private val  _sharedGoToCurrent = MutableSharedFlow<Unit>()
 
     val sharedOnlinePlayers = _sharedOnlinePlayers.asSharedFlow()
     val sharedBack = _sharedBack.asSharedFlow()
     val sharedQuit = _sharedQuit.asSharedFlow()
     val sharedCancel = _sharedCancel.asSharedFlow()
     val sharedWarName = _sharedWarName.asSharedFlow()
+    val sharedGoToCurrent = _sharedGoToCurrent.asSharedFlow()
 
     fun bind(onBackPress: Flow<Unit>) {
         firebaseRepository.listenToUsers().map {
             it.filter { user -> user.currentWar == preferencesRepository.currentUser?.currentWar }
-        }.bind(_sharedOnlinePlayers, viewModelScope)
+        }
+            .onEach { if (it.size == 2) _sharedGoToCurrent.emit(Unit) }
+            .bind(_sharedOnlinePlayers, viewModelScope)
 
         flowOf(preferencesRepository.currentUser?.currentWar)
             .filterNotNull()
