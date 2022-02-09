@@ -32,6 +32,8 @@ class PositionFragment : Fragment(R.layout.fragment_position) {
     private var tmId: Int? = null
     private var warTrackId: String? = null
     val dialog = QuitWarDialogFragment()
+    val dialogFragment = ProgressDialogFragment()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,7 +87,6 @@ class PositionFragment : Fragment(R.layout.fragment_position) {
 
         viewModel.sharedWaitingDialog
             .onEach {
-                val dialogFragment = ProgressDialogFragment()
                 when  {
                     it && !dialogFragment.isAdded -> dialogFragment.show(childFragmentManager, null)
                     !it && dialogFragment.isVisible -> dialogFragment.dismiss()

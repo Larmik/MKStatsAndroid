@@ -195,6 +195,8 @@
             app:destination="@id/warTrackResultFragment"
             app:enterAnim="@anim/enter_from_right"
             app:exitAnim="@anim/exit_to_left"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true"
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right">
 
@@ -243,8 +245,6 @@
             app:destination="@id/currentWarFragment"
             app:enterAnim="@anim/enter_from_right"
             app:exitAnim="@anim/exit_to_left"
-            app:popUpTo="@id/nav_graph"
-            app:popUpToInclusive="true"
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right"/>
         <action
@@ -302,7 +302,7 @@
             app:destination="@id/positionFragment"
             app:enterAnim="@anim/enter_from_right"
             app:exitAnim="@anim/exit_to_left"
-            app:popUpTo="@id/currentWarFragment"
+            app:popUpTo="@id/nav_graph"
             app:popUpToInclusive="true"
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right">

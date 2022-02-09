@@ -27,6 +27,7 @@ class WarTrackResultViewModel @Inject constructor(private val firebaseRepository
     private val _sharedHost = MutableSharedFlow<Unit>()
     private val _sharedBackToCurrent = MutableSharedFlow<Unit>()
     private val _sharedScore = MutableSharedFlow<WarTrack>()
+    private val _sharedWaitingVisibility = MutableSharedFlow<Boolean>()
 
 
     val sharedWarPos = _sharedWarPos.asSharedFlow()
@@ -36,6 +37,7 @@ class WarTrackResultViewModel @Inject constructor(private val firebaseRepository
     val sharedBackToCurrent = _sharedBackToCurrent.asSharedFlow()
     val sharedScore = _sharedScore.asSharedFlow()
     val sharedHost = _sharedHost.asSharedFlow()
+    val sharedWaitingVisibility = _sharedWaitingVisibility.asSharedFlow()
 
     fun bind(warTrackId: String? = null, onBack: Flow<Unit>, onQuit: Flow<Unit>, onBackDialog: Flow<Unit>, onValid: Flow<Unit>) {
         warTrackId?.let { id ->
@@ -46,12 +48,37 @@ class WarTrackResultViewModel @Inject constructor(private val firebaseRepository
 
             val positionListener = firebaseRepository.listenToWarPositions()
                 .map { it.filter { pos -> pos.warTrackId ==  warTrackId } }
+                .onEach { _sharedWarPos.emit(it) }
                 .shareIn(viewModelScope, SharingStarted.Eagerly)
 
-            positionListener.bind(_sharedWarPos, viewModelScope)
+            positionListener
+                .filter { it.size < 6 }
+                .onEach { hasEmitted = false
+                _sharedWaitingVisibility.emit(true)}.launchIn(viewModelScope)
+
+            //Mock
+            positionListener
+                .filter { it.size == 1 }
+                .onEach { delay(500) }
+                .map { WarPosition(mid = System.currentTimeMillis().toString(), warTrackId = warTrackId, playerId = "NSD", position = 6) }
+                .flatMapLatest { firebaseRepository.writeWarPosition(it) }
+                .onEach { delay(500) }
+                .map { WarPosition(mid = System.currentTimeMillis().toString(), warTrackId = warTrackId, playerId = "RemDtz", position = 4) }
+                .flatMapLatest { firebaseRepository.writeWarPosition(it) }
+                .onEach { delay(500) }
+                .map { WarPosition(mid = System.currentTimeMillis().toString(), warTrackId = warTrackId, playerId = "Square", position = 5) }
+                .flatMapLatest { firebaseRepository.writeWarPosition(it) }
+                .onEach { delay(500) }
+                .map { WarPosition(mid = System.currentTimeMillis().toString(), warTrackId = warTrackId, playerId = "Guyal", position = 7) }
+                .flatMapLatest { firebaseRepository.writeWarPosition(it) }
+                .onEach { delay(500) }
+                .map { WarPosition(mid = System.currentTimeMillis().toString(), warTrackId = warTrackId, playerId = "Nulls", position = 8) }
+                .flatMapLatest { firebaseRepository.writeWarPosition(it) }
+                .launchIn(viewModelScope)
 
             positionListener
-                .filter { it.size == 2  && !hasEmitted}
+                .filter { it.size == 6  && !hasEmitted}
+                .onEach { _sharedWaitingVisibility.emit(false) }
                 .mapNotNull { list ->
                     hasEmitted = true
                     score = list.mapNotNull { pos -> pos.points }.sumOf { it }

@@ -19,7 +19,8 @@ import javax.inject.Inject
 @FlowPreview
 class CurrentWarViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface) : ViewModel() {
 
-    private val _sharedHost = MutableSharedFlow<Unit>()
+    private val _sharedButtonVisible = MutableSharedFlow<Boolean>()
+    private val _sharedWaitingVisible = MutableSharedFlow<Boolean>()
     private val _sharedCurrentWar = MutableSharedFlow<War>()
     private val  _sharedBack = MutableSharedFlow<Unit>()
     private val  _sharedQuit = MutableSharedFlow<Unit>()
@@ -29,7 +30,8 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
     private val _sharedGoToPos = MutableSharedFlow<WarTrack>()
     private val _sharedTracks = MutableSharedFlow<List<WarTrack>>()
 
-    val sharedHost = _sharedHost.asSharedFlow()
+    val sharedButtonVisible = _sharedButtonVisible.asSharedFlow()
+    val sharedWaitingVisible = _sharedWaitingVisible.asSharedFlow()
     val sharedCurrentWar = _sharedCurrentWar.asSharedFlow()
     val sharedBack = _sharedBack.asSharedFlow()
     val sharedQuit = _sharedQuit.asSharedFlow()
@@ -44,10 +46,10 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
         preferencesRepository.currentUser?.currentWar?.let { it ->
             firebaseRepository.getWar(it)
                 .filterNotNull()
-                .onEach {
-                        war -> _sharedCurrentWar.emit(war)
-                    if (war.playerHostId == preferencesRepository.currentUser?.mid)
-                        _sharedHost.emit(Unit)
+                .onEach { war ->
+                    _sharedCurrentWar.emit(war)
+                    _sharedButtonVisible.emit(war.playerHostId == preferencesRepository.currentUser?.mid && !war.isOver)
+                    _sharedWaitingVisible.emit(war.playerHostId != preferencesRepository.currentUser?.mid && !war.isOver)
                 }.launchIn(viewModelScope)
 
             firebaseRepository.listenToUsers()

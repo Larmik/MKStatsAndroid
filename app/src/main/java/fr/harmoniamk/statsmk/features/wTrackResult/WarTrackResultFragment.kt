@@ -68,9 +68,14 @@ class WarTrackResultFragment : Fragment(R.layout.fragment_result_war_track) {
             .onEach { adapter.addResults(it) }
             .launchIn(lifecycleScope)
 
+        viewModel.sharedWaitingVisibility
+            .onEach {
+                binding.waitingLayout.isVisible = it
+                binding.scoreLayout.isVisible = !it
+            }.launchIn(lifecycleScope)
+
         viewModel.sharedScore
             .onEach {
-                binding.scoreLayout.isVisible = true
                 binding.trackScore.text = it.displayedResult
                 binding.trackDiff.text = it.displayedDiff
             }

@@ -184,6 +184,7 @@
         android:id="@+id/stop_btn"
         android:textAllCaps="true"
         android:text="Annuler le tournoi"
+        android:visibility="gone"
         android:layout_marginTop="15dp"
         android:textColor="@color/waluigi_second"
         android:fontFamily="@font/roboto"

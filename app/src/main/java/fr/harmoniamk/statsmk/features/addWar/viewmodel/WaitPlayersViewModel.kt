@@ -35,7 +35,7 @@ class WaitPlayersViewModel @Inject constructor(private val firebaseRepository: F
         firebaseRepository.listenToUsers().map {
             it.filter { user -> user.currentWar == preferencesRepository.currentUser?.currentWar }
         }
-            .onEach { if (it.size == 2) _sharedGoToCurrent.emit(Unit) }
+            .onEach { if (it.size == 1) _sharedGoToCurrent.emit(Unit) }
             .bind(_sharedOnlinePlayers, viewModelScope)
 
         flowOf(preferencesRepository.currentUser?.currentWar)

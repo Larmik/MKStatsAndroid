@@ -36,11 +36,6 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
         binding.currentTracksRv.adapter = adapter
         viewModel.bind(requireActivity().backPressedDispatcher(viewLifecycleOwner), binding.nextTrackBtn.clicks())
 
-        viewModel.sharedHost
-            .onEach {
-                binding.waitingNextTrack.isVisible = false
-                binding.nextTrackBtn.isVisible = true
-            }.launchIn(lifecycleScope)
 
         viewModel.sharedCurrentWar
             .onEach {
@@ -50,8 +45,10 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
                 binding.currentWarTv.text = it.displayedState
                 binding.scoreTv.text = it.displayedScore
                 binding.diffScoreTv.text = it.displayedDiff
-
             }.launchIn(lifecycleScope)
+
+        viewModel.sharedButtonVisible.onEach { binding.nextTrackBtn.isVisible = it }.launchIn(lifecycleScope)
+        viewModel.sharedWaitingVisible.onEach { binding.waitingNextTrack.isVisible = it }.launchIn(lifecycleScope)
 
         viewModel.sharedBack
             .onEach {
