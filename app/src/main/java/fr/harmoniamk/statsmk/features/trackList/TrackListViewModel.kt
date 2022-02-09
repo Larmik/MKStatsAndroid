@@ -26,13 +26,15 @@ class TrackListViewModel @Inject constructor(private val playedTrackRepository: 
 ) : ViewModel() {
 
     private val _sharedSearchedItems = MutableSharedFlow<List<Maps>>()
-    private val _sharedGoToPos = MutableSharedFlow<Int>()
+    private val _sharedGoToWarPos = MutableSharedFlow<WarTrack>()
+    private val _sharedGoToTmPos = MutableSharedFlow<Int>()
 
     val sharedSearchedItems = _sharedSearchedItems.asSharedFlow()
-    val sharedGoToPos = _sharedGoToPos.asSharedFlow()
+    val sharedGoToWarPos = _sharedGoToWarPos.asSharedFlow()
+    val sharedGoToTmPos = _sharedGoToTmPos.asSharedFlow()
 
     fun bind(tournamentId: Int? = null, warId: String? = null, onTrackAdded: Flow<Int>, onSearch: Flow<String>) {
-        var chosenTrack = -1
+        var chosenTrack: WarTrack? = null
 
         onSearch
             .map { searched ->
@@ -47,20 +49,19 @@ class TrackListViewModel @Inject constructor(private val playedTrackRepository: 
 
         tournamentId?.let {
             onTrackAdded.onEach {
-                chosenTrack = it
-                _sharedGoToPos.emit(it)
+                _sharedGoToTmPos.emit(it)
             }.launchIn(viewModelScope)
         }
 
         warId?.let { id ->
             onTrackAdded
-                .onEach { chosenTrack = it }
                 .map { WarTrack(mid = System.currentTimeMillis().toString(), warId = id, trackIndex = it) }
+                .onEach { chosenTrack = it }
                 .flatMapLatest {
                     firebaseRepository.writeWarTrack(it)
                 }
-                .onEach { _sharedGoToPos.emit(chosenTrack) }
-                .launchIn(viewModelScope)
+                .mapNotNull { chosenTrack }
+                .bind(_sharedGoToWarPos, viewModelScope)
         }
 
     }

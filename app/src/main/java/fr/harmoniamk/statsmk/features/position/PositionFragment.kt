@@ -8,18 +8,15 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
-import fr.harmoniamk.statsmk.ProgressDialogFragment
-import fr.harmoniamk.statsmk.QuitWarDialogFragment
+import fr.harmoniamk.statsmk.features.quitWar.ProgressDialogFragment
+import fr.harmoniamk.statsmk.features.quitWar.QuitWarDialogFragment
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentPositionBinding
 import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.extension.backPressedDispatcher
-import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.clicks
-import fr.harmoniamk.statsmk.features.addWar.fragment.WaitPlayersFragmentDirections
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -34,7 +31,7 @@ class PositionFragment : Fragment(R.layout.fragment_position) {
     private var track: Int? = null
     private var tmId: Int? = null
     private var warTrackId: String? = null
-    private val dialogFragment = ProgressDialogFragment()
+    val dialog = QuitWarDialogFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,7 +64,9 @@ class PositionFragment : Fragment(R.layout.fragment_position) {
                 onPos10 = binding.pos10.clicks(),
                 onPos11 = binding.pos11.clicks(),
                 onPos12 = binding.pos12.clicks(),
-                onBack = requireActivity().backPressedDispatcher(viewLifecycleOwner)
+                onBack = requireActivity().backPressedDispatcher(viewLifecycleOwner),
+                onBackDialog = dialog.sharedClose,
+                onQuit = dialog.sharedWarLeft
             )
         }
 
@@ -81,8 +80,6 @@ class PositionFragment : Fragment(R.layout.fragment_position) {
 
         viewModel.sharedBack
             .onEach {
-                val dialog = QuitWarDialogFragment()
-                viewModel.bindDialog(dialog.sharedWarLeft, dialog.sharedClose)
                 if (!dialog.isAdded) dialog.show(childFragmentManager, null)
                 viewModel.sharedCancel
                     .filter { findNavController().currentDestination?.id == R.id.positionFragment }
@@ -97,11 +94,16 @@ class PositionFragment : Fragment(R.layout.fragment_position) {
 
         viewModel.sharedWaitingDialog
             .onEach {
+                val dialogFragment = ProgressDialogFragment()
                 when  {
                     it && !dialogFragment.isAdded -> dialogFragment.show(childFragmentManager, null)
                     !it && dialogFragment.isVisible -> dialogFragment.dismiss()
                 }
             }.launchIn(lifecycleScope)
 
+        viewModel.sharedGoToResult
+            .filter { findNavController().currentDestination?.id == R.id.positionFragment }
+            .onEach { findNavController().navigate(PositionFragmentDirections.goToResult(it, track ?: -1)) }
+            .launchIn(lifecycleScope)
     }
 }

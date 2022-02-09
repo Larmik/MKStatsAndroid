@@ -212,6 +212,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:paddingVertical="10dp"
+                    android:gravity="center"
                     android:text="Votre équipe ne joue actuellement aucune war. Soyez l'hôte d'une war en démarrant une session ci-dessous."
                     android:layout_gravity="center"
                     android:fontFamily="@font/montserrat_regular"

@@ -90,7 +90,7 @@
                 android:name="tmId"
                 app:argType="integer"/>
             <argument
-                android:name="warId"
+                android:name="warTrackId"
                 app:nullable="true"
                 app:argType="string"/>
 
@@ -141,6 +141,21 @@
         tools:layout="@layout/fragment_add_war"
         android:label="AddWarFragment"/>
     <fragment
+        android:id="@+id/warTrackResultFragment"
+        android:name="fr.harmoniamk.statsmk.features.wTrackResult.WarTrackResultFragment"
+        tools:layout="@layout/fragment_result_war_track"
+        android:label="WarTrackResultFragment">
+
+        <action
+            android:id="@+id/back_to_wars"
+            app:destination="@id/homeFragment"
+            app:enterAnim="@anim/enter_from_left"
+            app:exitAnim="@anim/exit_to_right"
+            app:popEnterAnim="@anim/enter_from_right"
+            app:popExitAnim="@anim/exit_to_left"/>
+
+    </fragment>
+    <fragment
         android:id="@+id/positionFragment"
         android:name="fr.harmoniamk.statsmk.features.position.PositionFragment"
         tools:layout="@layout/fragment_position"
@@ -167,6 +182,26 @@
             app:exitAnim="@anim/exit_to_right"
             app:popEnterAnim="@anim/enter_from_right"
             app:popExitAnim="@anim/exit_to_left"/>
+
+        <action
+            android:id="@+id/go_to_result"
+            app:destination="@id/warTrackResultFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popUpTo="@id/positionFragment"
+            app:popUpToInclusive="true"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right">
+
+            <argument
+                android:name="warTrackId"
+                app:nullable="true"
+                app:argType="string"/>
+            <argument
+                android:name="track"
+                app:argType="integer"/>
+
+        </action>
     </fragment>
 
     <fragment
@@ -174,6 +209,7 @@
         android:name="fr.harmoniamk.statsmk.features.editTrack.fragment.EditTrackFragment"
         tools:layout="@layout/fragment_edit_track"
         android:label="EditTrackFragment"/>
+
 
     <fragment
         android:id="@+id/welcomeFragment"

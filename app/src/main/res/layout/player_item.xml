@@ -7,7 +7,7 @@
     app:cardBackgroundColor="@color/white_alphaed"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_marginTop="15dp"
-    android:orientation="vertical">
+    android:orientation="horizontal">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,19 +16,41 @@
         android:orientation="horizontal">
 
         <TextView
-            android:textSize="20sp"
-            tools:text="Lari"
+            android:id="@+id/name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:autoSizeTextType="uniform"
+            android:fontFamily="@font/montserrat_bold"
+            android:gravity="center"
             android:maxLines="1"
             android:paddingVertical="5dp"
-            android:autoSizeTextType="uniform"
             android:textColor="@color/black"
+            android:textSize="20sp"
+            tools:targetApi="o"
+            tools:text="Lari" />
+
+        <View
+            android:id="@+id/separator"
+            android:layout_width="1dp"
+            android:visibility="gone"
+            android:background="@color/waluigi_second"
+            android:layout_height="match_parent"/>
+
+
+        <TextView
+            android:id="@+id/player_pos"
             android:layout_width="0dp"
-            android:layout_weight="4"
-            android:gravity="center"
-            android:fontFamily="@font/montserrat_bold"
             android:layout_height="wrap_content"
-            android:id="@+id/name"
+            android:gravity="center"
+            android:autoSizeTextType="uniform"
+            android:visibility="gone"
+            android:fontFamily="@font/mk_position"
+            android:textSize="32sp"
+            android:textColor="@color/waluigi_second"
+            android:layout_weight="1"
             tools:targetApi="o" />
+
 
     </LinearLayout>
 

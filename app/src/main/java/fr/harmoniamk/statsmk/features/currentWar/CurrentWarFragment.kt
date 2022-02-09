@@ -5,14 +5,12 @@ import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
-import fr.harmoniamk.statsmk.QuitWarDialogFragment
+import fr.harmoniamk.statsmk.features.quitWar.QuitWarDialogFragment
 import fr.harmoniamk.statsmk.R
-import fr.harmoniamk.statsmk.database.firebase.model.War
 import fr.harmoniamk.statsmk.databinding.FragmentCurrentWarBinding
 import fr.harmoniamk.statsmk.extension.backPressedDispatcher
 import fr.harmoniamk.statsmk.extension.clicks
@@ -22,7 +20,6 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.isActive
 
 @FlowPreview
 @ExperimentalCoroutinesApi
@@ -78,7 +75,9 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
         viewModel.sharedSelectTrack
             .filter { findNavController().currentDestination?.id == R.id.currentWarFragment }
             .mapNotNull { warId }
-            .onEach { findNavController().navigate(CurrentWarFragmentDirections.addTrack(it)) }
+            .onEach {
+                findNavController().navigate(CurrentWarFragmentDirections.addTrack(it))
+            }
             .launchIn(lifecycleScope)
 
         viewModel.sharedGoToPos

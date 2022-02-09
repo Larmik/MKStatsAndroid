@@ -1,4 +1,4 @@
-package fr.harmoniamk.statsmk
+package fr.harmoniamk.statsmk.features.quitWar
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatDialogFragment
-import androidx.lifecycle.lifecycleScope
+import fr.harmoniamk.statsmk.R
 
 class ProgressDialogFragment : AppCompatDialogFragment() {
 

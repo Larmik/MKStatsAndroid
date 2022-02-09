@@ -28,12 +28,12 @@ class TrackListFragment(val onTrack: MutableSharedFlow<Int>? = null) :
     private val binding: FragmentTrackListBinding by viewBinding()
     private val viewModel: TrackListViewModel by viewModels()
 
-    private var tmId = -1
+    private var tmId : Int? = null
     private var warId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        tmId = arguments?.getInt("tmId") ?: -1
+        tmId = arguments?.getInt("tmId").takeIf { it != 0 }
         warId = arguments?.getString("warId")
     }
 
@@ -46,10 +46,17 @@ class TrackListFragment(val onTrack: MutableSharedFlow<Int>? = null) :
             .onEach { adapter.addTracks(it) }
             .launchIn(lifecycleScope)
 
-        viewModel.sharedGoToPos
+        viewModel.sharedGoToTmPos
             .filter { findNavController().currentDestination?.id == R.id.trackListFragment }
             .onEach {
-                findNavController().navigate(TrackListFragmentDirections.enterPositions(track = it, tmId = tmId, warId = warId))
+                findNavController().navigate(TrackListFragmentDirections.enterPositions(track = it, tmId = tmId ?: -1, warTrackId = null ))
+            }
+            .launchIn(lifecycleScope)
+
+        viewModel.sharedGoToWarPos
+            .filter { findNavController().currentDestination?.id == R.id.trackListFragment }
+            .onEach {
+                findNavController().navigate(TrackListFragmentDirections.enterPositions(track = it.trackIndex ?: -1, tmId = tmId ?: -1, warTrackId = it.mid))
             }
             .launchIn(lifecycleScope)
 

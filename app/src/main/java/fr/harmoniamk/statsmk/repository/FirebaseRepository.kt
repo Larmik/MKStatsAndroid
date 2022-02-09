@@ -28,14 +28,19 @@ interface FirebaseRepositoryInterface{
     fun getUsers(): Flow<List<User>>
     fun getTeams(): Flow<List<Team>>
     fun getWars(): Flow<List<War>>
+    fun getWarPositions(): Flow<List<WarPosition>>
 
     fun getTeam(id: String): Flow<Team?>
     fun getWar(id: String): Flow<War?>
+    fun getUser(id: String): Flow<User?>
 
     fun listenToUsers(): Flow<List<User>>
     fun listenToTeams(): Flow<List<Team>>
     fun listenToWars(): Flow<List<War>>
     fun listenToWarTracks(): Flow<List<WarTrack>>
+    fun listenToWarPositions(): Flow<List<WarPosition>>
+
+    fun deleteWarPosition(position: WarPosition): Flow<Unit>
 }
 
 @FlowPreview
@@ -144,6 +149,21 @@ class FirebaseRepository @Inject constructor() : FirebaseRepositoryInterface {
         awaitClose {  }
     }
 
+    override fun getWarPositions(): Flow<List<WarPosition>> = callbackFlow {
+        database.child("warPositions").get().addOnSuccessListener { snapshot ->
+            val wars: List<WarPosition> = snapshot.children
+                .map { it.value as Map<*, *> }
+                .map {map -> WarPosition(
+                    mid = map["mid"].toString(),
+                    warTrackId = map["warTrackId"].toString(),
+                    playerId = map["playerId"].toString(),
+                    position = map["position"].toString().toInt())
+                }
+            if (isActive) offer(wars)
+        }
+        awaitClose {  }
+    }
+
     override fun getTeam(id: String): Flow<Team?> = callbackFlow {
         database.child("teams").child(id).get().addOnSuccessListener { snapshot ->
             val map = (snapshot.value as? Map<*,*>)
@@ -175,6 +195,21 @@ class FirebaseRepository @Inject constructor() : FirebaseRepositoryInterface {
                     createdDate = map["createdDate"].toString(),
                     updatedDate = map["updatedDate"].toString()
                 ))
+        }
+        awaitClose {  }
+    }
+
+    override fun getUser(id: String): Flow<User?> = callbackFlow {
+        database.child("users").child(id).get().addOnSuccessListener { snapshot ->
+            val map = (snapshot.value as? Map<*,*>)
+            if (isActive) offer(
+                if (map == null) null
+                else User(
+                    mid = map["mid"].toString(),
+                    name = map["name"].toString(),
+                    accessCode = map["accessCode"].toString(),
+                    team = map["team"].toString()
+            ))
         }
         awaitClose {  }
     }
@@ -240,6 +275,31 @@ class FirebaseRepository @Inject constructor() : FirebaseRepositoryInterface {
         }
         database.addValueEventListener(postListener)
         awaitClose {  }
+    }
+
+    override fun listenToWarPositions(): Flow<List<WarPosition>> = callbackFlow {
+        val postListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val positions: List<WarPosition> = dataSnapshot.child("warPositions").children.map { it.value as Map<*, *> }.map {  WarPosition(
+                    mid = it["mid"].toString(),
+                    warTrackId = it["warTrackId"].toString(),
+                    playerId = it["playerId"].toString(),
+                    position = it["position"].toString().toInt()
+
+                )  }
+                if (isActive) offer(positions)
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+            }
+        }
+        database.addValueEventListener(postListener)
+        awaitClose {  }
+    }
+
+    override fun deleteWarPosition(position: WarPosition): Flow<Unit> = flow {
+        database.child("warPositions").child(position.mid.toString()).removeValue()
+        emit(Unit)
     }
 
 
