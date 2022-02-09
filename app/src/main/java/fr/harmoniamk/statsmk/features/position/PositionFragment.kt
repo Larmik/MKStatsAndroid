@@ -41,35 +41,26 @@ class PositionFragment : Fragment(R.layout.fragment_position) {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        track?.let {
-            val map = Maps.values()[it]
-            binding.trackIv.clipToOutline = true
-            binding.trackIv.setImageResource(map.picture)
-            binding.cupIv.setImageResource(map.cup.picture)
-            binding.shortname.text = map.name
-            binding.name.setText(map.label)
-            viewModel.bind(
-                tournamentId = tmId,
-                warTrackId = warTrackId,
-                chosenTrack = it,
-                onPos1 = binding.pos1.clicks(),
-                onPos2 = binding.pos2.clicks(),
-                onPos3 = binding.pos3.clicks(),
-                onPos4 = binding.pos4.clicks(),
-                onPos5 = binding.pos5.clicks(),
-                onPos6 = binding.pos6.clicks(),
-                onPos7 = binding.pos7.clicks(),
-                onPos8 = binding.pos8.clicks(),
-                onPos9 = binding.pos9.clicks(),
-                onPos10 = binding.pos10.clicks(),
-                onPos11 = binding.pos11.clicks(),
-                onPos12 = binding.pos12.clicks(),
-                onBack = requireActivity().backPressedDispatcher(viewLifecycleOwner),
-                onBackDialog = dialog.sharedClose,
-                onQuit = dialog.sharedWarLeft
-            )
-        }
-
+        viewModel.bind(
+            tournamentId = tmId,
+            warTrackId = warTrackId,
+            chosenTrack = track ?: -1,
+            onPos1 = binding.pos1.clicks(),
+            onPos2 = binding.pos2.clicks(),
+            onPos3 = binding.pos3.clicks(),
+            onPos4 = binding.pos4.clicks(),
+            onPos5 = binding.pos5.clicks(),
+            onPos6 = binding.pos6.clicks(),
+            onPos7 = binding.pos7.clicks(),
+            onPos8 = binding.pos8.clicks(),
+            onPos9 = binding.pos9.clicks(),
+            onPos10 = binding.pos10.clicks(),
+            onPos11 = binding.pos11.clicks(),
+            onPos12 = binding.pos12.clicks(),
+            onBack = requireActivity().backPressedDispatcher(viewLifecycleOwner),
+            onBackDialog = dialog.sharedClose,
+            onQuit = dialog.sharedWarLeft
+        )
         viewModel.validateTrack
             .filter { findNavController().currentDestination?.id == R.id.positionFragment }
             .onEach { when {
@@ -105,5 +96,16 @@ class PositionFragment : Fragment(R.layout.fragment_position) {
             .filter { findNavController().currentDestination?.id == R.id.positionFragment }
             .onEach { findNavController().navigate(PositionFragmentDirections.goToResult(it, track ?: -1)) }
             .launchIn(lifecycleScope)
+        track?.let {
+            val map = Maps.values()[it]
+            binding.trackIv.clipToOutline = true
+            binding.trackIv.setImageResource(map.picture)
+            binding.cupIv.setImageResource(map.cup.picture)
+            binding.shortname.text = map.name
+            binding.name.setText(map.label)
+
+        }
+
+
     }
 }

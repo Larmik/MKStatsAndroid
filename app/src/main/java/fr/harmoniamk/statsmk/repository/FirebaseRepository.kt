@@ -29,9 +29,11 @@ interface FirebaseRepositoryInterface{
     fun getTeams(): Flow<List<Team>>
     fun getWars(): Flow<List<War>>
     fun getWarPositions(): Flow<List<WarPosition>>
+    fun getWarTracks(): Flow<List<WarTrack>>
 
     fun getTeam(id: String): Flow<Team?>
     fun getWar(id: String): Flow<War?>
+    fun getWarTrack(id: String): Flow<WarTrack?>
     fun getUser(id: String): Flow<User?>
 
     fun listenToUsers(): Flow<List<User>>
@@ -141,6 +143,7 @@ class FirebaseRepository @Inject constructor() : FirebaseRepositoryInterface {
                     scoreHost = map["scoreHost"].toString().toInt(),
                     teamOpponent = map["teamOpponent"].toString(),
                     scoreOpponent = map["scoreOpponent"].toString().toInt(),
+                    trackPlayed = map["trackPlayed"].toString().toInt(),
                     updatedDate = map["updatedDate"].toString(),
                     createdDate = map["createdDate"].toString())
                 }
@@ -158,6 +161,22 @@ class FirebaseRepository @Inject constructor() : FirebaseRepositoryInterface {
                     warTrackId = map["warTrackId"].toString(),
                     playerId = map["playerId"].toString(),
                     position = map["position"].toString().toInt())
+                }
+            if (isActive) offer(wars)
+        }
+        awaitClose {  }
+    }
+
+    override fun getWarTracks(): Flow<List<WarTrack>> = callbackFlow {
+        database.child("warTracks").get().addOnSuccessListener { snapshot ->
+            val wars: List<WarTrack> = snapshot.children
+                .map { it.value as Map<*, *> }
+                .map {map -> WarTrack(
+                    mid = map["mid"].toString(),
+                    warId = map["warId"].toString(),
+                    trackIndex = map["trackIndex"].toString().toInt(),
+                    isOver = map["over"].toString().toBoolean(),
+                    teamScore = map["teamScore"].toString().toInt())
                 }
             if (isActive) offer(wars)
         }
@@ -192,8 +211,25 @@ class FirebaseRepository @Inject constructor() : FirebaseRepositoryInterface {
                     scoreOpponent = map["scoreOpponent"].toString().toInt(),
                     teamHost = map["teamHost"].toString(),
                     scoreHost = map["scoreHost"].toString().toInt(),
+                    trackPlayed = map["trackPlayed"].toString().toInt(),
                     createdDate = map["createdDate"].toString(),
                     updatedDate = map["updatedDate"].toString()
+                ))
+        }
+        awaitClose {  }
+    }
+
+    override fun getWarTrack(id: String): Flow<WarTrack?> = callbackFlow {
+        database.child("warTracks").child(id).get().addOnSuccessListener { snapshot ->
+            val map = (snapshot.value as? Map<*,*>)
+            if (isActive) offer(
+                if (map == null) null
+                else WarTrack(
+                    mid = map["mid"].toString(),
+                    warId = map["warId"].toString(),
+                    trackIndex = map["trackIndex"].toString().toInt(),
+                    isOver = map["over"].toString().toBoolean(),
+                    teamScore = map["teamScore"].toString().toInt()
                 ))
         }
         awaitClose {  }
@@ -264,8 +300,9 @@ class FirebaseRepository @Inject constructor() : FirebaseRepositoryInterface {
                 val tracks: List<WarTrack> = dataSnapshot.child("warTracks").children.map { it.value as Map<*, *> }.map {  WarTrack(
                     mid = it["mid"].toString(),
                     warId = it["warId"].toString(),
-                    trackIndex = it["trackIndex"].toString().toInt()
-
+                    trackIndex = it["trackIndex"].toString().toInt(),
+                    isOver = it["over"].toString().toBoolean(),
+                    teamScore = it["teamScore"].toString().toInt()
                 )  }
                 if (isActive) offer(tracks)
             }

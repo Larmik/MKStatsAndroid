@@ -6,6 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.database.firebase.model.War
 import fr.harmoniamk.statsmk.database.firebase.model.WarTrack
 import fr.harmoniamk.statsmk.extension.bind
+import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -26,6 +27,7 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
     private val  _sharedWaitingPlayers = MutableSharedFlow<Unit>()
     private val _sharedSelectTrack = MutableSharedFlow<Unit>()
     private val _sharedGoToPos = MutableSharedFlow<WarTrack>()
+    private val _sharedTracks = MutableSharedFlow<List<WarTrack>>()
 
     val sharedHost = _sharedHost.asSharedFlow()
     val sharedCurrentWar = _sharedCurrentWar.asSharedFlow()
@@ -35,10 +37,11 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
     val sharedWaitingPlayers = _sharedWaitingPlayers.asSharedFlow()
     val sharedSelectTrack = _sharedSelectTrack.asSharedFlow()
     val sharedGoToPos = _sharedGoToPos.asSharedFlow()
+    val sharedTracks = _sharedTracks.asSharedFlow()
 
 
     fun bind(onBack: Flow<Unit>, onNextTrack: Flow<Unit>) {
-        preferencesRepository.currentUser?.currentWar?.let {
+        preferencesRepository.currentUser?.currentWar?.let { it ->
             firebaseRepository.getWar(it)
                 .filterNotNull()
                 .onEach {
@@ -53,13 +56,19 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
                     _sharedWaitingPlayers.emit(Unit)
             }.launchIn(viewModelScope)
 
+            firebaseRepository.getWarTracks()
+                .mapNotNull {list -> list.filter { track -> track.warId == preferencesRepository.currentUser?.currentWar } }
+                .bind(_sharedTracks, viewModelScope)
+
             onBack.bind(_sharedBack, viewModelScope)
             onNextTrack.bind(_sharedSelectTrack, viewModelScope)
 
         }
 
         firebaseRepository.listenToWarTracks()
-            .mapNotNull { it.filter { track -> track.warId == preferencesRepository.currentUser?.currentWar }.lastOrNull() }
+            .mapNotNull {
+                it.lastOrNull().takeIf { track -> !track?.isOver.isTrue && track?.warId == preferencesRepository.currentUser?.currentWar }
+            }
             .bind(_sharedGoToPos, viewModelScope)
 
     }

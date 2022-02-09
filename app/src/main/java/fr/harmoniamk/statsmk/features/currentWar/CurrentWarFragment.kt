@@ -32,6 +32,8 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val adapter = CurrentWarTrackAdapter()
+        binding.currentTracksRv.adapter = adapter
         viewModel.bind(requireActivity().backPressedDispatcher(viewLifecycleOwner), binding.nextTrackBtn.clicks())
 
         viewModel.sharedHost
@@ -85,6 +87,10 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
             .onEach {
                 findNavController().navigate(CurrentWarFragmentDirections.enterPositions(it.trackIndex ?: -1, warTrackId = it.mid))
             }
+            .launchIn(lifecycleScope)
+
+        viewModel.sharedTracks
+            .onEach { adapter.addTracks(it) }
             .launchIn(lifecycleScope)
 
 

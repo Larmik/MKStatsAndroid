@@ -2,9 +2,10 @@ package fr.harmoniamk.statsmk.features.currentTournament
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import fr.harmoniamk.statsmk.database.room.model.PlayedTrack
-import fr.harmoniamk.statsmk.databinding.CurrentTrackItemBinding
+import fr.harmoniamk.statsmk.databinding.TrackItemBinding
 import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.extension.clicks
 import kotlinx.coroutines.CoroutineScope
@@ -23,10 +24,11 @@ class CurrentTrackAdapter(val items: MutableList<PlayedTrack> = mutableListOf())
     private val _sharedTrackToEdit = MutableSharedFlow<PlayedTrack>()
     val sharedTrackToEdit = _sharedTrackToEdit.asSharedFlow()
 
-    class CurrentTrackViewHolder(val binding: CurrentTrackItemBinding) :
+    class CurrentTrackViewHolder(val binding: TrackItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(track: PlayedTrack) {
+            binding.posTv.isVisible = true
             val map = Maps.values()[track.trackIndex]
             binding.trackIv.clipToOutline = true
             binding.trackIv.setImageResource(map.picture)
@@ -37,7 +39,7 @@ class CurrentTrackAdapter(val items: MutableList<PlayedTrack> = mutableListOf())
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = CurrentTrackViewHolder(
-        CurrentTrackItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        TrackItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
     )
 
     override fun onBindViewHolder(holder: CurrentTrackViewHolder, position: Int) {

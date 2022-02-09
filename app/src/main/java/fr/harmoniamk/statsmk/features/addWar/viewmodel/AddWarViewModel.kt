@@ -52,6 +52,7 @@ class AddWarViewModel @Inject constructor(private val firebaseRepository: Fireba
                     teamHost = preferencesRepository.currentTeam?.mid,
                     playerHostId = preferencesRepository.currentUser?.mid,
                     teamOpponent = it,
+                    trackPlayed = 0,
                     createdDate = date,
                     updatedDate = date)
                 war

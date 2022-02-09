@@ -78,7 +78,7 @@
             app:destination="@id/positionFragment"
             app:enterAnim="@anim/enter_from_right"
             app:exitAnim="@anim/exit_to_left"
-            app:popUpTo="@id/trackListFragment"
+            app:popUpTo="@id/nav_graph"
             app:popUpToInclusive="true"
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right">
@@ -153,6 +153,13 @@
             app:exitAnim="@anim/exit_to_right"
             app:popEnterAnim="@anim/enter_from_right"
             app:popExitAnim="@anim/exit_to_left"/>
+        <action
+            android:id="@+id/back_to_current"
+            app:destination="@id/currentWarFragment"
+            app:enterAnim="@anim/enter_from_left"
+            app:exitAnim="@anim/exit_to_right"
+            app:popEnterAnim="@anim/enter_from_right"
+            app:popExitAnim="@anim/exit_to_left"/>
 
     </fragment>
     <fragment
@@ -188,8 +195,6 @@
             app:destination="@id/warTrackResultFragment"
             app:enterAnim="@anim/enter_from_right"
             app:exitAnim="@anim/exit_to_left"
-            app:popUpTo="@id/positionFragment"
-            app:popUpToInclusive="true"
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right">
 
@@ -297,6 +302,8 @@
             app:destination="@id/positionFragment"
             app:enterAnim="@anim/enter_from_right"
             app:exitAnim="@anim/exit_to_left"
+            app:popUpTo="@id/currentWarFragment"
+            app:popUpToInclusive="true"
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right">
 

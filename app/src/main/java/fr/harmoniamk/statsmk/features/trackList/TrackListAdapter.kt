@@ -2,6 +2,7 @@ package fr.harmoniamk.statsmk.features.trackList
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import fr.harmoniamk.statsmk.databinding.TrackItemBinding
 import fr.harmoniamk.statsmk.enums.Maps
@@ -27,6 +28,7 @@ class TrackListAdapter(val items: MutableList<Maps> = Maps.values().toMutableLis
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(track: Maps) {
+            binding.cupIv.isVisible = true
             binding.trackIv.clipToOutline = true
             binding.trackIv.setImageResource(track.picture)
             binding.cupIv.setImageResource(track.cup.picture)

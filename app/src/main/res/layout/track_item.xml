@@ -26,7 +26,7 @@
 
         <LinearLayout
             android:layout_width="0dp"
-            android:layout_weight="1"
+            android:layout_weight="3"
             android:layout_height="match_parent"
             android:layout_marginStart="15dp"
             android:gravity="center_vertical"
@@ -55,13 +55,72 @@
 
         </LinearLayout>
 
-        <ImageView
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:scaleType="fitXY"
-            tools:src="@drawable/special"
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:gravity="center"
             android:layout_marginEnd="10dp"
-            android:id="@+id/cup_iv"/>
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <ImageView
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:scaleType="fitXY"
+                android:visibility="gone"
+                tools:src="@drawable/special"
+                android:id="@+id/cup_iv"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                tools:text="8."
+                android:visibility="gone"
+                android:textSize="46sp"
+                android:fontFamily="@font/mk_position"
+                android:layout_marginEnd="10dp"
+                android:id="@+id/pos_tv"/>
+
+            <LinearLayout
+                android:id="@+id/team_score_tv"
+                android:layout_width="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/track_score"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="12sp"
+                    android:textSize="14sp"
+                    android:textColor="@color/waluigi_second"
+                    android:fontFamily="@font/orbitron_semibold"
+                    tools:text="58 - 24"
+                    tools:targetApi="o" />
+                <TextView
+                    android:id="@+id/track_diff"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textSize="11sp"
+                    android:maxLines="1"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="9sp"
+                    android:textColor="@color/waluigi_second"
+                    android:fontFamily="@font/orbitron_semibold"
+                    tools:text="+34"
+                    tools:targetApi="o" />
+            </LinearLayout>
+
+
+
+
+        </RelativeLayout>
+
     </LinearLayout>
 
 

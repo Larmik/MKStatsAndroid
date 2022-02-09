@@ -102,7 +102,9 @@ class PositionViewModel @Inject constructor(
                     WarPosition(mid = System.currentTimeMillis().toString(), warTrackId = id, position = it, playerId = preferencesRepository.currentUser?.name)
                 }
                 .flatMapLatest { firebaseRepository.writeWarPosition(it) }
-                .mapNotNull { id }
+                .mapNotNull {
+                    id
+                }
                 .bind(_sharedGoToResult, viewModelScope)
 
             onQuit.bind(_sharedQuit, viewModelScope)

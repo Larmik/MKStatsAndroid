@@ -55,7 +55,7 @@ class TrackListViewModel @Inject constructor(private val playedTrackRepository: 
 
         warId?.let { id ->
             onTrackAdded
-                .map { WarTrack(mid = System.currentTimeMillis().toString(), warId = id, trackIndex = it) }
+                .map { WarTrack(mid = System.currentTimeMillis().toString(), warId = id, trackIndex = it, teamScore = 0, isOver = false) }
                 .onEach { chosenTrack = it }
                 .flatMapLatest {
                     firebaseRepository.writeWarTrack(it)

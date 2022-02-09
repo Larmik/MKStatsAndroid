@@ -13,11 +13,11 @@ data class War(
     val teamOpponent: String? = null,
     var scoreHost: Int = 0,
     var scoreOpponent: Int = 0,
+    var trackPlayed: Int = 0,
     val createdDate: String? = null,
     var updatedDate: String? = null
 ) {
 
-    val trackPlayed = (TOTAL_TRACKS - ( TOTAL_WAR_SCORE - ( scoreHost + scoreOpponent)) / TOTAL_TRACK_SCORE)
     val isOver = trackPlayed == TOTAL_TRACKS
 
     val displayedState: String

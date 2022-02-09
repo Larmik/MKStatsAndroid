@@ -2,6 +2,8 @@ package fr.harmoniamk.statsmk.features.wTrackResult
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -12,7 +14,7 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentResultWarTrackBinding
 import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.extension.backPressedDispatcher
-import fr.harmoniamk.statsmk.features.position.PositionFragmentDirections
+import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.features.quitWar.QuitWarDialogFragment
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -53,10 +55,25 @@ class WarTrackResultFragment : Fragment(R.layout.fragment_result_war_track) {
             warTrackId = warTrackId,
             onBack = requireActivity().backPressedDispatcher(viewLifecycleOwner),
             onBackDialog = dialog.sharedClose,
+            onValid = binding.validateBtn.clicks(),
             onQuit = dialog.sharedWarLeft)
+
+        viewModel.sharedHost
+            .onEach {
+                binding.validateBtn.isVisible = true
+            }.launchIn(lifecycleScope)
+
 
         viewModel.sharedWarPos
             .onEach { adapter.addResults(it) }
+            .launchIn(lifecycleScope)
+
+        viewModel.sharedScore
+            .onEach {
+                binding.scoreLayout.isVisible = true
+                binding.trackScore.text = it.displayedResult
+                binding.trackDiff.text = it.displayedDiff
+            }
             .launchIn(lifecycleScope)
 
         viewModel.sharedBack
@@ -72,6 +89,12 @@ class WarTrackResultFragment : Fragment(R.layout.fragment_result_war_track) {
             .filter { findNavController().currentDestination?.id == R.id.warTrackResultFragment }
             .onEach { findNavController().navigate(WarTrackResultFragmentDirections.backToWars()) }
             .launchIn(lifecycleScope)
+
+        viewModel.sharedBackToCurrent
+            .filter { findNavController().currentDestination?.id == R.id.warTrackResultFragment }
+            .onEach { findNavController().navigate(WarTrackResultFragmentDirections.backToCurrent()) }
+            .launchIn(lifecycleScope)
+
 
     }
 
