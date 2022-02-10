@@ -54,7 +54,7 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
 
             firebaseRepository.listenToUsers()
                 .onEach {
-                if (it.filter { user -> user.currentWar == preferencesRepository.currentUser?.currentWar }.size < 2)
+                if (it.filter { user -> user.currentWar == preferencesRepository.currentUser?.currentWar }.size < 1)
                     _sharedWaitingPlayers.emit(Unit)
             }.launchIn(viewModelScope)
 

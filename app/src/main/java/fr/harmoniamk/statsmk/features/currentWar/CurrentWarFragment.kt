@@ -87,7 +87,10 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
             .launchIn(lifecycleScope)
 
         viewModel.sharedTracks
-            .onEach { adapter.addTracks(it) }
+            .onEach {
+                binding.playedLabel.isVisible = it.isNotEmpty()
+                adapter.addTracks(it)
+            }
             .launchIn(lifecycleScope)
 
 
