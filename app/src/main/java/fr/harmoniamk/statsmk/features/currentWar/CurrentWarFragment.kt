@@ -73,16 +73,12 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
         viewModel.sharedSelectTrack
             .filter { findNavController().currentDestination?.id == R.id.currentWarFragment }
             .mapNotNull { warId }
-            .onEach {
-                findNavController().navigate(CurrentWarFragmentDirections.addTrack(it))
-            }
+            .onEach { findNavController().navigate(CurrentWarFragmentDirections.addTrack(it)) }
             .launchIn(lifecycleScope)
 
         viewModel.sharedGoToPos
             .filter { findNavController().currentDestination?.id == R.id.currentWarFragment }
-            .onEach {
-                findNavController().navigate(CurrentWarFragmentDirections.enterPositions(it.trackIndex ?: -1, warTrackId = it.mid))
-            }
+            .onEach { findNavController().navigate(CurrentWarFragmentDirections.enterPositions(it.trackIndex ?: -1, warTrackId = it.mid)) }
             .launchIn(lifecycleScope)
 
         viewModel.sharedTracks
@@ -94,9 +90,7 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
             .launchIn(lifecycleScope)
 
         viewModel.sharedPlayersConnected
-            .onEach {
-                binding.connectedPlayers.text = "Joueurs connectés: $it/6"
-            }
+            .onEach { binding.connectedPlayers.text = "Joueurs connectés: $it/6" }
             .launchIn(lifecycleScope)
     }
 
