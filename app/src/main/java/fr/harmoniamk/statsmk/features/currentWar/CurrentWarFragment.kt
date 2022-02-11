@@ -96,6 +96,10 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
             }
             .launchIn(lifecycleScope)
 
+        viewModel.sharedPlayersConnected
+            .onEach { binding.connectedPlayers.text = "Joueurs connectés: $it/6" }
+            .launchIn(lifecycleScope)
+
 
 
     }

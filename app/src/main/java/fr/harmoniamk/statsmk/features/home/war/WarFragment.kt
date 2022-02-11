@@ -10,13 +10,14 @@ import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
-import fr.harmoniamk.statsmk.database.firebase.model.TOTAL_TRACKS
 import fr.harmoniamk.statsmk.databinding.FragmentWarBinding
 import fr.harmoniamk.statsmk.extension.clicks
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import fr.harmoniamk.statsmk.extension.onTextChanged
 import fr.harmoniamk.statsmk.features.home.HomeFragmentDirections
+import fr.harmoniamk.statsmk.features.home.war.adapter.BestWarAdapter
+import fr.harmoniamk.statsmk.features.home.war.adapter.LastWarAdapter
 import kotlinx.coroutines.flow.*
 
 @FlowPreview

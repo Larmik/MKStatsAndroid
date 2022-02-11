@@ -16,6 +16,8 @@ import fr.harmoniamk.statsmk.database.room.model.Tournament
 import fr.harmoniamk.statsmk.databinding.FragmentTournamentsBinding
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.features.home.HomeFragmentDirections
+import fr.harmoniamk.statsmk.features.home.tournament.adapter.BestTournamentAdapter
+import fr.harmoniamk.statsmk.features.home.tournament.adapter.LastTournamentAdapter
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*

@@ -1,11 +1,9 @@
-package fr.harmoniamk.statsmk.features.home.war
+package fr.harmoniamk.statsmk.features.home.tournament.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import fr.harmoniamk.statsmk.R
-import fr.harmoniamk.statsmk.database.firebase.model.War
 import fr.harmoniamk.statsmk.database.room.model.Tournament
 import fr.harmoniamk.statsmk.databinding.BestTournamentItemBinding
 import fr.harmoniamk.statsmk.extension.clicks
@@ -19,21 +17,21 @@ import kotlinx.coroutines.flow.onEach
 import kotlin.coroutines.CoroutineContext
 
 @ExperimentalCoroutinesApi
-class BestWarAdapter(val items: MutableList<War> = mutableListOf()) :
-    RecyclerView.Adapter<BestWarAdapter.BestWarViewHolder>(), CoroutineScope {
+class BestTournamentAdapter(val items: MutableList<Tournament> = mutableListOf()) :
+    RecyclerView.Adapter<BestTournamentAdapter.BestTournamentViewHolder>(), CoroutineScope {
 
-    private val _sharedItemClick = MutableSharedFlow<War>()
+    private val _sharedItemClick = MutableSharedFlow<Tournament>()
     val sharedItemClick = _sharedItemClick.asSharedFlow()
 
-    class BestWarViewHolder(val binding: BestTournamentItemBinding) :
+    class BestTournamentViewHolder(val binding: BestTournamentItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(war: War, position: Int) {
-            binding.nameTv.text = war.name
-            binding.totalScoreTv.text = war.displayedScore
-            binding.timeTv.text = war.updatedDate
-            binding.tmInfos.isVisible = false
-            binding.ratioScoreTv.text = war.displayedAverage
+        fun bind(tournament: Tournament, position: Int) {
+            binding.nameTv.text = tournament.name
+            binding.totalScoreTv.text = tournament.points.toString()
+            binding.timeTv.text = tournament.updatedDate
+            binding.tmInfos.text = tournament.infos
+            binding.ratioScoreTv.text = tournament.ratio.toString()
             binding.trophy.setImageResource(
                 when (position) {
                     0 -> R.drawable.gold
@@ -41,16 +39,15 @@ class BestWarAdapter(val items: MutableList<War> = mutableListOf()) :
                     else -> R.drawable.bronze
                 }
             )
-            binding.topScoreTv.text = war.displayedDiff
-            binding.currentTmTop.text = "Diff."
+            binding.topScoreTv.text = tournament.tops.toString()
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = BestWarViewHolder(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = BestTournamentViewHolder(
         BestTournamentItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
     )
 
-    override fun onBindViewHolder(holder: BestWarViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: BestTournamentViewHolder, position: Int) {
         val item = items[position]
         holder.bind(item, position)
         holder.binding.root.clicks()
@@ -60,10 +57,10 @@ class BestWarAdapter(val items: MutableList<War> = mutableListOf()) :
 
     override fun getItemCount() = items.size
 
-    fun addTournaments(wars: List<War>) {
+    fun addTournaments(tm: List<Tournament>) {
         notifyItemRangeRemoved(0, itemCount)
         items.clear()
-        items.addAll(wars)
+        items.addAll(tm)
         notifyItemRangeInserted(0, itemCount)
     }
 

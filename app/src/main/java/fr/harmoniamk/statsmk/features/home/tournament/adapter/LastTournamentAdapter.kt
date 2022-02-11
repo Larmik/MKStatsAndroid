@@ -1,4 +1,4 @@
-package fr.harmoniamk.statsmk.features.home.tournament
+package fr.harmoniamk.statsmk.features.home.tournament.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
