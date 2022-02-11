@@ -11,15 +11,16 @@
         android:orientation="vertical"
         android:id="@+id/logout_layout">
 
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/white"
             android:fontFamily="@font/montserrat_regular"
             android:textSize="16sp"
-            android:id="@+id/disconnect_btn"
-            android:paddingVertical="10dp"
-            android:text="Déconnection"/>
+            android:id="@+id/manage_team_btn"
+            android:paddingVertical="15dp"
+            android:text="Gérer les équipes"/>
 
         <View
             android:layout_width="match_parent"
@@ -31,9 +32,23 @@
             android:textColor="@color/white"
             android:fontFamily="@font/montserrat_regular"
             android:textSize="16sp"
-            android:id="@+id/manage_team_btn"
-            android:paddingVertical="10dp"
-            android:text="Gérer les équipes"/>
+            android:id="@+id/theme_btn"
+            android:paddingVertical="15dp"
+            android:text="Thèmes"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/white"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:fontFamily="@font/montserrat_regular"
+            android:textSize="16sp"
+            android:id="@+id/disconnect_btn"
+            android:paddingVertical="15dp"
+            android:text="Déconnection"/>
 
         <View
             android:layout_width="match_parent"

@@ -57,10 +57,13 @@ class WarFragment : Fragment(R.layout.fragment_war) {
 
             viewModel.sharedHasTeam
                 .onEach {
-                    binding.noTeamLayout.isVisible = it == null
-                    binding.mainWarLayout.isVisible = it != null
-                    binding.currentTeamTv.text = it?.name
+                    binding.noTeamLayout.isVisible = !it
+                    binding.mainWarLayout.isVisible = it
                 }.launchIn(lifecycleScope)
+
+            viewModel.sharedTeamName
+                .onEach { binding.currentTeamTv.text = it }
+                .launchIn(lifecycleScope)
 
             viewModel.sharedCreateWar
                 .filter { findNavController().currentDestination?.id == R.id.homeFragment }
@@ -84,7 +87,7 @@ class WarFragment : Fragment(R.layout.fragment_war) {
 
             viewModel.sharedLastWars
                 .onEach {
-                    binding.lastWarLayout.isVisible = true
+                    binding.lastWarLayout.isVisible = it.isNotEmpty()
                     lastAdapter.addWars(it)
                 }.launchIn(lifecycleScope)
 

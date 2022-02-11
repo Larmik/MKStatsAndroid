@@ -20,7 +20,8 @@ import javax.inject.Inject
 class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface) : ViewModel() {
 
     private val _sharedTeam = MutableSharedFlow<Team?>()
-    private val _sharedHasTeam = MutableSharedFlow<Team?>()
+    private val _sharedHasTeam = MutableSharedFlow<Boolean>()
+    private val _sharedTeamName = MutableSharedFlow<String>()
     private val _sharedCreateWar = MutableSharedFlow<Unit>()
     private val _sharedCurrentWar = MutableSharedFlow<War?>()
     private val _sharedCurrentWarClick = MutableSharedFlow<War>()
@@ -30,6 +31,7 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
 
     val sharedTeam = _sharedTeam.asSharedFlow()
     val sharedHasTeam = _sharedHasTeam.asSharedFlow()
+    val sharedTeamName = _sharedTeamName.asSharedFlow()
     val sharedCreateWar = _sharedCreateWar.asSharedFlow()
     val sharedCurrentWar = _sharedCurrentWar.asSharedFlow()
     val sharedCurrentWarClick = _sharedCurrentWarClick.asSharedFlow()
@@ -43,13 +45,9 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
         var chosenTeam: String? = null
         var war: War? = null
 
-        flowOf(Unit)
-            .onEach {
-                delay(50)
-                preferencesRepository.currentTeam?.let {
-                    _sharedHasTeam.emit(it)
-                }
-            }.launchIn(viewModelScope)
+        firebaseRepository.listenToUsers()
+            .map{ it.singleOrNull{ user -> user.mid == preferencesRepository.currentUser?.mid}?.team != "-1" }
+            .bind(_sharedHasTeam, viewModelScope)
 
         onCodeTeam
             .onEach { codeTeam = it }
@@ -64,9 +62,23 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
             .flatMapLatest { firebaseRepository.writeUser(it) }
             .mapNotNull { chosenTeam }
             .flatMapLatest { firebaseRepository.getTeam(it) }
-            .onEach { preferencesRepository.currentTeam = it }
-            .onEach { _sharedHasTeam.emit(it) }
-            .launchIn(viewModelScope)
+            .onEach {
+                preferencesRepository.currentTeam = it
+                _sharedHasTeam.emit(true)
+            }
+            .flatMapLatest { firebaseRepository.getWars() }
+            .map { list ->
+                list.filter { war -> war.isOver && war.teamHost == preferencesRepository.currentTeam?.mid }
+                    .sortedBy{ it.createdDate }
+            }
+            .onEach { _sharedLastWars.emit(it) }
+            .mapNotNull { preferencesRepository.currentTeam?.name }
+            .bind(_sharedTeamName, viewModelScope)
+
+        flowOf(Unit)
+            .onEach { delay(50) }
+            .mapNotNull { preferencesRepository.currentTeam?.name }
+            .bind(_sharedTeamName, viewModelScope)
 
         onCreateWar.bind(_sharedCreateWar, viewModelScope)
 
@@ -92,7 +104,6 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
                 list.filter { war -> war.isOver && war.teamHost == preferencesRepository.currentTeam?.mid }
                     .sortedBy{ it.createdDate }
             }
-            .filterNot { it.isEmpty() }
             .bind(_sharedLastWars, viewModelScope)
 
         onWarClick.bind(_sharedGoToWar, viewModelScope)

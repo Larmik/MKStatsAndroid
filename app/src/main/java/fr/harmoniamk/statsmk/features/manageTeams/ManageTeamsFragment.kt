@@ -13,10 +13,12 @@ import fr.harmoniamk.statsmk.databinding.FragmentManageTeamsBinding
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.features.addWar.TeamListAdapter
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
+@FlowPreview
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class ManageTeamsFragment : Fragment(R.layout.fragment_manage_teams) {
@@ -28,7 +30,7 @@ class ManageTeamsFragment : Fragment(R.layout.fragment_manage_teams) {
         super.onViewCreated(view, savedInstanceState)
         val adapter = TeamListAdapter()
         binding.teamRv.adapter = adapter
-        viewModel.bind(binding.addTeamBtn.clicks())
+        viewModel.bind(binding.addTeamBtn.clicks(), binding.quitTeamBtn.clicks())
         viewModel.sharedTeams
             .onEach {
                 adapter.addTeams(it)
@@ -36,6 +38,14 @@ class ManageTeamsFragment : Fragment(R.layout.fragment_manage_teams) {
         viewModel.sharedAddTeam
             .filter { findNavController().currentDestination?.id == R.id.manageTeamsFragment }
             .onEach { findNavController().navigate(ManageTeamsFragmentDirections.addTeam()) }
+            .launchIn(lifecycleScope)
+
+        viewModel.sharedTeamQuit
+            .filter { findNavController().currentDestination?.id == R.id.manageTeamsFragment }
+            .onEach { findNavController().popBackStack() }
+            .launchIn(lifecycleScope)
+        viewModel.sharedCurrentTeamName
+            .onEach { binding.currentTeamTv.text = it }
             .launchIn(lifecycleScope)
     }
 }

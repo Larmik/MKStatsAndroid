@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        tools:visibility="gone"
+        android:visibility="gone"
         android:gravity="center"
         android:id="@+id/no_team_layout">
 
@@ -103,7 +103,6 @@
 
             <LinearLayout
                 android:visibility="gone"
-                tools:visibility="visible"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -205,7 +204,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:paddingTop="15dp"
-                tools:visibility="gone"
+                android:visibility="gone"
                 android:id="@+id/create_war_layout">
 
                 <TextView
@@ -230,7 +229,14 @@
                     android:id="@+id/create_war_btn"
                     android:fontFamily="@font/montserrat_bold"
                     android:text="Créer une war"
+                    android:layout_marginBottom="10dp"
                     android:gravity="center"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/white"/>
+
 
 
             </LinearLayout>

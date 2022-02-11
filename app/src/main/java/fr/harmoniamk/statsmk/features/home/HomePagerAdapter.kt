@@ -14,16 +14,16 @@ import kotlinx.coroutines.FlowPreview
 class HomePagerAdapter(val fa: FragmentActivity) : FragmentStateAdapter(fa) {
 
     fun getTabTitle(position: Int): String = fa.getString(when (position) {
-        1 -> R.string.tournament
-        0 -> R.string.team_war
+        0 -> R.string.tournament
+        1 -> R.string.team_war
         else -> R.string.settings
     })
 
     override fun getItemCount() = 3
 
     override fun createFragment(position: Int) = when (position) {
-        1 -> TournamentFragment()
-        0 -> WarFragment()
+        0 -> TournamentFragment()
+        1 -> WarFragment()
         else -> SettingsFragment()
     }
 }

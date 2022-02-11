@@ -61,6 +61,7 @@ class WarTrackResultFragment : Fragment(R.layout.fragment_result_war_track) {
 
         viewModel.sharedHost
             .onEach {
+                binding.waitingHostLayout.isVisible = false
                 binding.validateBtn.isVisible = true
             }.launchIn(lifecycleScope)
 
