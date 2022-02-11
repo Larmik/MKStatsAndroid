@@ -25,7 +25,6 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
     private val  _sharedBack = MutableSharedFlow<Unit>()
     private val  _sharedQuit = MutableSharedFlow<Unit>()
     private val  _sharedCancel = MutableSharedFlow<Unit>()
-    private val  _sharedWaitingPlayers = MutableSharedFlow<Unit>()
     private val _sharedSelectTrack = MutableSharedFlow<Unit>()
     private val _sharedGoToPos = MutableSharedFlow<WarTrack>()
     private val _sharedTracks = MutableSharedFlow<List<WarTrack>>()
@@ -36,7 +35,6 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
     val sharedBack = _sharedBack.asSharedFlow()
     val sharedQuit = _sharedQuit.asSharedFlow()
     val sharedCancel = _sharedCancel.asSharedFlow()
-    val sharedWaitingPlayers = _sharedWaitingPlayers.asSharedFlow()
     val sharedSelectTrack = _sharedSelectTrack.asSharedFlow()
     val sharedGoToPos = _sharedGoToPos.asSharedFlow()
     val sharedTracks = _sharedTracks.asSharedFlow()
@@ -79,12 +77,6 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
                 }
                 .launchIn(viewModelScope)
 
-            //TODO Chage size to 6 (78: isEmpty() -> size < 6)
-            firebaseRepository.listenToUsers()
-                .onEach {
-                if (it.filter { user -> user.currentWar == preferencesRepository.currentUser?.currentWar }.isEmpty())
-                    _sharedWaitingPlayers.emit(Unit)
-            }.launchIn(viewModelScope)
 
             firebaseRepository.getWarTracks()
                 .mapNotNull {list -> list.filter { track -> track.warId == preferencesRepository.currentUser?.currentWar } }

@@ -73,10 +73,6 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
             .onEach { findNavController().popBackStack() }
             .launchIn(lifecycleScope)
 
-        viewModel.sharedWaitingPlayers
-            .filter { findNavController().currentDestination?.id == R.id.currentWarFragment }
-            .onEach { findNavController().navigate(CurrentWarFragmentDirections.waitPlayers()) }
-            .launchIn(lifecycleScope)
 
         viewModel.sharedSelectTrack
             .filter { findNavController().currentDestination?.id == R.id.currentWarFragment }

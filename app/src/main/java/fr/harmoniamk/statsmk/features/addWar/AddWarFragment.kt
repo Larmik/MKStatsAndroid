@@ -1,4 +1,4 @@
-package fr.harmoniamk.statsmk.features.addWar.fragment
+package fr.harmoniamk.statsmk.features.addWar
 
 import android.os.Bundle
 import android.view.View
@@ -10,13 +10,9 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentAddWarBinding
-import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.clicks
-import fr.harmoniamk.statsmk.features.addWar.adapter.TeamListAdapter
-import fr.harmoniamk.statsmk.features.addWar.viewmodel.AddWarViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach

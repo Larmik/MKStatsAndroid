@@ -1,4 +1,4 @@
-package fr.harmoniamk.statsmk.features.addWar.viewmodel
+package fr.harmoniamk.statsmk.features.addWar
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

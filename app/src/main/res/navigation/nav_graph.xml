@@ -19,13 +19,6 @@
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right"/>
 
-        <action
-            android:id="@+id/go_to_waiting_players"
-            app:destination="@id/waitPlayersFragment"
-            app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right"/>
 
         <action
             android:id="@+id/back_to_welcome"
@@ -159,7 +152,7 @@
 
     <fragment
         android:id="@+id/addWarFragment"
-        android:name="fr.harmoniamk.statsmk.features.addWar.fragment.AddWarFragment"
+        android:name="fr.harmoniamk.statsmk.features.addWar.AddWarFragment"
         tools:layout="@layout/fragment_add_war"
         android:label="AddWarFragment"/>
     <fragment
@@ -282,45 +275,12 @@
 
     </fragment>
 
-    <fragment
-        android:id="@+id/waitPlayersFragment"
-        android:name="fr.harmoniamk.statsmk.features.addWar.fragment.WaitPlayersFragment"
-        tools:layout="@layout/fragment_wait_players"
-        android:label="WaitPlayersFragment">
-
-        <action
-            android:id="@+id/go_to_current"
-            app:destination="@id/currentWarFragment"
-            app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right"/>
-        <action
-            android:id="@+id/back_to_wars"
-            app:destination="@id/homeFragment"
-            app:popUpTo="@id/nav_graph"
-            app:popUpToInclusive="true"
-            app:enterAnim="@anim/enter_from_left"
-            app:exitAnim="@anim/exit_to_right"
-            app:popEnterAnim="@anim/enter_from_right"
-            app:popExitAnim="@anim/exit_to_left"/>
-
-    </fragment>
 
     <fragment
         android:id="@+id/currentWarFragment"
         android:name="fr.harmoniamk.statsmk.features.currentWar.CurrentWarFragment"
         tools:layout="@layout/fragment_current_war"
         android:label="CurrentWarFragment">
-        <action
-            android:id="@+id/wait_players"
-            app:destination="@id/waitPlayersFragment"
-            app:popUpTo="@id/nav_graph"
-            app:popUpToInclusive="true"
-            app:enterAnim="@anim/enter_from_left"
-            app:exitAnim="@anim/exit_to_right"
-            app:popEnterAnim="@anim/enter_from_right"
-            app:popExitAnim="@anim/exit_to_left"/>
         <action
             android:id="@+id/back_to_wars"
             app:destination="@id/homeFragment"
