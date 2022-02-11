@@ -1,12 +1,14 @@
-package fr.harmoniamk.statsmk.features.home.tournament
+package fr.harmoniamk.statsmk.features.home.war
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import fr.harmoniamk.statsmk.database.firebase.model.War
 import fr.harmoniamk.statsmk.database.room.model.Tournament
 import fr.harmoniamk.statsmk.databinding.LastTournamentItemBinding
 import fr.harmoniamk.statsmk.extension.clicks
+import fr.harmoniamk.statsmk.features.home.tournament.LastTournamentAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -17,29 +19,30 @@ import kotlinx.coroutines.flow.onEach
 import kotlin.coroutines.CoroutineContext
 
 @ExperimentalCoroutinesApi
-class LastTournamentAdapter(val items: MutableList<Tournament> = mutableListOf()) :
-    RecyclerView.Adapter<LastTournamentAdapter.BestTournamentViewHolder>(), CoroutineScope {
+class LastWarAdapter(val items: MutableList<War> = mutableListOf()) :
+    RecyclerView.Adapter<LastWarAdapter.LastWarViewHolder>(), CoroutineScope {
 
-    private val _sharedItemClick = MutableSharedFlow<Tournament>()
+    private val _sharedItemClick = MutableSharedFlow<War>()
     val sharedItemClick = _sharedItemClick.asSharedFlow()
 
-    class BestTournamentViewHolder(val binding: LastTournamentItemBinding) :
+    class LastWarViewHolder(val binding: LastTournamentItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(tournament: Tournament) {
-            binding.warTotal.isVisible = false
-            binding.tmTotal.isVisible = true
-            binding.nameTv.text = tournament.name
-            binding.totalScoreTv.text = tournament.points.toString()
-            binding.timeTv.text = tournament.createdDate.replace("-", "\n")
+        fun bind(war: War) {
+            binding.tmTotal.isVisible = false
+            binding.warTotal.isVisible = true
+            binding.nameTv.text = war.name
+            binding.totalWarScoreTv.text = war.displayedScore
+            binding.timeTv.text = war.createdDate?.replace("-", "\n")
+            binding.warDiff.text = war.displayedDiff
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = BestTournamentViewHolder(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = LastWarViewHolder(
         LastTournamentItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
     )
 
-    override fun onBindViewHolder(holder: BestTournamentViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: LastWarViewHolder, position: Int) {
         val item = items[position]
         holder.bind(item)
         holder.binding.root.clicks()
@@ -49,10 +52,10 @@ class LastTournamentAdapter(val items: MutableList<Tournament> = mutableListOf()
 
     override fun getItemCount() = items.size
 
-    fun addTournaments(tm: List<Tournament>) {
+    fun addWars(wars: List<War>) {
         notifyItemRangeRemoved(0, itemCount)
         items.clear()
-        items.addAll(tm)
+        items.addAll(wars)
         notifyItemRangeInserted(0, itemCount)
     }
 

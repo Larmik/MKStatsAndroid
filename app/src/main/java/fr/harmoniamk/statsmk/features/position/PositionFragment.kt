@@ -32,7 +32,6 @@ class PositionFragment : Fragment(R.layout.fragment_position) {
     private var tmId: Int? = null
     private var warTrackId: String? = null
     val dialog = QuitWarDialogFragment()
-    val dialogFragment = ProgressDialogFragment()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,7 +66,7 @@ class PositionFragment : Fragment(R.layout.fragment_position) {
             .filter { findNavController().currentDestination?.id == R.id.positionFragment }
             .onEach { when {
                 tmId != null -> findNavController().popBackStack()
-                warTrackId != null -> findNavController().navigate(PositionFragmentDirections.backToCurrentWar())
+                warTrackId != null -> findNavController().popBackStack()
             } }
             .launchIn(lifecycleScope)
 
@@ -82,16 +81,10 @@ class PositionFragment : Fragment(R.layout.fragment_position) {
 
         viewModel.sharedQuit
             .filter { findNavController().currentDestination?.id == R.id.positionFragment }
-            .onEach { findNavController().navigate(PositionFragmentDirections.backToWars()) }
+            .onEach { findNavController().popBackStack() }
             .launchIn(lifecycleScope)
 
-        viewModel.sharedWaitingDialog
-            .onEach {
-                when  {
-                    it && !dialogFragment.isAdded -> dialogFragment.show(childFragmentManager, null)
-                    !it && dialogFragment.isVisible -> dialogFragment.dismiss()
-                }
-            }.launchIn(lifecycleScope)
+
 
         viewModel.sharedGoToResult
             .filter { findNavController().currentDestination?.id == R.id.positionFragment }

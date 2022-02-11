@@ -1,5 +1,7 @@
 package fr.harmoniamk.statsmk.database.firebase.model
 
+import java.io.Serializable
+
 
 const val TOTAL_TRACKS = 12
 const val TOTAL_WAR_SCORE = 984
@@ -16,7 +18,7 @@ data class War(
     var trackPlayed: Int = 0,
     val createdDate: String? = null,
     var updatedDate: String? = null
-) {
+) : Serializable {
 
     val isOver = trackPlayed == TOTAL_TRACKS
 
@@ -31,4 +33,6 @@ data class War(
         }
     val scoreLabel: String
         get() = "Score: $scoreHost - $scoreOpponent"
+    val displayedAverage: String
+        get() = "${scoreHost/TOTAL_TRACKS}"
 }

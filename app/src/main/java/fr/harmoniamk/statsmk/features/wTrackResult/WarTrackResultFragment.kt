@@ -31,7 +31,8 @@ class WarTrackResultFragment : Fragment(R.layout.fragment_result_war_track) {
     private val viewModel: WarTrackResultViewModel by viewModels()
     private var warTrackId: String? = null
     private var track: Int? = null
-    private val dialog = QuitWarDialogFragment()
+    private val dialog =
+        QuitWarDialogFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -92,7 +93,7 @@ class WarTrackResultFragment : Fragment(R.layout.fragment_result_war_track) {
 
         viewModel.sharedQuit
             .filter { findNavController().currentDestination?.id == R.id.warTrackResultFragment }
-            .onEach { findNavController().navigate(WarTrackResultFragmentDirections.backToWars()) }
+            .onEach { findNavController().popBackStack() }
             .launchIn(lifecycleScope)
 
         viewModel.sharedBackToCurrent

@@ -10,10 +10,12 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentTrackListBinding
+import fr.harmoniamk.statsmk.extension.backPressedDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import fr.harmoniamk.statsmk.extension.onTextChanged
+import fr.harmoniamk.statsmk.features.quitWar.QuitWarDialogFragment
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.onEach
@@ -27,6 +29,7 @@ class TrackListFragment(val onTrack: MutableSharedFlow<Int>? = null) :
 
     private val binding: FragmentTrackListBinding by viewBinding()
     private val viewModel: TrackListViewModel by viewModels()
+    private val dialog = QuitWarDialogFragment()
 
     private var tmId : Int? = null
     private var warId: String? = null
@@ -41,7 +44,7 @@ class TrackListFragment(val onTrack: MutableSharedFlow<Int>? = null) :
         super.onViewCreated(view, savedInstanceState)
         val adapter = TrackListAdapter()
         binding.trackRv.adapter = adapter
-        viewModel.bind(tmId, warId, adapter.sharedClick, binding.searchEt.onTextChanged())
+        viewModel.bind(tmId, warId, adapter.sharedClick, binding.searchEt.onTextChanged(), requireActivity().backPressedDispatcher(viewLifecycleOwner), onBackDialog = dialog.sharedClose, onQuit = dialog.sharedWarLeft)
         viewModel.sharedSearchedItems
             .onEach { adapter.addTracks(it) }
             .launchIn(lifecycleScope)
@@ -58,6 +61,19 @@ class TrackListFragment(val onTrack: MutableSharedFlow<Int>? = null) :
             .onEach {
                 findNavController().navigate(TrackListFragmentDirections.enterPositions(track = it.trackIndex ?: -1, tmId = tmId ?: -1, warTrackId = it.mid))
             }
+            .launchIn(lifecycleScope)
+        viewModel.sharedBack
+            .onEach {
+                if (!dialog.isAdded) dialog.show(childFragmentManager, null)
+                viewModel.sharedCancel
+                    .filter { findNavController().currentDestination?.id == R.id.trackListFragment }
+                    .onEach { dialog.dismiss() }
+                    .launchIn(lifecycleScope)
+            }.launchIn(lifecycleScope)
+
+        viewModel.sharedQuit
+            .filter { findNavController().currentDestination?.id == R.id.trackListFragment }
+            .onEach { findNavController().popBackStack() }
             .launchIn(lifecycleScope)
 
     }

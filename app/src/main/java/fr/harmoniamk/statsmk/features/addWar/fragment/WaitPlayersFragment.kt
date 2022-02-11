@@ -49,7 +49,7 @@ class WaitPlayersFragment: Fragment(R.layout.fragment_wait_players) {
 
         viewModel.sharedQuit
             .filter { findNavController().currentDestination?.id == R.id.waitPlayersFragment }
-            .onEach { findNavController().navigate(WaitPlayersFragmentDirections.backToWars()) }
+            .onEach { findNavController().popBackStack() }
             .launchIn(lifecycleScope)
 
         viewModel.sharedWarName.onEach {

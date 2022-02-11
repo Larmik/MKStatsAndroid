@@ -11,6 +11,7 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.features.quitWar.QuitWarDialogFragment
 import fr.harmoniamk.statsmk.R
+import fr.harmoniamk.statsmk.database.firebase.model.War
 import fr.harmoniamk.statsmk.databinding.FragmentCurrentWarBinding
 import fr.harmoniamk.statsmk.extension.backPressedDispatcher
 import fr.harmoniamk.statsmk.extension.clicks
@@ -29,12 +30,18 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
     private val binding : FragmentCurrentWarBinding by viewBinding()
     private val viewModel: CurrentWarViewModel by viewModels()
     private var warId: String? = null
+    private var war: War? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        war = arguments?.get("war") as? War
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val adapter = CurrentWarTrackAdapter()
         binding.currentTracksRv.adapter = adapter
-        viewModel.bind(requireActivity().backPressedDispatcher(viewLifecycleOwner), binding.nextTrackBtn.clicks())
+        viewModel.bind(war, requireActivity().backPressedDispatcher(viewLifecycleOwner), binding.nextTrackBtn.clicks())
 
 
         viewModel.sharedCurrentWar
@@ -63,7 +70,7 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
 
         viewModel.sharedQuit
             .filter { findNavController().currentDestination?.id == R.id.currentWarFragment }
-            .onEach { findNavController().navigate(CurrentWarFragmentDirections.backToWars()) }
+            .onEach { findNavController().popBackStack() }
             .launchIn(lifecycleScope)
 
         viewModel.sharedWaitingPlayers

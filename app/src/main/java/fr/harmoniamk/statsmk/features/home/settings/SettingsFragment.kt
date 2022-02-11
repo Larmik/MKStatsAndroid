@@ -28,10 +28,15 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.bind(binding.logoutLayout.clicks())
+        viewModel.bind(binding.logoutLayout.clicks(), binding.manageTeamBtn.clicks())
         viewModel.sharedDisconnect
             .filter { findNavController().currentDestination?.id == R.id.homeFragment }
             .onEach { findNavController().navigate(HomeFragmentDirections.backToWelcome()) }
             .launchIn(lifecycleScope)
+        viewModel.sharedManageTeam
+            .filter { findNavController().currentDestination?.id == R.id.homeFragment }
+            .onEach { findNavController().navigate(HomeFragmentDirections.manageTeams()) }
+            .launchIn(lifecycleScope)
+
     }
 }

@@ -55,29 +55,73 @@
             android:layout_marginVertical="5dp"/>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_weight="1.5"
             android:layout_marginHorizontal="10dp"
             android:layout_height="match_parent"
             android:gravity="center"
             android:orientation="vertical">
 
-            <TextView
+            <RelativeLayout
                 android:layout_width="wrap_content"
-                android:fontFamily="@font/montserrat_regular"
-                android:layout_height="wrap_content"
-                android:text="Total"
-                android:textSize="13sp"
-                android:textColor="@color/black"
-                android:id="@+id/current_tm_tracks"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:textColor="@color/black"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:fontFamily="@font/orbitron_semibold"
-                tools:text="133"
-                android:id="@+id/total_score_tv" />
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    tools:visibility="gone"
+                    android:id="@+id/tm_total">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:fontFamily="@font/montserrat_regular"
+                        android:layout_height="wrap_content"
+                        android:text="Total"
+                        android:textSize="13sp"
+                        android:textColor="@color/black"
+                        android:id="@+id/current_tm_tracks"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:textColor="@color/black"
+                        android:layout_height="wrap_content"
+                        android:textSize="20sp"
+                        android:fontFamily="@font/orbitron_semibold"
+                        tools:text="133"
+                        android:id="@+id/total_score_tv" />
+
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:id="@+id/war_total">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:textColor="@color/black"
+                        android:layout_height="wrap_content"
+                        android:textSize="20sp"
+                        android:fontFamily="@font/orbitron_semibold"
+                        tools:text="505-479"
+                        android:id="@+id/total_war_score_tv" />
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:fontFamily="@font/orbitron_semibold"
+                        android:layout_height="wrap_content"
+                        android:text="+26"
+                        android:textSize="13sp"
+                        android:textColor="@color/black"
+                        android:id="@+id/war_diff"/>
+
+
+                </LinearLayout>
+
+
+            </RelativeLayout>
+
 
 
 

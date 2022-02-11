@@ -26,6 +26,7 @@ class QuitWarViewModel @Inject constructor(private val firebaseRepository: Fireb
         onBack.bind(_onDismiss, viewModelScope)
         onQuit
             .mapNotNull { preferencesRepository.currentUser?.apply { this.currentWar = "-1" } }
+            .onEach { preferencesRepository.currentUser = it }
             .flatMapLatest { firebaseRepository.writeUser(it) }
             .bind(_onWarQuit, viewModelScope)
     }

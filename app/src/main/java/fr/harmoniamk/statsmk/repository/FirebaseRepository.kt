@@ -24,6 +24,7 @@ interface FirebaseRepositoryInterface{
     fun writeWar(war: War): Flow<Unit>
     fun writeWarTrack(track: WarTrack): Flow<Unit>
     fun writeWarPosition(position: WarPosition): Flow<Unit>
+    fun writeTeam(team: Team): Flow<Unit>
 
     fun getUsers(): Flow<List<User>>
     fun getTeams(): Flow<List<Team>>
@@ -77,6 +78,11 @@ class FirebaseRepository @Inject constructor() : FirebaseRepositoryInterface {
 
     override fun writeWarPosition(position: WarPosition): Flow<Unit> = flow {
         database.child("warPositions").child(position.mid.toString()).setValue(position)
+        emit(Unit)
+    }
+
+    override fun writeTeam(team: Team): Flow<Unit> = flow {
+        database.child("teams").child(team.mid.toString()).setValue(team)
         emit(Unit)
     }
 
@@ -280,6 +286,7 @@ class FirebaseRepository @Inject constructor() : FirebaseRepositoryInterface {
                     scoreOpponent = it["scoreOpponent"].toString().toInt(),
                     teamHost = it["teamHost"].toString(),
                     scoreHost = it["scoreHost"].toString().toInt(),
+                    trackPlayed = it["trackPlayed"].toString().toInt(),
                     createdDate = it["createdDate"].toString(),
                     updatedDate = it["updatedDate"].toString()
 

@@ -25,6 +25,20 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/white"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:fontFamily="@font/montserrat_regular"
+            android:textSize="16sp"
+            android:id="@+id/manage_team_btn"
+            android:paddingVertical="10dp"
+            android:text="Gérer les équipes"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/white"/>
 
     </LinearLayout>
 

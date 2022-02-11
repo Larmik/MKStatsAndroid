@@ -28,12 +28,21 @@ class TrackListViewModel @Inject constructor(private val playedTrackRepository: 
     private val _sharedSearchedItems = MutableSharedFlow<List<Maps>>()
     private val _sharedGoToWarPos = MutableSharedFlow<WarTrack>()
     private val _sharedGoToTmPos = MutableSharedFlow<Int>()
+    private val _sharedBack = MutableSharedFlow<Unit>()
+    private val _sharedQuit = MutableSharedFlow<Unit>()
+    private val _sharedCancel = MutableSharedFlow<Unit>()
 
     val sharedSearchedItems = _sharedSearchedItems.asSharedFlow()
     val sharedGoToWarPos = _sharedGoToWarPos.asSharedFlow()
     val sharedGoToTmPos = _sharedGoToTmPos.asSharedFlow()
+    val sharedBack = _sharedBack.asSharedFlow()
+    val sharedQuit = _sharedQuit.asSharedFlow()
+    val sharedCancel = _sharedCancel.asSharedFlow()
 
-    fun bind(tournamentId: Int? = null, warId: String? = null, onTrackAdded: Flow<Int>, onSearch: Flow<String>) {
+
+    fun bind(tournamentId: Int? = null, warId: String? = null, onTrackAdded: Flow<Int>, onSearch: Flow<String>,  onBack: Flow<Unit>,
+             onBackDialog: Flow<Unit>,
+             onQuit: Flow<Unit>) {
         var chosenTrack: WarTrack? = null
 
         onSearch
@@ -62,6 +71,10 @@ class TrackListViewModel @Inject constructor(private val playedTrackRepository: 
                 }
                 .mapNotNull { chosenTrack }
                 .bind(_sharedGoToWarPos, viewModelScope)
+
+            onBackDialog.bind(_sharedCancel, viewModelScope)
+            onBack.bind(_sharedBack, viewModelScope)
+            onQuit.bind(_sharedQuit, viewModelScope)
         }
 
     }

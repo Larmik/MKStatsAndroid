@@ -15,14 +15,19 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsViewModel @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface) : ViewModel() {
 
-    private val _sharedDisconnect = MutableSharedFlow<Unit>()
-    val sharedDisconnect = _sharedDisconnect.asSharedFlow()
 
-    fun bind(onLogout: Flow<Unit>) {
+    private val _sharedDisconnect = MutableSharedFlow<Unit>()
+    private val _sharedManageTeam = MutableSharedFlow<Unit>()
+    val sharedDisconnect = _sharedDisconnect.asSharedFlow()
+    val sharedManageTeam = _sharedManageTeam.asSharedFlow()
+
+    fun bind(onLogout: Flow<Unit>, onManageTeam: Flow<Unit>) {
         onLogout.onEach {
             preferencesRepository.currentUser = null
             preferencesRepository.currentTeam = null
         }.bind(_sharedDisconnect, viewModelScope)
+        onManageTeam.bind(_sharedManageTeam, viewModelScope)
+
     }
 
 }

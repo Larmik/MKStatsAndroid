@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:padding="15dp"
+    android:background="@color/waluigi"
+    android:gravity="center"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_weight="4">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="10dp"
+            android:gravity="center"
+            android:fontFamily="@font/montserrat_regular"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:text="Veuillez saisir le nom de l'équipe"
+            android:layout_marginBottom="15dp" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:background="@drawable/rounded_bg"
+            android:layout_marginBottom="15dp"
+            android:gravity="center"
+            android:id="@+id/teamname_et"
+            android:hint="Nom"
+            android:backgroundTint="@color/white_alphaed"
+            android:layout_marginHorizontal="40dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:layout_weight="4">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="10dp"
+            android:layout_marginBottom="15dp"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:fontFamily="@font/montserrat_regular"
+            android:text="Veuillez saisir l'acronyme de l'équipe. Cela peut être un diminutif ou des initiales"
+            android:gravity="center"
+            android:layout_gravity="bottom"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:background="@drawable/rounded_bg"
+            android:layout_marginBottom="15dp"
+            android:id="@+id/shortname_et"
+            android:gravity="center"
+            android:hint="Acronyme"
+            android:backgroundTint="@color/white_alphaed"
+            android:layout_marginHorizontal="40dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:layout_weight="4">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="10dp"
+            android:layout_marginBottom="15dp"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:fontFamily="@font/montserrat_regular"
+            android:text="Veuillez saisir un code à 4 chiffres qui permettra à vos coéquipiers de vous rejoindre."
+            android:gravity="center"
+            android:layout_gravity="bottom"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:background="@drawable/rounded_bg"
+            android:layout_marginBottom="15dp"
+            android:id="@+id/code_et"
+            android:gravity="center"
+            android:inputType="numberPassword"
+            android:hint="Code"
+            android:backgroundTint="@color/white_alphaed"
+            android:layout_marginHorizontal="40dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:layout_weight="1">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="10dp"
+            android:background="@drawable/rounded_bg"
+            android:backgroundTint="@color/waluigi_second"
+            android:textColor="@color/white"
+            android:layout_marginBottom="10dp"
+            android:id="@+id/next_btn"
+            android:textSize="18sp"
+            android:text="Suivant"
+            android:textAllCaps="true"
+            android:gravity="center"
+            android:layout_gravity="bottom"/>
+
+
+
+    </LinearLayout>
+
+
+
+
+</LinearLayout>

@@ -59,6 +59,28 @@
 
         </action>
 
+        <action
+            android:id="@+id/manageTeams"
+            app:destination="@id/manageTeamsFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right"/>
+        <action
+            android:id="@+id/go_to_current_war"
+            app:destination="@id/currentWarFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right">
+            <argument
+                android:name="war"
+                app:argType="fr.harmoniamk.statsmk.database.firebase.model.War"
+                app:nullable="true"/>
+
+        </action>
+
+
     </fragment>
 
     <fragment
@@ -78,7 +100,7 @@
             app:destination="@id/positionFragment"
             app:enterAnim="@anim/enter_from_right"
             app:exitAnim="@anim/exit_to_left"
-            app:popUpTo="@id/nav_graph"
+            app:popUpTo="@id/trackListFragment"
             app:popUpToInclusive="true"
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right">
@@ -156,10 +178,12 @@
         <action
             android:id="@+id/back_to_current"
             app:destination="@id/currentWarFragment"
-            app:enterAnim="@anim/enter_from_left"
-            app:exitAnim="@anim/exit_to_right"
-            app:popEnterAnim="@anim/enter_from_right"
-            app:popExitAnim="@anim/exit_to_left"/>
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popUpTo="@id/warTrackResultFragment"
+            app:popUpToInclusive="true"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right"/>
 
     </fragment>
     <fragment
@@ -195,7 +219,7 @@
             app:destination="@id/warTrackResultFragment"
             app:enterAnim="@anim/enter_from_right"
             app:exitAnim="@anim/exit_to_left"
-            app:popUpTo="@id/nav_graph"
+            app:popUpTo="@id/positionFragment"
             app:popUpToInclusive="true"
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right">
@@ -216,6 +240,30 @@
         android:name="fr.harmoniamk.statsmk.features.editTrack.fragment.EditTrackFragment"
         tools:layout="@layout/fragment_edit_track"
         android:label="EditTrackFragment"/>
+    <fragment
+        android:id="@+id/addTeamFragment"
+        android:name="fr.harmoniamk.statsmk.features.manageTeams.AddTeamFragment"
+        tools:layout="@layout/fragment_add_team"
+        android:label="AddTeamFragment"/>
+
+    <fragment
+        android:id="@+id/manageTeamsFragment"
+        android:name="fr.harmoniamk.statsmk.features.manageTeams.ManageTeamsFragment"
+        tools:layout="@layout/fragment_manage_teams"
+        android:label="ManageTeamsFragment">
+
+
+        <action
+            android:id="@+id/add_team"
+            app:destination="@id/addTeamFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right"/>
+
+
+
+    </fragment>
 
 
     <fragment
@@ -288,6 +336,8 @@
             app:destination="@id/trackListFragment"
             app:enterAnim="@anim/enter_from_right"
             app:exitAnim="@anim/exit_to_left"
+            app:popUpTo="@id/currentWarFragment"
+            app:popUpToInclusive="true"
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right">
 
@@ -301,9 +351,9 @@
             android:id="@+id/enter_positions"
             app:destination="@id/positionFragment"
             app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popUpTo="@id/nav_graph"
+            app:popUpTo="@id/currentWarFragment"
             app:popUpToInclusive="true"
+            app:exitAnim="@anim/exit_to_left"
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right">
 

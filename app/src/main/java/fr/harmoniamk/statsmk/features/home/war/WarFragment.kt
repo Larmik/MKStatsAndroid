@@ -15,11 +15,9 @@ import fr.harmoniamk.statsmk.databinding.FragmentWarBinding
 import fr.harmoniamk.statsmk.extension.clicks
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import fr.harmoniamk.statsmk.extension.onTextChanged
 import fr.harmoniamk.statsmk.features.home.HomeFragmentDirections
-import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.*
 
 @FlowPreview
 @ExperimentalCoroutinesApi
@@ -31,49 +29,69 @@ class WarFragment : Fragment(R.layout.fragment_war) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.bind(
-            onCodeTeam = binding.teamCodeEt.onTextChanged(),
-            onTeamClick = binding.nextBtn.clicks(),
-            onCreateWar = binding.createWarBtn.clicks(),
-            onCurrentWarClick = binding.currentWarCard.clicks()
-        )
+        val bestAdapter = BestWarAdapter()
+        val lastAdapter = LastWarAdapter()
 
-        viewModel.sharedTeam
-            .onEach {
-                binding.nextBtn.visibility = View.INVISIBLE
-                it?.let {
-                    binding.nextBtn.visibility = View.VISIBLE
-                    binding.nextBtn.text = it.integrationLabel
+        lifecycleScope.launchWhenResumed {
+
+            binding.bestWarRv.adapter = bestAdapter
+            binding.lastWarRv.adapter = lastAdapter
+            viewModel.bind(
+                onCodeTeam = binding.teamCodeEt.onTextChanged(),
+                onTeamClick = binding.nextBtn.clicks(),
+                onCreateWar = binding.createWarBtn.clicks(),
+                onCurrentWarClick = binding.currentWarCard.clicks(),
+                onWarClick = flowOf(lastAdapter.sharedItemClick, bestAdapter.sharedItemClick).flattenMerge()
+            )
+
+            viewModel.sharedTeam
+                .onEach {
+                    binding.nextBtn.visibility = View.INVISIBLE
+                    it?.let {
+                        binding.nextBtn.visibility = View.VISIBLE
+                        binding.nextBtn.text = it.integrationLabel
+                    }
                 }
-            }
-            .launchIn(lifecycleScope)
+                .launchIn(lifecycleScope)
 
-        viewModel.sharedHasTeam
-            .onEach {
-                binding.noTeamLayout.isVisible = it == null
-                binding.mainWarLayout.isVisible = it != null
-                binding.currentTeamTv.text = it?.name
-            }.launchIn(lifecycleScope)
+            viewModel.sharedHasTeam
+                .onEach {
+                    binding.noTeamLayout.isVisible = it == null
+                    binding.mainWarLayout.isVisible = it != null
+                    binding.currentTeamTv.text = it?.name
+                }.launchIn(lifecycleScope)
 
-        viewModel.sharedCreateWar
-            .filter { findNavController().currentDestination?.id == R.id.homeFragment }
-            .onEach { findNavController().navigate(HomeFragmentDirections.createWar()) }
-            .launchIn(lifecycleScope)
+            viewModel.sharedCreateWar
+                .filter { findNavController().currentDestination?.id == R.id.homeFragment }
+                .onEach { findNavController().navigate(HomeFragmentDirections.createWar()) }
+                .launchIn(lifecycleScope)
 
-        viewModel.sharedCurrentWar
-            .onEach {
-                binding.createWarLayout.isVisible = false
-                binding.currentWarLayout.isVisible = true
-                binding.nameTv.text = it.name
-                binding.timeTv.text = it.createdDate
-                binding.currentWarRemaining.text = it.displayedState
-                binding.currentWarScore.text = it.scoreLabel
-            }.launchIn(lifecycleScope)
+            viewModel.sharedCurrentWar
+                .onEach {
+                    binding.createWarLayout.isVisible = it == null
+                    binding.currentWarLayout.isVisible = it != null
+                    binding.nameTv.text = it?.name
+                    binding.timeTv.text = it?.createdDate
+                    binding.currentWarRemaining.text = it?.displayedState
+                    binding.currentWarScore.text = it?.scoreLabel
+                }.launchIn(lifecycleScope)
 
-        viewModel.sharedCurrentWarClick
-            .filter { findNavController().currentDestination?.id == R.id.homeFragment }
-            .onEach { findNavController().navigate(HomeFragmentDirections.goToWaitingPlayers()) }
-            .launchIn(lifecycleScope)
+            viewModel.sharedCurrentWarClick
+                .filter { findNavController().currentDestination?.id == R.id.homeFragment }
+                .onEach { findNavController().navigate(HomeFragmentDirections.goToCurrentWar(null)) }
+                .launchIn(lifecycleScope)
+
+            viewModel.sharedLastWars
+                .onEach {
+                    binding.lastWarLayout.isVisible = true
+                    lastAdapter.addWars(it)
+                }.launchIn(lifecycleScope)
+
+            viewModel.sharedGoToWar
+                .filter { findNavController().currentDestination?.id == R.id.homeFragment }
+                .onEach { findNavController().navigate(HomeFragmentDirections.goToCurrentWar(it)) }
+                .launchIn(lifecycleScope)
+        }
 
     }
 

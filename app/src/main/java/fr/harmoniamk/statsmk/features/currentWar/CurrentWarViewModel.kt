@@ -41,20 +41,48 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
     val sharedGoToPos = _sharedGoToPos.asSharedFlow()
     val sharedTracks = _sharedTracks.asSharedFlow()
 
+    fun bind(war: War? = null, onBack: Flow<Unit>, onNextTrack: Flow<Unit>) {
+        firebaseRepository.getWarTracks()
+            .mapNotNull { list -> list.filter { track -> track.warId == war?.mid } }
+            .onEach { _sharedTracks.emit(it) }
+            .mapNotNull { war }
+            .onEach {
+                _sharedButtonVisible.emit(false)
+                _sharedWaitingVisible.emit(false)
+            }
+            .bind(_sharedCurrentWar, viewModelScope)
 
-    fun bind(onBack: Flow<Unit>, onNextTrack: Flow<Unit>) {
-        preferencesRepository.currentUser?.currentWar?.let { it ->
-            firebaseRepository.getWar(it)
+        preferencesRepository.currentUser?.currentWar?.takeIf { it != "-1" }?.let { it ->
+            val currentWar = firebaseRepository.getWar(it)
                 .filterNotNull()
-                .onEach { war ->
-                    _sharedCurrentWar.emit(war)
-                    _sharedButtonVisible.emit(war.playerHostId == preferencesRepository.currentUser?.mid && !war.isOver)
-                    _sharedWaitingVisible.emit(war.playerHostId != preferencesRepository.currentUser?.mid && !war.isOver)
+                .onEach { _sharedCurrentWar.emit(it) }
+                .shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
+
+            currentWar
+                .filterNot { it.isOver }
+                .onEach {
+                    _sharedButtonVisible.emit(it.playerHostId == preferencesRepository.currentUser?.mid)
+                    _sharedWaitingVisible.emit(it.playerHostId != preferencesRepository.currentUser?.mid)
+                    onBack.bind(_sharedBack, viewModelScope)
                 }.launchIn(viewModelScope)
 
+            currentWar
+                .filter { it.isOver }
+                .onEach {
+                    _sharedButtonVisible.emit(false)
+                    _sharedWaitingVisible.emit(false)
+                    onBack
+                        .mapNotNull { preferencesRepository.currentUser?.apply { this.currentWar = "-1" } }
+                        .onEach { preferencesRepository.currentUser = it }
+                        .flatMapLatest { firebaseRepository.writeUser(it) }
+                        .bind(_sharedQuit, viewModelScope)
+                }
+                .launchIn(viewModelScope)
+
+            //TODO Chage size to 6 (78: isEmpty() -> size < 6)
             firebaseRepository.listenToUsers()
                 .onEach {
-                if (it.filter { user -> user.currentWar == preferencesRepository.currentUser?.currentWar }.size < 1)
+                if (it.filter { user -> user.currentWar == preferencesRepository.currentUser?.currentWar }.isEmpty())
                     _sharedWaitingPlayers.emit(Unit)
             }.launchIn(viewModelScope)
 
@@ -62,22 +90,22 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
                 .mapNotNull {list -> list.filter { track -> track.warId == preferencesRepository.currentUser?.currentWar } }
                 .bind(_sharedTracks, viewModelScope)
 
-            onBack.bind(_sharedBack, viewModelScope)
+            firebaseRepository.listenToWarTracks()
+                .mapNotNull {
+                    it.lastOrNull().takeIf { track -> !track?.isOver.isTrue && track?.warId == preferencesRepository.currentUser?.currentWar }
+                }
+                .bind(_sharedGoToPos, viewModelScope)
+
             onNextTrack.bind(_sharedSelectTrack, viewModelScope)
-
         }
-
-        firebaseRepository.listenToWarTracks()
-            .mapNotNull {
-                it.lastOrNull().takeIf { track -> !track?.isOver.isTrue && track?.warId == preferencesRepository.currentUser?.currentWar }
-            }
-            .bind(_sharedGoToPos, viewModelScope)
-
     }
 
-
     fun bindDialog(onQuit: Flow<Unit>, onBack: Flow<Unit>) {
-        onQuit.bind(_sharedQuit, viewModelScope)
+        onQuit
+            .mapNotNull { preferencesRepository.currentUser?.apply { this.currentWar = "-1" } }
+            .onEach { preferencesRepository.currentUser = it }
+            .flatMapLatest { firebaseRepository.writeUser(it) }
+            .bind(_sharedQuit, viewModelScope)
         onBack.bind(_sharedCancel, viewModelScope)
     }
 

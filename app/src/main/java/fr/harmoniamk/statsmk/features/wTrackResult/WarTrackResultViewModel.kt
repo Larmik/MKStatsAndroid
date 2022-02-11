@@ -59,19 +59,19 @@ class WarTrackResultViewModel @Inject constructor(private val firebaseRepository
             //Mock
             positionListener
                 .filter { it.size == 1 }
-                .onEach { delay(500) }
+                .onEach { delay(50) }
                 .map { WarPosition(mid = System.currentTimeMillis().toString(), warTrackId = warTrackId, playerId = "NSD", position = 6) }
                 .flatMapLatest { firebaseRepository.writeWarPosition(it) }
-                .onEach { delay(500) }
+                .onEach { delay(50) }
                 .map { WarPosition(mid = System.currentTimeMillis().toString(), warTrackId = warTrackId, playerId = "RemDtz", position = 4) }
                 .flatMapLatest { firebaseRepository.writeWarPosition(it) }
-                .onEach { delay(500) }
+                .onEach { delay(50) }
                 .map { WarPosition(mid = System.currentTimeMillis().toString(), warTrackId = warTrackId, playerId = "Square", position = 5) }
                 .flatMapLatest { firebaseRepository.writeWarPosition(it) }
-                .onEach { delay(500) }
+                .onEach { delay(50) }
                 .map { WarPosition(mid = System.currentTimeMillis().toString(), warTrackId = warTrackId, playerId = "Guyal", position = 7) }
                 .flatMapLatest { firebaseRepository.writeWarPosition(it) }
-                .onEach { delay(500) }
+                .onEach { delay(50) }
                 .map { WarPosition(mid = System.currentTimeMillis().toString(), warTrackId = warTrackId, playerId = "Nulls", position = 8) }
                 .flatMapLatest { firebaseRepository.writeWarPosition(it) }
                 .launchIn(viewModelScope)
@@ -109,6 +109,8 @@ class WarTrackResultViewModel @Inject constructor(private val firebaseRepository
                 }
                 .flatMapLatest { firebaseRepository.writeWar(it) }
                 .launchIn(viewModelScope)
+
+
 
             firebaseRepository.listenToWarTracks()
                 .mapNotNull {

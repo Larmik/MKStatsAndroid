@@ -32,14 +32,12 @@ class PositionViewModel @Inject constructor(
     private val _sharedBack = MutableSharedFlow<Unit>()
     private val _sharedQuit = MutableSharedFlow<Unit>()
     private val _sharedCancel = MutableSharedFlow<Unit>()
-    private val _sharedWaitingDialog = MutableSharedFlow<Boolean>()
     private val _sharedGoToResult = MutableSharedFlow<String>()
 
     val validateTrack = _validateTrack.asSharedFlow()
     val sharedBack = _sharedBack.asSharedFlow()
     val sharedQuit = _sharedQuit.asSharedFlow()
     val sharedCancel = _sharedCancel.asSharedFlow()
-    val sharedWaitingDialog = _sharedWaitingDialog.asSharedFlow()
     val sharedGoToResult = _sharedGoToResult.asSharedFlow()
 
 
@@ -94,17 +92,13 @@ class PositionViewModel @Inject constructor(
 
         warTrackId?.let { id ->
             onBack.bind(_sharedBack, viewModelScope)
-            firebaseRepository.listenToUsers()
-                .mapNotNull { it.filter { user -> user.currentWar == preferencesRepository.currentUser?.currentWar }.size != 2 }
-                .bind(_sharedWaitingDialog, viewModelScope)
+
             _sharedPos
                 .map {
                     WarPosition(mid = System.currentTimeMillis().toString(), warTrackId = id, position = it, playerId = preferencesRepository.currentUser?.name)
                 }
                 .flatMapLatest { firebaseRepository.writeWarPosition(it) }
-                .mapNotNull {
-                    id
-                }
+                .mapNotNull { id }
                 .bind(_sharedGoToResult, viewModelScope)
 
             onQuit.bind(_sharedQuit, viewModelScope)
