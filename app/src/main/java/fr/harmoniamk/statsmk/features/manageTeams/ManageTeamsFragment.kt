@@ -2,6 +2,7 @@ package fr.harmoniamk.statsmk.features.manageTeams
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -45,7 +46,10 @@ class ManageTeamsFragment : Fragment(R.layout.fragment_manage_teams) {
             .onEach { findNavController().popBackStack() }
             .launchIn(lifecycleScope)
         viewModel.sharedCurrentTeamName
-            .onEach { binding.currentTeamTv.text = it }
+            .onEach {
+                binding.currentTeamLayout.isVisible = true
+                binding.currentTeamTv.text = it
+            }
             .launchIn(lifecycleScope)
     }
 }

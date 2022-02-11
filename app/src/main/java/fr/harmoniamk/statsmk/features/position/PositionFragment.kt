@@ -2,6 +2,7 @@ package fr.harmoniamk.statsmk.features.position
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -31,8 +32,7 @@ class PositionFragment : Fragment(R.layout.fragment_position) {
     private var track: Int? = null
     private var tmId: Int? = null
     private var warTrackId: String? = null
-    val dialog = QuitWarDialogFragment()
-
+    private val dialog = QuitWarDialogFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,8 +40,17 @@ class PositionFragment : Fragment(R.layout.fragment_position) {
         track = arguments?.getInt("track")
         warTrackId = arguments?.getString("warTrackId")
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        track?.let {
+            val map = Maps.values()[it]
+            binding.trackIv.clipToOutline = true
+            binding.trackIv.setImageResource(map.picture)
+            binding.cupIv.setImageResource(map.cup.picture)
+            binding.shortname.text = map.name
+            binding.name.setText(map.label)
+        }
         viewModel.bind(
             tournamentId = tmId,
             warTrackId = warTrackId,
@@ -60,8 +69,8 @@ class PositionFragment : Fragment(R.layout.fragment_position) {
             onPos12 = binding.pos12.clicks(),
             onBack = requireActivity().backPressedDispatcher(viewLifecycleOwner),
             onBackDialog = dialog.sharedClose,
-            onQuit = dialog.sharedWarLeft
-        )
+            onQuit = dialog.sharedWarLeft)
+
         viewModel.validateTrack
             .filter { findNavController().currentDestination?.id == R.id.positionFragment }
             .onEach { when {
@@ -84,22 +93,46 @@ class PositionFragment : Fragment(R.layout.fragment_position) {
             .onEach { findNavController().popBackStack() }
             .launchIn(lifecycleScope)
 
-
-
         viewModel.sharedGoToResult
             .filter { findNavController().currentDestination?.id == R.id.positionFragment }
             .onEach { findNavController().navigate(PositionFragmentDirections.goToResult(it, track ?: -1)) }
             .launchIn(lifecycleScope)
-        track?.let {
-            val map = Maps.values()[it]
-            binding.trackIv.clipToOutline = true
-            binding.trackIv.setImageResource(map.picture)
-            binding.cupIv.setImageResource(map.cup.picture)
-            binding.shortname.text = map.name
-            binding.name.setText(map.label)
 
-        }
+        viewModel.sharedSelectedPositions
+            .onEach {
+                showAllPositions()
+                it.forEach { pos -> hidePosition(pos) }
+            }.launchIn(lifecycleScope)
+    }
 
+    private fun showAllPositions() {
+        binding.pos1.isVisible = true
+        binding.pos2.isVisible = true
+        binding.pos3.isVisible = true
+        binding.pos4.isVisible = true
+        binding.pos5.isVisible = true
+        binding.pos6.isVisible = true
+        binding.pos7.isVisible = true
+        binding.pos8.isVisible = true
+        binding.pos9.isVisible = true
+        binding.pos10.isVisible = true
+        binding.pos11.isVisible = true
+        binding.pos12.isVisible = true
+    }
 
+    private fun hidePosition(position: Int) = when (position) {
+        1 -> binding.pos1.visibility = View.INVISIBLE
+        2 -> binding.pos2.visibility = View.INVISIBLE
+        3 -> binding.pos3.visibility = View.INVISIBLE
+        4 -> binding.pos4.visibility = View.INVISIBLE
+        5 -> binding.pos5.visibility = View.INVISIBLE
+        6 -> binding.pos6.visibility = View.INVISIBLE
+        7 -> binding.pos7.visibility = View.INVISIBLE
+        8 -> binding.pos8.visibility = View.INVISIBLE
+        9 -> binding.pos9.visibility = View.INVISIBLE
+        10 -> binding.pos10.visibility = View.INVISIBLE
+        11 -> binding.pos11.visibility = View.INVISIBLE
+        12 -> binding.pos12.visibility = View.INVISIBLE
+        else -> {}
     }
 }

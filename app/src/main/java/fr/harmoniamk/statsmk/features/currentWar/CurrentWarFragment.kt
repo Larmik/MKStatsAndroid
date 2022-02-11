@@ -11,16 +11,14 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.features.quitWar.QuitWarDialogFragment
 import fr.harmoniamk.statsmk.R
+import fr.harmoniamk.statsmk.database.firebase.model.TOTAL_TRACKS
 import fr.harmoniamk.statsmk.database.firebase.model.War
 import fr.harmoniamk.statsmk.databinding.FragmentCurrentWarBinding
 import fr.harmoniamk.statsmk.extension.backPressedDispatcher
 import fr.harmoniamk.statsmk.extension.clicks
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.mapNotNull
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 
 @FlowPreview
 @ExperimentalCoroutinesApi
@@ -42,7 +40,6 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
         val adapter = CurrentWarTrackAdapter()
         binding.currentTracksRv.adapter = adapter
         viewModel.bind(war, requireActivity().backPressedDispatcher(viewLifecycleOwner), binding.nextTrackBtn.clicks())
-
 
         viewModel.sharedCurrentWar
             .onEach {
@@ -73,7 +70,6 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
             .onEach { findNavController().popBackStack() }
             .launchIn(lifecycleScope)
 
-
         viewModel.sharedSelectTrack
             .filter { findNavController().currentDestination?.id == R.id.currentWarFragment }
             .mapNotNull { warId }
@@ -92,16 +88,16 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
         viewModel.sharedTracks
             .onEach {
                 binding.playedLabel.isVisible = it.isNotEmpty()
+                binding.connectedPlayers.isVisible = it.size < TOTAL_TRACKS
                 adapter.addTracks(it)
             }
             .launchIn(lifecycleScope)
 
         viewModel.sharedPlayersConnected
-            .onEach { binding.connectedPlayers.text = "Joueurs connectés: $it/6" }
+            .onEach {
+                binding.connectedPlayers.text = "Joueurs connectés: $it/6"
+            }
             .launchIn(lifecycleScope)
-
-
-
     }
 
 }

@@ -2,6 +2,7 @@ package fr.harmoniamk.statsmk.features.addWar
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -44,6 +45,11 @@ class AddWarFragment : Fragment(R.layout.fragment_add_war) {
             .filter { findNavController().currentDestination?.id == R.id.addWarFragment }
             .onEach { findNavController().popBackStack() }
             .launchIn(lifecycleScope)
+
+        viewModel.sharedAlreadyCreated
+            .onEach {
+                Toast.makeText(requireContext(), "Une war a déjà été créée, retournez sur l'écran précédent pour y accéder.", Toast.LENGTH_SHORT).show()
+            }.launchIn(lifecycleScope)
     }
 
 }

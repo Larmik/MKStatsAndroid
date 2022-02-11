@@ -23,10 +23,12 @@ class AddWarViewModel @Inject constructor(private val firebaseRepository: Fireba
     private val _sharedTeams = MutableSharedFlow<List<Team>>()
     private val _sharedStarted = MutableSharedFlow<Unit>()
     private val _sharedTeamSelected = MutableSharedFlow<String>()
+    private val _sharedAlreadyCreated = MutableSharedFlow<Unit>()
 
     val sharedTeams = _sharedTeams.asSharedFlow()
     val sharedStarted = _sharedStarted.asSharedFlow()
     val sharedTeamSelected = _sharedTeamSelected.asSharedFlow()
+    val sharedAlreadyCreated = _sharedAlreadyCreated.asSharedFlow()
 
     fun bind(onTeamClick: Flow<Team>, onCreateWar: Flow<Unit>) {
         val date = SimpleDateFormat("dd/MM/yyyy - HH'h'mm", Locale.FRANCE).format(Date())
@@ -43,7 +45,13 @@ class AddWarViewModel @Inject constructor(private val firebaseRepository: Fireba
             _sharedTeamSelected.emit("Démarrer $warName" )
         }.launchIn(viewModelScope)
 
-        onCreateWar
+        val createWar = onCreateWar
+            .flatMapLatest { firebaseRepository.getWars() }
+            .map { it.singleOrNull { war -> !war.isOver && war.teamHost == preferencesRepository.currentTeam?.mid} }
+            .shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
+
+        createWar
+            .filter { it == null}
             .mapNotNull { chosenOpponent?.mid }
             .map {
                 val war = War(
@@ -59,5 +67,10 @@ class AddWarViewModel @Inject constructor(private val firebaseRepository: Fireba
             }
             .flatMapLatest { firebaseRepository.writeWar(it) }
             .bind(_sharedStarted, viewModelScope)
+
+        createWar
+            .filter { it != null }
+            .map {  }
+            .bind(_sharedAlreadyCreated, viewModelScope)
     }
 }

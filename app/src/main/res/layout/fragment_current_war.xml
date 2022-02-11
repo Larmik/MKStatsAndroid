@@ -183,7 +183,6 @@
         android:layout_height="wrap_content"
         android:paddingVertical="2dp"
         android:id="@+id/connected_players"
-        android:text="Joueurs connectés : 2/6"
         android:layout_marginTop="15dp"
         android:textColor="@color/white"
         android:fontFamily="@font/montserrat_regular"

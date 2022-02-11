@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.database.firebase.model.WarPosition
-import fr.harmoniamk.statsmk.database.firebase.model.WarTrack
 import fr.harmoniamk.statsmk.database.room.model.PlayedTrack
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
@@ -27,19 +26,19 @@ class PositionViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _sharedPos = MutableSharedFlow<Int>()
-
     private val _validateTrack = MutableSharedFlow<Unit>()
     private val _sharedBack = MutableSharedFlow<Unit>()
     private val _sharedQuit = MutableSharedFlow<Unit>()
     private val _sharedCancel = MutableSharedFlow<Unit>()
     private val _sharedGoToResult = MutableSharedFlow<String>()
+    private val _sharedSelectedPositions = MutableSharedFlow<List<Int>>()
 
     val validateTrack = _validateTrack.asSharedFlow()
     val sharedBack = _sharedBack.asSharedFlow()
     val sharedQuit = _sharedQuit.asSharedFlow()
     val sharedCancel = _sharedCancel.asSharedFlow()
     val sharedGoToResult = _sharedGoToResult.asSharedFlow()
-
+    val sharedSelectedPositions = _sharedSelectedPositions.asSharedFlow()
 
     fun bind(
         tournamentId: Int? = null, warTrackId: String? = null, chosenTrack: Int,
@@ -60,7 +59,6 @@ class PositionViewModel @Inject constructor(
         onQuit: Flow<Unit>
     ) {
 
-
         onPos1.onEach { _sharedPos.emit(1) }.launchIn(viewModelScope)
         onPos2.onEach { _sharedPos.emit(2) }.launchIn(viewModelScope)
         onPos3.onEach { _sharedPos.emit(3) }.launchIn(viewModelScope)
@@ -75,7 +73,6 @@ class PositionViewModel @Inject constructor(
         onPos12.onEach { _sharedPos.emit(12) }.launchIn(viewModelScope)
 
         tournamentId?.let { id ->
-
             _sharedPos
                 .map { PlayedTrack(trackIndex = chosenTrack, position = it, tmId = id) }
                 .flatMapLatest { playedTrackRepository.insert(it) }
@@ -94,18 +91,17 @@ class PositionViewModel @Inject constructor(
             onBack.bind(_sharedBack, viewModelScope)
 
             _sharedPos
-                .map {
-                    WarPosition(mid = System.currentTimeMillis().toString(), warTrackId = id, position = it, playerId = preferencesRepository.currentUser?.name)
-                }
+                .map { WarPosition(mid = System.currentTimeMillis().toString(), warTrackId = id, position = it, playerId = preferencesRepository.currentUser?.name) }
                 .flatMapLatest { firebaseRepository.writeWarPosition(it) }
                 .mapNotNull { id }
                 .bind(_sharedGoToResult, viewModelScope)
 
+            firebaseRepository.listenToWarPositions()
+                .mapNotNull { it.filter { position -> position.warTrackId == id }.mapNotNull { warPosition -> warPosition.position } }
+                .bind(_sharedSelectedPositions, viewModelScope)
+
             onQuit.bind(_sharedQuit, viewModelScope)
         }
         onBackDialog.bind(_sharedCancel, viewModelScope)
-
-
     }
-
 }
