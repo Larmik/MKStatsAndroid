@@ -6,6 +6,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.database.firebase.model.Team
 import fr.harmoniamk.statsmk.database.firebase.model.War
 import fr.harmoniamk.statsmk.extension.bind
+import fr.harmoniamk.statsmk.extension.getCurrent
+import fr.harmoniamk.statsmk.extension.getLasts
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -45,6 +47,22 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
         var chosenTeam: String? = null
         var war: War? = null
 
+        val warsFlow = flowOf(firebaseRepository.listenToWars(), firebaseRepository.getWars())
+            .flattenMerge()
+            .shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
+
+        warsFlow
+            .map { war = it.getCurrent(preferencesRepository.currentTeam?.mid); war }
+            .bind(_sharedCurrentWar, viewModelScope)
+
+        warsFlow
+            .map { it.getLasts(preferencesRepository.currentTeam?.mid) }
+            .bind(_sharedLastWars, viewModelScope)
+
+        warsFlow
+            .mapNotNull { preferencesRepository.currentTeam?.name }
+            .bind(_sharedTeamName, viewModelScope)
+
         firebaseRepository.listenToUsers()
             .map{ it.singleOrNull{ user -> user.mid == preferencesRepository.currentUser?.mid}?.team != "-1" }
             .bind(_sharedHasTeam, viewModelScope)
@@ -63,34 +81,13 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
             .mapNotNull { chosenTeam }
             .flatMapLatest { firebaseRepository.getTeam(it) }
             .onEach {
+                val wars = firebaseRepository.getWars().first()
                 preferencesRepository.currentTeam = it
                 _sharedHasTeam.emit(true)
-            }
-            .flatMapLatest { firebaseRepository.getWars() }
-            .map { list ->
-                list.filter { war -> war.isOver && war.teamHost == preferencesRepository.currentTeam?.mid }
-                    .sortedBy{ it.createdDate }
-            }
-            .onEach { _sharedLastWars.emit(it) }
-            .mapNotNull { preferencesRepository.currentTeam?.name }
-            .bind(_sharedTeamName, viewModelScope)
-
-        flowOf(Unit)
-            .onEach { delay(50) }
-            .mapNotNull { preferencesRepository.currentTeam?.name }
-            .bind(_sharedTeamName, viewModelScope)
-
-        onCreateWar.bind(_sharedCreateWar, viewModelScope)
-
-        val wars =  flowOf(firebaseRepository.listenToWars(), firebaseRepository.getWars())
-            .flattenMerge().shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
-
-       wars.map {
-                it.singleOrNull {
-                        war -> !war.isOver && war.teamHost == preferencesRepository.currentTeam?.mid }
-            }
-            .onEach { war = it }
-            .bind(_sharedCurrentWar, viewModelScope)
+                _sharedTeamName.emit(preferencesRepository.currentTeam?.name ?: "")
+                _sharedLastWars.emit(wars.getLasts(preferencesRepository.currentTeam?.mid))
+                _sharedCurrentWar.emit(wars.getCurrent(preferencesRepository.currentTeam?.mid))
+            }.launchIn(viewModelScope)
 
         onCurrentWarClick
             .mapNotNull { preferencesRepository.currentUser?.apply { this.currentWar = war?.mid } }
@@ -99,14 +96,8 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
             .mapNotNull { war }
             .bind(_sharedCurrentWarClick, viewModelScope)
 
-        wars
-            .map { list ->
-                list.filter { war -> war.isOver && war.teamHost == preferencesRepository.currentTeam?.mid }
-                    .sortedBy{ it.createdDate }
-            }
-            .bind(_sharedLastWars, viewModelScope)
-
         onWarClick.bind(_sharedGoToWar, viewModelScope)
+        onCreateWar.bind(_sharedCreateWar, viewModelScope)
     }
 
 }

@@ -1,5 +1,8 @@
 package fr.harmoniamk.statsmk.repository
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.provider.Settings.Secure
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
@@ -9,6 +12,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.android.qualifiers.ApplicationContext
 import fr.harmoniamk.statsmk.database.firebase.model.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -35,7 +39,6 @@ interface FirebaseRepositoryInterface{
     fun getTeam(id: String): Flow<Team?>
     fun getWar(id: String): Flow<War?>
     fun getWarTrack(id: String): Flow<WarTrack?>
-    fun getUser(id: String): Flow<User?>
 
     fun listenToUsers(): Flow<List<User>>
     fun listenToTeams(): Flow<List<Team>>
@@ -57,12 +60,15 @@ interface FirebaseRepositoryModule {
 
 @FlowPreview
 @ExperimentalCoroutinesApi
-class FirebaseRepository @Inject constructor() : FirebaseRepositoryInterface {
+class FirebaseRepository @Inject constructor(@ApplicationContext private val context: Context) : FirebaseRepositoryInterface {
 
+    @SuppressLint("HardwareIds")
+    private val deviceId = Secure.getString(context.contentResolver, Secure.ANDROID_ID)
     private val database  = Firebase.database.reference
 
     override fun writeUser(user: User) = flow {
-        database.child("users").child(user.mid.toString()).setValue(user)
+        val authUser = user.apply { this.accessCode = "${this.accessCode}-$deviceId" }
+        database.child("users").child(authUser.mid.toString()).setValue(authUser)
         emit(Unit)
     }
 
@@ -114,7 +120,7 @@ class FirebaseRepository @Inject constructor() : FirebaseRepositoryInterface {
                 .map { User(
                     mid = it["mid"].toString(),
                     name = it["name"].toString(),
-                    accessCode = it["accessCode"].toString(),
+                    accessCode = it["accessCode"].toString().replace("-$deviceId", ""),
                     team = it["team"].toString()
                 ) }
             if (isActive) offer(users)
@@ -241,20 +247,6 @@ class FirebaseRepository @Inject constructor() : FirebaseRepositoryInterface {
         awaitClose {  }
     }
 
-    override fun getUser(id: String): Flow<User?> = callbackFlow {
-        database.child("users").child(id).get().addOnSuccessListener { snapshot ->
-            val map = (snapshot.value as? Map<*,*>)
-            if (isActive) offer(
-                if (map == null) null
-                else User(
-                    mid = map["mid"].toString(),
-                    name = map["name"].toString(),
-                    accessCode = map["accessCode"].toString(),
-                    team = map["team"].toString()
-            ))
-        }
-        awaitClose {  }
-    }
 
     override fun listenToTeams(): Flow<List<Team>> = callbackFlow {
         val postListener = object : ValueEventListener {
