@@ -57,7 +57,7 @@ class WarTrackResultViewModel @Inject constructor(private val firebaseRepository
                 _sharedWaitingVisibility.emit(true)}.launchIn(viewModelScope)
 
             //Mock
-            positionListener
+          /*  positionListener
                 .filter { it.size == 1 }
                 .onEach { delay(50) }
                 .map { WarPosition(mid = System.currentTimeMillis().toString(), warTrackId = warTrackId, playerId = "NSD", position = 6) }
@@ -74,7 +74,7 @@ class WarTrackResultViewModel @Inject constructor(private val firebaseRepository
                 .onEach { delay(50) }
                 .map { WarPosition(mid = System.currentTimeMillis().toString(), warTrackId = warTrackId, playerId = "Nulls", position = 8) }
                 .flatMapLatest { firebaseRepository.writeWarPosition(it) }
-                .launchIn(viewModelScope)
+                .launchIn(viewModelScope)*/
 
             positionListener
                 .filter { it.size == 6  && !hasEmitted}

@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.database.firebase.model.Team
 import fr.harmoniamk.statsmk.database.firebase.model.War
+import fr.harmoniamk.statsmk.database.room.model.Tournament
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.getCurrent
 import fr.harmoniamk.statsmk.extension.getLasts
@@ -58,6 +59,10 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
         warsFlow
             .map { it.getLasts(preferencesRepository.currentTeam?.mid) }
             .bind(_sharedLastWars, viewModelScope)
+
+        warsFlow
+            .mapNotNull { it.sortedWith(compareBy<War> { it.scoreHost }.thenBy { it.displayedAverage.toInt() }).reversed().subList(0, 3) }
+            .bind(_sharedBestWars, viewModelScope)
 
         warsFlow
             .mapNotNull { preferencesRepository.currentTeam?.name }

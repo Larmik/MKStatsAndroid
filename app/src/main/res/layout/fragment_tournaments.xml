@@ -12,112 +12,166 @@
         android:layout_height="0dp"
         android:orientation="vertical"
         android:layout_weight="1">
-        <LinearLayout
-            android:visibility="gone"
-            tools:visibility="visible"
+
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingTop="15dp"
-            android:id="@+id/current_tm_layout">
+            android:layout_height="wrap_content">
 
-            <TextView
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/current_tm_layout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:fontFamily="@font/roboto"
-                android:textSize="20sp"
-                android:text="Tournoi en cours :"/>
+                android:orientation="vertical"
+                android:paddingTop="15dp"
+                android:visibility="gone">
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/current_tm_card"
-                android:layout_width="match_parent"
-                android:layout_height="80dp"
-                app:cardCornerRadius="2dp"
-                app:cardBackgroundColor="@color/waluigi_second"
-                android:layout_marginVertical="10dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/roboto"
+                    android:text="Tournoi en cours :"
+                    android:textColor="@color/white"
+                    android:textSize="20sp" />
 
-                <LinearLayout
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/current_tm_card"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal">
+                    android:layout_height="80dp"
+                    android:layout_marginVertical="10dp"
+                    app:cardBackgroundColor="@color/waluigi_second"
+                    app:cardCornerRadius="2dp">
 
                     <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_weight="2"
-                        android:gravity="center"
+                        android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:orientation="vertical">
+                        android:orientation="horizontal">
 
-                        <TextView
-                            android:id="@+id/name_tv"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/orbitron_semibold"
-                            android:textSize="16sp"
-                            android:textColor="@color/white"
-                            tools:text="HR vs OF" />
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="2"
+                            android:gravity="center"
+                            android:orientation="vertical">
 
-                        <TextView
-                            android:id="@+id/time_tv"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/montserrat_regular"
-                            android:textColor="@color/white"
-                            android:textSize="13sp"
-                            tools:text="18/01/2022 - 21h" />
+                            <TextView
+                                android:id="@+id/name_tv"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/orbitron_semibold"
+                                android:textColor="@color/white"
+                                android:textSize="16sp"
+                                tools:text="HR vs OF" />
+
+                            <TextView
+                                android:id="@+id/time_tv"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/montserrat_regular"
+                                android:textColor="@color/white"
+                                android:textSize="13sp"
+                                tools:text="18/01/2022 - 21h" />
+
+                        </LinearLayout>
+
+
+                        <View
+                            android:layout_width="1dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginVertical="5dp"
+                            android:background="@color/white_alphaed" />
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="3"
+                            android:gravity="center"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/current_tm_infos"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="5dp"
+                                android:fontFamily="@font/montserrat_regular"
+                                android:textColor="@color/white"
+                                tools:text="20 courses - Miroir" />
+
+                            <TextView
+                                android:id="@+id/current_tm_remaining"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/montserrat_regular"
+                                android:textColor="@color/white"
+                                tools:text="Courses jouées: 8/20" />
+
+                            <TextView
+                                android:id="@+id/current_tm_score"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/montserrat_regular"
+                                android:textColor="@color/white"
+                                tools:text="Points : 96" />
+
+                        </LinearLayout>
 
                     </LinearLayout>
 
+                </androidx.cardview.widget.CardView>
 
-                    <View
-                        android:layout_width="1dp"
-                        android:layout_height="match_parent"
-                        android:background="@color/white_alphaed"
-                        android:layout_marginVertical="5dp"/>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/white_alphaed" />
 
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_weight="3"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:orientation="vertical">
+            </LinearLayout>
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:fontFamily="@font/montserrat_regular"
-                            android:layout_height="wrap_content"
-                            tools:text="20 courses - Miroir"
-                            android:textColor="@color/white"
-                            android:layout_marginBottom="5dp"
-                            android:id="@+id/current_tm_infos"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:textColor="@color/white"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/montserrat_regular"
-                            tools:text="Courses jouées: 8/20"
-                            android:id="@+id/current_tm_remaining" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:textColor="@color/white"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/montserrat_regular"
-                            tools:text="Points : 96"
-                            android:id="@+id/current_tm_score" />
 
-                    </LinearLayout>
-
-                </LinearLayout>
-
-            </androidx.cardview.widget.CardView>
-
-            <View
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/white_alphaed"/>
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="15dp"
+                android:id="@+id/create_tm_layout">
 
-        </LinearLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingVertical="10dp"
+                    android:gravity="center"
+                    android:text="Vous ne jouez actuellement aucun tournoi. Commencez à jouer dès maintenant en créant un tournoi ci-dessous."
+                    android:layout_gravity="center"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:layout_marginBottom="15dp"
+                    android:textColor="@color/white" />
+
+                <TextView
+                    android:id="@+id/add_tm_btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Jouer un tournoi"
+                    android:gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/rounded_bg"
+                    android:fontFamily="@font/roboto"
+                    android:textAllCaps="true"
+                    android:layout_marginBottom="10dp"
+                    android:textColor="@color/white"
+                    android:backgroundTint="@color/waluigi_second"
+                    android:paddingVertical="10dp"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/white"/>
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+
+
+
+
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -212,18 +266,6 @@
 
 
 
-    <TextView
-        android:id="@+id/add_tm_btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Jouer un tournoi"
-        android:gravity="center"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/rounded_bg"
-        android:fontFamily="@font/roboto"
-        android:textAllCaps="true"
-        android:textColor="@color/white"
-        android:backgroundTint="@color/waluigi_second"
-        android:paddingVertical="10dp"/>
+
 
 </LinearLayout>

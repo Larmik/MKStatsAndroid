@@ -90,6 +90,11 @@ class WarFragment : Fragment(R.layout.fragment_war) {
                     binding.lastWarLayout.isVisible = it.isNotEmpty()
                     lastAdapter.addWars(it)
                 }.launchIn(lifecycleScope)
+            viewModel.sharedBestWars
+                .onEach {
+                    binding.bestWarLayout.isVisible = it.isNotEmpty()
+                    bestAdapter.addWars(it)
+                }.launchIn(lifecycleScope)
 
             viewModel.sharedGoToWar
                 .filter { findNavController().currentDestination?.id == R.id.homeFragment }

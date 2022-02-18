@@ -97,8 +97,9 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
                 .bind(_sharedPlayersConnected, viewModelScope)
 
             onNextTrack.bind(_sharedSelectTrack, viewModelScope)
-            onTrackClick.bind(_sharedTrackClick, viewModelScope)
         }
+        onTrackClick.bind(_sharedTrackClick, viewModelScope)
+
     }
 
     fun bindDialog(onQuit: Flow<Unit>, onBack: Flow<Unit>) {

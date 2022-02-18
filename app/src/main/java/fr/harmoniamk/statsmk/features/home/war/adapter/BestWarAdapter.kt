@@ -59,7 +59,7 @@ class BestWarAdapter(val items: MutableList<War> = mutableListOf()) :
 
     override fun getItemCount() = items.size
 
-    fun addTournaments(wars: List<War>) {
+    fun addWars(wars: List<War>) {
         notifyItemRangeRemoved(0, itemCount)
         items.clear()
         items.addAll(wars)

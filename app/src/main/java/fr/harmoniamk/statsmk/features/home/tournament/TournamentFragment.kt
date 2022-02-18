@@ -43,7 +43,7 @@ class TournamentFragment : Fragment(R.layout.fragment_tournaments) {
         viewModel.currentTournament
             .onEach { tm ->
                 binding.currentTmLayout.isVisible = false
-                binding.addTmBtn.isVisible = true
+                binding.createTmLayout.isVisible = true
                 tm?.let { bindCurrent(it) }
             }.launchIn(lifecycleScope)
         viewModel.sharedAdd
