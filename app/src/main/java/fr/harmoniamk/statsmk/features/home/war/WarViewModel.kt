@@ -83,10 +83,11 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
             .onEach {
                 val wars = firebaseRepository.getWars().first()
                 preferencesRepository.currentTeam = it
+                war = wars.getCurrent(preferencesRepository.currentTeam?.mid)
                 _sharedHasTeam.emit(true)
                 _sharedTeamName.emit(preferencesRepository.currentTeam?.name ?: "")
                 _sharedLastWars.emit(wars.getLasts(preferencesRepository.currentTeam?.mid))
-                _sharedCurrentWar.emit(wars.getCurrent(preferencesRepository.currentTeam?.mid))
+                _sharedCurrentWar.emit(war)
             }.launchIn(viewModelScope)
 
         onCurrentWarClick

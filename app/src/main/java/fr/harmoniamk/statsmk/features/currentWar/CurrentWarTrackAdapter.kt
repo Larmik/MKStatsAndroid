@@ -7,13 +7,22 @@ import androidx.recyclerview.widget.RecyclerView
 import fr.harmoniamk.statsmk.database.firebase.model.WarTrack
 import fr.harmoniamk.statsmk.databinding.TrackItemBinding
 import fr.harmoniamk.statsmk.enums.Maps
+import fr.harmoniamk.statsmk.extension.clicks
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlin.coroutines.CoroutineContext
 
+@ExperimentalCoroutinesApi
 class CurrentWarTrackAdapter(val items: MutableList<WarTrack> = mutableListOf()) :
     RecyclerView.Adapter<CurrentWarTrackAdapter.CurrentTrackViewHolder>(), CoroutineScope {
 
+    private val _sharedClick = MutableSharedFlow<Pair<Int, WarTrack>>()
+    val sharedClick = _sharedClick.asSharedFlow()
 
     class CurrentTrackViewHolder(val binding: TrackItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -37,7 +46,11 @@ class CurrentWarTrackAdapter(val items: MutableList<WarTrack> = mutableListOf())
     )
 
     override fun onBindViewHolder(holder: CurrentTrackViewHolder, position: Int) {
-        holder.bind(items[position])
+        val item = items[position]
+        holder.bind(item)
+        holder.binding.root.clicks()
+            .onEach { _sharedClick.emit(Pair(position+1, item)) }
+            .launchIn(this)
     }
 
     override fun getItemCount() = items.size

@@ -308,6 +308,29 @@
         </action>
 
         <action
+            android:id="@+id/to_track_details"
+            app:destination="@id/trackDetailsFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right">
+
+            <argument
+                android:name="warTrack"
+                app:argType="fr.harmoniamk.statsmk.database.firebase.model.WarTrack"
+                app:nullable="true"/>
+
+            <argument
+                android:name="warName"
+                app:argType="string"
+                app:nullable="true"/>
+            <argument
+                android:name="number"
+                app:argType="integer"/>
+
+        </action>
+
+        <action
             android:id="@+id/enter_positions"
             app:destination="@id/positionFragment"
             app:enterAnim="@anim/enter_from_right"
@@ -327,5 +350,11 @@
 
         </action>
     </fragment>
+
+    <fragment
+        android:id="@+id/trackDetailsFragment"
+        android:name="fr.harmoniamk.statsmk.features.trackDetails.TrackDetailsFragment"
+        tools:layout="@layout/fragment_track_details"
+        android:label="TrackDetailsFragment" />
 
 </navigation>

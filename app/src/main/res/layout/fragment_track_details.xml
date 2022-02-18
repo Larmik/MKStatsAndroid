@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@color/waluigi"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="10dp"
+        tools:text="HR - OF\nCourse 3/12"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:fontFamily="@font/roboto"
+        android:textSize="18sp"/>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="15dp"
+        android:layout_marginBottom="15dp"
+        app:cardCornerRadius="2dp"
+        app:cardBackgroundColor="@color/white_alphaed"
+        android:layout_marginTop="15dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="60dp"
+                android:background="@drawable/rounded_bg"
+                android:scaleType="fitXY"
+                tools:src="@drawable/bc"
+                android:id="@+id/track_iv"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                android:layout_marginStart="15dp"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <TextView
+                    android:textSize="16sp"
+                    tools:text="Bowser Castle"
+                    android:maxLines="1"
+                    android:autoSizeTextType="uniform"
+                    android:textColor="@color/black"
+                    android:layout_width="match_parent"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:layout_marginBottom="10dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/name"
+                    tools:targetApi="o" />
+
+                <TextView
+                    tools:text="BC"
+                    android:textColor="@color/black"
+                    android:fontFamily="@font/orbitron_semibold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/shortname"/>
+
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:scaleType="fitXY"
+                tools:src="@drawable/special"
+                android:layout_marginEnd="10dp"
+                android:id="@+id/cup_iv"/>
+        </LinearLayout>
+
+
+    </androidx.cardview.widget.CardView>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginHorizontal="10dp"
+        android:background="@color/white"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:id="@+id/score_layout">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:fontFamily="@font/roboto"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:text="Score :"/>
+
+        <TextView
+            android:id="@+id/track_score"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="30sp"
+            android:textColor="@color/white"
+            android:fontFamily="@font/orbitron_semibold"
+            tools:text="58 - 24"/>
+        <TextView
+            android:id="@+id/track_diff"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:layout_marginBottom="20dp"
+            android:textColor="@color/white"
+            android:fontFamily="@font/orbitron_semibold"
+            tools:text="+34"/>
+
+    </LinearLayout>
+
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginHorizontal="10dp"
+        android:background="@color/white"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:fontFamily="@font/roboto"
+        android:textColor="@color/white"
+        android:gravity="center"
+        android:paddingVertical="15dp"
+        android:text="Positions de l'équipe :"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:id="@+id/result_rv"
+        android:layout_marginBottom="10dp"
+        android:paddingHorizontal="15dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:orientation="vertical"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:paddingHorizontal="10dp"
+        android:layout_marginBottom="15dp"
+        android:layout_height="wrap_content">
+
+
+
+    </RelativeLayout>
+
+
+
+</LinearLayout>

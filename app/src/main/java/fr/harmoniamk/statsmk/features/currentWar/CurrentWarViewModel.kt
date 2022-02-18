@@ -28,6 +28,7 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
     private val _sharedSelectTrack = MutableSharedFlow<Unit>()
     private val _sharedGoToPos = MutableSharedFlow<WarTrack>()
     private val _sharedTracks = MutableSharedFlow<List<WarTrack>>()
+    private val _sharedTrackClick = MutableSharedFlow<Pair<Int, WarTrack>>()
     private val _sharedPlayersConnected = MutableSharedFlow<Int>()
 
     val sharedButtonVisible = _sharedButtonVisible.asSharedFlow()
@@ -39,9 +40,10 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
     val sharedSelectTrack = _sharedSelectTrack.asSharedFlow()
     val sharedGoToPos = _sharedGoToPos.asSharedFlow()
     val sharedTracks = _sharedTracks.asSharedFlow()
+    val sharedTrackClick = _sharedTrackClick.asSharedFlow()
     val sharedPlayersConnected = _sharedPlayersConnected.asSharedFlow()
 
-    fun bind(war: War? = null, onBack: Flow<Unit>, onNextTrack: Flow<Unit>) {
+    fun bind(war: War? = null, onBack: Flow<Unit>, onNextTrack: Flow<Unit>, onTrackClick: Flow<Pair<Int, WarTrack>>) {
         firebaseRepository.getWarTracks()
             .mapNotNull { list -> list.filter { track -> track.warId == war?.mid } }
             .onEach { _sharedTracks.emit(it) }
@@ -95,6 +97,7 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
                 .bind(_sharedPlayersConnected, viewModelScope)
 
             onNextTrack.bind(_sharedSelectTrack, viewModelScope)
+            onTrackClick.bind(_sharedTrackClick, viewModelScope)
         }
     }
 

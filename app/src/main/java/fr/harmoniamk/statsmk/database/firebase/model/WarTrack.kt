@@ -1,12 +1,14 @@
 package fr.harmoniamk.statsmk.database.firebase.model
 
+import java.io.Serializable
+
 data class WarTrack(
     val mid: String? = null,
     val warId: String? = null,
     val trackIndex: Int? = null,
     var isOver: Boolean? = null,
     var teamScore: Int? = null
-) {
+) : Serializable {
     val opponentScore: Int?
         get() {
             teamScore?.takeIf { it != 0 }?.let {
