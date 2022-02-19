@@ -32,7 +32,7 @@ class PlayersWarFragment(val onWarCreated: MutableSharedFlow<Unit>, val onUsersS
         viewModel.bind(usersAdapter.sharedUserSelected)
         viewModel.sharedPlayers.onEach { usersAdapter.addUsers(it) }.launchIn(lifecycleScope)
         viewModel.sharedUsersSelected.onEach {
-            binding.createWarLayout.visibility = if (it.size == 5) View.VISIBLE else View.INVISIBLE
+            binding.createWarLayout.visibility = if (it.size == 6) View.VISIBLE else View.INVISIBLE
         }.bind(onUsersSelected, lifecycleScope)
     }
 

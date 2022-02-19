@@ -6,7 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.database.firebase.model.War
 import fr.harmoniamk.statsmk.database.firebase.model.WarTrack
 import fr.harmoniamk.statsmk.extension.bind
-import fr.harmoniamk.statsmk.extension.isTrue
+import fr.harmoniamk.statsmk.extension.getCurrent
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -25,7 +25,6 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
     private val  _sharedQuit = MutableSharedFlow<Unit>()
     private val  _sharedCancel = MutableSharedFlow<Unit>()
     private val _sharedSelectTrack = MutableSharedFlow<Unit>()
-    private val _sharedGoToPos = MutableSharedFlow<WarTrack>()
     private val _sharedTracks = MutableSharedFlow<List<WarTrack>>()
     private val _sharedTrackClick = MutableSharedFlow<Pair<Int, WarTrack>>()
 
@@ -35,61 +34,46 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
     val sharedQuit = _sharedQuit.asSharedFlow()
     val sharedCancel = _sharedCancel.asSharedFlow()
     val sharedSelectTrack = _sharedSelectTrack.asSharedFlow()
-    val sharedGoToPos = _sharedGoToPos.asSharedFlow()
     val sharedTracks = _sharedTracks.asSharedFlow()
     val sharedTrackClick = _sharedTrackClick.asSharedFlow()
 
-    fun bind(war: War? = null, onBack: Flow<Unit>, onNextTrack: Flow<Unit>, onTrackClick: Flow<Pair<Int, WarTrack>>) {
-        firebaseRepository.getWarTracks()
-            .mapNotNull { list -> list.filter { track -> track.warId == war?.mid } }
-            .onEach { _sharedTracks.emit(it) }
-            .mapNotNull { war }
-            .onEach { _sharedButtonVisible.emit(false) }
-            .bind(_sharedCurrentWar, viewModelScope)
+    fun bind(onBack: Flow<Unit>, onNextTrack: Flow<Unit>, onTrackClick: Flow<Pair<Int, WarTrack>>) {
 
-        preferencesRepository.currentUser?.currentWar?.takeIf { it != "-1" }?.let { it ->
-            val currentWar = firebaseRepository.getWar(it)
-                .filterNotNull()
-                .onEach { _sharedCurrentWar.emit(it) }
-                .shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
+        val currentWar = firebaseRepository.getWars()
+            .mapNotNull { it.getCurrent(preferencesRepository.currentTeam?.mid) }
+            .onEach { w ->
+                _sharedCurrentWar.emit(w)
+                val tracks = firebaseRepository.getWarTracks().first().filter { it.warId == w.mid }
+                _sharedTracks.emit(tracks)
+            }
+            .shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
 
-            currentWar
-                .filterNot { it.isOver }
-                .onEach {
-                    _sharedButtonVisible.emit(it.playerHostId == preferencesRepository.currentUser?.mid)
-                    onBack.bind(_sharedBack, viewModelScope)
-                }.launchIn(viewModelScope)
+        currentWar
+            .filterNot { it.isOver }
+            .onEach {
+                _sharedButtonVisible.emit(it.playerHostId == preferencesRepository.currentUser?.mid)
+                onBack.bind(_sharedBack, viewModelScope)
+            }.launchIn(viewModelScope)
 
-            currentWar
-                .filter { it.isOver }
-                .onEach {
-                    _sharedButtonVisible.emit(false)
-                    onBack
-                        .mapNotNull { preferencesRepository.currentUser?.apply { this.currentWar = "-1" } }
-                        .onEach { preferencesRepository.currentUser = it }
-                        .flatMapLatest { firebaseRepository.writeUser(it) }
-                        .bind(_sharedQuit, viewModelScope)
-                }
-                .launchIn(viewModelScope)
+        currentWar
+            .filter { it.isOver }
+            .onEach {
+                _sharedButtonVisible.emit(false)
+                onBack
+                    .mapNotNull { preferencesRepository.currentUser?.apply { this.currentWar = "-1" } }
+                    .onEach { preferencesRepository.currentUser = it }
+                    .flatMapLatest { firebaseRepository.writeUser(it) }
+                    .bind(_sharedQuit, viewModelScope)
+            }
+            .launchIn(viewModelScope)
 
-
-            firebaseRepository.getWarTracks()
-                .mapNotNull {list -> list.filter { track -> track.warId == preferencesRepository.currentUser?.currentWar } }
-                .bind(_sharedTracks, viewModelScope)
-
-
-            onNextTrack.bind(_sharedSelectTrack, viewModelScope)
-        }
+        onNextTrack.bind(_sharedSelectTrack, viewModelScope)
         onTrackClick.bind(_sharedTrackClick, viewModelScope)
 
     }
 
     fun bindDialog(onQuit: Flow<Unit>, onBack: Flow<Unit>) {
-        onQuit
-            .mapNotNull { preferencesRepository.currentUser?.apply { this.currentWar = "-1" } }
-            .onEach { preferencesRepository.currentUser = it }
-            .flatMapLatest { firebaseRepository.writeUser(it) }
-            .bind(_sharedQuit, viewModelScope)
+        onQuit.bind(_sharedQuit, viewModelScope)
         onBack.bind(_sharedCancel, viewModelScope)
     }
 

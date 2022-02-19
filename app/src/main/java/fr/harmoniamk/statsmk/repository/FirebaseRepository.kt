@@ -47,6 +47,7 @@ interface FirebaseRepositoryInterface{
     fun listenToWarPositions(): Flow<List<WarPosition>>
 
     fun deleteWarPosition(position: WarPosition): Flow<Unit>
+    fun deleteWarTrack(id: String): Flow<Unit>
 }
 
 @FlowPreview
@@ -336,6 +337,11 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
 
     override fun deleteWarPosition(position: WarPosition): Flow<Unit> = flow {
         database.child("warPositions").child(position.mid.toString()).removeValue()
+        emit(Unit)
+    }
+
+    override fun deleteWarTrack(id: String): Flow<Unit> = flow {
+        database.child("warTracks").child(id).removeValue()
         emit(Unit)
     }
 

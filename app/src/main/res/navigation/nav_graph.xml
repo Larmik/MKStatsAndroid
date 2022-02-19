@@ -65,13 +65,7 @@
             app:enterAnim="@anim/enter_from_right"
             app:exitAnim="@anim/exit_to_left"
             app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right">
-            <argument
-                android:name="war"
-                app:argType="fr.harmoniamk.statsmk.database.firebase.model.War"
-                app:nullable="true"/>
-
-        </action>
+            app:popExitAnim="@anim/exit_to_right"/>
 
 
     </fragment>
@@ -162,13 +156,6 @@
         android:label="WarTrackResultFragment">
 
         <action
-            android:id="@+id/back_to_wars"
-            app:destination="@id/homeFragment"
-            app:enterAnim="@anim/enter_from_left"
-            app:exitAnim="@anim/exit_to_right"
-            app:popEnterAnim="@anim/enter_from_right"
-            app:popExitAnim="@anim/exit_to_left"/>
-        <action
             android:id="@+id/back_to_current"
             app:destination="@id/currentWarFragment"
             app:enterAnim="@anim/enter_from_right"
@@ -184,29 +171,6 @@
         android:name="fr.harmoniamk.statsmk.features.position.PositionFragment"
         tools:layout="@layout/fragment_position"
         android:label="PositionFragment">
-        <action
-            android:id="@+id/back_to_current_war"
-            app:destination="@id/currentWarFragment"
-            app:enterAnim="@anim/enter_from_left"
-            app:exitAnim="@anim/exit_to_right"
-            app:popEnterAnim="@anim/enter_from_right"
-            app:popExitAnim="@anim/exit_to_left"/>
-        <action
-            android:id="@+id/back_to_wars"
-            app:destination="@id/homeFragment"
-            app:enterAnim="@anim/enter_from_left"
-            app:exitAnim="@anim/exit_to_right"
-            app:popEnterAnim="@anim/enter_from_right"
-            app:popExitAnim="@anim/exit_to_left"/>
-
-        <action
-            android:id="@+id/back_to_current_tm"
-            app:destination="@id/currentTournamentFragment"
-            app:enterAnim="@anim/enter_from_left"
-            app:exitAnim="@anim/exit_to_right"
-            app:popEnterAnim="@anim/enter_from_right"
-            app:popExitAnim="@anim/exit_to_left"/>
-
         <action
             android:id="@+id/go_to_result"
             app:destination="@id/warTrackResultFragment"
@@ -281,15 +245,6 @@
         android:name="fr.harmoniamk.statsmk.features.currentWar.CurrentWarFragment"
         tools:layout="@layout/fragment_current_war"
         android:label="CurrentWarFragment">
-        <action
-            android:id="@+id/back_to_wars"
-            app:destination="@id/homeFragment"
-            app:popUpTo="@id/nav_graph"
-            app:popUpToInclusive="true"
-            app:enterAnim="@anim/enter_from_left"
-            app:exitAnim="@anim/exit_to_right"
-            app:popEnterAnim="@anim/enter_from_right"
-            app:popExitAnim="@anim/exit_to_left"/>
 
         <action
             android:id="@+id/add_track"
@@ -330,25 +285,6 @@
 
         </action>
 
-        <action
-            android:id="@+id/enter_positions"
-            app:destination="@id/positionFragment"
-            app:enterAnim="@anim/enter_from_right"
-            app:popUpTo="@id/currentWarFragment"
-            app:popUpToInclusive="true"
-            app:exitAnim="@anim/exit_to_left"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right">
-
-            <argument
-                android:name="track"
-                app:argType="integer"/>
-            <argument
-                android:name="warTrackId"
-                app:nullable="true"
-                app:argType="string"/>
-
-        </action>
     </fragment>
 
     <fragment

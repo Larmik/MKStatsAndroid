@@ -82,7 +82,7 @@ class WarFragment : Fragment(R.layout.fragment_war) {
 
             viewModel.sharedCurrentWarClick
                 .filter { findNavController().currentDestination?.id == R.id.homeFragment }
-                .onEach { findNavController().navigate(HomeFragmentDirections.goToCurrentWar(null)) }
+                .onEach { findNavController().navigate(HomeFragmentDirections.goToCurrentWar()) }
                 .launchIn(lifecycleScope)
 
             viewModel.sharedLastWars
@@ -96,9 +96,10 @@ class WarFragment : Fragment(R.layout.fragment_war) {
                     bestAdapter.addWars(it)
                 }.launchIn(lifecycleScope)
 
+            //TODO Change to display past war details (new screen)
             viewModel.sharedGoToWar
                 .filter { findNavController().currentDestination?.id == R.id.homeFragment }
-                .onEach { findNavController().navigate(HomeFragmentDirections.goToCurrentWar(it)) }
+                .onEach { findNavController().navigate(HomeFragmentDirections.goToCurrentWar()) }
                 .launchIn(lifecycleScope)
         }
 

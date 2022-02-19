@@ -36,12 +36,11 @@ class WarTrackResultViewModel @Inject constructor(private val firebaseRepository
 
     fun bind(warTrackId: String? = null, onBack: Flow<Unit>, onQuit: Flow<Unit>, onBackDialog: Flow<Unit>, onValid: Flow<Unit>) {
         warTrackId?.let { id ->
-
             var score: Int? = null
             var track: WarTrack? = null
 
             firebaseRepository.getWarPositions()
-                .map { it.filter { pos -> pos.warTrackId ==  warTrackId } }
+                .map { list -> list.filter { pos -> pos.warTrackId ==  warTrackId }.sortedBy { it.position } }
                 .onEach { _sharedWarPos.emit(it) }
                 .filter { it.size == 6 }
                 .mapNotNull { list ->
@@ -72,8 +71,7 @@ class WarTrackResultViewModel @Inject constructor(private val firebaseRepository
                 }
                 .onEach { war ->
                     if (war.isOver) {
-                        val users = firebaseRepository.getUsers().first().filter { it.currentWar == war.mid }
-                        users.forEach {
+                        firebaseRepository.getUsers().first().filter { it.currentWar == war.mid }.forEach {
                             val new = it.apply { this.currentWar = "-1" }
                             firebaseRepository.writeUser(new).first()
                         }
@@ -83,22 +81,14 @@ class WarTrackResultViewModel @Inject constructor(private val firebaseRepository
                 .bind(_sharedBackToCurrent, viewModelScope)
 
             onQuit
+                .flatMapLatest { firebaseRepository.deleteWarTrack(id) }
                 .flatMapLatest { firebaseRepository.getWarPositions() }
-                .mapNotNull {
-                    it.lastOrNull {
-                            pos -> pos.warTrackId == id && pos.playerId == preferencesRepository.currentUser?.name
-                    }
-                }
-                .flatMapLatest { firebaseRepository.deleteWarPosition(it) }
-                .bind(_sharedQuit, viewModelScope)
+                .onEach { it.filter { pos -> pos.warTrackId == id }
+                            .forEach { pos -> firebaseRepository.deleteWarPosition(pos).first() }
+                    _sharedQuit.emit(Unit)
+                }.launchIn(viewModelScope)
         }
-
         onBack.bind(_sharedBack, viewModelScope)
         onBackDialog.bind(_sharedCancel, viewModelScope)
-
-
     }
-
-
-
 }

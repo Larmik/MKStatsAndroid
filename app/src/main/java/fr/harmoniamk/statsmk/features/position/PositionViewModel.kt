@@ -99,7 +99,7 @@ class PositionViewModel @Inject constructor(
                 .mapNotNull { it?.warId }
                 .flatMapLatest { firebaseRepository.getWar(it) }
                 .zip(firebaseRepository.getUsers()) { war , users ->
-                    currentUsers = users.filter { user -> user.currentWar == war?.mid }
+                    currentUsers = users.filter { user -> user.currentWar == war?.mid }.sortedBy { it.name }
                     currentUser = currentUsers[index]
                     _sharedPlayerLabel.emit(currentUser?.name)
                 }.launchIn(viewModelScope)
@@ -122,7 +122,16 @@ class PositionViewModel @Inject constructor(
                 .mapNotNull { it.filter { position -> position.warTrackId == id }.mapNotNull { warPosition -> warPosition.position } }
                 .bind(_sharedSelectedPositions, viewModelScope)
 
-            onQuit.bind(_sharedQuit, viewModelScope)
+            onQuit
+                .flatMapLatest { firebaseRepository.deleteWarTrack(id) }
+                .flatMapLatest { firebaseRepository.getWarPositions() }
+                .onEach {
+                    it.filter { pos -> pos.warTrackId == id }.forEach { pos ->
+                        firebaseRepository.deleteWarPosition(pos).first()
+                    }
+                    _sharedQuit.emit(Unit)
+                }
+                .launchIn(viewModelScope)
         }
         onBackDialog.bind(_sharedCancel, viewModelScope)
     }

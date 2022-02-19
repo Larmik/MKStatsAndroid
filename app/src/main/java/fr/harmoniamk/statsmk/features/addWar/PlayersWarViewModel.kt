@@ -30,7 +30,6 @@ class PlayersWarViewModel@Inject constructor(private val firebaseRepository: Fir
         firebaseRepository.getUsers()
             .map { list -> list
                 .filter { user -> user.team == preferencesRepository.currentTeam?.mid }
-                .filter { user -> user.mid != preferencesRepository.currentUser?.mid }
                 .sortedBy { it.name?.toLowerCase(Locale.ROOT) }
                 .map { UserSelector(it, false) }
             }.bind(_sharedPlayers, viewModelScope)

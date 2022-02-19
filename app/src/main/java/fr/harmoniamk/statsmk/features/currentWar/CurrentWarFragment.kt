@@ -28,18 +28,12 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
     private val viewModel: CurrentWarViewModel by viewModels()
     private var warId: String? = null
     private var warName: String? = null
-    private var war: War? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        war = arguments?.get("war") as? War
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val adapter = CurrentWarTrackAdapter()
         binding.currentTracksRv.adapter = adapter
-        viewModel.bind(war, requireActivity().backPressedDispatcher(viewLifecycleOwner), binding.nextTrackBtn.clicks(), adapter.sharedClick)
+        viewModel.bind(requireActivity().backPressedDispatcher(viewLifecycleOwner), binding.nextTrackBtn.clicks(), adapter.sharedClick)
 
         viewModel.sharedCurrentWar
             .onEach {
@@ -76,10 +70,6 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
             .onEach { findNavController().navigate(CurrentWarFragmentDirections.addTrack(it)) }
             .launchIn(lifecycleScope)
 
-        viewModel.sharedGoToPos
-            .filter { findNavController().currentDestination?.id == R.id.currentWarFragment }
-            .onEach { findNavController().navigate(CurrentWarFragmentDirections.enterPositions(it.trackIndex ?: -1, warTrackId = it.mid)) }
-            .launchIn(lifecycleScope)
 
         viewModel.sharedTracks
             .onEach {
@@ -87,7 +77,6 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
                 adapter.addTracks(it)
             }
             .launchIn(lifecycleScope)
-
 
         viewModel.sharedTrackClick
             .filter { findNavController().currentDestination?.id == R.id.currentWarFragment }

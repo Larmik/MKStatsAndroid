@@ -95,9 +95,6 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
             }.launchIn(viewModelScope)
 
         onCurrentWarClick
-            .mapNotNull { preferencesRepository.currentUser?.apply { this.currentWar = war?.mid } }
-            .onEach { preferencesRepository.currentUser = it }
-            .flatMapLatest { firebaseRepository.writeUser(it) }
             .mapNotNull { war }
             .bind(_sharedCurrentWarClick, viewModelScope)
 
