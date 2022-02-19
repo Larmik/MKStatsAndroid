@@ -11,7 +11,6 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.features.quitWar.QuitWarDialogFragment
 import fr.harmoniamk.statsmk.R
-import fr.harmoniamk.statsmk.database.firebase.model.TOTAL_TRACKS
 import fr.harmoniamk.statsmk.database.firebase.model.War
 import fr.harmoniamk.statsmk.databinding.FragmentCurrentWarBinding
 import fr.harmoniamk.statsmk.extension.backPressedDispatcher
@@ -54,7 +53,6 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
             }.launchIn(lifecycleScope)
 
         viewModel.sharedButtonVisible.onEach { binding.nextTrackBtn.isVisible = it }.launchIn(lifecycleScope)
-        viewModel.sharedWaitingVisible.onEach { binding.waitingNextTrack.isVisible = it }.launchIn(lifecycleScope)
 
         viewModel.sharedBack
             .onEach {
@@ -86,14 +84,10 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
         viewModel.sharedTracks
             .onEach {
                 binding.playedLabel.isVisible = it.isNotEmpty()
-                binding.connectedPlayers.isVisible = it.size < TOTAL_TRACKS
                 adapter.addTracks(it)
             }
             .launchIn(lifecycleScope)
 
-        viewModel.sharedPlayersConnected
-            .onEach { binding.connectedPlayers.text = "Joueurs connectés: $it/6" }
-            .launchIn(lifecycleScope)
 
         viewModel.sharedTrackClick
             .filter { findNavController().currentDestination?.id == R.id.currentWarFragment }

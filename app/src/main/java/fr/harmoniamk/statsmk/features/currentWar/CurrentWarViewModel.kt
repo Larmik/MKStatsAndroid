@@ -20,7 +20,6 @@ import javax.inject.Inject
 class CurrentWarViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface) : ViewModel() {
 
     private val _sharedButtonVisible = MutableSharedFlow<Boolean>()
-    private val _sharedWaitingVisible = MutableSharedFlow<Boolean>()
     private val _sharedCurrentWar = MutableSharedFlow<War>()
     private val  _sharedBack = MutableSharedFlow<Unit>()
     private val  _sharedQuit = MutableSharedFlow<Unit>()
@@ -29,10 +28,8 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
     private val _sharedGoToPos = MutableSharedFlow<WarTrack>()
     private val _sharedTracks = MutableSharedFlow<List<WarTrack>>()
     private val _sharedTrackClick = MutableSharedFlow<Pair<Int, WarTrack>>()
-    private val _sharedPlayersConnected = MutableSharedFlow<Int>()
 
     val sharedButtonVisible = _sharedButtonVisible.asSharedFlow()
-    val sharedWaitingVisible = _sharedWaitingVisible.asSharedFlow()
     val sharedCurrentWar = _sharedCurrentWar.asSharedFlow()
     val sharedBack = _sharedBack.asSharedFlow()
     val sharedQuit = _sharedQuit.asSharedFlow()
@@ -41,17 +38,13 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
     val sharedGoToPos = _sharedGoToPos.asSharedFlow()
     val sharedTracks = _sharedTracks.asSharedFlow()
     val sharedTrackClick = _sharedTrackClick.asSharedFlow()
-    val sharedPlayersConnected = _sharedPlayersConnected.asSharedFlow()
 
     fun bind(war: War? = null, onBack: Flow<Unit>, onNextTrack: Flow<Unit>, onTrackClick: Flow<Pair<Int, WarTrack>>) {
         firebaseRepository.getWarTracks()
             .mapNotNull { list -> list.filter { track -> track.warId == war?.mid } }
             .onEach { _sharedTracks.emit(it) }
             .mapNotNull { war }
-            .onEach {
-                _sharedButtonVisible.emit(false)
-                _sharedWaitingVisible.emit(false)
-            }
+            .onEach { _sharedButtonVisible.emit(false) }
             .bind(_sharedCurrentWar, viewModelScope)
 
         preferencesRepository.currentUser?.currentWar?.takeIf { it != "-1" }?.let { it ->
@@ -64,7 +57,6 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
                 .filterNot { it.isOver }
                 .onEach {
                     _sharedButtonVisible.emit(it.playerHostId == preferencesRepository.currentUser?.mid)
-                    _sharedWaitingVisible.emit(it.playerHostId != preferencesRepository.currentUser?.mid)
                     onBack.bind(_sharedBack, viewModelScope)
                 }.launchIn(viewModelScope)
 
@@ -72,7 +64,6 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
                 .filter { it.isOver }
                 .onEach {
                     _sharedButtonVisible.emit(false)
-                    _sharedWaitingVisible.emit(false)
                     onBack
                         .mapNotNull { preferencesRepository.currentUser?.apply { this.currentWar = "-1" } }
                         .onEach { preferencesRepository.currentUser = it }
@@ -86,15 +77,6 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
                 .mapNotNull {list -> list.filter { track -> track.warId == preferencesRepository.currentUser?.currentWar } }
                 .bind(_sharedTracks, viewModelScope)
 
-            firebaseRepository.listenToWarTracks()
-                .mapNotNull {
-                    it.lastOrNull().takeIf { track -> !track?.isOver.isTrue && track?.warId == preferencesRepository.currentUser?.currentWar }
-                }
-                .bind(_sharedGoToPos, viewModelScope)
-
-            firebaseRepository.listenToUsers()
-                .map { it.filter { user -> user.currentWar == preferencesRepository.currentUser?.currentWar }.size }
-                .bind(_sharedPlayersConnected, viewModelScope)
 
             onNextTrack.bind(_sharedSelectTrack, viewModelScope)
         }

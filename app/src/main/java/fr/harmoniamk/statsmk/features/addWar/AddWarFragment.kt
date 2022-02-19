@@ -11,7 +11,6 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentAddWarBinding
-import fr.harmoniamk.statsmk.extension.clicks
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.filter
@@ -28,17 +27,16 @@ class AddWarFragment : Fragment(R.layout.fragment_add_war) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val adapter = TeamListAdapter()
-        binding.teamRv.adapter = adapter
-        viewModel.bind(adapter.onTeamClick, binding.startWarBtn.clicks())
+        val adapter = AddWarPagerAdapter(requireActivity())
+        binding.pager.adapter = adapter
+        binding.pager.currentItem = 0
+        binding.pager.isUserInputEnabled = false
 
-        viewModel.sharedTeams.onEach {
-            adapter.addTeams(it)
-        }.launchIn(lifecycleScope)
+        viewModel.bind(adapter.onTeamSelected, adapter.onWarCreated, adapter.onUsersSelected)
 
         viewModel.sharedTeamSelected.onEach {
-            binding.createWarLayout.visibility = View.VISIBLE
-            binding.startWarBtn.text = it
+            binding.pager.currentItem = 1
+            binding.title.text = "Nouvelle war : $it"
         }.launchIn(lifecycleScope)
 
         viewModel.sharedStarted

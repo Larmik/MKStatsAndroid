@@ -4,8 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.database.firebase.model.Team
+import fr.harmoniamk.statsmk.database.firebase.model.User
 import fr.harmoniamk.statsmk.database.firebase.model.War
 import fr.harmoniamk.statsmk.extension.bind
+import fr.harmoniamk.statsmk.extension.getCurrent
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -20,41 +22,39 @@ import javax.inject.Inject
 @HiltViewModel
 class AddWarViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface): ViewModel() {
 
-    private val _sharedTeams = MutableSharedFlow<List<Team>>()
     private val _sharedStarted = MutableSharedFlow<Unit>()
-    private val _sharedTeamSelected = MutableSharedFlow<String>()
+    private val _sharedTeamSelected = MutableSharedFlow<String?>()
     private val _sharedAlreadyCreated = MutableSharedFlow<Unit>()
 
-    val sharedTeams = _sharedTeams.asSharedFlow()
     val sharedStarted = _sharedStarted.asSharedFlow()
     val sharedTeamSelected = _sharedTeamSelected.asSharedFlow()
     val sharedAlreadyCreated = _sharedAlreadyCreated.asSharedFlow()
 
-    fun bind(onTeamClick: Flow<Team>, onCreateWar: Flow<Unit>) {
+    fun bind(onTeamClick: Flow<Team>, onCreateWar: Flow<Unit>, onUserSelected: Flow<List<User>>) {
+
         val date = SimpleDateFormat("dd/MM/yyyy - HH'h'mm", Locale.FRANCE).format(Date())
+        val usersSelected = mutableListOf<User>()
+
         var chosenOpponent: Team? = null
         var warName: String? = null
-
-        firebaseRepository.getTeams().map {
-            it.filterNot { team -> team.mid == preferencesRepository.currentTeam?.mid }
-        }.bind(_sharedTeams, viewModelScope)
+        var war: War?
 
         onTeamClick.onEach {
             chosenOpponent = it
             warName = "${preferencesRepository.currentTeam?.shortName} - ${it.shortName}"
-            _sharedTeamSelected.emit("Démarrer $warName" )
+            _sharedTeamSelected.emit(warName)
         }.launchIn(viewModelScope)
 
         val createWar = onCreateWar
             .flatMapLatest { firebaseRepository.getWars() }
-            .map { it.singleOrNull { war -> !war.isOver && war.teamHost == preferencesRepository.currentTeam?.mid} }
+            .map { it.getCurrent(preferencesRepository.currentTeam?.mid) }
             .shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
 
         createWar
             .filter { it == null}
             .mapNotNull { chosenOpponent?.mid }
-            .map {
-                val war = War(
+            .mapNotNull {
+                war = War(
                     mid = System.currentTimeMillis().toString(),
                     name = warName,
                     teamHost = preferencesRepository.currentTeam?.mid,
@@ -65,6 +65,12 @@ class AddWarViewModel @Inject constructor(private val firebaseRepository: Fireba
                     updatedDate = date)
                 war
             }
+            .onEach {
+                usersSelected.forEach { user ->
+                    val new = user.apply { this.currentWar = it.mid }
+                    firebaseRepository.writeUser(new).first()
+                }
+            }
             .flatMapLatest { firebaseRepository.writeWar(it) }
             .bind(_sharedStarted, viewModelScope)
 
@@ -72,5 +78,10 @@ class AddWarViewModel @Inject constructor(private val firebaseRepository: Fireba
             .filter { it != null }
             .map {  }
             .bind(_sharedAlreadyCreated, viewModelScope)
+
+        onUserSelected.onEach {
+            usersSelected.clear()
+            usersSelected.addAll(it)
+        }.launchIn(viewModelScope)
     }
 }
