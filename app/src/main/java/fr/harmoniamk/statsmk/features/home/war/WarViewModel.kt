@@ -47,11 +47,11 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
         var chosenTeam: String? = null
         var war: War? = null
 
-        val warsFlow = flowOf(firebaseRepository.listenToWars(), firebaseRepository.getWars())
-            .flattenMerge()
+        val warsFlow = firebaseRepository.getWars()
             .shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
 
-        warsFlow
+        flowOf(warsFlow, firebaseRepository.listenToWars())
+            .flattenMerge()
             .map { war = it.getCurrent(preferencesRepository.currentTeam?.mid); war }
             .bind(_sharedCurrentWar, viewModelScope)
 

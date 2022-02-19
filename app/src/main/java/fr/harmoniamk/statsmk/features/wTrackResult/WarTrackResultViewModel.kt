@@ -3,15 +3,14 @@ package fr.harmoniamk.statsmk.features.wTrackResult
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import fr.harmoniamk.statsmk.database.firebase.model.War
 import fr.harmoniamk.statsmk.database.firebase.model.WarPosition
 import fr.harmoniamk.statsmk.database.firebase.model.WarTrack
 import fr.harmoniamk.statsmk.extension.bind
-import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
@@ -25,6 +24,7 @@ class WarTrackResultViewModel @Inject constructor(private val firebaseRepository
     private val _sharedQuit = MutableSharedFlow<Unit>()
     private val _sharedCancel = MutableSharedFlow<Unit>()
     private val _sharedBackToCurrent = MutableSharedFlow<Unit>()
+    private val _sharedGoToWarResume = MutableSharedFlow<War>()
     private val _sharedScore = MutableSharedFlow<WarTrack>()
 
     val sharedWarPos = _sharedWarPos.asSharedFlow()
@@ -33,6 +33,7 @@ class WarTrackResultViewModel @Inject constructor(private val firebaseRepository
     val sharedCancel = _sharedCancel.asSharedFlow()
     val sharedBackToCurrent = _sharedBackToCurrent.asSharedFlow()
     val sharedScore = _sharedScore.asSharedFlow()
+    val sharedGoToWarResume = _sharedGoToWarResume.asSharedFlow()
 
     fun bind(warTrackId: String? = null, onBack: Flow<Unit>, onQuit: Flow<Unit>, onBackDialog: Flow<Unit>, onValid: Flow<Unit>) {
         warTrackId?.let { id ->
@@ -70,15 +71,15 @@ class WarTrackResultViewModel @Inject constructor(private val firebaseRepository
                     }
                 }
                 .onEach { war ->
+                    firebaseRepository.writeWar(war).first()
                     if (war.isOver) {
                         firebaseRepository.getUsers().first().filter { it.currentWar == war.mid }.forEach {
                             val new = it.apply { this.currentWar = "-1" }
                             firebaseRepository.writeUser(new).first()
                         }
-                    }
-                }
-                .flatMapLatest { firebaseRepository.writeWar(it) }
-                .bind(_sharedBackToCurrent, viewModelScope)
+                        _sharedGoToWarResume.emit(war)
+                    } else _sharedBackToCurrent.emit(Unit)
+                }.launchIn(viewModelScope)
 
             onQuit
                 .flatMapLatest { firebaseRepository.deleteWarTrack(id) }

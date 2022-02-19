@@ -29,9 +29,10 @@ class PlayerListAdapter(val items: MutableList<UserSelector> = mutableListOf()) 
         PlayerViewHolder(PlayerItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
     override fun onBindViewHolder(holder: PlayerViewHolder, position: Int) {
+        val item = items[position]
         holder.binding.separator.isVisible = false
         holder.binding.playerPos.isVisible = false
-        val item = items[position]
+        holder.binding.root.background.setTint(ContextCompat.getColor(holder.binding.root.context, if (item.isSelected) R.color.luigi else R.color.white))
         holder.binding.name.text = items[position].user.name
         holder.binding.root.clicks()
             .onEach {

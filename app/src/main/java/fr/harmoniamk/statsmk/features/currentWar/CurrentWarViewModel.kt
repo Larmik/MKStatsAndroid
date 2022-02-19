@@ -7,11 +7,13 @@ import fr.harmoniamk.statsmk.database.firebase.model.War
 import fr.harmoniamk.statsmk.database.firebase.model.WarTrack
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.getCurrent
+import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
+import java.util.*
 import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
@@ -21,60 +23,38 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
 
     private val _sharedButtonVisible = MutableSharedFlow<Boolean>()
     private val _sharedCurrentWar = MutableSharedFlow<War>()
-    private val  _sharedBack = MutableSharedFlow<Unit>()
     private val  _sharedQuit = MutableSharedFlow<Unit>()
-    private val  _sharedCancel = MutableSharedFlow<Unit>()
     private val _sharedSelectTrack = MutableSharedFlow<Unit>()
     private val _sharedTracks = MutableSharedFlow<List<WarTrack>>()
     private val _sharedTrackClick = MutableSharedFlow<Pair<Int, WarTrack>>()
+    private val _sharedPlayers = MutableSharedFlow<List<String>>()
 
     val sharedButtonVisible = _sharedButtonVisible.asSharedFlow()
     val sharedCurrentWar = _sharedCurrentWar.asSharedFlow()
-    val sharedBack = _sharedBack.asSharedFlow()
     val sharedQuit = _sharedQuit.asSharedFlow()
-    val sharedCancel = _sharedCancel.asSharedFlow()
     val sharedSelectTrack = _sharedSelectTrack.asSharedFlow()
     val sharedTracks = _sharedTracks.asSharedFlow()
     val sharedTrackClick = _sharedTrackClick.asSharedFlow()
+    val sharedPlayers = _sharedPlayers.asSharedFlow()
 
-    fun bind(onBack: Flow<Unit>, onNextTrack: Flow<Unit>, onTrackClick: Flow<Pair<Int, WarTrack>>) {
+    fun bind(onBack: Flow<Unit>, onNextTrack: Flow<Unit>, onTrackClick: Flow<Pair<Int, WarTrack>>, onBackDialog: Flow<Unit>, onQuitDialog: Flow<Unit>) {
 
-        val currentWar = firebaseRepository.getWars()
+        flowOf(firebaseRepository.getWars(), firebaseRepository.listenToWars())
+            .flattenMerge()
             .mapNotNull { it.getCurrent(preferencesRepository.currentTeam?.mid) }
             .onEach { w ->
+                val tracks = firebaseRepository.getWarTracks().first().filter { it.warId == w.mid && it.isOver.isTrue}
+                val players = firebaseRepository.getUsers().first().filter { it.currentWar == w.mid }
+                    .sortedBy { it.name?.toLowerCase(Locale.ROOT) }.mapNotNull { it.name }
                 _sharedCurrentWar.emit(w)
-                val tracks = firebaseRepository.getWarTracks().first().filter { it.warId == w.mid }
+                _sharedButtonVisible.emit(w.playerHostId == preferencesRepository.currentUser?.mid && !w.isOver)
                 _sharedTracks.emit(tracks)
-            }
-            .shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
-
-        currentWar
-            .filterNot { it.isOver }
-            .onEach {
-                _sharedButtonVisible.emit(it.playerHostId == preferencesRepository.currentUser?.mid)
-                onBack.bind(_sharedBack, viewModelScope)
+                _sharedPlayers.emit(players)
             }.launchIn(viewModelScope)
 
-        currentWar
-            .filter { it.isOver }
-            .onEach {
-                _sharedButtonVisible.emit(false)
-                onBack
-                    .mapNotNull { preferencesRepository.currentUser?.apply { this.currentWar = "-1" } }
-                    .onEach { preferencesRepository.currentUser = it }
-                    .flatMapLatest { firebaseRepository.writeUser(it) }
-                    .bind(_sharedQuit, viewModelScope)
-            }
-            .launchIn(viewModelScope)
-
+        onBack.bind(_sharedQuit, viewModelScope)
         onNextTrack.bind(_sharedSelectTrack, viewModelScope)
         onTrackClick.bind(_sharedTrackClick, viewModelScope)
-
-    }
-
-    fun bindDialog(onQuit: Flow<Unit>, onBack: Flow<Unit>) {
-        onQuit.bind(_sharedQuit, viewModelScope)
-        onBack.bind(_sharedCancel, viewModelScope)
     }
 
 }

@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingVertical="10dp"
-        android:text="Vous êtes inscrit par défaut pour cette war. Veuillez sélectionnez les cinq autres joueurs de votre équipe"
+        android:text="Sélectionnez les six joueurs de votre équipe."
         android:gravity="center"
         android:layout_marginBottom="15dp"
         android:fontFamily="@font/montserrat_bold"

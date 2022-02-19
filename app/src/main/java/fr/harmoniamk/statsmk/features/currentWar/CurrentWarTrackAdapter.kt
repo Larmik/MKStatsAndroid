@@ -56,10 +56,12 @@ class CurrentWarTrackAdapter(val items: MutableList<WarTrack> = mutableListOf())
     override fun getItemCount() = items.size
 
     fun addTracks(tracks: List<WarTrack>) {
-        notifyItemRangeRemoved(0, itemCount)
-        items.clear()
-        items.addAll(tracks)
-        notifyItemRangeInserted(0, itemCount)
+        if (tracks.size != itemCount) {
+            notifyItemRangeRemoved(0, itemCount)
+            items.clear()
+            items.addAll(tracks)
+            notifyItemRangeInserted(0, itemCount)
+        }
     }
 
     override val coroutineContext: CoroutineContext

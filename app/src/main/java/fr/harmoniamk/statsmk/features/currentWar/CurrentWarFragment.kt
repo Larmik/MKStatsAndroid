@@ -28,12 +28,13 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
     private val viewModel: CurrentWarViewModel by viewModels()
     private var warId: String? = null
     private var warName: String? = null
+    private val dialog = QuitWarDialogFragment()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val adapter = CurrentWarTrackAdapter()
         binding.currentTracksRv.adapter = adapter
-        viewModel.bind(requireActivity().backPressedDispatcher(viewLifecycleOwner), binding.nextTrackBtn.clicks(), adapter.sharedClick)
+        viewModel.bind(requireActivity().backPressedDispatcher(viewLifecycleOwner), binding.nextTrackBtn.clicks(), adapter.sharedClick, dialog.sharedClose, dialog.sharedWarLeft)
 
         viewModel.sharedCurrentWar
             .onEach {
@@ -48,17 +49,6 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
 
         viewModel.sharedButtonVisible.onEach { binding.nextTrackBtn.isVisible = it }.launchIn(lifecycleScope)
 
-        viewModel.sharedBack
-            .onEach {
-                val dialog = QuitWarDialogFragment()
-                viewModel.bindDialog(dialog.sharedWarLeft, dialog.sharedClose)
-                if (!dialog.isAdded) dialog.show(childFragmentManager, null)
-                viewModel.sharedCancel
-                    .filter { findNavController().currentDestination?.id == R.id.currentWarFragment }
-                    .onEach { dialog.dismiss() }
-                    .launchIn(lifecycleScope)
-            }.launchIn(lifecycleScope)
-
         viewModel.sharedQuit
             .filter { findNavController().currentDestination?.id == R.id.currentWarFragment }
             .onEach { findNavController().popBackStack() }
@@ -70,13 +60,26 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
             .onEach { findNavController().navigate(CurrentWarFragmentDirections.addTrack(it)) }
             .launchIn(lifecycleScope)
 
-
         viewModel.sharedTracks
             .onEach {
                 binding.playedLabel.isVisible = it.isNotEmpty()
                 adapter.addTracks(it)
             }
             .launchIn(lifecycleScope)
+
+        viewModel.sharedPlayers
+            .onEach {
+                it.forEachIndexed { index, s ->
+                    when (index) {
+                        0 -> binding.player1.text = s
+                        1 -> binding.player2.text = s
+                        2 -> binding.player3.text = s
+                        3 -> binding.player4.text = s
+                        4 -> binding.player5.text = s
+                        else -> binding.player6.text = s
+                    }
+                }
+            }.launchIn(lifecycleScope)
 
         viewModel.sharedTrackClick
             .filter { findNavController().currentDestination?.id == R.id.currentWarFragment }
