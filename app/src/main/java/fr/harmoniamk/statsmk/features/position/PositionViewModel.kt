@@ -3,12 +3,12 @@ package fr.harmoniamk.statsmk.features.position
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import fr.harmoniamk.statsmk.database.firebase.model.User
 import fr.harmoniamk.statsmk.database.firebase.model.WarPosition
 import fr.harmoniamk.statsmk.database.room.model.PlayedTrack
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PlayedTrackRepositoryInterface
-import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import fr.harmoniamk.statsmk.repository.TournamentRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -21,7 +21,6 @@ import javax.inject.Inject
 class PositionViewModel @Inject constructor(
     private val playedTrackRepository: PlayedTrackRepositoryInterface,
     private val tournamentRepository: TournamentRepositoryInterface,
-    private val preferencesRepository: PreferencesRepositoryInterface,
     private val firebaseRepository: FirebaseRepositoryInterface
 ) : ViewModel() {
 
@@ -32,6 +31,7 @@ class PositionViewModel @Inject constructor(
     private val _sharedCancel = MutableSharedFlow<Unit>()
     private val _sharedGoToResult = MutableSharedFlow<String>()
     private val _sharedSelectedPositions = MutableSharedFlow<List<Int>>()
+    private val _sharedPlayerLabel = MutableSharedFlow<String?>()
 
     val validateTrack = _validateTrack.asSharedFlow()
     val sharedBack = _sharedBack.asSharedFlow()
@@ -39,6 +39,7 @@ class PositionViewModel @Inject constructor(
     val sharedCancel = _sharedCancel.asSharedFlow()
     val sharedGoToResult = _sharedGoToResult.asSharedFlow()
     val sharedSelectedPositions = _sharedSelectedPositions.asSharedFlow()
+    val sharedPlayerLabel = _sharedPlayerLabel.asSharedFlow()
 
     fun bind(
         tournamentId: Int? = null, warTrackId: String? = null, chosenTrack: Int,
@@ -72,7 +73,7 @@ class PositionViewModel @Inject constructor(
         onPos11.onEach { _sharedPos.emit(11) }.launchIn(viewModelScope)
         onPos12.onEach { _sharedPos.emit(12) }.launchIn(viewModelScope)
 
-        tournamentId?.let { id ->
+        tournamentId?.takeIf { it != -1 }?.let { id ->
             _sharedPos
                 .map { PlayedTrack(trackIndex = chosenTrack, position = it, tmId = id) }
                 .flatMapLatest { playedTrackRepository.insert(it) }
@@ -88,13 +89,34 @@ class PositionViewModel @Inject constructor(
         }
 
         warTrackId?.let { id ->
+            var currentUser: User? = null
+            var currentUsers: List<User> = listOf()
+            var index = 0
+
             onBack.bind(_sharedBack, viewModelScope)
 
+            firebaseRepository.getWarTrack(id)
+                .mapNotNull { it?.warId }
+                .flatMapLatest { firebaseRepository.getWar(it) }
+                .zip(firebaseRepository.getUsers()) { war , users ->
+                    currentUsers = users.filter { user -> user.currentWar == war?.mid }
+                    currentUser = currentUsers[index]
+                    _sharedPlayerLabel.emit(currentUser?.name)
+                }.launchIn(viewModelScope)
+
             _sharedPos
-                .map { WarPosition(mid = System.currentTimeMillis().toString(), warTrackId = id, position = it, playerId = preferencesRepository.currentUser?.name) }
+                .map { WarPosition(mid = System.currentTimeMillis().toString(), warTrackId = id, position = it, playerId = currentUser?.name) }
                 .flatMapLatest { firebaseRepository.writeWarPosition(it) }
                 .mapNotNull { id }
-                .bind(_sharedGoToResult, viewModelScope)
+                .onEach {
+                    if (index == currentUsers.size-1) _sharedGoToResult.emit(it)
+                    else {
+                        index++
+                        currentUser = currentUsers[index]
+                        _sharedPlayerLabel.emit(currentUser?.name)
+                    }
+                }
+                .launchIn(viewModelScope)
 
             firebaseRepository.listenToWarPositions()
                 .mapNotNull { it.filter { position -> position.warTrackId == id }.mapNotNull { warPosition -> warPosition.position } }

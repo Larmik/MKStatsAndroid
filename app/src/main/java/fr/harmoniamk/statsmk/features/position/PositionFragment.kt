@@ -9,7 +9,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
-import fr.harmoniamk.statsmk.features.quitWar.ProgressDialogFragment
 import fr.harmoniamk.statsmk.features.quitWar.QuitWarDialogFragment
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentPositionBinding
@@ -103,6 +102,10 @@ class PositionFragment : Fragment(R.layout.fragment_position) {
                 showAllPositions()
                 it.forEach { pos -> hidePosition(pos) }
             }.launchIn(lifecycleScope)
+
+        viewModel.sharedPlayerLabel
+            .onEach { binding.posTitle.text = "Sélectionnez la position de $it" }
+            .launchIn(lifecycleScope)
     }
 
     private fun showAllPositions() {

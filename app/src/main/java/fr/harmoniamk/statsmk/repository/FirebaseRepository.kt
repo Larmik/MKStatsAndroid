@@ -120,6 +120,7 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
                 .map { User(
                     mid = it["mid"].toString(),
                     name = it["name"].toString(),
+                    currentWar = it["currentWar"].toString(),
                     accessCode = it["accessCode"].toString().replace("-$deviceId", ""),
                     team = it["team"].toString()
                 ) }
