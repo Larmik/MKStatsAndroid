@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingVertical="10dp"
-        android:text="Sélectionnez les joueurs de votre équipe"
+        android:text="Vous êtes inscrit par défaut pour cette war. Veuillez sélectionnez les cinq autres joueurs de votre équipe"
         android:gravity="center"
         android:layout_marginBottom="15dp"
         android:fontFamily="@font/montserrat_bold"
@@ -25,11 +25,18 @@
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:orientation="vertical"/>
 
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_margin="10dp"
+        android:background="@color/white"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/create_war_layout"
-        android:visibility="gone"
+        android:visibility="invisible"
         android:orientation="vertical"
         android:gravity="center">
 

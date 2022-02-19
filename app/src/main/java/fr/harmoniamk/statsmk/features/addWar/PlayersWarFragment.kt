@@ -2,7 +2,6 @@ package fr.harmoniamk.statsmk.features.addWar
 
 import android.os.Bundle
 import android.view.View
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -33,7 +32,7 @@ class PlayersWarFragment(val onWarCreated: MutableSharedFlow<Unit>, val onUsersS
         viewModel.bind(usersAdapter.sharedUserSelected)
         viewModel.sharedPlayers.onEach { usersAdapter.addUsers(it) }.launchIn(lifecycleScope)
         viewModel.sharedUsersSelected.onEach {
-            binding.createWarLayout.isVisible = it.size == 6
+            binding.createWarLayout.visibility = if (it.size == 5) View.VISIBLE else View.INVISIBLE
         }.bind(onUsersSelected, lifecycleScope)
     }
 

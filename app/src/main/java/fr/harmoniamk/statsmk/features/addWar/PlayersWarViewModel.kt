@@ -10,6 +10,7 @@ import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
+import java.util.*
 import javax.inject.Inject
 
 @FlowPreview
@@ -29,6 +30,8 @@ class PlayersWarViewModel@Inject constructor(private val firebaseRepository: Fir
         firebaseRepository.getUsers()
             .map { list -> list
                 .filter { user -> user.team == preferencesRepository.currentTeam?.mid }
+                .filter { user -> user.mid != preferencesRepository.currentUser?.mid }
+                .sortedBy { it.name?.toLowerCase(Locale.ROOT) }
                 .map { UserSelector(it, false) }
             }.bind(_sharedPlayers, viewModelScope)
 
