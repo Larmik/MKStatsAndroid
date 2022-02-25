@@ -62,7 +62,10 @@ class WarFragment : Fragment(R.layout.fragment_war) {
                 }.launchIn(lifecycleScope)
 
             viewModel.sharedTeamName
-                .onEach { binding.currentTeamTv.text = it }
+                .onEach {
+                    binding.progress.isVisible = false
+                    binding.currentTeamTv.text = it
+                }
                 .launchIn(lifecycleScope)
 
             viewModel.sharedCreateWar

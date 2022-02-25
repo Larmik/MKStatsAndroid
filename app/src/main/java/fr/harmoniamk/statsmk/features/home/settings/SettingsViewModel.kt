@@ -18,15 +18,18 @@ class SettingsViewModel @Inject constructor(private val preferencesRepository: P
 
     private val _sharedDisconnect = MutableSharedFlow<Unit>()
     private val _sharedManageTeam = MutableSharedFlow<Unit>()
+    private val _sharedThemeClick = MutableSharedFlow<Unit>()
     val sharedDisconnect = _sharedDisconnect.asSharedFlow()
     val sharedManageTeam = _sharedManageTeam.asSharedFlow()
+    val sharedThemeClick = _sharedThemeClick.asSharedFlow()
 
-    fun bind(onLogout: Flow<Unit>, onManageTeam: Flow<Unit>) {
+    fun bind(onLogout: Flow<Unit>, onManageTeam: Flow<Unit>, onTheme: Flow<Unit>) {
         onLogout.onEach {
             preferencesRepository.currentUser = null
             preferencesRepository.currentTeam = null
         }.bind(_sharedDisconnect, viewModelScope)
         onManageTeam.bind(_sharedManageTeam, viewModelScope)
+        onTheme.bind(_sharedThemeClick, viewModelScope)
 
     }
 

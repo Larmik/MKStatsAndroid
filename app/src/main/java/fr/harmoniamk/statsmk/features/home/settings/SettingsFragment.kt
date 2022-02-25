@@ -2,6 +2,7 @@ package fr.harmoniamk.statsmk.features.home.settings
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -28,7 +29,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.bind(binding.logoutLayout.clicks(), binding.manageTeamBtn.clicks())
+        viewModel.bind(binding.logoutLayout.clicks(), binding.manageTeamBtn.clicks(), binding.themeBtn.clicks())
         viewModel.sharedDisconnect
             .filter { findNavController().currentDestination?.id == R.id.homeFragment }
             .onEach { findNavController().navigate(HomeFragmentDirections.backToWelcome()) }
@@ -36,6 +37,9 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         viewModel.sharedManageTeam
             .filter { findNavController().currentDestination?.id == R.id.homeFragment }
             .onEach { findNavController().navigate(HomeFragmentDirections.manageTeams()) }
+            .launchIn(lifecycleScope)
+        viewModel.sharedThemeClick
+            .onEach { Toast.makeText(requireContext(), "Bientôt disponible", Toast.LENGTH_SHORT).show() }
             .launchIn(lifecycleScope)
 
     }
