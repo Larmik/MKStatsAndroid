@@ -12,7 +12,7 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.features.currentTournament.CurrentTrackAdapter
-import fr.harmoniamk.statsmk.database.room.model.Tournament
+import fr.harmoniamk.statsmk.database.model.Tournament
 import fr.harmoniamk.statsmk.databinding.FragmentCurrentTournamentBinding
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.features.currentTournament.viewmodel.CurrentTournamentViewModel

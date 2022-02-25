@@ -1,4 +1,4 @@
-package fr.harmoniamk.statsmk.features.addWar
+package fr.harmoniamk.statsmk.features.addWar.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.PlayerItemBinding
 import fr.harmoniamk.statsmk.extension.clicks
+import fr.harmoniamk.statsmk.features.addWar.UserSelector
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

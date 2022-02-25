@@ -3,8 +3,8 @@ package fr.harmoniamk.statsmk.features.home.war
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.harmoniamk.statsmk.database.firebase.model.Team
-import fr.harmoniamk.statsmk.database.firebase.model.War
+import fr.harmoniamk.statsmk.database.model.Team
+import fr.harmoniamk.statsmk.database.model.War
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.getBests
 import fr.harmoniamk.statsmk.extension.getCurrent

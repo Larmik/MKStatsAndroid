@@ -3,7 +3,7 @@ package fr.harmoniamk.statsmk.features.welcome.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.harmoniamk.statsmk.database.firebase.model.User
+import fr.harmoniamk.statsmk.database.model.User
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -35,7 +35,8 @@ class AddUserViewModel @Inject constructor(private val firebaseRepository: Fireb
                     name = name,
                     accessCode = code,
                     team = "-1",
-                    currentWar = "-1")) }
+                    currentWar = "-1")
+            ) }
             .flatMapLatest { firebaseRepository.getUsers() }
             .map { it.singleOrNull { user -> user.accessCode == code } }
             .onEach {

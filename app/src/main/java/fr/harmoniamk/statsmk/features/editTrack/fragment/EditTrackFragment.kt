@@ -9,7 +9,7 @@ import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
-import fr.harmoniamk.statsmk.database.room.model.PlayedTrack
+import fr.harmoniamk.statsmk.database.model.PlayedTrack
 import fr.harmoniamk.statsmk.databinding.FragmentEditTrackBinding
 import fr.harmoniamk.statsmk.features.editTrack.EditTrackPagerAdapter
 import fr.harmoniamk.statsmk.features.editTrack.viewmodel.EditTrackViewModel

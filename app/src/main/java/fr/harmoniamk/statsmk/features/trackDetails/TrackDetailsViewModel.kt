@@ -3,7 +3,7 @@ package fr.harmoniamk.statsmk.features.trackDetails
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.harmoniamk.statsmk.database.firebase.model.WarPosition
+import fr.harmoniamk.statsmk.database.model.WarPosition
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import kotlinx.coroutines.flow.MutableSharedFlow

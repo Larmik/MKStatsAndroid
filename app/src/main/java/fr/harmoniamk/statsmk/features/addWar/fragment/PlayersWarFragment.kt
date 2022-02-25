@@ -1,4 +1,4 @@
-package fr.harmoniamk.statsmk.features.addWar
+package fr.harmoniamk.statsmk.features.addWar.fragment
 
 import android.os.Bundle
 import android.view.View
@@ -8,10 +8,12 @@ import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
-import fr.harmoniamk.statsmk.database.firebase.model.User
+import fr.harmoniamk.statsmk.database.model.User
 import fr.harmoniamk.statsmk.databinding.FragmentWarPlayersBinding
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.clicks
+import fr.harmoniamk.statsmk.features.addWar.adapter.PlayerListAdapter
+import fr.harmoniamk.statsmk.features.addWar.viewModel.PlayersWarViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*

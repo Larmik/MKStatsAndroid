@@ -3,8 +3,8 @@ package fr.harmoniamk.statsmk.features.currentWar
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.harmoniamk.statsmk.database.firebase.model.War
-import fr.harmoniamk.statsmk.database.firebase.model.WarTrack
+import fr.harmoniamk.statsmk.database.model.War
+import fr.harmoniamk.statsmk.database.model.WarTrack
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.getCurrent
 import fr.harmoniamk.statsmk.extension.isTrue
@@ -37,7 +37,7 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
     val sharedTrackClick = _sharedTrackClick.asSharedFlow()
     val sharedPlayers = _sharedPlayers.asSharedFlow()
 
-    fun bind(onBack: Flow<Unit>, onNextTrack: Flow<Unit>, onTrackClick: Flow<Pair<Int, WarTrack>>, onBackDialog: Flow<Unit>, onQuitDialog: Flow<Unit>) {
+    fun bind(onBack: Flow<Unit>, onNextTrack: Flow<Unit>, onTrackClick: Flow<Pair<Int, WarTrack>>) {
 
         flowOf(firebaseRepository.getWars(), firebaseRepository.listenToWars())
             .flattenMerge()

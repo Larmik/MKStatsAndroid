@@ -250,15 +250,6 @@
 
         </LinearLayout>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/welcome_tv"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            android:visibility="gone"
-            android:fontFamily="@font/montserrat_regular"
-            android:gravity="center"/>
 
     </LinearLayout>
 

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.Handler
 import androidx.appcompat.app.AppCompatActivity
 import dagger.hilt.android.AndroidEntryPoint
+import fr.harmoniamk.statsmk.MainActivity
 import fr.harmoniamk.statsmk.databinding.ActivitySplashBinding
 
 @AndroidEntryPoint

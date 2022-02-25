@@ -1,7 +1,7 @@
-package fr.harmoniamk.statsmk.database.room.dao
+package fr.harmoniamk.statsmk.database.dao
 
 import androidx.room.*
-import fr.harmoniamk.statsmk.database.room.model.PlayedTrack
+import fr.harmoniamk.statsmk.database.model.PlayedTrack
 import kotlinx.coroutines.flow.Flow
 
 @Dao

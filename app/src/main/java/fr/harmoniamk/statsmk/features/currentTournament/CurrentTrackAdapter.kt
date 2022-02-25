@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import fr.harmoniamk.statsmk.database.room.model.PlayedTrack
+import fr.harmoniamk.statsmk.database.model.PlayedTrack
 import fr.harmoniamk.statsmk.databinding.TrackItemBinding
 import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.extension.clicks

@@ -1,16 +1,13 @@
-package fr.harmoniamk.statsmk.activity
+package fr.harmoniamk.statsmk
 
 import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.NavHostFragment
 import androidx.preference.PreferenceManager
 import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
-import fr.harmoniamk.statsmk.MainApplication
-import fr.harmoniamk.statsmk.R
-import fr.harmoniamk.statsmk.database.firebase.model.User
+import fr.harmoniamk.statsmk.database.model.User
 import fr.harmoniamk.statsmk.databinding.ActivityMainBinding
 import kotlin.system.exitProcess
 

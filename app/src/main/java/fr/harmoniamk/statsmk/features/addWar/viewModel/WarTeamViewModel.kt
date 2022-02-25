@@ -1,9 +1,9 @@
-package fr.harmoniamk.statsmk.features.addWar
+package fr.harmoniamk.statsmk.features.addWar.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.harmoniamk.statsmk.database.firebase.model.Team
+import fr.harmoniamk.statsmk.database.model.Team
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface

@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import fr.harmoniamk.statsmk.database.firebase.model.WarPosition
+import fr.harmoniamk.statsmk.database.model.WarPosition
 import fr.harmoniamk.statsmk.databinding.PlayerItemBinding
 
 class WarTrackResultAdapter(val items: MutableList<WarPosition> = mutableListOf()) : RecyclerView.Adapter<WarTrackResultAdapter.PlayerViewHolder>() {

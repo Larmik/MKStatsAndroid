@@ -4,13 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.MainApplication
-import fr.harmoniamk.statsmk.database.firebase.model.WarTrack
-import fr.harmoniamk.statsmk.database.room.model.PlayedTrack
+import fr.harmoniamk.statsmk.database.model.WarTrack
 import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
-import fr.harmoniamk.statsmk.repository.PlayedTrackRepositoryInterface
-import fr.harmoniamk.statsmk.repository.TournamentRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
@@ -20,29 +17,20 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class TrackListViewModel @Inject constructor(private val playedTrackRepository: PlayedTrackRepositoryInterface,
-                                             private val tournamentRepository: TournamentRepositoryInterface,
-                                             private val firebaseRepository: FirebaseRepositoryInterface
-) : ViewModel() {
+class TrackListViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface) : ViewModel() {
 
     private val _sharedSearchedItems = MutableSharedFlow<List<Maps>>()
     private val _sharedGoToWarPos = MutableSharedFlow<WarTrack>()
     private val _sharedGoToTmPos = MutableSharedFlow<Int>()
-    private val _sharedBack = MutableSharedFlow<Unit>()
     private val _sharedQuit = MutableSharedFlow<Unit>()
-    private val _sharedCancel = MutableSharedFlow<Unit>()
 
     val sharedSearchedItems = _sharedSearchedItems.asSharedFlow()
     val sharedGoToWarPos = _sharedGoToWarPos.asSharedFlow()
     val sharedGoToTmPos = _sharedGoToTmPos.asSharedFlow()
-    val sharedBack = _sharedBack.asSharedFlow()
     val sharedQuit = _sharedQuit.asSharedFlow()
-    val sharedCancel = _sharedCancel.asSharedFlow()
 
 
-    fun bind(tournamentId: Int? = null, warId: String? = null, onTrackAdded: Flow<Int>, onSearch: Flow<String>,  onBack: Flow<Unit>,
-             onBackDialog: Flow<Unit>,
-             onQuit: Flow<Unit>) {
+    fun bind(tournamentId: Int? = null, warId: String? = null, onTrackAdded: Flow<Int>, onSearch: Flow<String>,  onBack: Flow<Unit>) {
         var chosenTrack: WarTrack? = null
 
         onSearch
@@ -72,9 +60,7 @@ class TrackListViewModel @Inject constructor(private val playedTrackRepository: 
                 .mapNotNull { chosenTrack }
                 .bind(_sharedGoToWarPos, viewModelScope)
 
-            onBackDialog.bind(_sharedCancel, viewModelScope)
-            onBack.bind(_sharedBack, viewModelScope)
-            onQuit.bind(_sharedQuit, viewModelScope)
+            onBack.bind(_sharedQuit, viewModelScope)
         }
 
     }

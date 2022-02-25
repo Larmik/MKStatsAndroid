@@ -1,4 +1,5 @@
-package fr.harmoniamk.statsmk.database.firebase.model
+package fr.harmoniamk.statsmk.database.model
+
 
 data class Team(
     val mid: String?,
@@ -6,6 +7,6 @@ data class Team(
     val shortName: String? = null,
     val accessCode: String? = null
 ) {
-    val integrationLabel: String
-        get() = "Intégrer $name ($shortName)"
+
+    val integrationLabel: String = "Intégrer $name ($shortName)"
 }

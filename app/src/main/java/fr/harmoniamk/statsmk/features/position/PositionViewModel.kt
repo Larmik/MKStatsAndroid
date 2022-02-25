@@ -3,9 +3,9 @@ package fr.harmoniamk.statsmk.features.position
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.harmoniamk.statsmk.database.firebase.model.User
-import fr.harmoniamk.statsmk.database.firebase.model.WarPosition
-import fr.harmoniamk.statsmk.database.room.model.PlayedTrack
+import fr.harmoniamk.statsmk.database.model.User
+import fr.harmoniamk.statsmk.database.model.WarPosition
+import fr.harmoniamk.statsmk.database.model.PlayedTrack
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PlayedTrackRepositoryInterface

@@ -1,8 +1,6 @@
 package fr.harmoniamk.statsmk.features.home.tournament
 
-import android.os.Build
 import android.os.Bundle
-import android.text.Html
 import android.view.View
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -12,7 +10,7 @@ import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
-import fr.harmoniamk.statsmk.database.room.model.Tournament
+import fr.harmoniamk.statsmk.database.model.Tournament
 import fr.harmoniamk.statsmk.databinding.FragmentTournamentsBinding
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.features.home.HomeFragmentDirections
@@ -40,27 +38,19 @@ class TournamentFragment : Fragment(R.layout.fragment_tournaments) {
             addTournamentClick = binding.addTmBtn.clicks(),
             onClickTournament = flowOf(adapter.sharedItemClick, lastAdapter.sharedItemClick).flattenMerge()
         )
-        viewModel.currentTournament
-            .onEach { tm ->
-                binding.currentTmLayout.isVisible = false
-                binding.createTmLayout.isVisible = true
-                tm?.let { bindCurrent(it) }
-            }.launchIn(lifecycleScope)
+        lifecycleScope.launchWhenResumed {
+            viewModel.currentTournament
+                .onEach { bindCurrent(null) }
+                .filterNotNull()
+                .onEach { bindCurrent(it) }
+                .launchIn(lifecycleScope)
+        }
         viewModel.sharedAdd
             .filter { findNavController().currentDestination?.id == R.id.homeFragment }
             .onEach { findNavController().navigate(HomeFragmentDirections.addFragment()) }
             .launchIn(lifecycleScope)
         viewModel.sharedLastTournaments
             .onEach {
-                binding.welcomeTv.isVisible =
-                    it.isNullOrEmpty() && !binding.currentTmLayout.isVisible
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-                    binding.welcomeTv.text = Html.fromHtml(
-                        requireContext().getString(R.string.welcome_message),
-                        Html.FROM_HTML_MODE_LEGACY
-                    )
-                else binding.welcomeTv.text =
-                    Html.fromHtml(requireContext().getString(R.string.welcome_message))
                 binding.lastTmLayout.isVisible = it.isNotEmpty()
                 lastAdapter.addTournaments(it)
             }.launchIn(lifecycleScope)
@@ -75,21 +65,24 @@ class TournamentFragment : Fragment(R.layout.fragment_tournaments) {
             .launchIn(lifecycleScope)
     }
 
-    private fun bindCurrent(current: Tournament) {
-        binding.welcomeTv.isVisible = false
-        binding.addTmBtn.isVisible = false
-        binding.currentTmLayout.isVisible = true
-        binding.nameTv.text = current.name
-        binding.currentTmInfos.text = current.infos
-        binding.currentTmScore.text = current.displayedScore
-        binding.timeTv.text = current.updatedDate
-        binding.currentTmCard.clicks()
-            .filter { findNavController().currentDestination?.id == R.id.homeFragment }
-            .onEach { findNavController().navigate(HomeFragmentDirections.gotoCurrent(current)) }
-            .launchIn(lifecycleScope)
-        viewModel.sharedRemainingTracks
-            .onEach { binding.currentTmRemaining.text = current.displayedRemaining(it) }
-            .launchIn(lifecycleScope)
+    private fun bindCurrent(current: Tournament?) {
+        binding.addTmBtn.isVisible = current == null
+        binding.createTmLayout.isVisible = current == null
+        binding.currentTmLayout.isVisible = current != null
+        current?.let {
+            binding.nameTv.text = it.name
+            binding.currentTmInfos.text = it.infos
+            binding.currentTmScore.text = it.displayedScore
+            binding.timeTv.text = it.updatedDate
+            binding.currentTmCard.clicks()
+                .filter { findNavController().currentDestination?.id == R.id.homeFragment }
+                .onEach { findNavController().navigate(HomeFragmentDirections.gotoCurrent(current)) }
+                .launchIn(lifecycleScope)
+            viewModel.sharedRemainingTracks
+                .onEach { tracks -> binding.currentTmRemaining.text = it.displayedRemaining(tracks) }
+                .launchIn(lifecycleScope)
+        }
+
     }
 
 }

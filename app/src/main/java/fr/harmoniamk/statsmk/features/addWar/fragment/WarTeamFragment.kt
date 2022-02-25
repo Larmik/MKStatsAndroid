@@ -1,17 +1,18 @@
-package fr.harmoniamk.statsmk.features.addWar
+package fr.harmoniamk.statsmk.features.addWar.fragment
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
-import fr.harmoniamk.statsmk.database.firebase.model.Team
+import fr.harmoniamk.statsmk.database.model.Team
 import fr.harmoniamk.statsmk.databinding.FragmentWarTeamBinding
 import fr.harmoniamk.statsmk.extension.bind
+import fr.harmoniamk.statsmk.features.addWar.adapter.TeamListAdapter
+import fr.harmoniamk.statsmk.features.addWar.viewModel.WarTeamViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow

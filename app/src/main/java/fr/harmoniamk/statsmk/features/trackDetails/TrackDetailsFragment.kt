@@ -8,7 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
-import fr.harmoniamk.statsmk.database.firebase.model.WarTrack
+import fr.harmoniamk.statsmk.database.model.WarTrack
 import fr.harmoniamk.statsmk.databinding.FragmentTrackDetailsBinding
 import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.features.wTrackResult.WarTrackResultAdapter

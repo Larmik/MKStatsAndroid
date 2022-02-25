@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import fr.harmoniamk.statsmk.database.firebase.model.War
+import fr.harmoniamk.statsmk.database.model.War
 import fr.harmoniamk.statsmk.databinding.LastTournamentItemBinding
 import fr.harmoniamk.statsmk.extension.clicks
 import kotlinx.coroutines.CoroutineScope

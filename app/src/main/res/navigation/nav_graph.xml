@@ -47,7 +47,7 @@
 
             <argument
                 android:name="tournament"
-                app:argType="fr.harmoniamk.statsmk.database.room.model.Tournament"
+                app:argType="fr.harmoniamk.statsmk.database.model.Tournament"
                 app:nullable="false"/>
 
         </action>
@@ -136,7 +136,7 @@
 
             <argument
                 android:name="track"
-                app:argType="fr.harmoniamk.statsmk.database.room.model.PlayedTrack"
+                app:argType="fr.harmoniamk.statsmk.database.model.PlayedTrack"
                 app:nullable="true"/>
 
         </action>
@@ -146,7 +146,7 @@
 
     <fragment
         android:id="@+id/addWarFragment"
-        android:name="fr.harmoniamk.statsmk.features.addWar.AddWarFragment"
+        android:name="fr.harmoniamk.statsmk.features.addWar.fragment.AddWarFragment"
         tools:layout="@layout/fragment_add_war"
         android:label="AddWarFragment"/>
     <fragment
@@ -199,13 +199,13 @@
         android:label="EditTrackFragment"/>
     <fragment
         android:id="@+id/addTeamFragment"
-        android:name="fr.harmoniamk.statsmk.features.manageTeams.AddTeamFragment"
+        android:name="fr.harmoniamk.statsmk.features.manageTeams.fragment.AddTeamFragment"
         tools:layout="@layout/fragment_add_team"
         android:label="AddTeamFragment"/>
 
     <fragment
         android:id="@+id/manageTeamsFragment"
-        android:name="fr.harmoniamk.statsmk.features.manageTeams.ManageTeamsFragment"
+        android:name="fr.harmoniamk.statsmk.features.manageTeams.fragment.ManageTeamsFragment"
         tools:layout="@layout/fragment_manage_teams"
         android:label="ManageTeamsFragment">
 
@@ -272,7 +272,7 @@
 
             <argument
                 android:name="warTrack"
-                app:argType="fr.harmoniamk.statsmk.database.firebase.model.WarTrack"
+                app:argType="fr.harmoniamk.statsmk.database.model.WarTrack"
                 app:nullable="true"/>
 
             <argument

@@ -29,7 +29,6 @@ class TrackListFragment(val onTrack: MutableSharedFlow<Int>? = null) :
 
     private val binding: FragmentTrackListBinding by viewBinding()
     private val viewModel: TrackListViewModel by viewModels()
-    private val dialog = QuitWarDialogFragment()
 
     private var tmId : Int? = null
     private var warId: String? = null
@@ -44,7 +43,7 @@ class TrackListFragment(val onTrack: MutableSharedFlow<Int>? = null) :
         super.onViewCreated(view, savedInstanceState)
         val adapter = TrackListAdapter()
         binding.trackRv.adapter = adapter
-        viewModel.bind(tmId, warId, adapter.sharedClick, binding.searchEt.onTextChanged(), requireActivity().backPressedDispatcher(viewLifecycleOwner), onBackDialog = dialog.sharedClose, onQuit = dialog.sharedWarLeft)
+        viewModel.bind(tmId, warId, adapter.sharedClick, binding.searchEt.onTextChanged(), requireActivity().backPressedDispatcher(viewLifecycleOwner))
         viewModel.sharedSearchedItems
             .onEach { adapter.addTracks(it) }
             .launchIn(lifecycleScope)
@@ -62,14 +61,6 @@ class TrackListFragment(val onTrack: MutableSharedFlow<Int>? = null) :
                 findNavController().navigate(TrackListFragmentDirections.enterPositions(track = it.trackIndex ?: -1, tmId = tmId ?: -1, warTrackId = it.mid))
             }
             .launchIn(lifecycleScope)
-        viewModel.sharedBack
-            .onEach {
-                if (!dialog.isAdded) dialog.show(childFragmentManager, null)
-                viewModel.sharedCancel
-                    .filter { findNavController().currentDestination?.id == R.id.trackListFragment }
-                    .onEach { dialog.dismiss() }
-                    .launchIn(lifecycleScope)
-            }.launchIn(lifecycleScope)
 
         viewModel.sharedQuit
             .filter { findNavController().currentDestination?.id == R.id.trackListFragment }

@@ -1,4 +1,4 @@
-package fr.harmoniamk.statsmk.features.manageTeams
+package fr.harmoniamk.statsmk.features.manageTeams.fragment
 
 import android.os.Bundle
 import android.view.View
@@ -12,6 +12,7 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentAddTeamBinding
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.extension.onTextChanged
+import fr.harmoniamk.statsmk.features.manageTeams.viewModel.AddTeamViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn

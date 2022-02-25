@@ -1,4 +1,4 @@
-package fr.harmoniamk.statsmk.database.firebase.model
+package fr.harmoniamk.statsmk.database.model
 
 import java.io.Serializable
 
@@ -23,7 +23,7 @@ data class War(
     val isOver = trackPlayed == TOTAL_TRACKS
 
     val displayedState: String
-        get() = if (isOver) "War terminée" else "War en cours (${trackPlayed}/${TOTAL_TRACKS})"
+        get() = if (isOver) "War terminée" else "War en cours (${trackPlayed}/$TOTAL_TRACKS)"
     val displayedScore: String
         get() = "$scoreHost - $scoreOpponent"
     val displayedDiff: String
@@ -34,5 +34,5 @@ data class War(
     val scoreLabel: String
         get() = "Score: $scoreHost - $scoreOpponent"
     val displayedAverage: String
-        get() = "${scoreHost/TOTAL_TRACKS}"
+        get() = "${scoreHost/ TOTAL_TRACKS}"
 }

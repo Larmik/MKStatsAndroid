@@ -1,4 +1,4 @@
-package fr.harmoniamk.statsmk.database.room.model
+package fr.harmoniamk.statsmk.database.model
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

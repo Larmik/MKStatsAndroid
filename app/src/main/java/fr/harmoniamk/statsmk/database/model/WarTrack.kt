@@ -1,4 +1,4 @@
-package fr.harmoniamk.statsmk.database.firebase.model
+package fr.harmoniamk.statsmk.database.model
 
 import java.io.Serializable
 

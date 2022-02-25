@@ -6,8 +6,8 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
-import fr.harmoniamk.statsmk.database.room.MKDatabase
-import fr.harmoniamk.statsmk.database.room.model.Tournament
+import fr.harmoniamk.statsmk.database.MKDatabase
+import fr.harmoniamk.statsmk.database.model.Tournament
 import fr.harmoniamk.statsmk.extension.displayedString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview

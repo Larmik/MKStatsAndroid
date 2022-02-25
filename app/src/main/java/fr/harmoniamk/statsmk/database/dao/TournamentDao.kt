@@ -1,11 +1,11 @@
-package fr.harmoniamk.statsmk.database.room.dao
+package fr.harmoniamk.statsmk.database.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy.REPLACE
 import androidx.room.Query
-import fr.harmoniamk.statsmk.database.room.model.Tournament
+import fr.harmoniamk.statsmk.database.model.Tournament
 import kotlinx.coroutines.flow.Flow
 
 @Dao

@@ -13,7 +13,7 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
-import fr.harmoniamk.statsmk.database.firebase.model.*
+import fr.harmoniamk.statsmk.database.model.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.awaitClose
@@ -228,7 +228,8 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
                     trackPlayed = map["trackPlayed"].toString().toInt(),
                     createdDate = map["createdDate"].toString(),
                     updatedDate = map["updatedDate"].toString()
-                ))
+                )
+            )
         }
         awaitClose {  }
     }
@@ -244,7 +245,8 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
                     trackIndex = map["trackIndex"].toString().toInt(),
                     isOver = map["over"].toString().toBoolean(),
                     teamScore = map["teamScore"].toString().toInt()
-                ))
+                )
+            )
         }
         awaitClose {  }
     }
