@@ -8,6 +8,7 @@ import fr.harmoniamk.statsmk.database.model.User
 import fr.harmoniamk.statsmk.database.model.War
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.getCurrent
+import fr.harmoniamk.statsmk.model.MKWar
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -47,7 +48,7 @@ class AddWarViewModel @Inject constructor(private val firebaseRepository: Fireba
 
         val createWar = onCreateWar
             .flatMapLatest { firebaseRepository.getWars() }
-            .map { it.getCurrent(preferencesRepository.currentTeam?.mid) }
+            .map { it.map { w -> MKWar(w) }.getCurrent(preferencesRepository.currentTeam?.mid) }
             .shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
 
         createWar

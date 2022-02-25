@@ -8,6 +8,8 @@ import fr.harmoniamk.statsmk.database.model.WarTrack
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.getCurrent
 import fr.harmoniamk.statsmk.extension.isTrue
+import fr.harmoniamk.statsmk.model.MKWar
+import fr.harmoniamk.statsmk.model.MKWarTrack
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -22,10 +24,10 @@ import javax.inject.Inject
 class CurrentWarViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface) : ViewModel() {
 
     private val _sharedButtonVisible = MutableSharedFlow<Boolean>()
-    private val _sharedCurrentWar = MutableSharedFlow<War>()
+    private val _sharedCurrentWar = MutableSharedFlow<MKWar>()
     private val  _sharedQuit = MutableSharedFlow<Unit>()
     private val _sharedSelectTrack = MutableSharedFlow<Unit>()
-    private val _sharedTracks = MutableSharedFlow<List<WarTrack>>()
+    private val _sharedTracks = MutableSharedFlow<List<MKWarTrack>>()
     private val _sharedTrackClick = MutableSharedFlow<Pair<Int, WarTrack>>()
     private val _sharedPlayers = MutableSharedFlow<List<String>>()
 
@@ -41,14 +43,14 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
 
         flowOf(firebaseRepository.getWars(), firebaseRepository.listenToWars())
             .flattenMerge()
-            .mapNotNull { it.getCurrent(preferencesRepository.currentTeam?.mid) }
-            .onEach { w ->
-                val tracks = firebaseRepository.getWarTracks().first().filter { it.warId == w.mid && it.isOver.isTrue}
-                val players = firebaseRepository.getUsers().first().filter { it.currentWar == w.mid }
+            .mapNotNull { it.map { w -> MKWar(w) }.getCurrent(preferencesRepository.currentTeam?.mid) }
+            .onEach { war ->
+                val tracks = firebaseRepository.getWarTracks().first().filter { it.warId == war.war?.mid && it.isOver.isTrue}
+                val players = firebaseRepository.getUsers().first().filter { it.currentWar == war.war?.mid }
                     .sortedBy { it.name?.toLowerCase(Locale.ROOT) }.mapNotNull { it.name }
-                _sharedCurrentWar.emit(w)
-                _sharedButtonVisible.emit(w.playerHostId == preferencesRepository.currentUser?.mid && !w.isOver)
-                _sharedTracks.emit(tracks)
+                _sharedCurrentWar.emit(war)
+                _sharedButtonVisible.emit(war.war?.playerHostId == preferencesRepository.currentUser?.mid && !war.isOver)
+                _sharedTracks.emit(tracks.map { MKWarTrack(it) })
                 _sharedPlayers.emit(players)
             }.launchIn(viewModelScope)
 

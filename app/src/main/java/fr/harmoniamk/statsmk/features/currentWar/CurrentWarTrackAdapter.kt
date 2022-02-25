@@ -8,6 +8,8 @@ import fr.harmoniamk.statsmk.database.model.WarTrack
 import fr.harmoniamk.statsmk.databinding.TrackItemBinding
 import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.extension.clicks
+import fr.harmoniamk.statsmk.model.MKWar
+import fr.harmoniamk.statsmk.model.MKWarTrack
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -18,7 +20,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlin.coroutines.CoroutineContext
 
 @ExperimentalCoroutinesApi
-class CurrentWarTrackAdapter(val items: MutableList<WarTrack> = mutableListOf()) :
+class CurrentWarTrackAdapter(val items: MutableList<MKWarTrack> = mutableListOf()) :
     RecyclerView.Adapter<CurrentWarTrackAdapter.CurrentTrackViewHolder>(), CoroutineScope {
 
     private val _sharedClick = MutableSharedFlow<Pair<Int, WarTrack>>()
@@ -27,10 +29,10 @@ class CurrentWarTrackAdapter(val items: MutableList<WarTrack> = mutableListOf())
     class CurrentTrackViewHolder(val binding: TrackItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(track: WarTrack) {
+        fun bind(track: MKWarTrack) {
             binding.teamScoreTv.isVisible = true
-            track.trackIndex?.let {
-                val map = Maps.values()[track.trackIndex]
+            track.track?.trackIndex?.let {
+                val map = Maps.values()[track.track?.trackIndex]
                 binding.trackIv.clipToOutline = true
                 binding.trackIv.setImageResource(map.picture)
                 binding.trackScore.text = track.displayedResult
@@ -48,14 +50,16 @@ class CurrentWarTrackAdapter(val items: MutableList<WarTrack> = mutableListOf())
     override fun onBindViewHolder(holder: CurrentTrackViewHolder, position: Int) {
         val item = items[position]
         holder.bind(item)
-        holder.binding.root.clicks()
-            .onEach { _sharedClick.emit(Pair(position+1, item)) }
-            .launchIn(this)
+        item.track?.let { tr ->
+            holder.binding.root.clicks()
+                .onEach { _sharedClick.emit(Pair(position+1, tr)) }
+                .launchIn(this)
+        }
     }
 
     override fun getItemCount() = items.size
 
-    fun addTracks(tracks: List<WarTrack>) {
+    fun addTracks(tracks: List<MKWarTrack>) {
         if (tracks.size != itemCount) {
             notifyItemRangeRemoved(0, itemCount)
             items.clear()

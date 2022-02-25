@@ -46,11 +46,11 @@ class WarFragment : Fragment(R.layout.fragment_war) {
             )
 
             viewModel.sharedTeam
-                .onEach {
+                .onEach { team ->
                     binding.nextBtn.visibility = View.INVISIBLE
-                    it?.let {
+                    team?.team?.let {
                         binding.nextBtn.visibility = View.VISIBLE
-                        binding.nextBtn.text = it.integrationLabel
+                        binding.nextBtn.text = team.integrationLabel
                     }
                 }
                 .launchIn(lifecycleScope)
@@ -58,6 +58,7 @@ class WarFragment : Fragment(R.layout.fragment_war) {
             viewModel.sharedHasTeam
                 .onEach {
                     binding.noTeamLayout.isVisible = !it
+                    binding.progress.isVisible = false
                     binding.mainWarLayout.isVisible = it
                 }.launchIn(lifecycleScope)
 
@@ -77,8 +78,8 @@ class WarFragment : Fragment(R.layout.fragment_war) {
                 .onEach {
                     binding.createWarLayout.isVisible = it == null
                     binding.currentWarLayout.isVisible = it != null
-                    binding.nameTv.text = it?.name
-                    binding.timeTv.text = it?.createdDate
+                    binding.nameTv.text = it?.war?.name
+                    binding.timeTv.text = it?.war?.createdDate
                     binding.currentWarRemaining.text = it?.displayedState
                     binding.currentWarScore.text = it?.scoreLabel
                 }.launchIn(lifecycleScope)

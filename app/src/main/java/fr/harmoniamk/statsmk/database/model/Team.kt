@@ -6,7 +6,4 @@ data class Team(
     val name: String? = null,
     val shortName: String? = null,
     val accessCode: String? = null
-) {
-
-    val integrationLabel: String = "Intégrer $name ($shortName)"
-}
+)

@@ -18,21 +18,4 @@ data class War(
     var trackPlayed: Int = 0,
     val createdDate: String? = null,
     var updatedDate: String? = null
-) : Serializable {
-
-    val isOver = trackPlayed == TOTAL_TRACKS
-
-    val displayedState: String
-        get() = if (isOver) "War terminée" else "War en cours (${trackPlayed}/$TOTAL_TRACKS)"
-    val displayedScore: String
-        get() = "$scoreHost - $scoreOpponent"
-    val displayedDiff: String
-        get() {
-            val diff = scoreHost-scoreOpponent
-            return if (diff > 0) "+$diff" else "$diff"
-        }
-    val scoreLabel: String
-        get() = "Score: $scoreHost - $scoreOpponent"
-    val displayedAverage: String
-        get() = "${scoreHost/ TOTAL_TRACKS}"
-}
+) : Serializable

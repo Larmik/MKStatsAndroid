@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import fr.harmoniamk.statsmk.database.model.War
 import fr.harmoniamk.statsmk.databinding.LastTournamentItemBinding
 import fr.harmoniamk.statsmk.extension.clicks
+import fr.harmoniamk.statsmk.model.MKWar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -17,7 +18,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlin.coroutines.CoroutineContext
 
 @ExperimentalCoroutinesApi
-class LastWarAdapter(val items: MutableList<War> = mutableListOf()) :
+class LastWarAdapter(val items: MutableList<MKWar> = mutableListOf()) :
     RecyclerView.Adapter<LastWarAdapter.LastWarViewHolder>(), CoroutineScope {
 
     private val _sharedItemClick = MutableSharedFlow<War>()
@@ -26,12 +27,12 @@ class LastWarAdapter(val items: MutableList<War> = mutableListOf()) :
     class LastWarViewHolder(val binding: LastTournamentItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(war: War) {
+        fun bind(war: MKWar) {
             binding.tmTotal.isVisible = false
             binding.warTotal.isVisible = true
-            binding.nameTv.text = war.name
+            binding.nameTv.text = war.war?.name
             binding.totalWarScoreTv.text = war.displayedScore
-            binding.timeTv.text = war.createdDate?.replace("-", "\n")
+            binding.timeTv.text = war.war?.createdDate?.replace("-", "\n")
             binding.warDiff.text = war.displayedDiff
         }
     }
@@ -43,14 +44,17 @@ class LastWarAdapter(val items: MutableList<War> = mutableListOf()) :
     override fun onBindViewHolder(holder: LastWarViewHolder, position: Int) {
         val item = items[position]
         holder.bind(item)
-        holder.binding.root.clicks()
-            .onEach { _sharedItemClick.emit(item) }
-            .launchIn(this)
+        item.war?.let { war ->
+            holder.binding.root.clicks()
+                .onEach { _sharedItemClick.emit(war) }
+                .launchIn(this)
+        }
+
     }
 
     override fun getItemCount() = items.size
 
-    fun addWars(wars: List<War>) {
+    fun addWars(wars: List<MKWar>) {
         notifyItemRangeRemoved(0, itemCount)
         items.clear()
         items.addAll(wars)

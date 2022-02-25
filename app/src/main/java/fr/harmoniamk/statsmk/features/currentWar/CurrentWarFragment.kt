@@ -35,10 +35,10 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
 
         viewModel.sharedCurrentWar
             .onEach {
-                warId = it.mid
-                warName = it.name
-                binding.warTitleTv.text = it.name
-                binding.warDateTv.text = it.createdDate
+                warId = it.war?.mid
+                warName = it.war?.name
+                binding.warTitleTv.text = it.war?.name
+                binding.warDateTv.text = it.war?.createdDate
                 binding.currentWarTv.text = it.displayedState
                 binding.scoreTv.text = it.displayedScore
                 binding.diffScoreTv.text = it.displayedDiff

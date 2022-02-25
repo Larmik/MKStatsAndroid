@@ -7,6 +7,8 @@ import fr.harmoniamk.statsmk.database.model.War
 import fr.harmoniamk.statsmk.database.model.WarPosition
 import fr.harmoniamk.statsmk.database.model.WarTrack
 import fr.harmoniamk.statsmk.extension.bind
+import fr.harmoniamk.statsmk.model.MKWar
+import fr.harmoniamk.statsmk.model.MKWarTrack
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -25,7 +27,7 @@ class WarTrackResultViewModel @Inject constructor(private val firebaseRepository
     private val _sharedCancel = MutableSharedFlow<Unit>()
     private val _sharedBackToCurrent = MutableSharedFlow<Unit>()
     private val _sharedGoToWarResume = MutableSharedFlow<War>()
-    private val _sharedScore = MutableSharedFlow<WarTrack>()
+    private val _sharedScore = MutableSharedFlow<MKWarTrack>()
 
     val sharedWarPos = _sharedWarPos.asSharedFlow()
     val sharedBack = _sharedBack.asSharedFlow()
@@ -54,7 +56,7 @@ class WarTrackResultViewModel @Inject constructor(private val firebaseRepository
                     track
                 }
                 .flatMapLatest { firebaseRepository.writeWarTrack(it) }
-                .mapNotNull { track }
+                .map { MKWarTrack(track) }
                 .bind(_sharedScore, viewModelScope)
 
             onValid
@@ -66,13 +68,13 @@ class WarTrackResultViewModel @Inject constructor(private val firebaseRepository
                 .mapNotNull {
                     it.apply {
                         this.scoreHost += track?.teamScore ?: 0
-                        this.scoreOpponent += track?.opponentScore ?: 0
+                        this.scoreOpponent += MKWarTrack(track).opponentScore ?: 0
                         this.trackPlayed += 1
                     }
                 }
                 .onEach { war ->
                     firebaseRepository.writeWar(war).first()
-                    if (war.isOver) {
+                    if (MKWar(war).isOver) {
                         firebaseRepository.getUsers().first().filter { it.currentWar == war.mid }.forEach {
                             val new = it.apply { this.currentWar = "-1" }
                             firebaseRepository.writeUser(new).first()

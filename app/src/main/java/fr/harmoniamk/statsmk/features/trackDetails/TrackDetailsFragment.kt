@@ -12,6 +12,7 @@ import fr.harmoniamk.statsmk.database.model.WarTrack
 import fr.harmoniamk.statsmk.databinding.FragmentTrackDetailsBinding
 import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.features.wTrackResult.WarTrackResultAdapter
+import fr.harmoniamk.statsmk.model.MKWarTrack
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -38,6 +39,7 @@ class TrackDetailsFragment : Fragment(R.layout.fragment_track_details) {
         val adapter = WarTrackResultAdapter()
         binding.resultRv.adapter = adapter
         warTrack?.let { track ->
+            val item = MKWarTrack(track)
             track.trackIndex?.let {
                 val map = Maps.values()[it]
                 binding.trackIv.clipToOutline = true
@@ -47,8 +49,8 @@ class TrackDetailsFragment : Fragment(R.layout.fragment_track_details) {
                 binding.name.setText(map.label)
             }
             binding.title.text = "$warName\nCourse $number/12"
-            binding.trackScore.text = track.displayedResult
-            binding.trackDiff.text = track.displayedDiff
+            binding.trackScore.text = item.displayedResult
+            binding.trackDiff.text = item.displayedDiff
             viewModel.bind(track.mid)
             viewModel.sharedPositions
                 .onEach { adapter.addResults(it) }
