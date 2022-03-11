@@ -27,7 +27,6 @@ class WarDetailsFragment : Fragment(R.layout.fragment_war_details) {
     private val binding : FragmentWarDetailsBinding by viewBinding()
     private val viewModel: WarDetailsViewModel by viewModels()
     private var war: War? = null
-    private var isExpanded = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,14 +50,7 @@ class WarDetailsFragment : Fragment(R.layout.fragment_war_details) {
             viewModel.sharedTracks.onEach {
                 adapter.addTracks(it)
             }.launchIn(lifecycleScope)
-            binding.allTracksBtn.clicks()
-                .onEach {
-                    when (isExpanded) {
-                        true -> binding.motion.transitionToStart()
-                        false -> binding.motion.transitionToEnd()
-                    }
-                    isExpanded = !isExpanded
-                }.launchIn(lifecycleScope)
+
         }
     }
 
@@ -102,7 +94,6 @@ class WarDetailsFragment : Fragment(R.layout.fragment_war_details) {
                     binding.bestTrackIv.setImageResource(map.picture)
                     binding.bestTrackScore.text = track.displayedResult
                     binding.bestTrackDiff.text = track.displayedDiff
-                    binding.bestTrackShortname.text = map.name
                     binding.bestTrackName.setText(map.label)
                 }
                 false -> {
@@ -111,7 +102,6 @@ class WarDetailsFragment : Fragment(R.layout.fragment_war_details) {
                     binding.worstTrackIv.setImageResource(map.picture)
                     binding.worstTrackScore.text = track.displayedResult
                     binding.worstTrackDiff.text = track.displayedDiff
-                    binding.worstTrackShortname.text = map.name
                     binding.worstTrackName.setText(map.label)
                 }
             }

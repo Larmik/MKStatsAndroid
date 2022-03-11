@@ -1,262 +1,272 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
     android:background="@color/waluigi"
-    android:orientation="vertical"
-    android:padding="15dp">
-
-    <TextView
-        android:id="@+id/war_title_tv"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/orbitron_semibold"
-        android:gravity="center"
-        android:textColor="@color/white"
-        android:textSize="24sp"
-        tools:text="HR vs OF" />
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:padding="15dp">
 
         <TextView
-            android:id="@+id/war_date_tv"
-            android:layout_width="0dp"
+            android:id="@+id/war_title_tv"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:fontFamily="@font/montserrat_regular"
+            android:fontFamily="@font/orbitron_semibold"
             android:gravity="center"
             android:textColor="@color/white"
-            tools:text="26/01/2022 - 22h" />
-
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_margin="10dp"
-        android:background="@color/white" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:fontFamily="@font/montserrat_bold"
-            android:text="Score de l'équipe :"
-            android:textColor="@color/white"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/score_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:autoSizeTextType="uniform"
-            android:fontFamily="@font/orbitron_semibold"
-            android:maxLines="1"
-            android:textColor="@color/white"
-            android:textSize="28sp"
-            tools:targetApi="o"
-            tools:text="229 - 190" />
-
-        <TextView
-            android:id="@+id/diff_score_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/orbitron_semibold"
-            android:textColor="@color/white"
-            android:textSize="20sp"
-            tools:text="+39" />
-
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_margin="10dp"
-        android:background="@color/white" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:fontFamily="@font/montserrat_bold"
-            android:text="Score des joueurs :"
-            android:textColor="@color/white"
-            android:textSize="16sp" />
+            android:textSize="24sp"
+            tools:text="HR vs OF" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
             android:orientation="horizontal">
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/war_date_tv"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:fontFamily="@font/montserrat_regular"
                 android:gravity="center"
-                android:orientation="horizontal">
+                android:textColor="@color/white"
+                tools:text="26/01/2022 - 22h" />
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
-                    android:orientation="vertical">
+        </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/player1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/montserrat_regular"
-                        android:textColor="@color/white"
-                        android:textSize="16sp"
-                        tools:text="Akioze" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_margin="10dp"
+            android:background="@color/white" />
 
-                    <TextView
-                        android:id="@+id/player2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/montserrat_regular"
-                        android:textColor="@color/white"
-                        android:textSize="16sp"
-                        tools:text="Skyoshi" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/player3"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/montserrat_regular"
-                        android:textColor="@color/white"
-                        android:textSize="16sp"
-                        tools:text="Cami" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:fontFamily="@font/montserrat_bold"
+                android:text="Score de l'équipe :"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
 
-                </LinearLayout>
+            <TextView
+                android:id="@+id/score_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:autoSizeTextType="uniform"
+                android:fontFamily="@font/orbitron_semibold"
+                android:maxLines="1"
+                android:textColor="@color/white"
+                android:textSize="28sp"
+                tools:targetApi="o"
+                tools:text="229 - 190" />
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
+            <TextView
+                android:id="@+id/diff_score_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/orbitron_semibold"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                tools:text="+39" />
 
-                    <TextView
-                        android:id="@+id/player1score"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/montserrat_regular"
-                        android:textColor="@color/white"
-                        android:textSize="16sp"
-                        tools:text="105" />
+        </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/player2score"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/montserrat_regular"
-                        android:textColor="@color/white"
-                        android:textSize="16sp"
-                        tools:text="93" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_margin="10dp"
+            android:background="@color/white" />
 
-                    <TextView
-                        android:id="@+id/player3score"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/montserrat_regular"
-                        android:textColor="@color/white"
-                        android:textSize="16sp"
-                        tools:text="90" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingVertical="10dp"
+            android:background="@drawable/rounded_bg"
+            android:backgroundTint="@color/waluigi_second"
+            android:orientation="vertical">
 
-                </LinearLayout>
-
-            </LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:fontFamily="@font/montserrat_bold"
+                android:text="Score des joueurs :"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
 
             <LinearLayout
-                android:layout_width="0dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
                 android:orientation="horizontal">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
-                    android:orientation="vertical">
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/player4"
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/montserrat_regular"
-                        android:textColor="@color/white"
-                        android:textSize="16sp"
-                        tools:text="nsdive" />
+                        android:layout_marginEnd="10dp"
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/player5"
+                        <TextView
+                            android:id="@+id/player1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/montserrat_regular"
+                            android:textColor="@color/white"
+                            android:textSize="16sp"
+                            tools:text="Akioze" />
+
+                        <TextView
+                            android:id="@+id/player2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/montserrat_regular"
+                            android:textColor="@color/white"
+                            android:textSize="16sp"
+                            tools:text="Skyoshi" />
+
+                        <TextView
+                            android:id="@+id/player3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/montserrat_regular"
+                            android:textColor="@color/white"
+                            android:textSize="16sp"
+                            tools:text="Cami" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/montserrat_regular"
-                        android:textColor="@color/white"
-                        android:textSize="16sp"
-                        tools:text="Guyal" />
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/player6"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/montserrat_regular"
-                        android:textColor="@color/white"
-                        android:textSize="16sp"
-                        tools:text="Lari" />
+                        <TextView
+                            android:id="@+id/player1score"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/orbitron_semibold"
+                            android:textColor="@color/white"
+                            android:textSize="16sp"
+                            tools:text="105" />
+
+                        <TextView
+                            android:id="@+id/player2score"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/orbitron_semibold"
+                            android:textColor="@color/white"
+                            android:textSize="16sp"
+                            tools:text="93" />
+
+                        <TextView
+                            android:id="@+id/player3score"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/orbitron_semibold"
+                            android:textColor="@color/white"
+                            android:textSize="16sp"
+                            tools:text="90" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/player4score"
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/montserrat_regular"
-                        android:textColor="@color/white"
-                        android:textSize="16sp"
-                        tools:text="73" />
+                        android:layout_marginEnd="10dp"
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/player5score"
+                        <TextView
+                            android:id="@+id/player4"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/montserrat_regular"
+                            android:textColor="@color/white"
+                            android:textSize="16sp"
+                            tools:text="nsdive" />
+
+                        <TextView
+                            android:id="@+id/player5"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/montserrat_regular"
+                            android:textColor="@color/white"
+                            android:textSize="16sp"
+                            tools:text="Guyal" />
+
+                        <TextView
+                            android:id="@+id/player6"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/montserrat_regular"
+                            android:textColor="@color/white"
+                            android:textSize="16sp"
+                            tools:text="Lari" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/montserrat_regular"
-                        android:textColor="@color/white"
-                        android:textSize="16sp"
-                        tools:text="58" />
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/player6score"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/montserrat_regular"
-                        android:textColor="@color/white"
-                        android:textSize="16sp"
-                        tools:text="42" />
+                        <TextView
+                            android:id="@+id/player4score"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/orbitron_semibold"
+                            android:textColor="@color/white"
+                            android:textSize="16sp"
+                            tools:text="73" />
+
+                        <TextView
+                            android:id="@+id/player5score"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/orbitron_semibold"
+                            android:textColor="@color/white"
+                            android:textSize="16sp"
+                            tools:text="58" />
+
+                        <TextView
+                            android:id="@+id/player6score"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/orbitron_semibold"
+                            android:textColor="@color/white"
+                            android:textSize="16sp"
+                            tools:text="42" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
@@ -264,293 +274,255 @@
 
         </LinearLayout>
 
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_margin="10dp"
-        android:background="@color/white" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:fontFamily="@font/montserrat_bold"
-            android:text="Circuits joués"
-            android:textColor="@color/white"
-            android:textSize="16sp" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_margin="10dp"
+            android:background="@color/white" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:fontFamily="@font/montserrat_bold"
+                android:text="Circuits joués"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
                 android:layout_marginBottom="10dp"
                 android:orientation="horizontal">
 
-                <TextView
-                    android:layout_width="100dp"
+                <LinearLayout
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Meilleur circuit :"
-                    android:textColor="@color/white"
-                    android:textSize="12sp" />
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:layout_marginEnd="5dp"
+                    android:orientation="vertical">
 
-                <androidx.cardview.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/white_alphaed"
-                    android:orientation="vertical"
-                    app:cardBackgroundColor="@color/white_alphaed"
-                    app:cardCornerRadius="2dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Meilleur circuit :"
+                        android:textColor="@color/white"
+                        android:layout_marginBottom="5dp"
+                        android:textSize="14sp" />
 
-                    <LinearLayout
+                    <androidx.cardview.widget.CardView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="5dp"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:id="@+id/best_track_iv"
-                            android:layout_width="50dp"
-                            android:layout_height="30dp"
-                            android:background="@drawable/rounded_bg"
-                            android:scaleType="fitXY"
-                            tools:src="@drawable/bc" />
+                        app:cardCornerRadius="2dp"
+                        android:outlineSpotShadowColor="@android:color/transparent"
+                        app:cardBackgroundColor="@color/win"
+                        android:orientation="vertical"
+                        tools:targetApi="p">
 
                         <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_marginStart="5dp"
-                            android:layout_weight="3"
-                            android:gravity="center_vertical"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:gravity="center"
                             android:orientation="vertical">
 
+                            <ImageView
+                                android:layout_width="100dp"
+                                android:layout_height="60dp"
+                                android:background="@drawable/rounded_bg"
+                                android:scaleType="fitXY"
+                                tools:src="@drawable/bc"
+                                android:id="@+id/best_track_iv"/>
+
                             <TextView
+                                android:textSize="16sp"
+                                tools:text="Bowser Castle"
+                                android:maxLines="1"
+                                android:gravity="center"
+                                android:layout_marginBottom="5dp"
+                                android:autoSizeTextType="uniform"
+                                android:textColor="@color/black"
+                                android:layout_width="match_parent"
+                                android:fontFamily="@font/montserrat_bold"
+                                android:layout_height="wrap_content"
                                 android:id="@+id/best_track_name"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:autoSizeTextType="uniform"
-                                android:fontFamily="@font/montserrat_bold"
-                                android:maxLines="1"
-                                android:textColor="@color/black"
-                                android:textSize="14sp"
-                                tools:targetApi="o"
-                                tools:text="Bowser Castle" />
+                                tools:targetApi="o" />
 
-                            <TextView
-                                android:id="@+id/best_track_shortname"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/orbitron_semibold"
-                                android:textColor="@color/black"
-                                android:textSize="9sp"
-                                tools:text="BC" />
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:background="@drawable/rounded_bg"
+                                android:backgroundTint="@color/white_alphaed"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/best_track_score"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:autoSizeMinTextSize="12sp"
+                                    android:autoSizeTextType="uniform"
+                                    android:fontFamily="@font/orbitron_semibold"
+                                    android:gravity="center"
+                                    android:maxLines="1"
+                                    android:textColor="@color/waluigi_second"
+                                    android:textSize="14sp"
+                                    tools:targetApi="o"
+                                    tools:text="58 - 24" />
+
+                                <TextView
+                                    android:id="@+id/best_track_diff"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:autoSizeMinTextSize="9sp"
+                                    android:autoSizeTextType="uniform"
+                                    android:fontFamily="@font/orbitron_semibold"
+                                    android:gravity="center"
+                                    android:maxLines="1"
+                                    android:textColor="@color/waluigi_second"
+                                    android:textSize="11sp"
+                                    tools:targetApi="o"
+                                    tools:text="+34" />
+                            </LinearLayout>
 
                         </LinearLayout>
 
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:gravity="center"
-                            android:orientation="vertical">
+                    </androidx.cardview.widget.CardView>
 
-                            <TextView
-                                android:id="@+id/best_track_score"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:autoSizeMinTextSize="12sp"
-                                android:autoSizeTextType="uniform"
-                                android:fontFamily="@font/orbitron_semibold"
-                                android:gravity="center"
-                                android:maxLines="1"
-                                android:textColor="@color/waluigi_second"
-                                android:textSize="14sp"
-                                tools:targetApi="o"
-                                tools:text="58 - 24" />
+                </LinearLayout>
 
-                            <TextView
-                                android:id="@+id/best_track_diff"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:autoSizeMinTextSize="9sp"
-                                android:autoSizeTextType="uniform"
-                                android:fontFamily="@font/orbitron_semibold"
-                                android:gravity="center"
-                                android:maxLines="1"
-                                android:textColor="@color/waluigi_second"
-                                android:textSize="11sp"
-                                tools:targetApi="o"
-                                tools:text="+34" />
-
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                </androidx.cardview.widget.CardView>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="100dp"
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:layout_marginStart="5dp"
                     android:layout_height="wrap_content"
-                    android:text="Pire circuit :"
-                    android:textColor="@color/white"
-                    android:textSize="12sp" />
+                    android:orientation="vertical">
 
-                <androidx.cardview.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/white_alphaed"
-                    android:orientation="vertical"
-                    app:cardBackgroundColor="@color/white_alphaed"
-                    app:cardCornerRadius="2dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_margin="5dp"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
+                        android:text="Pire circuit :"
+                        android:textColor="@color/white"
+                        android:layout_marginBottom="5dp"
+                        android:textSize="14sp" />
 
-                        <ImageView
-                            android:id="@+id/worst_track_iv"
-                            android:layout_width="50dp"
-                            android:layout_height="30dp"
-                            android:background="@drawable/rounded_bg"
-                            android:scaleType="fitXY"
-                            tools:src="@drawable/bc" />
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="match_parent"
-                            android:layout_marginStart="5dp"
-                            android:layout_weight="3"
-                            android:gravity="center_vertical"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:id="@+id/worst_track_name"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:autoSizeTextType="uniform"
-                                android:fontFamily="@font/montserrat_bold"
-                                android:maxLines="1"
-                                android:textColor="@color/black"
-                                android:textSize="14sp"
-                                tools:targetApi="o"
-                                tools:text="Bowser Castle" />
-
-                            <TextView
-                                android:id="@+id/worst_track_shortname"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:fontFamily="@font/orbitron_semibold"
-                                android:textColor="@color/black"
-                                android:textSize="9sp"
-                                tools:text="BC" />
-
-                        </LinearLayout>
+                    <androidx.cardview.widget.CardView android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:cardCornerRadius="2dp"
+                        android:outlineSpotShadowColor="@android:color/transparent"
+                        app:cardBackgroundColor="@color/lose"
+                        android:orientation="vertical"
+                        tools:targetApi="p">
 
                         <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="5dp"
+                            android:background="@android:color/transparent"
                             android:gravity="center"
                             android:orientation="vertical">
 
-                            <TextView
-                                android:id="@+id/worst_track_score"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:autoSizeMinTextSize="12sp"
-                                android:autoSizeTextType="uniform"
-                                android:fontFamily="@font/orbitron_semibold"
-                                android:gravity="center"
-                                android:maxLines="1"
-                                android:textColor="@color/waluigi_second"
-                                android:textSize="14sp"
-                                tools:targetApi="o"
-                                tools:text="58 - 24" />
+                            <ImageView
+                                android:layout_width="100dp"
+                                android:layout_height="60dp"
+                                android:background="@drawable/rounded_bg"
+                                android:scaleType="fitXY"
+                                tools:src="@drawable/bc"
+                                android:id="@+id/worst_track_iv"/>
 
                             <TextView
-                                android:id="@+id/worst_track_diff"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:autoSizeMinTextSize="9sp"
-                                android:autoSizeTextType="uniform"
-                                android:fontFamily="@font/orbitron_semibold"
-                                android:gravity="center"
+                                android:textSize="16sp"
+                                tools:text="Bowser Castle"
                                 android:maxLines="1"
-                                android:textColor="@color/waluigi_second"
-                                android:textSize="11sp"
-                                tools:targetApi="o"
-                                tools:text="+34" />
+                                android:gravity="center"
+                                android:autoSizeTextType="uniform"
+                                android:textColor="@color/black"
+                                android:layout_width="match_parent"
+                                android:layout_marginBottom="5dp"
+                                android:fontFamily="@font/montserrat_bold"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/worst_track_name"
+                                tools:targetApi="o"  />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:backgroundTint="@color/white_alphaed"
+                                android:background="@drawable/rounded_bg"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/worst_track_score"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:autoSizeMinTextSize="12sp"
+                                    android:autoSizeTextType="uniform"
+                                    android:fontFamily="@font/orbitron_semibold"
+                                    android:gravity="center"
+                                    android:maxLines="1"
+                                    android:textColor="@color/waluigi_second"
+                                    android:textSize="14sp"
+                                    tools:targetApi="o"
+                                    tools:text="58 - 24" />
+
+                                <TextView
+                                    android:id="@+id/worst_track_diff"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:autoSizeMinTextSize="9sp"
+                                    android:autoSizeTextType="uniform"
+                                    android:fontFamily="@font/orbitron_semibold"
+                                    android:gravity="center"
+                                    android:maxLines="1"
+                                    android:textColor="@color/waluigi_second"
+                                    android:textSize="11sp"
+                                    tools:targetApi="o"
+                                    tools:text="+34" />
+
+                            </LinearLayout>
 
                         </LinearLayout>
 
-                    </LinearLayout>
+                    </androidx.cardview.widget.CardView>
 
-                </androidx.cardview.widget.CardView>
+                </LinearLayout>
 
             </LinearLayout>
 
         </LinearLayout>
 
-    </LinearLayout>
-
-    <androidx.constraintlayout.motion.widget.MotionLayout
-        android:id="@+id/motion"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layoutDescription="@xml/fragment_war_details_scene">
-
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="end"
-            android:id="@+id/all_tracks_btn"
-            android:layout_margin="10dp"
-            android:text="Voir tous les circuits"
-            android:textSize="10sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:textColor="@color/white"/>
+            android:text="Tous les circuits :"
+            android:textColor="@color/white"
+            android:layout_gravity="center"
+            android:textSize="14sp"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/current_tracks_rv"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/all_tracks_btn"
             android:orientation="vertical"
+            android:nestedScrollingEnabled="false"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-    </androidx.constraintlayout.motion.widget.MotionLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_margin="10dp"
+            android:background="@color/white" />
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_margin="10dp"
-        android:background="@color/white" />
+    </LinearLayout>
 
-</LinearLayout>
+</androidx.core.widget.NestedScrollView>

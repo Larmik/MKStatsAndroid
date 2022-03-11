@@ -2,13 +2,13 @@ package fr.harmoniamk.statsmk.features.currentWar
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import fr.harmoniamk.statsmk.database.model.WarTrack
 import fr.harmoniamk.statsmk.databinding.TrackItemBinding
 import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.extension.clicks
-import fr.harmoniamk.statsmk.model.MKWar
 import fr.harmoniamk.statsmk.model.MKWarTrack
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -31,8 +31,9 @@ class CurrentWarTrackAdapter(val items: MutableList<MKWarTrack> = mutableListOf(
 
         fun bind(track: MKWarTrack) {
             binding.teamScoreTv.isVisible = true
+            binding.root.background.setTint(ContextCompat.getColor(binding.root.context, track.backgroundColor))
             track.track?.trackIndex?.let {
-                val map = Maps.values()[track.track?.trackIndex]
+                val map = Maps.values()[it]
                 binding.trackIv.clipToOutline = true
                 binding.trackIv.setImageResource(map.picture)
                 binding.trackScore.text = track.displayedResult

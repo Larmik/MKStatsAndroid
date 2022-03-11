@@ -31,4 +31,6 @@
     <color name="pos_9_10">#E27602</color>
     <color name="pos_11">#DC6601</color>
     <color name="pos_12">#D24E01</color>
+    <color name="win">#9cffa1</color>
+    <color name="lose">#ff8282</color>
 </resources>

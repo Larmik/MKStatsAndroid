@@ -1,5 +1,6 @@
 package fr.harmoniamk.statsmk.model
 
+import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.database.model.TOTAL_TRACK_SCORE
 import fr.harmoniamk.statsmk.database.model.WarTrack
 
@@ -31,6 +32,18 @@ data class MKWarTrack(val track: WarTrack?) {
                 return if (it > 0) "+$it" else "$it"
             }
             return ""
+        }
+
+    val backgroundColor : Int
+        get() {
+            diffScore?.let {
+                return when {
+                    it > 0 -> R.color.win
+                    it < 0 -> R.color.lose
+                    else -> R.color.white_alphaed
+                }
+            }
+            return R.color.white_alphaed
         }
 
 }
