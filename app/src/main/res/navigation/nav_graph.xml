@@ -53,6 +53,21 @@
         </action>
 
         <action
+            android:id="@+id/go_to_war_details"
+            app:destination="@id/warDetailsFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right">
+
+            <argument
+                android:name="war"
+                app:argType="fr.harmoniamk.statsmk.database.model.War"
+                app:nullable="false"/>
+
+        </action>
+
+        <action
             android:id="@+id/manageTeams"
             app:destination="@id/manageTeamsFragment"
             app:enterAnim="@anim/enter_from_right"
@@ -164,6 +179,21 @@
             app:popUpToInclusive="true"
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right"/>
+
+        <action
+            android:id="@+id/go_to_war_details"
+            app:destination="@id/warDetailsFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right">
+
+            <argument
+                android:name="war"
+                app:argType="fr.harmoniamk.statsmk.database.model.War"
+                app:nullable="false"/>
+
+        </action>
 
     </fragment>
     <fragment
@@ -292,5 +322,10 @@
         android:name="fr.harmoniamk.statsmk.features.trackDetails.TrackDetailsFragment"
         tools:layout="@layout/fragment_track_details"
         android:label="TrackDetailsFragment" />
+    <fragment
+        android:id="@+id/warDetailsFragment"
+        android:name="fr.harmoniamk.statsmk.features.warDetails.WarDetailsFragment"
+        tools:layout="@layout/fragment_war_details"
+        android:label="WarDetailsFragment" />
 
 </navigation>

@@ -100,10 +100,9 @@ class WarFragment : Fragment(R.layout.fragment_war) {
                     bestAdapter.addWars(it)
                 }.launchIn(lifecycleScope)
 
-            //TODO Change to display past war details (new screen)
             viewModel.sharedGoToWar
                 .filter { findNavController().currentDestination?.id == R.id.homeFragment }
-                .onEach { findNavController().navigate(HomeFragmentDirections.goToCurrentWar()) }
+                .onEach { findNavController().navigate(HomeFragmentDirections.goToWarDetails(it)) }
                 .launchIn(lifecycleScope)
         }
 

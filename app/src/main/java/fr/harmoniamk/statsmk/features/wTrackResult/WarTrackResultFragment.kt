@@ -87,10 +87,9 @@ class WarTrackResultFragment : Fragment(R.layout.fragment_result_war_track) {
             .onEach { findNavController().navigate(WarTrackResultFragmentDirections.backToCurrent()) }
             .launchIn(lifecycleScope)
 
-        //TODO Change to display past war details (new screen)
         viewModel.sharedGoToWarResume
             .filter { findNavController().currentDestination?.id == R.id.warTrackResultFragment }
-            .onEach { findNavController().navigate(WarTrackResultFragmentDirections.backToCurrent()) }
+            .onEach { findNavController().navigate(WarTrackResultFragmentDirections.goToWarDetails(it)) }
             .launchIn(lifecycleScope)
     }
 
