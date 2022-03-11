@@ -2,8 +2,9 @@ package fr.harmoniamk.statsmk.model
 
 import fr.harmoniamk.statsmk.database.model.TOTAL_TRACKS
 import fr.harmoniamk.statsmk.database.model.War
+import java.io.Serializable
 
-data class MKWar(val war: War?) {
+data class MKWar(val war: War?) : Serializable {
 
     val isOver = war?.trackPlayed == TOTAL_TRACKS
 

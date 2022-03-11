@@ -318,12 +318,13 @@
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:id="@+id/all_wars_btn"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="end"
+                        android:paddingVertical="10dp"
+                        android:gravity="end"
                         android:textSize="14sp"
                         android:textColor="@color/white"
-                        android:layout_marginBottom="10dp"
                         android:fontFamily="@font/montserrat_bold"
                         android:text="Toutes les wars"/>
 

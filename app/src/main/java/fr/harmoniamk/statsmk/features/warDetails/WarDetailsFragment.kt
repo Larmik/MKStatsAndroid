@@ -26,11 +26,11 @@ class WarDetailsFragment : Fragment(R.layout.fragment_war_details) {
 
     private val binding : FragmentWarDetailsBinding by viewBinding()
     private val viewModel: WarDetailsViewModel by viewModels()
-    private var war: War? = null
+    private var war: MKWar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        war = arguments?.get("war") as? War
+        war = arguments?.get("war") as? MKWar
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -38,12 +38,11 @@ class WarDetailsFragment : Fragment(R.layout.fragment_war_details) {
         val adapter = CurrentWarTrackAdapter()
         binding.currentTracksRv.adapter = adapter
         war?.let { war ->
-            val displayedWar = MKWar(war)
-            binding.warTitleTv.text = war.name
-            binding.warDateTv.text = war.createdDate
-            binding.scoreTv.text = displayedWar.displayedScore
-            binding.diffScoreTv.text = displayedWar.displayedDiff
-            viewModel.bind(war.mid)
+            binding.warTitleTv.text = war.war?.name
+            binding.warDateTv.text = war.war?.createdDate
+            binding.scoreTv.text = war.displayedScore
+            binding.diffScoreTv.text = war.displayedDiff
+            viewModel.bind(war.war?.mid)
             viewModel.sharedBestTrack.onEach { bindTrack(it, true) }.launchIn(lifecycleScope)
             viewModel.sharedWorstTrack.onEach { bindTrack(it, false) }.launchIn(lifecycleScope)
             viewModel.sharedWarPlayers.onEach { bindPlayers(it) }.launchIn(lifecycleScope)

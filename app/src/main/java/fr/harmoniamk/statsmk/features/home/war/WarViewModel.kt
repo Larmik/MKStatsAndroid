@@ -31,7 +31,7 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
     private val _sharedCurrentWarClick = MutableSharedFlow<War>()
     private val _sharedLastWars = MutableSharedFlow<List<MKWar>>()
     private val _sharedBestWars = MutableSharedFlow<List<MKWar>>()
-    private val _sharedGoToWar = MutableSharedFlow<War>()
+    private val _sharedGoToWar = MutableSharedFlow<MKWar>()
 
     val sharedTeam = _sharedTeam.asSharedFlow()
     val sharedHasTeam = _sharedHasTeam.asSharedFlow()
@@ -102,7 +102,7 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
             .mapNotNull { war?.war }
             .bind(_sharedCurrentWarClick, viewModelScope)
 
-        onWarClick.bind(_sharedGoToWar, viewModelScope)
+        onWarClick.map { MKWar(it) }.bind(_sharedGoToWar, viewModelScope)
         onCreateWar.bind(_sharedCreateWar, viewModelScope)
     }
 

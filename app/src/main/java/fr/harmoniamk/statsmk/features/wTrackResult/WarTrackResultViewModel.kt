@@ -26,7 +26,7 @@ class WarTrackResultViewModel @Inject constructor(private val firebaseRepository
     private val _sharedQuit = MutableSharedFlow<Unit>()
     private val _sharedCancel = MutableSharedFlow<Unit>()
     private val _sharedBackToCurrent = MutableSharedFlow<Unit>()
-    private val _sharedGoToWarResume = MutableSharedFlow<War>()
+    private val _sharedGoToWarResume = MutableSharedFlow<MKWar>()
     private val _sharedScore = MutableSharedFlow<MKWarTrack>()
 
     val sharedWarPos = _sharedWarPos.asSharedFlow()
@@ -79,7 +79,7 @@ class WarTrackResultViewModel @Inject constructor(private val firebaseRepository
                             val new = it.apply { this.currentWar = "-1" }
                             firebaseRepository.writeUser(new).first()
                         }
-                        _sharedGoToWarResume.emit(war)
+                        _sharedGoToWarResume.emit(MKWar(war))
                     } else _sharedBackToCurrent.emit(Unit)
                 }.launchIn(viewModelScope)
 

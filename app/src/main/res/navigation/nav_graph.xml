@@ -62,7 +62,7 @@
 
             <argument
                 android:name="war"
-                app:argType="fr.harmoniamk.statsmk.database.model.War"
+                app:argType="fr.harmoniamk.statsmk.model.MKWar"
                 app:nullable="false"/>
 
         </action>
@@ -77,6 +77,13 @@
         <action
             android:id="@+id/go_to_current_war"
             app:destination="@id/currentWarFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right"/>
+        <action
+            android:id="@+id/go_to_all_wars"
+            app:destination="@id/allWarsFragment"
             app:enterAnim="@anim/enter_from_right"
             app:exitAnim="@anim/exit_to_left"
             app:popEnterAnim="@anim/enter_from_left"
@@ -190,7 +197,7 @@
 
             <argument
                 android:name="war"
-                app:argType="fr.harmoniamk.statsmk.database.model.War"
+                app:argType="fr.harmoniamk.statsmk.model.MKWar"
                 app:nullable="false"/>
 
         </action>
@@ -327,5 +334,26 @@
         android:name="fr.harmoniamk.statsmk.features.warDetails.WarDetailsFragment"
         tools:layout="@layout/fragment_war_details"
         android:label="WarDetailsFragment" />
+    <fragment
+        android:id="@+id/allWarsFragment"
+        android:name="fr.harmoniamk.statsmk.features.allWars.AllWarsFragment"
+        tools:layout="@layout/fragment_all_wars"
+        android:label="AllWarsFragment" >
+        <action
+            android:id="@+id/go_to_war_details"
+            app:destination="@id/warDetailsFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right">
+
+            <argument
+                android:name="war"
+                app:argType="fr.harmoniamk.statsmk.model.MKWar"
+                app:nullable="false"/>
+
+        </action>
+
+    </fragment>
 
 </navigation>
