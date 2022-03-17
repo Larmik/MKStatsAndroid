@@ -23,21 +23,17 @@ class WarTrackResultViewModel @Inject constructor(private val firebaseRepository
 
     private val _sharedWarPos = MutableSharedFlow<List<WarPosition>>()
     private val _sharedBack = MutableSharedFlow<Unit>()
-    private val _sharedQuit = MutableSharedFlow<Unit>()
-    private val _sharedCancel = MutableSharedFlow<Unit>()
     private val _sharedBackToCurrent = MutableSharedFlow<Unit>()
     private val _sharedGoToWarResume = MutableSharedFlow<MKWar>()
     private val _sharedScore = MutableSharedFlow<MKWarTrack>()
 
     val sharedWarPos = _sharedWarPos.asSharedFlow()
     val sharedBack = _sharedBack.asSharedFlow()
-    val sharedQuit = _sharedQuit.asSharedFlow()
-    val sharedCancel = _sharedCancel.asSharedFlow()
     val sharedBackToCurrent = _sharedBackToCurrent.asSharedFlow()
     val sharedScore = _sharedScore.asSharedFlow()
     val sharedGoToWarResume = _sharedGoToWarResume.asSharedFlow()
 
-    fun bind(warTrackId: String? = null, onBack: Flow<Unit>, onQuit: Flow<Unit>, onBackDialog: Flow<Unit>, onValid: Flow<Unit>) {
+    fun bind(warTrackId: String? = null, onBack: Flow<Unit>, onValid: Flow<Unit>) {
         warTrackId?.let { id ->
             var score: Int? = null
             var track: WarTrack? = null
@@ -83,15 +79,15 @@ class WarTrackResultViewModel @Inject constructor(private val firebaseRepository
                     } else _sharedBackToCurrent.emit(Unit)
                 }.launchIn(viewModelScope)
 
-            onQuit
-                .flatMapLatest { firebaseRepository.deleteWarTrack(id) }
+            onBack
                 .flatMapLatest { firebaseRepository.getWarPositions() }
                 .onEach { it.filter { pos -> pos.warTrackId == id }
-                            .forEach { pos -> firebaseRepository.deleteWarPosition(pos).first() }
-                    _sharedQuit.emit(Unit)
+                    .forEach {
+                        firebaseRepository.deleteWarPosition(it).first()
+                    }
+                    firebaseRepository.deleteWarTrack(id).first()
+                    _sharedBack.emit(Unit)
                 }.launchIn(viewModelScope)
         }
-        onBack.bind(_sharedBack, viewModelScope)
-        onBackDialog.bind(_sharedCancel, viewModelScope)
     }
 }

@@ -66,9 +66,8 @@ class PositionFragment : Fragment(R.layout.fragment_position) {
             onPos10 = binding.pos10.clicks(),
             onPos11 = binding.pos11.clicks(),
             onPos12 = binding.pos12.clicks(),
-            onBack = requireActivity().backPressedDispatcher(viewLifecycleOwner),
-            onBackDialog = dialog.sharedClose,
-            onQuit = dialog.sharedWarLeft)
+            onBack = requireActivity().backPressedDispatcher(viewLifecycleOwner)
+        )
 
         viewModel.validateTrack
             .filter { findNavController().currentDestination?.id == R.id.positionFragment }
@@ -77,15 +76,6 @@ class PositionFragment : Fragment(R.layout.fragment_position) {
                 warTrackId != null -> findNavController().popBackStack()
             } }
             .launchIn(lifecycleScope)
-
-        viewModel.sharedBack
-            .onEach {
-                if (!dialog.isAdded) dialog.show(childFragmentManager, null)
-                viewModel.sharedCancel
-                    .filter { findNavController().currentDestination?.id == R.id.positionFragment }
-                    .onEach { dialog.dismiss() }
-                    .launchIn(lifecycleScope)
-            }.launchIn(lifecycleScope)
 
         viewModel.sharedQuit
             .filter { findNavController().currentDestination?.id == R.id.positionFragment }

@@ -19,7 +19,7 @@ class TrackDetailsViewModel @Inject constructor(private val firebaseRepository: 
 
     fun bind(warTrackId: String?) {
         firebaseRepository.getWarPositions()
-            .map { it.filter { position -> position.warTrackId == warTrackId } }
+            .map { it.filter { position -> position.warTrackId == warTrackId }.sortedBy { it.position } }
             .bind(_sharedPositions, viewModelScope)
     }
 

@@ -29,8 +29,6 @@ class WarTrackResultFragment : Fragment(R.layout.fragment_result_war_track) {
     private val viewModel: WarTrackResultViewModel by viewModels()
     private var warTrackId: String? = null
     private var track: Int? = null
-    private val dialog =
-        QuitWarDialogFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,9 +51,8 @@ class WarTrackResultFragment : Fragment(R.layout.fragment_result_war_track) {
         viewModel.bind(
             warTrackId = warTrackId,
             onBack = requireActivity().backPressedDispatcher(viewLifecycleOwner),
-            onBackDialog = dialog.sharedClose,
-            onValid = binding.validateBtn.clicks(),
-            onQuit = dialog.sharedWarLeft)
+            onValid = binding.validateBtn.clicks()
+        )
 
         viewModel.sharedWarPos
             .onEach { adapter.addResults(it) }
@@ -69,15 +66,6 @@ class WarTrackResultFragment : Fragment(R.layout.fragment_result_war_track) {
             .launchIn(lifecycleScope)
 
         viewModel.sharedBack
-            .onEach {
-                if (!dialog.isAdded) dialog.show(childFragmentManager, null)
-                viewModel.sharedCancel
-                    .filter { findNavController().currentDestination?.id == R.id.warTrackResultFragment }
-                    .onEach { dialog.dismiss() }
-                    .launchIn(lifecycleScope)
-            }.launchIn(lifecycleScope)
-
-        viewModel.sharedQuit
             .filter { findNavController().currentDestination?.id == R.id.warTrackResultFragment }
             .onEach { findNavController().popBackStack() }
             .launchIn(lifecycleScope)

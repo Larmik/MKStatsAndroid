@@ -26,17 +26,13 @@ class PositionViewModel @Inject constructor(
 
     private val _sharedPos = MutableSharedFlow<Int>()
     private val _validateTrack = MutableSharedFlow<Unit>()
-    private val _sharedBack = MutableSharedFlow<Unit>()
     private val _sharedQuit = MutableSharedFlow<Unit>()
-    private val _sharedCancel = MutableSharedFlow<Unit>()
     private val _sharedGoToResult = MutableSharedFlow<String>()
     private val _sharedSelectedPositions = MutableSharedFlow<List<Int>>()
     private val _sharedPlayerLabel = MutableSharedFlow<String?>()
 
     val validateTrack = _validateTrack.asSharedFlow()
-    val sharedBack = _sharedBack.asSharedFlow()
     val sharedQuit = _sharedQuit.asSharedFlow()
-    val sharedCancel = _sharedCancel.asSharedFlow()
     val sharedGoToResult = _sharedGoToResult.asSharedFlow()
     val sharedSelectedPositions = _sharedSelectedPositions.asSharedFlow()
     val sharedPlayerLabel = _sharedPlayerLabel.asSharedFlow()
@@ -56,8 +52,6 @@ class PositionViewModel @Inject constructor(
         onPos11: Flow<Unit>,
         onPos12: Flow<Unit>,
         onBack: Flow<Unit>,
-        onBackDialog: Flow<Unit>,
-        onQuit: Flow<Unit>
     ) {
 
         onPos1.onEach { _sharedPos.emit(1) }.launchIn(viewModelScope)
@@ -92,8 +86,23 @@ class PositionViewModel @Inject constructor(
             var currentUser: User? = null
             var currentUsers: List<User> = listOf()
             var index = 0
+            val back = onBack.shareIn(viewModelScope, SharingStarted.Eagerly, 1)
 
-            onBack.bind(_sharedBack, viewModelScope)
+
+            back.filter { index == 0 }
+                .flatMapLatest { firebaseRepository.deleteWarTrack(id) }
+                .bind(_sharedQuit, viewModelScope)
+
+            back.filter { index > 0 }
+                .flatMapLatest { firebaseRepository.getWarPositions() }
+                .map { it.filter { pos -> pos.warTrackId == id }.last() }
+                .flatMapLatest { firebaseRepository.deleteWarPosition(it) }
+                .onEach {
+                    index--
+                    currentUser = currentUsers[index]
+                }
+                .map { currentUser?.name }
+                .bind(_sharedPlayerLabel, viewModelScope)
 
             firebaseRepository.getWarTrack(id)
                 .mapNotNull { it?.warId }
@@ -122,17 +131,6 @@ class PositionViewModel @Inject constructor(
                 .mapNotNull { it.filter { position -> position.warTrackId == id }.mapNotNull { warPosition -> warPosition.position } }
                 .bind(_sharedSelectedPositions, viewModelScope)
 
-            onQuit
-                .flatMapLatest { firebaseRepository.deleteWarTrack(id) }
-                .flatMapLatest { firebaseRepository.getWarPositions() }
-                .onEach {
-                    it.filter { pos -> pos.warTrackId == id }.forEach { pos ->
-                        firebaseRepository.deleteWarPosition(pos).first()
-                    }
-                    _sharedQuit.emit(Unit)
-                }
-                .launchIn(viewModelScope)
         }
-        onBackDialog.bind(_sharedCancel, viewModelScope)
     }
 }
