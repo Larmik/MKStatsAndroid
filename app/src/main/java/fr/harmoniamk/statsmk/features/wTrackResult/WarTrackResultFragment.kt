@@ -10,10 +10,9 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentResultWarTrackBinding
-import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.extension.backPressedDispatcher
 import fr.harmoniamk.statsmk.extension.clicks
-import fr.harmoniamk.statsmk.features.quitWar.QuitWarDialogFragment
+import fr.harmoniamk.statsmk.features.trackList.TrackView
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.filter
@@ -40,12 +39,14 @@ class WarTrackResultFragment : Fragment(R.layout.fragment_result_war_track) {
         super.onViewCreated(view, savedInstanceState)
         val adapter = WarTrackResultAdapter()
         binding.resultRv.adapter = adapter
-        binding.trackView.bind(track)
         viewModel.bind(
             warTrackId = warTrackId,
             onBack = requireActivity().backPressedDispatcher(viewLifecycleOwner),
             onValid = binding.validateBtn.clicks()
         )
+        val trackView = TrackView(requireContext())
+        trackView.bind(track)
+        binding.trackView.addView(trackView)
 
         viewModel.sharedWarPos
             .onEach { adapter.addResults(it) }

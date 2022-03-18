@@ -19,9 +19,11 @@
         android:textSize="18sp"/>
 
 
-    <fr.harmoniamk.statsmk.features.trackList.TrackView
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
         android:id="@+id/track_view"/>
 
 

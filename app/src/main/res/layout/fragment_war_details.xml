@@ -10,13 +10,14 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="15dp">
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/war_title_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginHorizontal="15dp"
             android:fontFamily="@font/orbitron_semibold"
             android:gravity="center"
             android:textColor="@color/white"
@@ -36,6 +37,7 @@
                 android:layout_weight="1"
                 android:fontFamily="@font/montserrat_regular"
                 android:gravity="center"
+                android:layout_marginHorizontal="15dp"
                 android:textColor="@color/white"
                 tools:text="26/01/2022 - 22h" />
 
@@ -44,13 +46,16 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_margin="10dp"
+            android:layout_marginVertical="10dp"
+            android:layout_marginHorizontal="15dp"
             android:background="@color/white" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:layout_marginHorizontal="15dp"
+
             android:orientation="vertical">
 
             <TextView
@@ -88,7 +93,8 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_margin="10dp"
+            android:layout_marginVertical="10dp"
+            android:layout_marginHorizontal="15dp"
             android:background="@color/white" />
 
         <LinearLayout
@@ -96,6 +102,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:paddingVertical="10dp"
+            android:layout_marginHorizontal="15dp"
             android:background="@drawable/rounded_bg"
             android:backgroundTint="@color/waluigi_second"
             android:orientation="vertical">
@@ -277,7 +284,8 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_margin="10dp"
+            android:layout_marginVertical="10dp"
+            android:layout_marginHorizontal="15dp"
             android:background="@color/white" />
 
         <LinearLayout
@@ -298,7 +306,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="15dp"
+                android:layout_marginHorizontal="15dp"
                 android:orientation="horizontal">
 
                 <LinearLayout
@@ -353,30 +362,36 @@
 
             </LinearLayout>
 
+
         </LinearLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Tous les circuits :"
-            android:textColor="@color/white"
-            android:layout_gravity="center"
-            android:textSize="14sp"/>
+            android:padding="5dp"
+            android:background="@color/white_alphaed"
+            android:orientation="vertical">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/current_tracks_rv"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:nestedScrollingEnabled="false"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Tous les circuits :"
+                android:textColor="@color/waluigi_second"
+                android:fontFamily="@font/montserrat_bold"
+                android:layout_gravity="center"
+                android:textSize="16sp"/>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_margin="10dp"
-            android:background="@color/white" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/current_tracks_rv"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:nestedScrollingEnabled="false"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+        </LinearLayout>
+
 
     </LinearLayout>
 

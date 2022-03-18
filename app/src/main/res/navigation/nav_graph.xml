@@ -192,6 +192,8 @@
             app:destination="@id/warDetailsFragment"
             app:enterAnim="@anim/enter_from_right"
             app:exitAnim="@anim/exit_to_left"
+            app:popUpTo="@id/warTrackResultFragment"
+            app:popUpToInclusive="true"
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right">
 
@@ -333,7 +335,31 @@
         android:id="@+id/warDetailsFragment"
         android:name="fr.harmoniamk.statsmk.features.warDetails.WarDetailsFragment"
         tools:layout="@layout/fragment_war_details"
-        android:label="WarDetailsFragment" />
+        android:label="WarDetailsFragment" >
+
+        <action
+            android:id="@+id/to_track_details"
+            app:destination="@id/trackDetailsFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right">
+
+            <argument
+                android:name="warTrack"
+                app:argType="fr.harmoniamk.statsmk.database.model.WarTrack"
+                app:nullable="true"/>
+
+            <argument
+                android:name="warName"
+                app:argType="string"
+                app:nullable="true"/>
+            <argument
+                android:name="number"
+                app:argType="integer"/>
+
+        </action>
+    </fragment>
     <fragment
         android:id="@+id/allWarsFragment"
         android:name="fr.harmoniamk.statsmk.features.allWars.AllWarsFragment"

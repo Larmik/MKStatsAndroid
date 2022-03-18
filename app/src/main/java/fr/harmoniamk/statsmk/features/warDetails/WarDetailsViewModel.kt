@@ -3,6 +3,8 @@ package fr.harmoniamk.statsmk.features.warDetails
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import fr.harmoniamk.statsmk.database.model.WarTrack
+import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.sum
 import fr.harmoniamk.statsmk.model.MKWarTrack
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
@@ -16,15 +18,17 @@ class WarDetailsViewModel @Inject constructor(private val firebaseRepository: Fi
     private val _sharedTracks = MutableSharedFlow<List<MKWarTrack>>()
     private val _sharedBestTrack = MutableSharedFlow<MKWarTrack>()
     private val _sharedWorstTrack = MutableSharedFlow<MKWarTrack>()
+    private val _sharedTrackClick = MutableSharedFlow<Pair<Int, WarTrack>>()
 
     val sharedWarPlayers = _sharedWarPlayers.asSharedFlow()
     val sharedTracks = _sharedTracks.asSharedFlow()
     val sharedBestTrack = _sharedBestTrack.asSharedFlow()
     val sharedWorstTrack = _sharedWorstTrack.asSharedFlow()
+    val sharedTrackClick = _sharedTrackClick.asSharedFlow()
 
     private val positions = mutableListOf<Pair<String?, Int>>()
 
-    fun bind(warId: String?) {
+    fun bind(warId: String?, onTrackClick: Flow<Pair<Int, WarTrack>>) {
         warId?.let { id ->
             firebaseRepository.getWarTracks()
                 .map { it.filter { track -> track.warId == id } }
@@ -40,6 +44,7 @@ class WarDetailsViewModel @Inject constructor(private val firebaseRepository: Fi
                     }
                     _sharedWarPlayers.emit(positions.groupBy { it.first }.map { Pair(it.key, it.value.map { it.second }.sum()) })
                 }.launchIn(viewModelScope)
+            onTrackClick.bind(_sharedTrackClick, viewModelScope)
         }
     }
 

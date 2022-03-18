@@ -10,7 +10,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.database.model.WarTrack
 import fr.harmoniamk.statsmk.databinding.FragmentTrackDetailsBinding
-import fr.harmoniamk.statsmk.enums.Maps
+import fr.harmoniamk.statsmk.features.trackList.TrackView
 import fr.harmoniamk.statsmk.features.wTrackResult.WarTrackResultAdapter
 import fr.harmoniamk.statsmk.model.MKWarTrack
 import kotlinx.coroutines.flow.launchIn
@@ -40,7 +40,9 @@ class TrackDetailsFragment : Fragment(R.layout.fragment_track_details) {
         binding.resultRv.adapter = adapter
         warTrack?.let { track ->
             val item = MKWarTrack(track)
-            binding.trackView.bind(track.trackIndex)
+            val trackView = TrackView(requireContext())
+            trackView.bind(track.trackIndex)
+            binding.trackView.addView(trackView)
             binding.title.text = "$warName\nCourse $number/12"
             binding.trackScore.text = item.displayedResult
             binding.trackDiff.text = item.displayedDiff
