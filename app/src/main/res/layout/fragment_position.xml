@@ -20,6 +20,7 @@
    <fr.harmoniamk.statsmk.features.trackList.TrackView
        android:layout_width="match_parent"
        android:layout_height="wrap_content"
+       android:layout_margin="10dp"
        android:id="@+id/track_view"/>
 
     <View
