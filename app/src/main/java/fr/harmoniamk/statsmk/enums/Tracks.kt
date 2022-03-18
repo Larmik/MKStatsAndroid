@@ -5,21 +5,21 @@ import fr.harmoniamk.statsmk.R
 enum class Cups(
     val label: Int,
     val picture: Int,
-    val isRetro: Boolean = false,
-    val isDLC: Boolean = false
 ) {
     MUSHROOM(R.string.mushroom, R.drawable.mushroom),
     FLOWER(R.string.flower, R.drawable.flower),
     STAR(R.string.star, R.drawable.star),
     SPECIAL(R.string.special, R.drawable.special),
-    EGG(R.string.egg, R.drawable.egg, isDLC = true),
-    TRIFORCE(R.string.triforce, R.drawable.triforce, isDLC = true),
-    SHELL(R.string.shell, R.drawable.shell, isRetro = true),
-    BANANA(R.string.banana, R.drawable.banana, isRetro = true),
-    LEAF(R.string.leaf, R.drawable.leaf, isRetro = true),
-    LIGHTNING(R.string.lightning, R.drawable.lightning, isDLC = true),
-    CROSSING(R.string.crossing, R.drawable.crossing, isDLC = true),
-    BELL(R.string.bell, R.drawable.bell, isDLC = true),
+    EGG(R.string.egg, R.drawable.egg),
+    TRIFORCE(R.string.triforce, R.drawable.triforce),
+    SHELL(R.string.shell, R.drawable.shell),
+    BANANA(R.string.banana, R.drawable.banana),
+    LEAF(R.string.leaf, R.drawable.leaf),
+    LIGHTNING(R.string.lightning, R.drawable.lightning),
+    CROSSING(R.string.crossing, R.drawable.crossing),
+    BELL(R.string.bell, R.drawable.bell),
+    GOLDEN_DASH(R.string.goldendash, R.drawable.goldendash),
+    LUCKY_CAT(R.string.luckycat, R.drawable.luckycat)
 }
 
 enum class Maps(val label: Int, val picture: Int, val cup: Cups) {
@@ -71,4 +71,12 @@ enum class Maps(val label: Int, val picture: Int, val cup: Cups) {
     dRiR(R.string.drir, R.drawable.drir, Cups.BELL),
     dSBS(R.string.dsbs, R.drawable.dsbs, Cups.BELL),
     dBB(R.string.dbb, R.drawable.dbb, Cups.BELL),
+    bPP(R.string.bpp, R.drawable.bpp, Cups.GOLDEN_DASH),
+    bTC(R.string.btc, R.drawable.btc, Cups.GOLDEN_DASH),
+    bCMo(R.string.bcmo, R.drawable.bcmo, Cups.GOLDEN_DASH),
+    bCMa(R.string.bcma, R.drawable.bcma, Cups.GOLDEN_DASH),
+    bTB(R.string.btb, R.drawable.btb, Cups.LUCKY_CAT),
+    bSR(R.string.bsr, R.drawable.bsr, Cups.LUCKY_CAT),
+    bSG(R.string.bsg, R.drawable.bsg, Cups.LUCKY_CAT),
+    bNH(R.string.bnh, R.drawable.bnh, Cups.LUCKY_CAT)
 }

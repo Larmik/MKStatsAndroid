@@ -28,7 +28,7 @@
     <string name="dhc">Circuit Hyrule</string>
     <string name="rmmm">Prairie Meuh Meuh</string>
     <string name="rmc">Circuit Mario GBA</string>
-    <string name="rccb">Plage Cheap Cheap</string>
+    <string name="rccb">Plage Cheep Cheep</string>
     <string name="rtt">Autoroute Toad</string>
     <string name="rddd">Désert Sec-Sec</string>
     <string name="rdp3">Plaine Donut 3</string>
@@ -41,7 +41,7 @@
     <string name="rttc">Horloge Tic-Tac</string>
     <string name="rpps">Egouts Piranha</string>
     <string name="rgv">Volcan Grondant</string>
-    <string name="rrrd">Route Arc-en-ciel 64</string>
+    <string name="rrrd">Route Arc-en-ciel N64</string>
     <string name="dbp">Parc Baby</string>
     <string name="dcl">Pays Fromage</string>
     <string name="dww">Passage Feuillage</string>
@@ -50,6 +50,14 @@
     <string name="drir">Route Ruban</string>
     <string name="dsbs">Métro Turbo</string>
     <string name="dbb">Big Blue</string>
+    <string name="bpp">Promenade à Paris</string>
+    <string name="btc">Circuit Toad</string>
+    <string name="bcmo">Montagne Choco</string>
+    <string name="bcma">Supermarché Coco</string>
+    <string name="btb">Traversée de Tokyo</string>
+    <string name="bsr">Corniche Champignon</string>
+    <string name="bsg">Jardin Volant</string>
+    <string name="bnh">Dojo Ninja</string>
     <string name="mushroom">Coupe Champignon</string>
     <string name="flower">Coupe Fleur</string>
     <string name="star">Coupe Etoile</string>
@@ -62,6 +70,8 @@
     <string name="lightning">Coupe Eclair</string>
     <string name="crossing">Coupe Crossing</string>
     <string name="bell">Coupe Cloche</string>
+    <string name="goldendash">Coupe Turbo dorée</string>
+    <string name="luckycat">Coupe Maneki-Neko</string>
     <string name="tracks">Circuits</string>
     <string name="welcome_message"><![CDATA[ Bienvenue sur Mario Kart Stats !<br/> <br/> Cette application est l\'ébauche d\'un outil visant à réunir des statistiques sur vos tournois et time-trials. <br/> <br/> Ici, vous pourrez retrouver vos meilleurs temps ainsi que vos performances, avec la visualisation de votre progression sur le moyen ou long terme. <br/> A terme, l\'application devrait également inclure des fonctionnalités telles qu\'une partie \"Conseils et infos utiles\" sur les circuits et techniques à connaître, ainsi qu\'une partie "Connectivité" qui permettra de pouvoir partager ses infos et commenter celles de ses amis. <br/> <br/> Attention toutefois, l\'app est un prototype en cours de dev, il se peut que de nombreux bugs ou crashs soient présents. Soyez indulgents et n\'hésitez pas à me faire des retours. <br/><br/> Je voous invite donc à créer votre premier tournoi ou time-trial en vous rendant dans les sections correspondantes. <br/> <br/> Excellent jeu à tous !]]></string>
     <string name="team_war">War en équipe</string>
