@@ -40,14 +40,7 @@ class WarTrackResultFragment : Fragment(R.layout.fragment_result_war_track) {
         super.onViewCreated(view, savedInstanceState)
         val adapter = WarTrackResultAdapter()
         binding.resultRv.adapter = adapter
-        track?.let {
-            val map = Maps.values()[it]
-            binding.trackIv.clipToOutline = true
-            binding.trackIv.setImageResource(map.picture)
-            binding.cupIv.setImageResource(map.cup.picture)
-            binding.shortname.text = map.name
-            binding.name.setText(map.label)
-        }
+        binding.trackView.bind(track)
         viewModel.bind(
             warTrackId = warTrackId,
             onBack = requireActivity().backPressedDispatcher(viewLifecycleOwner),

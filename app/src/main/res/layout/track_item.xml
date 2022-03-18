@@ -64,13 +64,12 @@
             android:layout_weight="1">
 
             <ImageView
+                android:id="@+id/cup_iv"
                 android:layout_width="45dp"
                 android:layout_height="match_parent"
                 android:scaleType="centerInside"
                 android:visibility="gone"
-                tools:visibility="visible"
-                tools:src="@drawable/special"
-                android:id="@+id/cup_iv"/>
+                tools:src="@drawable/special" />
 
             <TextView
                 android:id="@+id/pos_tv"
@@ -81,14 +80,14 @@
                 android:textSize="40sp"
                 android:visibility="gone"
                 tools:targetApi="o"
-                tools:text="8."
-                tools:visibility="visible" />
+                tools:text="8."/>
 
             <LinearLayout
                 android:id="@+id/team_score_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
+                android:visibility="gone"
                 android:orientation="vertical">
 
                 <TextView

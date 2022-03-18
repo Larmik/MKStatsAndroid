@@ -43,8 +43,8 @@ class WarDetailsFragment : Fragment(R.layout.fragment_war_details) {
             binding.scoreTv.text = war.displayedScore
             binding.diffScoreTv.text = war.displayedDiff
             viewModel.bind(war.war?.mid)
-            viewModel.sharedBestTrack.onEach { bindTrack(it, true) }.launchIn(lifecycleScope)
-            viewModel.sharedWorstTrack.onEach { bindTrack(it, false) }.launchIn(lifecycleScope)
+            viewModel.sharedBestTrack.onEach { binding.bestTrack.bind(it) }.launchIn(lifecycleScope)
+            viewModel.sharedWorstTrack.onEach { binding.worstTrack.bind(it) }.launchIn(lifecycleScope)
             viewModel.sharedWarPlayers.onEach { bindPlayers(it) }.launchIn(lifecycleScope)
             viewModel.sharedTracks.onEach {
                 adapter.addTracks(it)
@@ -83,28 +83,4 @@ class WarDetailsFragment : Fragment(R.layout.fragment_war_details) {
             }
         }
     }
-
-    private fun bindTrack(track: MKWarTrack, isBest: Boolean) {
-        track.track?.trackIndex?.let {
-            when (isBest) {
-                true -> {
-                    val map = Maps.values()[it]
-                    binding.bestTrackIv.clipToOutline = true
-                    binding.bestTrackIv.setImageResource(map.picture)
-                    binding.bestTrackScore.text = track.displayedResult
-                    binding.bestTrackDiff.text = track.displayedDiff
-                    binding.bestTrackName.setText(map.label)
-                }
-                false -> {
-                    val map = Maps.values()[it]
-                    binding.worstTrackIv.clipToOutline = true
-                    binding.worstTrackIv.setImageResource(map.picture)
-                    binding.worstTrackScore.text = track.displayedResult
-                    binding.worstTrackDiff.text = track.displayedDiff
-                    binding.worstTrackName.setText(map.label)
-                }
-            }
-        }
-    }
-
 }

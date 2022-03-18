@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:cardCornerRadius="2dp"
+    android:outlineSpotShadowColor="@android:color/transparent"
+    app:cardBackgroundColor="@color/win"
+    android:id="@+id/card_root"
+    android:orientation="vertical"
+    tools:targetApi="p"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="60dp"
+            android:background="@drawable/rounded_bg"
+            android:scaleType="fitXY"
+            tools:src="@drawable/bc"
+            android:id="@+id/best_track_iv"/>
+
+        <TextView
+            android:textSize="16sp"
+            tools:text="Bowser Castle"
+            android:maxLines="1"
+            android:gravity="center"
+            android:layout_marginBottom="5dp"
+            android:autoSizeTextType="uniform"
+            android:textColor="@color/black"
+            android:layout_width="match_parent"
+            android:fontFamily="@font/montserrat_bold"
+            android:layout_height="wrap_content"
+            android:id="@+id/best_track_name"
+            tools:targetApi="o" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:background="@drawable/rounded_bg"
+            android:backgroundTint="@color/white_alphaed"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/best_track_score"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autoSizeMinTextSize="12sp"
+                android:autoSizeTextType="uniform"
+                android:fontFamily="@font/orbitron_semibold"
+                android:gravity="center"
+                android:maxLines="1"
+                android:textColor="@color/waluigi_second"
+                android:textSize="14sp"
+                tools:targetApi="o"
+                tools:text="58 - 24" />
+
+            <TextView
+                android:id="@+id/best_track_diff"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autoSizeMinTextSize="9sp"
+                android:autoSizeTextType="uniform"
+                android:fontFamily="@font/orbitron_semibold"
+                android:gravity="center"
+                android:maxLines="1"
+                android:textColor="@color/waluigi_second"
+                android:textSize="11sp"
+                tools:targetApi="o"
+                tools:text="+34" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

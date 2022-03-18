@@ -42,14 +42,7 @@ class PositionFragment : Fragment(R.layout.fragment_position) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        track?.let {
-            val map = Maps.values()[it]
-            binding.trackIv.clipToOutline = true
-            binding.trackIv.setImageResource(map.picture)
-            binding.cupIv.setImageResource(map.cup.picture)
-            binding.shortname.text = map.name
-            binding.name.setText(map.label)
-        }
+        binding.trackView.bind(track)
         viewModel.bind(
             tournamentId = tmId,
             warTrackId = warTrackId,

@@ -22,7 +22,7 @@ enum class Cups(
     LUCKY_CAT(R.string.luckycat, R.drawable.luckycat)
 }
 
-enum class Maps(val label: Int, val picture: Int, val cup: Cups) {
+enum class Maps(val label: Int, val picture: Int, val cup: Cups)  {
     MKS(R.string.mks, R.drawable.mks, Cups.MUSHROOM),
     WP(R.string.wp, R.drawable.wp, Cups.MUSHROOM),
     SSC(R.string.ssc, R.drawable.ssc, Cups.MUSHROOM),

@@ -40,14 +40,7 @@ class TrackDetailsFragment : Fragment(R.layout.fragment_track_details) {
         binding.resultRv.adapter = adapter
         warTrack?.let { track ->
             val item = MKWarTrack(track)
-            track.trackIndex?.let {
-                val map = Maps.values()[it]
-                binding.trackIv.clipToOutline = true
-                binding.trackIv.setImageResource(map.picture)
-                binding.cupIv.setImageResource(map.cup.picture)
-                binding.shortname.text = map.name
-                binding.name.setText(map.label)
-            }
+            binding.trackView.bind(track.trackIndex)
             binding.title.text = "$warName\nCourse $number/12"
             binding.trackScore.text = item.displayedResult
             binding.trackDiff.text = item.displayedDiff
