@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.preference.PreferenceManager
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.database.model.User
 import fr.harmoniamk.statsmk.databinding.ActivityMainBinding
@@ -22,7 +23,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(this.binding.root)
-        val isConnected = Gson().fromJson(preferences.getString("currentUser", null), User::class.java) != null
+        val isConnected = GsonBuilder().serializeNulls().create().fromJson(preferences.getString("currentUser", null), User::class.java) != null
         val navGraph = navController.navInflater.inflate(R.navigation.nav_graph)
         val destination = if (isConnected) R.id.homeFragment else R.id.welcomeFragment
         navGraph.startDestination = destination
