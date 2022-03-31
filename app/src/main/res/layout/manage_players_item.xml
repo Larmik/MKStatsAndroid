@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    app:cardCornerRadius="2dp"
+    app:cardBackgroundColor="@color/white_alphaed"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_marginTop="15dp"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/checkmark"
+            android:visibility="invisible"
+            android:padding="10dp"
+            android:id="@+id/checkmark"/>
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:autoSizeTextType="uniform"
+            android:autoSizeMaxTextSize="18sp"
+            android:fontFamily="@font/montserrat_bold"
+            android:gravity="center"
+            android:maxLines="1"
+            android:paddingVertical="5dp"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            tools:targetApi="o"
+            tools:text="Lari" />
+
+        <View
+            android:id="@+id/separator"
+            android:layout_width="1dp"
+            android:visibility="gone"
+            android:background="@color/waluigi_second"
+            android:layout_height="match_parent"/>
+
+            <ImageView
+                android:layout_width="70dp"
+                android:visibility="invisible"
+                android:layout_height="50dp"
+                android:src="@drawable/edit"
+                android:padding="10dp"
+                android:id="@+id/edit_btn"/>
+            <ImageView
+                android:layout_width="70dp"
+                android:layout_height="50dp"
+                android:padding="10dp"
+
+                android:src="@drawable/delete"
+                android:id="@+id/delete_btn"/>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

@@ -75,6 +75,13 @@
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right"/>
         <action
+            android:id="@+id/managePlayers"
+            app:destination="@id/managePlayersFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right"/>
+        <action
             android:id="@+id/go_to_current_war"
             app:destination="@id/currentWarFragment"
             app:enterAnim="@anim/enter_from_right"
@@ -241,6 +248,30 @@
         android:name="fr.harmoniamk.statsmk.features.manageTeams.fragment.AddTeamFragment"
         tools:layout="@layout/fragment_add_team"
         android:label="AddTeamFragment"/>
+    <fragment
+        android:id="@+id/addPlayersFragment"
+        android:name="fr.harmoniamk.statsmk.features.managePlayers.AddPlayersFragment"
+        tools:layout="@layout/fragment_add_players"
+        android:label="AddPlayersFragment"/>
+    <fragment
+        android:id="@+id/managePlayersFragment"
+        android:name="fr.harmoniamk.statsmk.features.managePlayers.ManagePlayersFragment"
+        tools:layout="@layout/fragment_manage_players"
+        android:label="ManagePlayersFragment">
+
+
+        <action
+            android:id="@+id/add_player"
+            app:destination="@id/addPlayersFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right"/>
+
+
+
+    </fragment>
+
 
     <fragment
         android:id="@+id/manageTeamsFragment"

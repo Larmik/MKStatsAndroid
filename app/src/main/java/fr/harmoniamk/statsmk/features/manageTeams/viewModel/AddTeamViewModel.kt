@@ -26,7 +26,7 @@ class AddTeamViewModel @Inject constructor(private val firebaseRepository: Fireb
         onCode.onEach { code = it }.launchIn(viewModelScope)
 
         onAddClick
-            .filter { name != null && shortName != null && code != null }
+            .filter { name != null && shortName != null }
             .flatMapLatest { firebaseRepository.writeTeam(
                 Team(
                     mid = System.currentTimeMillis().toString(),

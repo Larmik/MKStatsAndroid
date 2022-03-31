@@ -13,6 +13,7 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentManageTeamsBinding
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.features.addWar.adapter.TeamListAdapter
+import fr.harmoniamk.statsmk.features.manageTeams.ManageTeamsAdapter
 import fr.harmoniamk.statsmk.features.manageTeams.viewModel.ManageTeamsViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -30,9 +31,9 @@ class ManageTeamsFragment : Fragment(R.layout.fragment_manage_teams) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val adapter = TeamListAdapter()
+        val adapter = ManageTeamsAdapter()
         binding.teamRv.adapter = adapter
-        viewModel.bind(binding.addTeamBtn.clicks(), binding.quitTeamBtn.clicks())
+        viewModel.bind(binding.addTeamBtn.clicks(), binding.quitTeamBtn.clicks(), adapter.sharedDelete)
         viewModel.sharedTeams
             .onEach {
                 adapter.addTeams(it)

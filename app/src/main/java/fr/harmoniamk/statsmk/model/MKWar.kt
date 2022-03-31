@@ -20,7 +20,12 @@ data class MKWar(val war: War?) : Serializable {
     val scoreLabel: String
         get() = "Score: ${war?.scoreHost} - ${war?.scoreOpponent}"
     val displayedAverage: String
-        get() = "${war?.scoreHost ?: 0 / TOTAL_TRACKS}"
+        get() {
+            war?.scoreHost?.let {
+                return "${it / TOTAL_TRACKS}"
+            }
+            return ""
+        }
 
 
 }

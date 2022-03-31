@@ -22,7 +22,7 @@
             android:fontFamily="@font/montserrat_regular"
             android:textColor="@color/white"
             android:textSize="16sp"
-            android:text="Veuillez saisir le nom de l'équipe"
+            android:text="Veuillez saisir le nom du joueur"
             android:layout_marginBottom="15dp" />
 
         <EditText
@@ -31,20 +31,14 @@
             android:background="@drawable/rounded_bg"
             android:layout_marginBottom="15dp"
             android:gravity="center"
-            android:id="@+id/teamname_et"
+            android:id="@+id/playername_et"
             android:hint="Nom"
             android:backgroundTint="@color/white_alphaed"
             android:layout_marginHorizontal="40dp" />
 
     </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:orientation="vertical"
-        android:layout_weight="4">
-
         <TextView
+            android:id="@+id/info_player_team"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingVertical="10dp"
@@ -52,55 +46,11 @@
             android:textSize="16sp"
             android:textColor="@color/white"
             android:fontFamily="@font/montserrat_regular"
-            android:text="Veuillez saisir l'acronyme de l'équipe. Cela peut être un diminutif ou des initiales"
             android:gravity="center"
             android:layout_gravity="bottom"/>
 
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:background="@drawable/rounded_bg"
-            android:layout_marginBottom="15dp"
-            android:id="@+id/shortname_et"
-            android:gravity="center"
-            android:hint="Acronyme"
-            android:backgroundTint="@color/white_alphaed"
-            android:layout_marginHorizontal="40dp" />
 
-    </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:visibility="invisible"
-        android:orientation="vertical"
-        android:layout_weight="4">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingVertical="10dp"
-            android:layout_marginBottom="15dp"
-            android:textSize="16sp"
-            android:textColor="@color/white"
-            android:fontFamily="@font/montserrat_regular"
-            android:text="Veuillez saisir un code à 4 chiffres qui permettra à vos coéquipiers de vous rejoindre."
-            android:gravity="center"
-            android:layout_gravity="bottom"/>
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:background="@drawable/rounded_bg"
-            android:layout_marginBottom="15dp"
-            android:id="@+id/code_et"
-            android:gravity="center"
-            android:inputType="numberPassword"
-            android:hint="Code"
-            android:backgroundTint="@color/white_alphaed"
-            android:layout_marginHorizontal="40dp" />
-
-    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"

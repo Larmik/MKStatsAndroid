@@ -27,8 +27,9 @@ class ManageTeamsViewModel @Inject constructor(private val preferencesRepository
     val sharedTeamQuit = _sharedTeamQuit.asSharedFlow()
     val sharedCurrentTeamName = _sharedCurrentTeamName.asSharedFlow()
 
-    fun bind(onAddTeam: Flow<Unit>, onQuitTeam: Flow<Unit>) {
+    fun bind(onAddTeam: Flow<Unit>, onQuitTeam: Flow<Unit>, onDeleteTeam: Flow<Team>) {
         firebaseRepository.getTeams()
+            .map { it.filterNot { team -> team.mid == preferencesRepository.currentTeam?.mid } }
             .bind(_sharedTeams, viewModelScope)
         onAddTeam.bind(_sharedAddTeam, viewModelScope)
 
@@ -46,6 +47,11 @@ class ManageTeamsViewModel @Inject constructor(private val preferencesRepository
             .mapNotNull { it?.name }
             .bind(_sharedCurrentTeamName, viewModelScope)
 
+        onDeleteTeam
+            .flatMapLatest { firebaseRepository.deleteTeam(it) }
+            .flatMapLatest { firebaseRepository.getTeams() }
+            .map { it.filterNot { team -> team.mid == preferencesRepository.currentTeam?.mid } }
+            .bind(_sharedTeams, viewModelScope)
 
     }
 

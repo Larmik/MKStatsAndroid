@@ -26,13 +26,13 @@ class WarDetailsViewModel @Inject constructor(private val firebaseRepository: Fi
     val sharedWorstTrack = _sharedWorstTrack.asSharedFlow()
     val sharedTrackClick = _sharedTrackClick.asSharedFlow()
 
-    private val positions = mutableListOf<Pair<String?, Int>>()
 
     fun bind(warId: String?, onTrackClick: Flow<Pair<Int, WarTrack>>) {
         warId?.let { id ->
             firebaseRepository.getWarTracks()
                 .map { it.filter { track -> track.warId == id } }
                 .onEach {
+                    val positions = mutableListOf<Pair<String?, Int>>()
                     _sharedTracks.emit(it.map {track -> MKWarTrack(track) })
                     _sharedBestTrack.emit(it.sortedByDescending { track -> track.teamScore }.map {track -> MKWarTrack(track) }.first())
                     _sharedWorstTrack.emit(it.sortedBy { track -> track.teamScore }.map {track -> MKWarTrack(track) }.first())
