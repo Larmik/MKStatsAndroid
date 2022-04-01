@@ -7,6 +7,14 @@ apply plugin: "androidx.navigation.safeargs.kotlin"
 apply plugin: 'com.google.gms.google-services'
 
 android {
+    signingConfigs {
+        release {
+            storeFile file('/Users/pascal/Documents/mkstats_keystore')
+            storePassword 'Harmonia2022!'
+            keyPassword 'Harmonia2022!'
+            keyAlias 'MKStats'
+        }
+    }
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
     useLibrary 'org.apache.http.legacy'
@@ -46,13 +54,49 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "FLAVOR_NAME", '" "'
+            debuggable false
+            testCoverageEnabled = false
+            manifestPlaceholders = [appLabel: "Mario Kart Stats"]
+            buildConfigField "boolean", "IS_DEBUG", "false"
+            signingConfig signingConfigs.release
+            buildConfigField 'java.util.Hashtable<String, String>', 'PropertyPairs', makePropertyHashTable(getRootDir().getPath() + File.separator + 'constants_release.properties')
         }
+        debug {
+            buildConfigField "String", "FLAVOR_NAME", '"debug"'
+            debuggable true
+            applicationIdSuffix ".debug"
+            manifestPlaceholders = [appLabel: "Mario Kart Stats (Dev)"]
+            buildConfigField "boolean", "IS_DEBUG", "true"
+            buildConfigField 'java.util.Hashtable<String, String>', 'PropertyPairs', makePropertyHashTable(getRootDir().getPath() + File.separator + 'constants_debug.properties')
+        }
+
     }
 
     buildFeatures {
         viewBinding = true
     }
+}
+
+//Read properties file
+def makePropertyHashTable(filename) {
+    def devProperties = new Properties()
+    try {
+        devProperties.load(new FileInputStream(file(filename)))
+    } catch (FileNotFoundException e) {
+        devProperties = null
+        System.out.println("devProperties is null")
+    }
+
+    def prefix = 'new java.util.Hashtable<String, String>(){{ '
+    def suffix = '}}'
+    def value = ''
+    if (devProperties != null) {
+        for (d in devProperties) {
+            value += String.format('put("%s",%s); ', d.key, d.value)
+        }
+    }
+    return String.format('%s%s%s', prefix, value, suffix)
 }
 
 dependencies {

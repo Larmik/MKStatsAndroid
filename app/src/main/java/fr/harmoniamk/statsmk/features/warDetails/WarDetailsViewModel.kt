@@ -26,7 +26,6 @@ class WarDetailsViewModel @Inject constructor(private val firebaseRepository: Fi
     val sharedWorstTrack = _sharedWorstTrack.asSharedFlow()
     val sharedTrackClick = _sharedTrackClick.asSharedFlow()
 
-
     fun bind(warId: String?, onTrackClick: Flow<Pair<Int, WarTrack>>) {
         warId?.let { id ->
             firebaseRepository.getWarTracks()
