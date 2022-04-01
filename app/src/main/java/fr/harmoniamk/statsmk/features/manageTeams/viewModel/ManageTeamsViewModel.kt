@@ -1,5 +1,6 @@
 package fr.harmoniamk.statsmk.features.manageTeams.viewModel
 
+import android.view.View
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,19 +19,23 @@ import javax.inject.Inject
 @HiltViewModel
 class ManageTeamsViewModel @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val firebaseRepository: FirebaseRepositoryInterface): ViewModel() {
 
-    private val _sharedTeams = MutableSharedFlow<List<Team>>()
+    private val _sharedTeams = MutableSharedFlow<List<ManageTeamsItemViewModel>>()
     private val _sharedCurrentTeamName = MutableSharedFlow<String>()
     private val _sharedAddTeam = MutableSharedFlow<Unit>()
     private val _sharedTeamQuit = MutableSharedFlow<Unit>()
+    private val _sharedAddTeamVisibility = MutableSharedFlow<Int>()
+
     val sharedTeams = _sharedTeams.asSharedFlow()
     val sharedAddTeam = _sharedAddTeam.asSharedFlow()
     val sharedTeamQuit = _sharedTeamQuit.asSharedFlow()
     val sharedCurrentTeamName = _sharedCurrentTeamName.asSharedFlow()
+    val sharedAddTeamVisibility = _sharedAddTeamVisibility.asSharedFlow()
 
     fun bind(onAddTeam: Flow<Unit>, onQuitTeam: Flow<Unit>, onDeleteTeam: Flow<Team>) {
         firebaseRepository.getTeams()
-            .map { it.filterNot { team -> team.mid == preferencesRepository.currentTeam?.mid } }
+            .map { list -> list.filterNot { it.mid == preferencesRepository.currentTeam?.mid }.map { ManageTeamsItemViewModel(it, preferencesRepository) } }
             .bind(_sharedTeams, viewModelScope)
+
         onAddTeam.bind(_sharedAddTeam, viewModelScope)
 
         onQuitTeam
@@ -43,16 +48,23 @@ class ManageTeamsViewModel @Inject constructor(private val preferencesRepository
             .bind(_sharedTeamQuit, viewModelScope)
 
         flowOf(preferencesRepository.currentTeam)
-            .onEach { delay(50) }
+            .onEach { delay(20) }
             .mapNotNull { it?.name }
             .bind(_sharedCurrentTeamName, viewModelScope)
+
+        flowOf(preferencesRepository.currentUser)
+            .onEach { delay(20) }
+            .mapNotNull {
+                when (it?.isAdmin) {
+                    true -> View.VISIBLE
+                    else -> View.INVISIBLE
+                }
+            }.bind(_sharedAddTeamVisibility, viewModelScope)
 
         onDeleteTeam
             .flatMapLatest { firebaseRepository.deleteTeam(it) }
             .flatMapLatest { firebaseRepository.getTeams() }
-            .map { it.filterNot { team -> team.mid == preferencesRepository.currentTeam?.mid } }
+            .map { list -> list.filterNot { it.mid == preferencesRepository.currentTeam?.mid }.map { ManageTeamsItemViewModel(it, preferencesRepository) } }
             .bind(_sharedTeams, viewModelScope)
-
     }
-
 }

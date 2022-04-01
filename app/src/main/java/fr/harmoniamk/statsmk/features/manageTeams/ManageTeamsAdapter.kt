@@ -8,22 +8,30 @@ import fr.harmoniamk.statsmk.database.model.Team
 import fr.harmoniamk.statsmk.databinding.ManagePlayersItemBinding
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.clicks
+import fr.harmoniamk.statsmk.features.manageTeams.viewModel.ManageTeamsItemViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.map
 import kotlin.coroutines.CoroutineContext
 
-class ManageTeamsAdapter(private val items: MutableList<Team> = mutableListOf()) : RecyclerView.Adapter<ManageTeamsAdapter.ManageTeamsViewHolder>(),
+@FlowPreview
+@ExperimentalCoroutinesApi
+class ManageTeamsAdapter(private val items: MutableList<ManageTeamsItemViewModel> = mutableListOf()) : RecyclerView.Adapter<ManageTeamsAdapter.ManageTeamsViewHolder>(),
     CoroutineScope {
 
     val sharedEdit = MutableSharedFlow<Unit>()
     val sharedDelete = MutableSharedFlow<Team>()
 
+    @ExperimentalCoroutinesApi
+    @FlowPreview
     class ManageTeamsViewHolder(val binding: ManagePlayersItemBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(team: Team) {
-            binding.name.text = team.name
+        fun bind(teamVM: ManageTeamsItemViewModel) {
+            binding.name.text = teamVM.name
             binding.checkmark.visibility = View.INVISIBLE
+            binding.deleteBtn.visibility = teamVM.deleteButtonVisibility
         }
     }
 
@@ -34,10 +42,10 @@ class ManageTeamsAdapter(private val items: MutableList<Team> = mutableListOf())
         val item = items[position]
         holder.bind(item)
         holder.binding.editBtn.clicks().bind(sharedEdit, this)
-        holder.binding.deleteBtn.clicks().map { item }.bind(sharedDelete, this)
+        holder.binding.deleteBtn.clicks().map { item.team }.bind(sharedDelete, this)
     }
 
-    fun addTeams(teams: List<Team>) {
+    fun addTeams(teams: List<ManageTeamsItemViewModel>) {
         if (teams.size != itemCount) {
             notifyItemRangeRemoved(0, itemCount)
             items.clear()

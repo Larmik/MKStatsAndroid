@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:paddingVertical="10dp"
-        android:text="L'encoche à gauche du nom signifie que le joueur possède un compte sur l'application. \n Cliquez pour éditer ou supprimer le joueur de la base de données."
+        android:text="L'encoche à gauche du nom signifie que le joueur possède un compte sur l'application. \n Vous pouvez éditer votre profil et gérer les joueurs sans compte (si vous en avez le droit)."
         android:textSize="13sp"
         android:gravity="center"
         android:fontFamily="@font/montserrat_regular"
