@@ -25,4 +25,6 @@ class ManageTeamsItemViewModel(val team: Team, private val preferencesRepository
     val name: String?
         get() = team.name
 
+    val shortName: String?
+        get() = team.shortName
 }

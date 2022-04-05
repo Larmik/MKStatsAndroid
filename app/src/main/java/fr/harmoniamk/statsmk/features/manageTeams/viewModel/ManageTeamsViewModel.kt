@@ -75,7 +75,20 @@ class ManageTeamsViewModel @Inject constructor(private val preferencesRepository
         onTeamDelete
             .flatMapLatest { firebaseRepository.deleteTeam(it) }
             .flatMapLatest { firebaseRepository.getTeams() }
-            .map { list -> list.filterNot { it.mid == preferencesRepository.currentTeam?.mid }.map { ManageTeamsItemViewModel(it, preferencesRepository) } }
+            .map { list -> list.map { ManageTeamsItemViewModel(it, preferencesRepository) } }
+            .onEach {
+                _sharedShowDialog.emit(false)
+                _sharedTeams.emit(it)
+            }.launchIn(viewModelScope)
+
+        onTeamEdit
+            .onEach {
+                if (it.mid == preferencesRepository.currentTeam?.mid)
+                    preferencesRepository.currentTeam = it
+            }
+            .flatMapLatest { firebaseRepository.writeTeam(it) }
+            .flatMapLatest {  firebaseRepository.getTeams() }
+            .map { list -> list.map { ManageTeamsItemViewModel(it, preferencesRepository) } }
             .onEach {
                 _sharedShowDialog.emit(false)
                 _sharedTeams.emit(it)

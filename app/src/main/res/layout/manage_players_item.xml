@@ -24,6 +24,17 @@
             android:id="@+id/checkmark"/>
 
         <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/shortname_tv"
+            tools:text="HR"
+            android:visibility="gone"
+            android:paddingHorizontal="5dp"
+            android:textSize="20sp"
+            android:gravity="center"
+            android:fontFamily="@font/orbitron_semibold"/>
+
+        <TextView
             android:id="@+id/name"
             android:layout_width="0dp"
             android:layout_height="match_parent"

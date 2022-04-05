@@ -36,6 +36,34 @@
     </LinearLayout>
 
     <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="10dp"
+            android:gravity="center"
+            android:fontFamily="@font/montserrat_regular"
+            android:textColor="@color/waluigi_second"
+            android:textSize="16sp"
+            android:text="Modifier l'abréviation :"
+            android:layout_marginBottom="15dp" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:background="@drawable/rounded_bg"
+            android:layout_marginBottom="15dp"
+            android:gravity="center"
+            android:id="@+id/teamshort_et"
+            android:layout_marginHorizontal="40dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
         android:visibility="gone"
         android:id="@+id/teamcode_layout"
         android:layout_width="match_parent"

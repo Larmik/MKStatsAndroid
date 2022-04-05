@@ -3,7 +3,7 @@ package fr.harmoniamk.statsmk.database.model
 
 data class Team(
     val mid: String?,
-    val name: String? = null,
-    val shortName: String? = null,
-    val accessCode: String? = null
+    var name: String? = null,
+    var shortName: String? = null,
+    var accessCode: String? = null
 )

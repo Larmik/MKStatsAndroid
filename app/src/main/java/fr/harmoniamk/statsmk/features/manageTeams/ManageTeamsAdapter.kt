@@ -32,6 +32,8 @@ class ManageTeamsAdapter(private val items: MutableList<ManageTeamsItemViewModel
             binding.checkmark.visibility = View.INVISIBLE
             binding.editBtn.visibility = teamVM.buttonVisibility
             binding.checkmark.visibility = teamVM.checkMarkVisibility
+            binding.shortnameTv.visibility = View.VISIBLE
+            binding.shortnameTv.text = teamVM.shortName
         }
     }
 
@@ -45,12 +47,10 @@ class ManageTeamsAdapter(private val items: MutableList<ManageTeamsItemViewModel
     }
 
     fun addTeams(teams: List<ManageTeamsItemViewModel>) {
-        if (teams.size != itemCount) {
-            notifyItemRangeRemoved(0, itemCount)
-            items.clear()
-            items.addAll(teams)
-            notifyItemRangeInserted(0, itemCount)
-        }
+        notifyItemRangeRemoved(0, itemCount)
+        items.clear()
+        items.addAll(teams)
+        notifyItemRangeInserted(0, itemCount)
     }
 
     override fun getItemCount() = items.size

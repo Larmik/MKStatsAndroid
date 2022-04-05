@@ -37,7 +37,14 @@ class EditTeamFragment(val team: Team? = null) : BottomSheetDialogFragment(), Co
         binding.teamnameEt.setText(team?.name)
         binding.teamcodeLayout.isVisible = team?.accessCode != "null" && !team?.accessCode.isNullOrEmpty()
         binding.teamcodeEt.setText(team?.accessCode)
-        binding.nextBtn.clicks().mapNotNull { team }.bind(onTeamEdit, this)
+        binding.teamshortEt.setText(team?.shortName)
+        binding.nextBtn.clicks().mapNotNull {
+            team.apply {
+                this?.name = binding.teamnameEt.text.toString()
+                this?.shortName = binding.teamshortEt.text.toString()
+                this?.accessCode = binding.teamcodeEt.text.toString()
+            }
+        }.bind(onTeamEdit, this)
         binding.deleteBtn.clicks().mapNotNull { team }.bind(onTeamDelete, this)
     }
 
