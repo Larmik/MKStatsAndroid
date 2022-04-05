@@ -20,7 +20,6 @@ import kotlin.coroutines.CoroutineContext
 @ExperimentalCoroutinesApi
 class ManagePlayersAdapter(private val items: MutableList<ManagePlayersItemViewModel> = mutableListOf()) : RecyclerView.Adapter<ManagePlayersAdapter.ManagePlayersViewHolder>(), CoroutineScope {
 
-    val sharedDelete = MutableSharedFlow<User>()
     val sharedEdit = MutableSharedFlow<User>()
 
     @FlowPreview
@@ -28,7 +27,6 @@ class ManagePlayersAdapter(private val items: MutableList<ManagePlayersItemViewM
         fun bind(player: ManagePlayersItemViewModel) {
             binding.name.text = player.name
             binding.checkmark.visibility = player.checkmarkVisibility
-            binding.deleteBtn.visibility = View.GONE
             binding.editBtn.visibility = player.buttonsVisibility
         }
     }
@@ -39,7 +37,6 @@ class ManagePlayersAdapter(private val items: MutableList<ManagePlayersItemViewM
     override fun onBindViewHolder(holder: ManagePlayersViewHolder, position: Int) {
         val item = items[position]
         holder.bind(item)
-        holder.binding.deleteBtn.clicks().map { item.player }.bind(sharedDelete, this)
         holder.binding.editBtn.clicks().map { item.player }.bind(sharedEdit, this)
     }
 

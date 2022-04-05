@@ -24,16 +24,20 @@ class ManageTeamsViewModel @Inject constructor(private val preferencesRepository
     private val _sharedAddTeam = MutableSharedFlow<Unit>()
     private val _sharedTeamQuit = MutableSharedFlow<Unit>()
     private val _sharedAddTeamVisibility = MutableSharedFlow<Int>()
+    private val _sharedOnEditClick = MutableSharedFlow<Team>()
+    private val _sharedShowDialog = MutableSharedFlow<Boolean>()
 
     val sharedTeams = _sharedTeams.asSharedFlow()
     val sharedAddTeam = _sharedAddTeam.asSharedFlow()
     val sharedTeamQuit = _sharedTeamQuit.asSharedFlow()
     val sharedCurrentTeamName = _sharedCurrentTeamName.asSharedFlow()
     val sharedAddTeamVisibility = _sharedAddTeamVisibility.asSharedFlow()
+    val sharedOnEditClick = _sharedOnEditClick.asSharedFlow()
+    val sharedShowDialog = _sharedShowDialog.asSharedFlow()
 
-    fun bind(onAddTeam: Flow<Unit>, onQuitTeam: Flow<Unit>, onDeleteTeam: Flow<Team>) {
+    fun bind(onAddTeam: Flow<Unit>, onQuitTeam: Flow<Unit>, onEditClick: Flow<Team>) {
         firebaseRepository.getTeams()
-            .map { list -> list.filterNot { it.mid == preferencesRepository.currentTeam?.mid }.map { ManageTeamsItemViewModel(it, preferencesRepository) } }
+            .map { list -> list.map { ManageTeamsItemViewModel(it, preferencesRepository) } }
             .bind(_sharedTeams, viewModelScope)
 
         onAddTeam.bind(_sharedAddTeam, viewModelScope)
@@ -61,10 +65,20 @@ class ManageTeamsViewModel @Inject constructor(private val preferencesRepository
                 }
             }.bind(_sharedAddTeamVisibility, viewModelScope)
 
-        onDeleteTeam
+        onEditClick.onEach {
+            _sharedOnEditClick.emit(it)
+            _sharedShowDialog.emit(true)
+        }.launchIn(viewModelScope)
+    }
+
+    fun bindDialog(onTeamEdit: Flow<Team>, onTeamDelete: Flow<Team>) {
+        onTeamDelete
             .flatMapLatest { firebaseRepository.deleteTeam(it) }
             .flatMapLatest { firebaseRepository.getTeams() }
             .map { list -> list.filterNot { it.mid == preferencesRepository.currentTeam?.mid }.map { ManageTeamsItemViewModel(it, preferencesRepository) } }
-            .bind(_sharedTeams, viewModelScope)
+            .onEach {
+                _sharedShowDialog.emit(false)
+                _sharedTeams.emit(it)
+            }.launchIn(viewModelScope)
     }
 }

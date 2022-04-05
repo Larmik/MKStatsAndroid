@@ -22,8 +22,7 @@ import kotlin.coroutines.CoroutineContext
 class ManageTeamsAdapter(private val items: MutableList<ManageTeamsItemViewModel> = mutableListOf()) : RecyclerView.Adapter<ManageTeamsAdapter.ManageTeamsViewHolder>(),
     CoroutineScope {
 
-    val sharedEdit = MutableSharedFlow<Unit>()
-    val sharedDelete = MutableSharedFlow<Team>()
+    val sharedEdit = MutableSharedFlow<Team>()
 
     @ExperimentalCoroutinesApi
     @FlowPreview
@@ -31,7 +30,8 @@ class ManageTeamsAdapter(private val items: MutableList<ManageTeamsItemViewModel
         fun bind(teamVM: ManageTeamsItemViewModel) {
             binding.name.text = teamVM.name
             binding.checkmark.visibility = View.INVISIBLE
-            binding.deleteBtn.visibility = teamVM.deleteButtonVisibility
+            binding.editBtn.visibility = teamVM.buttonVisibility
+            binding.checkmark.visibility = teamVM.checkMarkVisibility
         }
     }
 
@@ -41,8 +41,7 @@ class ManageTeamsAdapter(private val items: MutableList<ManageTeamsItemViewModel
     override fun onBindViewHolder(holder: ManageTeamsViewHolder, position: Int) {
         val item = items[position]
         holder.bind(item)
-        holder.binding.editBtn.clicks().bind(sharedEdit, this)
-        holder.binding.deleteBtn.clicks().map { item.team }.bind(sharedDelete, this)
+        holder.binding.editBtn.clicks().map{ item.team }.bind(sharedEdit, this)
     }
 
     fun addTeams(teams: List<ManageTeamsItemViewModel>) {

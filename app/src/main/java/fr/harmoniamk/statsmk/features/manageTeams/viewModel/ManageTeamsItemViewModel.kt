@@ -10,12 +10,19 @@ import kotlinx.coroutines.FlowPreview
 @ExperimentalCoroutinesApi
 class ManageTeamsItemViewModel(val team: Team, private val preferencesRepository: PreferencesRepositoryInterface) {
 
-    val deleteButtonVisibility: Int
+    val buttonVisibility: Int
         get() = when (preferencesRepository.currentUser?.isAdmin) {
             true -> View.VISIBLE
-            else -> View.GONE
+            else -> View.INVISIBLE
+        }
+
+    val checkMarkVisibility: Int
+        get() = when (team.accessCode.isNullOrEmpty() || team.accessCode == "null") {
+            true -> View.INVISIBLE
+            else -> View.VISIBLE
         }
 
     val name: String?
         get() = team.name
+
 }

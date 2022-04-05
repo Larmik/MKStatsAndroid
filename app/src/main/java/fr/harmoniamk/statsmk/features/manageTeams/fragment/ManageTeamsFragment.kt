@@ -16,6 +16,7 @@ import fr.harmoniamk.statsmk.features.manageTeams.ManageTeamsAdapter
 import fr.harmoniamk.statsmk.features.manageTeams.viewModel.ManageTeamsViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -31,8 +32,9 @@ class ManageTeamsFragment : Fragment(R.layout.fragment_manage_teams) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val adapter = ManageTeamsAdapter()
+        var dialog = EditTeamFragment()
         binding.teamRv.adapter = adapter
-        viewModel.bind(binding.addTeamBtn.clicks(), binding.quitTeamBtn.clicks(), adapter.sharedDelete)
+        viewModel.bind(binding.addTeamBtn.clicks(), binding.quitTeamBtn.clicks(), adapter.sharedEdit)
         viewModel.sharedTeams
             .onEach {
                 adapter.addTeams(it)
@@ -52,7 +54,22 @@ class ManageTeamsFragment : Fragment(R.layout.fragment_manage_teams) {
             .onEach {
                 binding.currentTeamLayout.isVisible = true
                 binding.currentTeamTv.text = it
+            }.launchIn(lifecycleScope)
+        viewModel.sharedOnEditClick
+            .onEach {
+                dialog = EditTeamFragment(it)
+                viewModel.bindDialog(
+                    dialog.onTeamEdit,
+                    dialog.onTeamDelete
+                )
+            }.launchIn(lifecycleScope)
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewModel.sharedShowDialog.collect {
+                when (it) {
+                    true -> dialog.show(childFragmentManager, null)
+                    else -> dialog.dismiss()
+                }
             }
-            .launchIn(lifecycleScope)
+        }
     }
 }
