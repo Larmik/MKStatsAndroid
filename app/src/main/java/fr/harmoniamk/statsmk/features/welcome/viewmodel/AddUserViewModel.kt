@@ -33,7 +33,7 @@ class AddUserViewModel @Inject constructor(private val firebaseRepository: Fireb
                 User(
                     mid = System.currentTimeMillis().toString(),
                     name = name,
-                    accessCode = code,
+                    accessCode = "$code-${firebaseRepository.deviceId}",
                     team = "-1",
                     currentWar = "-1")
             ) }

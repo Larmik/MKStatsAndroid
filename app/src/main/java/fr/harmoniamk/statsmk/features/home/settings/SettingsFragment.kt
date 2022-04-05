@@ -3,7 +3,6 @@ package fr.harmoniamk.statsmk.features.home.settings
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -17,7 +16,6 @@ import fr.harmoniamk.statsmk.features.home.HomeFragmentDirections
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -49,6 +47,9 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             .launchIn(lifecycleScope)
         viewModel.sharedToast
             .onEach { Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show() }
+            .launchIn(lifecycleScope)
+        viewModel.sharedUserLabel
+            .onEach { binding.currentUserLabel.text = "Connecté en tant que $it" }
             .launchIn(lifecycleScope)
     }
 }

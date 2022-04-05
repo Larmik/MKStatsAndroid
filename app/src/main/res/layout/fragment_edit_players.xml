@@ -16,6 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingVertical="10dp"
+            android:id="@+id/modify_label"
             android:gravity="center"
             android:fontFamily="@font/montserrat_regular"
             android:textColor="@color/waluigi_second"
@@ -65,6 +66,15 @@
 
     </LinearLayout>
 
+    <androidx.appcompat.widget.SwitchCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginHorizontal="40dp"
+        android:layout_marginBottom="10dp"
+        android:id="@+id/admin_checkbox"
+        android:text="Ce joueur est un admin"/>
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -79,6 +89,7 @@
         android:textAllCaps="true"
         android:gravity="center"
         android:layout_gravity="bottom"/>
+
 
         <TextView
             android:layout_width="match_parent"

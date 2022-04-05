@@ -13,8 +13,8 @@ class ManagePlayersItemViewModel(val player: User, private val preferencesReposi
 
     val buttonsVisibility: Int
         get() = when  {
-            (preferencesRepository.currentUser?.mid == player.mid) ||
-            (preferencesRepository.currentUser?.isAdmin.isTrue && !hasAccount) -> View.VISIBLE
+            preferencesRepository.currentUser?.mid == player.mid ||
+            preferencesRepository.currentUser?.isAdmin.isTrue -> View.VISIBLE
             else -> View.INVISIBLE
         }
 

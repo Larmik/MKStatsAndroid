@@ -23,11 +23,13 @@ class SettingsViewModel @Inject constructor(private val preferencesRepository: P
     private val _sharedManagePlayers= MutableSharedFlow<Unit>()
     private val _sharedThemeClick = MutableSharedFlow<Unit>()
     private val _sharedToast = MutableSharedFlow<String>()
+    private val _sharedUserLabel = MutableSharedFlow<String>()
     val sharedDisconnect = _sharedDisconnect.asSharedFlow()
     val sharedManageTeam = _sharedManageTeam.asSharedFlow()
     val sharedManagePlayers = _sharedManagePlayers.asSharedFlow()
     val sharedThemeClick = _sharedThemeClick.asSharedFlow()
     val sharedToast = _sharedToast.asSharedFlow()
+    val sharedUserLabel = _sharedUserLabel.asSharedFlow()
 
     fun bind(onLogout: Flow<Unit>, onManageTeam: Flow<Unit>, onTheme: Flow<Unit>, onManagePlayers: Flow<Unit>) {
         onLogout.onEach {
@@ -45,6 +47,10 @@ class SettingsViewModel @Inject constructor(private val preferencesRepository: P
             .map { "Vous devez intégrer une équipe pour avoir accès à cette fonctionnalité." }
             .bind(_sharedToast, viewModelScope)
         onTheme.bind(_sharedThemeClick, viewModelScope)
+        flowOf(preferencesRepository.currentUser?.name)
+            .filterNotNull()
+            .onEach { delay(20) }
+            .bind(_sharedUserLabel, viewModelScope)
     }
 
 

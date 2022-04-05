@@ -24,6 +24,8 @@ import kotlinx.coroutines.isActive
 import javax.inject.Inject
 
 interface FirebaseRepositoryInterface{
+    val deviceId: String?
+
     fun writeUser(user: User): Flow<Unit>
     fun writeWar(war: War): Flow<Unit>
     fun writeWarTrack(track: WarTrack): Flow<Unit>
@@ -66,12 +68,11 @@ interface FirebaseRepositoryModule {
 class FirebaseRepository @Inject constructor(@ApplicationContext private val context: Context) : FirebaseRepositoryInterface {
 
     @SuppressLint("HardwareIds")
-    private val deviceId = Secure.getString(context.contentResolver, Secure.ANDROID_ID)
+    override val deviceId = Secure.getString(context.contentResolver, Secure.ANDROID_ID)
     private val database  = Firebase.database.reference
 
     override fun writeUser(user: User) = flow {
-        val authUser = user.apply { this.accessCode = "${this.accessCode}-$deviceId" }
-        database.child("users").child(authUser.mid.toString()).setValue(authUser)
+        database.child("users").child(user.mid.toString()).setValue(user)
         emit(Unit)
     }
 
