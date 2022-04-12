@@ -39,12 +39,15 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
     val sharedTrackClick = _sharedTrackClick.asSharedFlow()
     val sharedPlayers = _sharedPlayers.asSharedFlow()
 
-    fun bind(onBack: Flow<Unit>, onNextTrack: Flow<Unit>, onTrackClick: Flow<Pair<Int, WarTrack>>) {
+    fun bind(onBack: Flow<Unit>, onNextTrack: Flow<Unit>, onTrackClick: Flow<Pair<Int, WarTrack>>, onDelete: Flow<Unit>) {
+
+        var current: War? = null
 
         flowOf(firebaseRepository.getWars(), firebaseRepository.listenToWars())
             .flattenMerge()
             .mapNotNull { it.map { w -> MKWar(w) }.getCurrent(preferencesRepository.currentTeam?.mid) }
             .onEach { war ->
+                current = war.war
                 val tracks = firebaseRepository.getWarTracks().first().filter { it.warId == war.war?.mid && it.isOver.isTrue}
                 val players = firebaseRepository.getUsers().first().filter { it.currentWar == war.war?.mid }
                     .sortedBy { it.name?.toLowerCase(Locale.ROOT) }.mapNotNull { it.name }
@@ -57,6 +60,27 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
         onBack.bind(_sharedQuit, viewModelScope)
         onNextTrack.bind(_sharedSelectTrack, viewModelScope)
         onTrackClick.bind(_sharedTrackClick, viewModelScope)
+
+        onDelete
+            .flatMapLatest { firebaseRepository.getWarTracks() }
+            .map { it.filter { track -> track.warId == current?.mid } }
+            .onEach { list ->
+                list.mapNotNull { tr -> tr.mid }.forEach { id ->
+                    firebaseRepository.getWarPositions()
+                        .firstOrNull()
+                        ?.filter { pos -> pos.warTrackId == id }
+                        ?.forEach { firebaseRepository.deleteWarPosition(it).first() }
+                    firebaseRepository.deleteWarTrack(id).first()
+                }
+            }.flatMapLatest { firebaseRepository.getUsers() }
+            .map { list -> list.filter { user -> user.currentWar == current?.mid } }
+            .onEach { list ->
+                list.forEach {
+                    firebaseRepository.writeUser(it.apply { this.currentWar = "-1" }).first()
+                }
+            }.mapNotNull { current }
+            .flatMapLatest { firebaseRepository.deleteWar(it) }
+            .bind(_sharedQuit, viewModelScope)
     }
 
 }

@@ -52,6 +52,7 @@ interface FirebaseRepositoryInterface{
     fun deleteWarTrack(id: String): Flow<Unit>
     fun deleteUser(user: User): Flow<Unit>
     fun deleteTeam(team: Team): Flow<Unit>
+    fun deleteWar(war: War): Flow<Unit>
 }
 
 @FlowPreview
@@ -359,6 +360,11 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
 
     override fun deleteTeam(team: Team)= flow {
         database.child("teams").child(team.mid.toString()).removeValue()
+        emit(Unit)
+    }
+
+    override fun deleteWar(war: War) = flow {
+        database.child("wars").child(war.mid.toString()).removeValue()
         emit(Unit)
     }
 

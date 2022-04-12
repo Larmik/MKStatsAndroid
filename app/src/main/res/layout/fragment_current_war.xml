@@ -251,4 +251,20 @@
         android:orientation="vertical"/>
 
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingVertical="10dp"
+        android:background="@drawable/rounded_bg"
+        android:backgroundTint="@color/waluigi_second"
+        android:visibility="gone"
+        android:text="Annuler la war"
+        android:id="@+id/delete_war"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:fontFamily="@font/montserrat_bold"
+        android:layout_marginTop="10dp"/>
+
+
 </LinearLayout>

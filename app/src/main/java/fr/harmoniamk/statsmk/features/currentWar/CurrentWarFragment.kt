@@ -31,7 +31,7 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
         super.onViewCreated(view, savedInstanceState)
         val adapter = CurrentWarTrackAdapter()
         binding.currentTracksRv.adapter = adapter
-        viewModel.bind(requireActivity().backPressedDispatcher(viewLifecycleOwner), binding.nextTrackBtn.clicks(), adapter.sharedClick)
+        viewModel.bind(requireActivity().backPressedDispatcher(viewLifecycleOwner), binding.nextTrackBtn.clicks(), adapter.sharedClick, binding.deleteWar.clicks())
 
         viewModel.sharedCurrentWar
             .onEach {
@@ -44,7 +44,10 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
                 binding.diffScoreTv.text = it.displayedDiff
             }.launchIn(lifecycleScope)
 
-        viewModel.sharedButtonVisible.onEach { binding.nextTrackBtn.isVisible = it }.launchIn(lifecycleScope)
+        viewModel.sharedButtonVisible.onEach {
+            binding.nextTrackBtn.isVisible = it
+            binding.deleteWar.isVisible = it
+        }.launchIn(lifecycleScope)
 
         viewModel.sharedQuit
             .filter { findNavController().currentDestination?.id == R.id.currentWarFragment }
