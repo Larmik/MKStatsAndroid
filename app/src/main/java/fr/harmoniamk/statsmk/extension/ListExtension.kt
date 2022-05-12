@@ -17,3 +17,5 @@ fun <T> List<T>.safeSubList(from: Int, to: Int): List<T> = when {
     this.size < to -> this
     else -> this.subList(from, to)
 }
+
+fun Any.toMapList(): List<Map<*,*>>? = this as? List<Map<*,*>>

@@ -7,10 +7,10 @@
         android:icon="@mipmap/hr_logo"
         android:label="${appLabel}"
         android:supportsRtl="true"
-        android:name=".MainApplication"
+        android:name=".application.MainApplication"
         android:theme="@style/Theme.StatsMK">
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.MainActivity"
             android:exported="true"/>
         <activity android:name=".activity.SplashScreenActivity" android:exported="true">
             <intent-filter>

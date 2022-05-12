@@ -1,34 +1,34 @@
 package fr.harmoniamk.statsmk.database.dao
 
 import androidx.room.*
-import fr.harmoniamk.statsmk.database.model.PlayedTrack
+import fr.harmoniamk.statsmk.model.local.MKTournamentTrack
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PlayedTrackDao {
 
-    @Query("SELECT * FROM PlayedTrack")
-    fun getAll(): Flow<List<PlayedTrack>>
+    @Query("SELECT * FROM MKTournamentTrack")
+    fun getAll(): Flow<List<MKTournamentTrack>>
 
-    @Query("SELECT * FROM PlayedTrack WHERE tmId=(:id)")
-    fun getByTmID(id: Int): Flow<List<PlayedTrack>>
+    @Query("SELECT * FROM MKTournamentTrack WHERE tmId=(:id)")
+    fun getByTmID(id: Int): Flow<List<MKTournamentTrack>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(track: PlayedTrack)
+    fun insert(track: MKTournamentTrack)
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
-    fun update(track: PlayedTrack)
+    fun update(track: MKTournamentTrack)
 
-    @Query("DELETE FROM PlayedTrack WHERE tmId=(:id)")
+    @Query("DELETE FROM MKTournamentTrack WHERE tmId=(:id)")
     fun deleteByTmId(id: Int)
 
-    @Query("SELECT * FROM PlayedTrack WHERE mid=(:id) LIMIT 1")
-    fun getById(id: Int) : Flow<PlayedTrack>
+    @Query("SELECT * FROM MKTournamentTrack WHERE mid=(:id) LIMIT 1")
+    fun getById(id: Int) : Flow<MKTournamentTrack>
 
-    @Query("UPDATE PlayedTrack SET trackIndex=(:newTrack) WHERE mid=(:id)")
+    @Query("UPDATE MKTournamentTrack SET trackIndex=(:newTrack) WHERE mid=(:id)")
     fun updateTrack(id: Int, newTrack: Int)
 
-    @Query("UPDATE PlayedTrack SET position=(:newPos) WHERE mid=(:id)")
+    @Query("UPDATE MKTournamentTrack SET position=(:newPos) WHERE mid=(:id)")
     fun updatePosition(id: Int, newPos: Int)
 
 }

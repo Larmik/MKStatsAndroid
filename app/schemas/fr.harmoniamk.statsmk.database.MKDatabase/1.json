@@ -2,10 +2,10 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "ea3b29be1936605ab06a847be700f420",
+    "identityHash": "c88f04d973a64c3475bc59f60f938516",
     "entities": [
       {
-        "tableName": "Tournament",
+        "tableName": "MKTournament",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`mid` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, `trackCount` INTEGER, `trackPlayed` INTEGER, `difficulty` INTEGER NOT NULL, `points` INTEGER NOT NULL, `tops` INTEGER NOT NULL, `created_date` TEXT NOT NULL, `updated_date` TEXT NOT NULL)",
         "fields": [
           {
@@ -73,7 +73,7 @@
         "foreignKeys": []
       },
       {
-        "tableName": "PlayedTrack",
+        "tableName": "MKTournamentTrack",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`mid` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `tmId` INTEGER, `trackIndex` INTEGER NOT NULL, `position` INTEGER, `lap1time` INTEGER, `lap2time` INTEGER, `lap3time` INTEGER)",
         "fields": [
           {
@@ -132,7 +132,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'ea3b29be1936605ab06a847be700f420')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'c88f04d973a64c3475bc59f60f938516')"
     ]
   }
 }

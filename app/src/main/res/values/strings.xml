@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Stats MK</string>
-    <string name="tournament">Tournois</string>
+    <string name="MKTournament">Tournois</string>
     <string name="time_trial">Contre la montre</string>
     <string name="mks">Champidrome</string>
     <string name="wp">Parc Gloogloop</string>

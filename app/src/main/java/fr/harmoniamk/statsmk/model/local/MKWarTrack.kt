@@ -8,46 +8,37 @@ import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
 
 data class MKWarTrack(val track: NewWarTrack?) {
 
-    val teamScore = track?.warPositions?.map { it.position.positionToPoints() }.sum()
+    val teamScore: Int
+        get() = track?.warPositions?.map { it.position.positionToPoints() }.sum()
 
-    val isOver = track?.warPositions?.size == 6
+    val isOver: Boolean
+        get() = track?.warPositions?.size == 6
 
-    val opponentScore: Int?
+    val opponentScore: Int
         get() {
             teamScore.takeIf { it != 0 }?.let {
                 return TOTAL_TRACK_SCORE - it
             }
-            return null
+            return 0
         }
 
-    val diffScore: Int?
+    val diffScore: Int
         get() {
-            opponentScore?.let {
+            opponentScore.takeIf { it != 0 }?.let {
                 return teamScore - it
             }
-            return null
+            return 0
         }
     val displayedResult: String
         get() = "$teamScore - $opponentScore"
 
     val displayedDiff: String
-        get() {
-            diffScore?.let {
-                return if (it > 0) "+$it" else "$it"
-            }
-            return ""
-        }
+        get() = if (diffScore > 0) "+$diffScore" else "$diffScore"
 
     val backgroundColor : Int
-        get() {
-            diffScore?.let {
-                return when {
-                    it > 0 -> R.color.win
-                    it < 0 -> R.color.lose
-                    else -> R.color.white_alphaed
-                }
-            }
-            return R.color.white_alphaed
+        get() = when {
+            diffScore > 0 -> R.color.win
+            diffScore < 0 -> R.color.lose
+            else -> R.color.white_alphaed
         }
-
 }

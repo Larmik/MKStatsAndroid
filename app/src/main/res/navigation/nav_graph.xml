@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="fr.harmoniamk.statsmk.features.home.HomeFragment"
+        android:name="fr.harmoniamk.statsmk.fragment.home.HomeFragment"
         tools:layout="@layout/fragment_home"
         android:label="HomeFragment">
 
@@ -46,8 +46,8 @@
             app:popExitAnim="@anim/exit_to_right">
 
             <argument
-                android:name="tournament"
-                app:argType="fr.harmoniamk.statsmk.database.model.Tournament"
+                android:name="MKTournament"
+                app:argType="fr.harmoniamk.statsmk.model.local.MKTournament"
                 app:nullable="false"/>
 
         </action>
@@ -101,14 +101,14 @@
 
     <fragment
         android:id="@+id/addTournamentFragment"
-        android:name="fr.harmoniamk.statsmk.features.addTournament.AddTournamentFragment"
+        android:name="fr.harmoniamk.statsmk.fragment.addTournament.AddTournamentFragment"
         tools:layout="@layout/fragment_add_tournament"
         android:label="AddTournamentFragment"/>
 
 
     <fragment
         android:id="@+id/trackListFragment"
-        android:name="fr.harmoniamk.statsmk.features.trackList.TrackListFragment"
+        android:name="fr.harmoniamk.statsmk.fragment.trackList.TrackListFragment"
         tools:layout="@layout/fragment_track_list"
         android:label="TrackListFragment">
         <action
@@ -137,7 +137,7 @@
 
     <fragment
         android:id="@+id/currentTournamentFragment"
-        android:name="fr.harmoniamk.statsmk.features.currentTournament.fragment.CurrentTournamentFragment"
+        android:name="fr.harmoniamk.statsmk.fragment.currentTournament.CurrentTournamentFragment"
         tools:layout="@layout/fragment_current_tournament"
         android:label="CurrentTournamentFragment">
 
@@ -165,7 +165,7 @@
 
             <argument
                 android:name="track"
-                app:argType="fr.harmoniamk.statsmk.database.model.PlayedTrack"
+                app:argType="fr.harmoniamk.statsmk.model.local.MKTournamentTrack"
                 app:nullable="true"/>
 
         </action>
@@ -175,12 +175,12 @@
 
     <fragment
         android:id="@+id/addWarFragment"
-        android:name="fr.harmoniamk.statsmk.features.addWar.fragment.AddWarFragment"
+        android:name="fr.harmoniamk.statsmk.fragment.addWar.AddWarFragment"
         tools:layout="@layout/fragment_add_war"
         android:label="AddWarFragment"/>
     <fragment
         android:id="@+id/warTrackResultFragment"
-        android:name="fr.harmoniamk.statsmk.features.wTrackResult.WarTrackResultFragment"
+        android:name="fr.harmoniamk.statsmk.fragment.warTrackResult.WarTrackResultFragment"
         tools:layout="@layout/fragment_result_war_track"
         android:label="WarTrackResultFragment">
 
@@ -214,7 +214,7 @@
     </fragment>
     <fragment
         android:id="@+id/positionFragment"
-        android:name="fr.harmoniamk.statsmk.features.position.PositionFragment"
+        android:name="fr.harmoniamk.statsmk.fragment.position.PositionFragment"
         tools:layout="@layout/fragment_position"
         android:label="PositionFragment">
         <action
@@ -240,22 +240,22 @@
 
     <fragment
         android:id="@+id/editTrackFragment"
-        android:name="fr.harmoniamk.statsmk.features.editTrack.fragment.EditTrackFragment"
+        android:name="fr.harmoniamk.statsmk.fragment.editTrack.EditTrackFragment"
         tools:layout="@layout/fragment_edit_track"
         android:label="EditTrackFragment"/>
     <fragment
         android:id="@+id/addTeamFragment"
-        android:name="fr.harmoniamk.statsmk.features.manageTeams.fragment.AddTeamFragment"
+        android:name="fr.harmoniamk.statsmk.fragment.manageTeams.AddTeamFragment"
         tools:layout="@layout/fragment_add_team"
         android:label="AddTeamFragment"/>
     <fragment
         android:id="@+id/addPlayersFragment"
-        android:name="fr.harmoniamk.statsmk.features.managePlayers.AddPlayersFragment"
+        android:name="fr.harmoniamk.statsmk.fragment.managePlayers.AddPlayersFragment"
         tools:layout="@layout/fragment_add_players"
         android:label="AddPlayersFragment"/>
     <fragment
         android:id="@+id/managePlayersFragment"
-        android:name="fr.harmoniamk.statsmk.features.managePlayers.ManagePlayersFragment"
+        android:name="fr.harmoniamk.statsmk.fragment.managePlayers.ManagePlayersFragment"
         tools:layout="@layout/fragment_manage_players"
         android:label="ManagePlayersFragment">
 
@@ -282,7 +282,7 @@
 
     <fragment
         android:id="@+id/manageTeamsFragment"
-        android:name="fr.harmoniamk.statsmk.features.manageTeams.fragment.ManageTeamsFragment"
+        android:name="fr.harmoniamk.statsmk.fragment.manageTeams.ManageTeamsFragment"
         tools:layout="@layout/fragment_manage_teams"
         android:label="ManageTeamsFragment">
 
@@ -302,7 +302,7 @@
 
     <fragment
         android:id="@+id/welcomeFragment"
-        android:name="fr.harmoniamk.statsmk.features.welcome.fragment.WelcomeFragment"
+        android:name="fr.harmoniamk.statsmk.fragment.welcome.WelcomeFragment"
         tools:layout="@layout/fragment_welcome"
         android:label="WelcomeFragment">
 
@@ -319,7 +319,7 @@
 
     <fragment
         android:id="@+id/currentWarFragment"
-        android:name="fr.harmoniamk.statsmk.features.currentWar.CurrentWarFragment"
+        android:name="fr.harmoniamk.statsmk.fragment.currentWar.CurrentWarFragment"
         tools:layout="@layout/fragment_current_war"
         android:label="CurrentWarFragment">
 
@@ -366,12 +366,12 @@
 
     <fragment
         android:id="@+id/trackDetailsFragment"
-        android:name="fr.harmoniamk.statsmk.features.trackDetails.TrackDetailsFragment"
+        android:name="fr.harmoniamk.statsmk.fragment.trackDetails.TrackDetailsFragment"
         tools:layout="@layout/fragment_track_details"
         android:label="TrackDetailsFragment" />
     <fragment
         android:id="@+id/warDetailsFragment"
-        android:name="fr.harmoniamk.statsmk.features.warDetails.WarDetailsFragment"
+        android:name="fr.harmoniamk.statsmk.fragment.warDetails.WarDetailsFragment"
         tools:layout="@layout/fragment_war_details"
         android:label="WarDetailsFragment" >
 
@@ -400,7 +400,7 @@
     </fragment>
     <fragment
         android:id="@+id/allWarsFragment"
-        android:name="fr.harmoniamk.statsmk.features.allWars.AllWarsFragment"
+        android:name="fr.harmoniamk.statsmk.fragment.allWars.AllWarsFragment"
         tools:layout="@layout/fragment_all_wars"
         android:label="AllWarsFragment" >
         <action

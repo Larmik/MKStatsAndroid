@@ -6,11 +6,11 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import fr.harmoniamk.statsmk.database.dao.PlayedTrackDao
 import fr.harmoniamk.statsmk.database.dao.TournamentDao
-import fr.harmoniamk.statsmk.database.model.PlayedTrack
-import fr.harmoniamk.statsmk.database.model.Tournament
+import fr.harmoniamk.statsmk.model.local.MKTournamentTrack
+import fr.harmoniamk.statsmk.model.local.MKTournament
 import kotlinx.coroutines.FlowPreview
 
-@Database(entities = [Tournament::class, PlayedTrack::class], version = 1)
+@Database(entities = [MKTournament::class, MKTournamentTrack::class], version = 1)
 abstract class MKDatabase : RoomDatabase() {
 
     abstract fun tournamentDao(): TournamentDao
