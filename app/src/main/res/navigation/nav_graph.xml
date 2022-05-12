@@ -19,7 +19,6 @@
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right"/>
 
-
         <action
             android:id="@+id/back_to_welcome"
             app:destination="@id/welcomeFragment"
@@ -74,6 +73,7 @@
             app:exitAnim="@anim/exit_to_left"
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right"/>
+
         <action
             android:id="@+id/managePlayers"
             app:destination="@id/managePlayersFragment"
@@ -81,6 +81,7 @@
             app:exitAnim="@anim/exit_to_left"
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right"/>
+
         <action
             android:id="@+id/go_to_current_war"
             app:destination="@id/currentWarFragment"
@@ -88,6 +89,7 @@
             app:exitAnim="@anim/exit_to_left"
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right"/>
+
         <action
             android:id="@+id/go_to_all_wars"
             app:destination="@id/allWarsFragment"
@@ -95,7 +97,6 @@
             app:exitAnim="@anim/exit_to_left"
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right"/>
-
 
     </fragment>
 
@@ -105,12 +106,12 @@
         tools:layout="@layout/fragment_add_tournament"
         android:label="AddTournamentFragment"/>
 
-
     <fragment
         android:id="@+id/trackListFragment"
         android:name="fr.harmoniamk.statsmk.fragment.trackList.TrackListFragment"
         tools:layout="@layout/fragment_track_list"
         android:label="TrackListFragment">
+
         <action
             android:id="@+id/enter_positions"
             app:destination="@id/positionFragment"
@@ -124,15 +125,18 @@
             <argument
                 android:name="track"
                 app:argType="integer"/>
+
             <argument
                 android:name="tmId"
                 app:argType="integer"/>
+
             <argument
                 android:name="warTrackId"
                 app:nullable="true"
                 app:argType="string"/>
 
         </action>
+
     </fragment>
 
     <fragment
@@ -155,29 +159,14 @@
 
         </action>
 
-        <action
-            android:id="@+id/edit_track"
-            app:destination="@id/editTrackFragment"
-            app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right">
-
-            <argument
-                android:name="track"
-                app:argType="fr.harmoniamk.statsmk.model.local.MKTournamentTrack"
-                app:nullable="true"/>
-
-        </action>
-
     </fragment>
-
 
     <fragment
         android:id="@+id/addWarFragment"
         android:name="fr.harmoniamk.statsmk.fragment.addWar.AddWarFragment"
         tools:layout="@layout/fragment_add_war"
         android:label="AddWarFragment"/>
+
     <fragment
         android:id="@+id/warTrackResultFragment"
         android:name="fr.harmoniamk.statsmk.fragment.warTrackResult.WarTrackResultFragment"
@@ -212,11 +201,13 @@
         </action>
 
     </fragment>
+
     <fragment
         android:id="@+id/positionFragment"
         android:name="fr.harmoniamk.statsmk.fragment.position.PositionFragment"
         tools:layout="@layout/fragment_position"
         android:label="PositionFragment">
+
         <action
             android:id="@+id/go_to_result"
             app:destination="@id/warTrackResultFragment"
@@ -236,29 +227,26 @@
                 app:argType="integer"/>
 
         </action>
+
     </fragment>
 
-    <fragment
-        android:id="@+id/editTrackFragment"
-        android:name="fr.harmoniamk.statsmk.fragment.editTrack.EditTrackFragment"
-        tools:layout="@layout/fragment_edit_track"
-        android:label="EditTrackFragment"/>
     <fragment
         android:id="@+id/addTeamFragment"
         android:name="fr.harmoniamk.statsmk.fragment.manageTeams.AddTeamFragment"
         tools:layout="@layout/fragment_add_team"
         android:label="AddTeamFragment"/>
+
     <fragment
         android:id="@+id/addPlayersFragment"
         android:name="fr.harmoniamk.statsmk.fragment.managePlayers.AddPlayersFragment"
         tools:layout="@layout/fragment_add_players"
         android:label="AddPlayersFragment"/>
+
     <fragment
         android:id="@+id/managePlayersFragment"
         android:name="fr.harmoniamk.statsmk.fragment.managePlayers.ManagePlayersFragment"
         tools:layout="@layout/fragment_manage_players"
         android:label="ManagePlayersFragment">
-
 
         <action
             android:id="@+id/add_player"
@@ -279,13 +267,11 @@
 
     </fragment>
 
-
     <fragment
         android:id="@+id/manageTeamsFragment"
         android:name="fr.harmoniamk.statsmk.fragment.manageTeams.ManageTeamsFragment"
         tools:layout="@layout/fragment_manage_teams"
         android:label="ManageTeamsFragment">
-
 
         <action
             android:id="@+id/add_team"
@@ -295,10 +281,7 @@
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right"/>
 
-
-
     </fragment>
-
 
     <fragment
         android:id="@+id/welcomeFragment"
@@ -315,7 +298,6 @@
             app:popExitAnim="@anim/exit_to_right"/>
 
     </fragment>
-
 
     <fragment
         android:id="@+id/currentWarFragment"
@@ -369,6 +351,7 @@
         android:name="fr.harmoniamk.statsmk.fragment.trackDetails.TrackDetailsFragment"
         tools:layout="@layout/fragment_track_details"
         android:label="TrackDetailsFragment" />
+
     <fragment
         android:id="@+id/warDetailsFragment"
         android:name="fr.harmoniamk.statsmk.fragment.warDetails.WarDetailsFragment"
@@ -397,12 +380,15 @@
                 app:argType="integer"/>
 
         </action>
+
     </fragment>
+
     <fragment
         android:id="@+id/allWarsFragment"
         android:name="fr.harmoniamk.statsmk.fragment.allWars.AllWarsFragment"
         tools:layout="@layout/fragment_all_wars"
         android:label="AllWarsFragment" >
+
         <action
             android:id="@+id/go_to_war_details"
             app:destination="@id/warDetailsFragment"

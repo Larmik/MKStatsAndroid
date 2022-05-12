@@ -50,7 +50,6 @@ class CurrentTournamentFragment : Fragment(R.layout.fragment_current_tournament)
                 tmId = tm.mid,
                 onAddTrackClick = binding.nextTrackBtn.clicks(),
                 onCancel = binding.stopBtn.clicks(),
-                onTrackEdit = adapter.sharedTrackToEdit
             )
 
             viewModel.sharedAddTrack
@@ -87,11 +86,7 @@ class CurrentTournamentFragment : Fragment(R.layout.fragment_current_tournament)
                 .filter { findNavController().currentDestination?.id == R.id.currentTournamentFragment }
                 .onEach { findNavController().popBackStack() }
                 .launchIn(lifecycleScope)
-            viewModel.sharedEditTrack
-                .filter { !tm.isOver }
-                .filter { findNavController().currentDestination?.id == R.id.currentTournamentFragment }
-                .onEach { findNavController().navigate(CurrentTournamentFragmentDirections.editTrack(track = it)) }
-                .launchIn(lifecycleScope)
+
         }
 
     }

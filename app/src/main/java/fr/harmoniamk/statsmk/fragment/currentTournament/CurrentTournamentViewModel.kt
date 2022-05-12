@@ -21,7 +21,6 @@ class CurrentTournamentViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _sharedAddTrack = MutableSharedFlow<Unit>()
-    private val _sharedEditTrack = MutableSharedFlow<MKTournamentTrack>()
     private val _sharedCancel = MutableSharedFlow<Unit>()
     private val _sharedQuit = MutableSharedFlow<Unit>()
     private val _sharedBack = MutableSharedFlow<Unit>()
@@ -29,14 +28,13 @@ class CurrentTournamentViewModel @Inject constructor(
     private val _sharedTracks = MutableSharedFlow<List<MKTournamentTrack>>()
 
     val sharedAddTrack = _sharedAddTrack.asSharedFlow()
-    val sharedEditTrack = _sharedEditTrack.asSharedFlow()
     val sharedCancel = _sharedCancel.asSharedFlow()
     val sharedQuit = _sharedQuit.asSharedFlow()
     val sharedBack = _sharedBack.asSharedFlow()
     val sharedTracks = _sharedTracks.asSharedFlow()
     val sharedScore = _sharedScore.asSharedFlow()
 
-    fun bind(tmId: Int, onAddTrackClick: Flow<Unit>, onCancel: Flow<Unit>, onTrackEdit: Flow<MKTournamentTrack>) {
+    fun bind(tmId: Int, onAddTrackClick: Flow<Unit>, onCancel: Flow<Unit>) {
         var points = 0
         playedTrackRepository.getByTmId(tmId)
             .map {
@@ -47,7 +45,6 @@ class CurrentTournamentViewModel @Inject constructor(
             .onEach { _sharedScore.emit(points) }
             .launchIn(viewModelScope)
         onAddTrackClick.bind(_sharedAddTrack, viewModelScope)
-        onTrackEdit.bind(_sharedEditTrack, viewModelScope)
         onCancel.bind(_sharedCancel, viewModelScope)
     }
 
