@@ -26,12 +26,10 @@ class WarTrackResultFragment : Fragment(R.layout.fragment_result_war_track) {
 
     private val binding : FragmentResultWarTrackBinding by viewBinding()
     private val viewModel: WarTrackResultViewModel by viewModels()
-    private var warTrackId: String? = null
     private var track: Int? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        warTrackId = arguments?.getString("warTrackId")
         track = arguments?.getInt("track").takeIf { it != -1 }
     }
 
@@ -40,7 +38,6 @@ class WarTrackResultFragment : Fragment(R.layout.fragment_result_war_track) {
         val adapter = WarTrackResultAdapter()
         binding.resultRv.adapter = adapter
         viewModel.bind(
-            warTrackId = warTrackId,
             onBack = requireActivity().backPressedDispatcher(viewLifecycleOwner),
             onValid = binding.validateBtn.clicks()
         )
@@ -49,7 +46,9 @@ class WarTrackResultFragment : Fragment(R.layout.fragment_result_war_track) {
         binding.trackView.addView(trackView)
 
         viewModel.sharedWarPos
-            .onEach { adapter.addResults(it) }
+            .onEach {
+                adapter.addResults(it)
+            }
             .launchIn(lifecycleScope)
 
         viewModel.sharedScore

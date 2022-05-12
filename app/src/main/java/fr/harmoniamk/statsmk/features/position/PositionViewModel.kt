@@ -98,44 +98,39 @@ class PositionViewModel @Inject constructor(
                     _sharedPlayerLabel.emit(currentUser?.name)
                 }.launchIn(viewModelScope)
 
-            war.warTracks?.singleOrNull{ it.mid == warTrackId}?.let { track ->
-
-                back.filter { positions.isEmpty() }
-                    .bind(_sharedQuit, viewModelScope)
+                back.filter { positions.isEmpty() }.bind(_sharedQuit, viewModelScope)
 
                 back.filterNot { positions.isEmpty() }
                     .onEach {
                         positions.remove(positions.last())
+                        _sharedSelectedPositions.emit(positions.mapNotNull { pos -> pos.position })
                         currentUser = currentUsers[positions.size]
                     }
                     .map { currentUser?.name }
                     .bind(_sharedPlayerLabel, viewModelScope)
 
-                flowOf(positions)
-                    .map { it.mapNotNull { pos -> pos.position } }
-                    .bind(_sharedSelectedPositions, viewModelScope)
-
                 _sharedPos
                     .map { NewWarPositions(mid = System.currentTimeMillis().toString(), position = it, playerId = currentUser?.name) }
                     .onEach {
                         positions.add(it)
+                        _sharedSelectedPositions.emit(positions.mapNotNull { pos -> pos.position })
                         if (positions.size == currentUsers.size) {
-                            val tracks = mutableListOf<NewWarTrack>()
-                            tracks.addAll(preferencesRepository.currentWar?.warTracks.orEmpty())
-                            val updatedTrack = track.apply { this.warPositions = positions }
-                            tracks[tracks.indexOf(track)] = updatedTrack
-                            preferencesRepository.currentWar = preferencesRepository.currentWar.apply {
-                                this?.warTracks = tracks
+                            preferencesRepository.currentWarTrack.apply { this?.warPositions = positions }?.let { newTrack ->
+                                preferencesRepository.currentWarTrack = newTrack
+                                val tracks = mutableListOf<NewWarTrack>()
+                                tracks.addAll(preferencesRepository.currentWar?.warTracks?.filterNot { tr -> tr.mid == newTrack.mid }.orEmpty())
+                                tracks.add(newTrack)
+                                preferencesRepository.currentWar = preferencesRepository.currentWar.apply {
+                                    this?.warTracks = tracks
+                                }
+                                _sharedGoToResult.emit(newTrack.mid)
                             }
-                            _sharedGoToResult.emit(it.mid)
                         }
                         else {
-                            currentUser = currentUsers[positions.indexOf(it)]
+                            currentUser = currentUsers[positions.indexOf(it)+1]
                             _sharedPlayerLabel.emit(currentUser?.name)
                         }
-                    }
-                    .launchIn(viewModelScope)
-            }
+                    }.launchIn(viewModelScope)
         }
     }
 }

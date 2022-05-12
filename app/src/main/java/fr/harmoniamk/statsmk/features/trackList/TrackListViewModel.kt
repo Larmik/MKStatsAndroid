@@ -33,6 +33,7 @@ class TrackListViewModel @Inject constructor(private val firebaseRepository: Fir
 
     fun bind(tournamentId: Int? = null, warId: String? = null, onTrackAdded: Flow<Int>, onSearch: Flow<String>,  onBack: Flow<Unit>) {
 
+        onBack.bind(_sharedQuit, viewModelScope)
         onSearch
             .map { searched ->
                 Maps.values().filter {
@@ -44,25 +45,19 @@ class TrackListViewModel @Inject constructor(private val firebaseRepository: Fir
             }
             .bind(_sharedSearchedItems, viewModelScope)
 
-        tournamentId?.let {
-            onTrackAdded.onEach {
-                _sharedGoToTmPos.emit(it)
-            }.launchIn(viewModelScope)
-        }
+        // A optimiser avec boolean à la place d'id (isTournament ou isWar) //
+        tournamentId?.let { onTrackAdded.bind(_sharedGoToTmPos, viewModelScope) }
 
-        warId?.let { id ->
+        warId?.let {
             onTrackAdded
                 .mapNotNull {
                     val track = NewWarTrack(mid = System.currentTimeMillis().toString(), trackIndex = it)
-                    val trackList = mutableListOf<NewWarTrack>()
-                    trackList.addAll(preferencesRepository.currentWar?.warTracks.orEmpty())
-                    trackList.add(track)
+                    preferencesRepository.currentWarTrack = track
                     track
                 }.bind(_sharedGoToWarPos, viewModelScope)
 
-            onBack.bind(_sharedQuit, viewModelScope)
         }
-
+        //////////////////////////////////////////////////////////////////////
     }
 
 }
