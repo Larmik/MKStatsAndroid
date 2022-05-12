@@ -3,7 +3,7 @@ package fr.harmoniamk.statsmk.features.addWar.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import fr.harmoniamk.statsmk.database.model.Team
+import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.databinding.TeamItemBinding
 import fr.harmoniamk.statsmk.extension.clicks
 import kotlinx.coroutines.CoroutineScope

@@ -5,11 +5,11 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import fr.harmoniamk.statsmk.database.model.WarTrack
 import fr.harmoniamk.statsmk.databinding.TrackItemBinding
 import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.extension.clicks
-import fr.harmoniamk.statsmk.model.MKWarTrack
+import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
+import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -23,7 +23,7 @@ import kotlin.coroutines.CoroutineContext
 class CurrentWarTrackAdapter(val items: MutableList<MKWarTrack> = mutableListOf()) :
     RecyclerView.Adapter<CurrentWarTrackAdapter.CurrentTrackViewHolder>(), CoroutineScope {
 
-    private val _sharedClick = MutableSharedFlow<Pair<Int, WarTrack>>()
+    private val _sharedClick = MutableSharedFlow<Pair<Int, NewWarTrack>>()
     val sharedClick = _sharedClick.asSharedFlow()
 
     class CurrentTrackViewHolder(val binding: TrackItemBinding) :

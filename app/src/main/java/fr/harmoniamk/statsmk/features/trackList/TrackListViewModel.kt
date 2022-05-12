@@ -4,10 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.MainApplication
-import fr.harmoniamk.statsmk.database.model.WarTrack
 import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.extension.bind
+import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
+import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
@@ -17,10 +18,10 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class TrackListViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface) : ViewModel() {
+class TrackListViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface) : ViewModel() {
 
     private val _sharedSearchedItems = MutableSharedFlow<List<Maps>>()
-    private val _sharedGoToWarPos = MutableSharedFlow<WarTrack>()
+    private val _sharedGoToWarPos = MutableSharedFlow<NewWarTrack>()
     private val _sharedGoToTmPos = MutableSharedFlow<Int>()
     private val _sharedQuit = MutableSharedFlow<Unit>()
 
@@ -31,7 +32,6 @@ class TrackListViewModel @Inject constructor(private val firebaseRepository: Fir
 
 
     fun bind(tournamentId: Int? = null, warId: String? = null, onTrackAdded: Flow<Int>, onSearch: Flow<String>,  onBack: Flow<Unit>) {
-        var chosenTrack: WarTrack? = null
 
         onSearch
             .map { searched ->
@@ -52,13 +52,13 @@ class TrackListViewModel @Inject constructor(private val firebaseRepository: Fir
 
         warId?.let { id ->
             onTrackAdded
-                .map { WarTrack(mid = System.currentTimeMillis().toString(), warId = id, trackIndex = it, teamScore = 0, isOver = false) }
-                .onEach { chosenTrack = it }
-                .flatMapLatest {
-                    firebaseRepository.writeWarTrack(it)
-                }
-                .mapNotNull { chosenTrack }
-                .bind(_sharedGoToWarPos, viewModelScope)
+                .mapNotNull {
+                    val track = NewWarTrack(mid = System.currentTimeMillis().toString(), trackIndex = it)
+                    val trackList = mutableListOf<NewWarTrack>()
+                    trackList.addAll(preferencesRepository.currentWar?.warTracks.orEmpty())
+                    trackList.add(track)
+                    track
+                }.bind(_sharedGoToWarPos, viewModelScope)
 
             onBack.bind(_sharedQuit, viewModelScope)
         }

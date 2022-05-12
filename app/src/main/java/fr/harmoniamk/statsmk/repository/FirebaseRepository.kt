@@ -8,12 +8,14 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.gson.GsonBuilder
+import com.google.gson.reflect.TypeToken
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
-import fr.harmoniamk.statsmk.database.model.*
+import fr.harmoniamk.statsmk.model.firebase.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.awaitClose
@@ -26,33 +28,36 @@ import javax.inject.Inject
 interface FirebaseRepositoryInterface{
     val deviceId: String?
 
-    fun writeUser(user: User): Flow<Unit>
-    fun writeWar(war: War): Flow<Unit>
-    fun writeWarTrack(track: WarTrack): Flow<Unit>
-    fun writeWarPosition(position: WarPosition): Flow<Unit>
-    fun writeTeam(team: Team): Flow<Unit>
 
-    fun getUsers(): Flow<List<User>>
-    fun getTeams(): Flow<List<Team>>
+    //Used only for migration
     fun getWars(): Flow<List<War>>
     fun getWarPositions(): Flow<List<WarPosition>>
     fun getWarTracks(): Flow<List<WarTrack>>
 
-    fun getTeam(id: String): Flow<Team?>
-    fun getWar(id: String): Flow<War?>
-    fun getWarTrack(id: String): Flow<WarTrack?>
+    //Write and edit methods
+    fun writeUser(user: User): Flow<Unit>
+    fun writeNewWar(war: NewWar): Flow<Unit>
+    fun writeTeam(team: Team): Flow<Unit>
 
+    //Get lists methods
+    fun getUsers(): Flow<List<User>>
+    fun getTeams(): Flow<List<Team>>
+    fun getNewWars(): Flow<List<NewWar>>
+
+    //Get objects methods
+    fun getTeam(id: String): Flow<Team?>
+    fun getNewWar(id: String): Flow<NewWar?>
+
+    //Firebase event listeners methods
     fun listenToUsers(): Flow<List<User>>
     fun listenToTeams(): Flow<List<Team>>
-    fun listenToWars(): Flow<List<War>>
-    fun listenToWarTracks(): Flow<List<WarTrack>>
-    fun listenToWarPositions(): Flow<List<WarPosition>>
+    fun listenToNewWars(): Flow<List<NewWar>>
 
-    fun deleteWarPosition(position: WarPosition): Flow<Unit>
-    fun deleteWarTrack(id: String): Flow<Unit>
+    //delete methods
     fun deleteUser(user: User): Flow<Unit>
     fun deleteTeam(team: Team): Flow<Unit>
-    fun deleteWar(war: War): Flow<Unit>
+    fun deleteNewWar(war: NewWar): Flow<Unit>
+
 }
 
 @FlowPreview
@@ -71,24 +76,16 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
     @SuppressLint("HardwareIds")
     override val deviceId = Secure.getString(context.contentResolver, Secure.ANDROID_ID)
     private val database  = Firebase.database.reference
+    private val gson = GsonBuilder().serializeNulls().create()
+    private val warTrackType = object : TypeToken<List<NewWarTrack>>(){}.type
 
     override fun writeUser(user: User) = flow {
         database.child("users").child(user.mid.toString()).setValue(user)
         emit(Unit)
     }
 
-    override fun writeWar(war: War) = flow {
-        database.child("wars").child(war.mid.toString()).setValue(war)
-        emit(Unit)
-    }
-
-    override fun writeWarTrack(track: WarTrack): Flow<Unit> = flow {
-        database.child("warTracks").child(track.mid.toString()).setValue(track)
-        emit(Unit)
-    }
-
-    override fun writeWarPosition(position: WarPosition): Flow<Unit> = flow {
-        database.child("warPositions").child(position.mid.toString()).setValue(position)
+    override fun writeNewWar(war: NewWar): Flow<Unit> = flow {
+        database.child("newWars").child(war.mid.toString()).setValue(war)
         emit(Unit)
     }
 
@@ -172,6 +169,24 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
         awaitClose {  }
     }
 
+    override fun getNewWars(): Flow<List<NewWar>> = callbackFlow {
+        database.child("newWars").get().addOnSuccessListener { snapshot ->
+            val wars: List<NewWar> = snapshot.children
+                .map { it.value as Map<*, *> }
+                .map {map -> NewWar(
+                    mid = map["mid"].toString(),
+                    playerHostId = map["playerHostId"].toString(),
+                    name = map["name"].toString(),
+                    teamHost = map["teamHost"].toString(),
+                    teamOpponent = map["teamOpponent"].toString(),
+                    createdDate = map["createdDate"].toString(),
+                    warTracks = parseTracks(map))
+                }
+            if (isActive) offer(wars)
+        }
+        awaitClose {  }
+    }
+
     override fun getWarPositions(): Flow<List<WarPosition>> = callbackFlow {
         database.child("warPositions").get().addOnSuccessListener { snapshot ->
             val wars: List<WarPosition> = snapshot.children
@@ -218,45 +233,24 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
         awaitClose {  }
     }
 
-    override fun getWar(id: String): Flow<War?> = callbackFlow {
-        database.child("wars").child(id).get().addOnSuccessListener { snapshot ->
+    override fun getNewWar(id: String): Flow<NewWar?> = callbackFlow {
+        database.child("newWars").child(id).get().addOnSuccessListener { snapshot ->
             val map = (snapshot.value as? Map<*,*>)
             if (isActive) offer(
                 if (map == null) null
-                else War(
+                else NewWar(
                     mid = map["mid"].toString(),
                     name = map["name"].toString(),
                     playerHostId = map["playerHostId"].toString(),
                     teamOpponent = map["teamOpponent"].toString(),
-                    scoreOpponent = map["scoreOpponent"].toString().toInt(),
                     teamHost = map["teamHost"].toString(),
-                    scoreHost = map["scoreHost"].toString().toInt(),
-                    trackPlayed = map["trackPlayed"].toString().toInt(),
                     createdDate = map["createdDate"].toString(),
-                    updatedDate = map["updatedDate"].toString()
+                    warTracks = parseTracks(map)
                 )
             )
         }
         awaitClose {  }
     }
-
-    override fun getWarTrack(id: String): Flow<WarTrack?> = callbackFlow {
-        database.child("warTracks").child(id).get().addOnSuccessListener { snapshot ->
-            val map = (snapshot.value as? Map<*,*>)
-            if (isActive) offer(
-                if (map == null) null
-                else WarTrack(
-                    mid = map["mid"].toString(),
-                    warId = map["warId"].toString(),
-                    trackIndex = map["trackIndex"].toString().toInt(),
-                    isOver = map["over"].toString().toBoolean(),
-                    teamScore = map["teamScore"].toString().toInt()
-                )
-            )
-        }
-        awaitClose {  }
-    }
-
 
     override fun listenToTeams(): Flow<List<Team>> = callbackFlow {
         val postListener = object : ValueEventListener {
@@ -277,21 +271,19 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
         awaitClose {  }
     }
 
-    override fun listenToWars(): Flow<List<War>> = callbackFlow {
+    override fun listenToNewWars(): Flow<List<NewWar>> = callbackFlow {
         val postListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val wars: List<War> = dataSnapshot.child("wars").children.map { it.value as Map<*, *> }.map {  War(
+                val wars: List<NewWar> = dataSnapshot.child("newWars").children.map { it.value as Map<*, *> }.map {
+                    parseTracks(it)
+                    NewWar(
                     mid = it["mid"].toString(),
                     name = it["name"].toString(),
                     playerHostId = it["playerHostId"].toString(),
                     teamOpponent = it["teamOpponent"].toString(),
-                    scoreOpponent = it["scoreOpponent"].toString().toInt(),
                     teamHost = it["teamHost"].toString(),
-                    scoreHost = it["scoreHost"].toString().toInt(),
-                    trackPlayed = it["trackPlayed"].toString().toInt(),
                     createdDate = it["createdDate"].toString(),
-                    updatedDate = it["updatedDate"].toString()
-
+                    warTracks = parseTracks(it)
                 )  }
                 if (isActive) offer(wars)
             }
@@ -301,56 +293,6 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
         }
         database.addValueEventListener(postListener)
         awaitClose {  }
-    }
-
-    override fun listenToWarTracks(): Flow<List<WarTrack>> = callbackFlow {
-        val postListener = object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val tracks: List<WarTrack> = dataSnapshot.child("warTracks").children.map { it.value as Map<*, *> }.map {  WarTrack(
-                    mid = it["mid"].toString(),
-                    warId = it["warId"].toString(),
-                    trackIndex = it["trackIndex"].toString().toInt(),
-                    isOver = it["over"].toString().toBoolean(),
-                    teamScore = it["teamScore"].toString().toInt()
-                )  }
-                if (isActive) offer(tracks)
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-            }
-        }
-        database.addValueEventListener(postListener)
-        awaitClose {  }
-    }
-
-    override fun listenToWarPositions(): Flow<List<WarPosition>> = callbackFlow {
-        val postListener = object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val positions: List<WarPosition> = dataSnapshot.child("warPositions").children.map { it.value as Map<*, *> }.map {  WarPosition(
-                    mid = it["mid"].toString(),
-                    warTrackId = it["warTrackId"].toString(),
-                    playerId = it["playerId"].toString(),
-                    position = it["position"].toString().toInt()
-
-                )  }
-                if (isActive) offer(positions)
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-            }
-        }
-        database.addValueEventListener(postListener)
-        awaitClose {  }
-    }
-
-    override fun deleteWarPosition(position: WarPosition): Flow<Unit> = flow {
-        database.child("warPositions").child(position.mid.toString()).removeValue()
-        emit(Unit)
-    }
-
-    override fun deleteWarTrack(id: String): Flow<Unit> = flow {
-        database.child("warTracks").child(id).removeValue()
-        emit(Unit)
     }
 
     override fun deleteUser(user: User) = flow {
@@ -363,10 +305,29 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
         emit(Unit)
     }
 
-    override fun deleteWar(war: War) = flow {
-        database.child("wars").child(war.mid.toString()).removeValue()
+    override fun deleteNewWar(war: NewWar) = flow {
+        database.child("newWars").child(war.mid.toString()).removeValue()
         emit(Unit)
     }
+
+    private fun parseTracks(array: Map<*,*>) =
+        (array["warTracks"] as? List<Map<*,*>>)
+            ?.map { track ->
+                NewWarTrack(
+                    mid = track["mid"].toString(),
+                    trackIndex = track["trackIndex"].toString().toInt(),
+                    warPositions = (track["warPositions"] as? List<Map<*,*>>)
+                        ?.map {
+                            NewWarPositions(
+                                mid = it["mid"].toString(),
+                                playerId = it["playerId"].toString(),
+                                position = it["position"].toString().toInt()
+                            )
+                        }
+                )
+            }
+
+
 
 
 }

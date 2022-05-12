@@ -2,8 +2,8 @@ package fr.harmoniamk.statsmk.features.addWar.adapter
 
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import fr.harmoniamk.statsmk.database.model.Team
-import fr.harmoniamk.statsmk.database.model.User
+import fr.harmoniamk.statsmk.model.firebase.Team
+import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.features.addWar.fragment.PlayersWarFragment
 import fr.harmoniamk.statsmk.features.addWar.fragment.WarTeamFragment
 import kotlinx.coroutines.ExperimentalCoroutinesApi

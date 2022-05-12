@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import fr.harmoniamk.statsmk.database.model.User
+import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.databinding.FragmentEditPlayersBinding
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.clicks

@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import fr.harmoniamk.statsmk.databinding.WarItemBinding
 import fr.harmoniamk.statsmk.extension.clicks
-import fr.harmoniamk.statsmk.model.MKWar
+import fr.harmoniamk.statsmk.model.local.MKWar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

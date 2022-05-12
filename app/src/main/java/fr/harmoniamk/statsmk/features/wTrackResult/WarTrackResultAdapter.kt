@@ -4,10 +4,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import fr.harmoniamk.statsmk.database.model.WarPosition
 import fr.harmoniamk.statsmk.databinding.PlayerItemBinding
+import fr.harmoniamk.statsmk.model.firebase.NewWarPositions
 
-class WarTrackResultAdapter(val items: MutableList<WarPosition> = mutableListOf()) : RecyclerView.Adapter<WarTrackResultAdapter.PlayerViewHolder>() {
+class WarTrackResultAdapter(val items: MutableList<NewWarPositions> = mutableListOf()) : RecyclerView.Adapter<WarTrackResultAdapter.PlayerViewHolder>() {
 
     class PlayerViewHolder(val binding: PlayerItemBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -23,7 +23,7 @@ class WarTrackResultAdapter(val items: MutableList<WarPosition> = mutableListOf(
 
     override fun getItemCount() = items.size
 
-    fun addResults(results: List<WarPosition>) {
+    fun addResults(results: List<NewWarPositions>) {
         notifyItemRangeRemoved(0, itemCount)
         items.clear()
         items.addAll(results)

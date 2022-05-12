@@ -8,11 +8,11 @@ import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
-import fr.harmoniamk.statsmk.database.model.WarTrack
 import fr.harmoniamk.statsmk.databinding.FragmentTrackDetailsBinding
 import fr.harmoniamk.statsmk.features.trackList.TrackView
 import fr.harmoniamk.statsmk.features.wTrackResult.WarTrackResultAdapter
-import fr.harmoniamk.statsmk.model.MKWarTrack
+import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
+import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -21,14 +21,14 @@ class TrackDetailsFragment : Fragment(R.layout.fragment_track_details) {
 
     private val binding: FragmentTrackDetailsBinding by viewBinding()
     private val viewModel: TrackDetailsViewModel by viewModels()
-    private var warTrack: WarTrack? = null
+    private var warTrack: NewWarTrack? = null
     private var warName: String? = null
     private var number: Int? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        warTrack = arguments?.get("warTrack") as? WarTrack
+        warTrack = arguments?.get("warTrack") as? NewWarTrack
         warName = arguments?.getString("warName")
         number = arguments?.getInt("number")
 
@@ -46,7 +46,7 @@ class TrackDetailsFragment : Fragment(R.layout.fragment_track_details) {
             binding.title.text = "$warName\nCourse $number/12"
             binding.trackScore.text = item.displayedResult
             binding.trackDiff.text = item.displayedDiff
-            viewModel.bind(track.mid)
+            viewModel.bind(track)
             viewModel.sharedPositions
                 .onEach { adapter.addResults(it) }
                 .launchIn(lifecycleScope)

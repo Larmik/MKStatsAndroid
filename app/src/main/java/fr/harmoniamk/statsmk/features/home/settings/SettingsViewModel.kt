@@ -3,8 +3,11 @@ package fr.harmoniamk.statsmk.features.home.settings
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.harmoniamk.statsmk.database.model.Team
 import fr.harmoniamk.statsmk.extension.bind
+import fr.harmoniamk.statsmk.model.firebase.NewWar
+import fr.harmoniamk.statsmk.model.firebase.NewWarPositions
+import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
+import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -15,7 +18,7 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class SettingsViewModel @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface) : ViewModel() {
+class SettingsViewModel @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val firebaseRepository: FirebaseRepositoryInterface) : ViewModel() {
 
 
     private val _sharedDisconnect = MutableSharedFlow<Unit>()
@@ -31,7 +34,7 @@ class SettingsViewModel @Inject constructor(private val preferencesRepository: P
     val sharedToast = _sharedToast.asSharedFlow()
     val sharedUserLabel = _sharedUserLabel.asSharedFlow()
 
-    fun bind(onLogout: Flow<Unit>, onManageTeam: Flow<Unit>, onTheme: Flow<Unit>, onManagePlayers: Flow<Unit>) {
+    fun bind(onLogout: Flow<Unit>, onManageTeam: Flow<Unit>, onTheme: Flow<Unit>, onManagePlayers: Flow<Unit>, onMigrate: Flow<Unit>) {
         onLogout.onEach {
             preferencesRepository.currentUser = null
             preferencesRepository.currentTeam = null
@@ -51,6 +54,33 @@ class SettingsViewModel @Inject constructor(private val preferencesRepository: P
             .filterNotNull()
             .onEach { delay(20) }
             .bind(_sharedUserLabel, viewModelScope)
+
+        onMigrate
+            .onEach {
+                val newWarTracks = mutableListOf<NewWarTrack>()
+                val newWarPos = mutableListOf<NewWarPositions>()
+                val wars = firebaseRepository.getWars().first()
+                wars.forEach { war ->
+                    newWarTracks.clear()
+                    val warTracks = firebaseRepository.getWarTracks().first().filter { it.warId == war.mid }
+                    warTracks.forEach { track ->
+                        newWarPos.clear()
+                        val warPositions = firebaseRepository.getWarPositions().first().filter { it.warTrackId ==  track.mid}
+                        newWarTracks.add(NewWarTrack(track.mid, track.trackIndex, warPositions.map { NewWarPositions(
+                            it.mid,
+                            it.playerId ?: "-1",
+                            it.position
+                        ) }))
+
+
+                    }
+                    firebaseRepository.writeNewWar(
+                        NewWar(
+                        war.mid, war.name, war.playerHostId, war.teamHost, war.teamOpponent, war.createdDate, newWarTracks
+                    )
+                    ).first()
+                }
+            }.launchIn(viewModelScope)
     }
 
 

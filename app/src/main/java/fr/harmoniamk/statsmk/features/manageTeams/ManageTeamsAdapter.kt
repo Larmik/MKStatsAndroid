@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import fr.harmoniamk.statsmk.database.model.Team
+import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.databinding.ManagePlayersItemBinding
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.clicks

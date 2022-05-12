@@ -1,6 +1,6 @@
-package fr.harmoniamk.statsmk.model
+package fr.harmoniamk.statsmk.model.local
 
-import fr.harmoniamk.statsmk.database.model.Team
+import fr.harmoniamk.statsmk.model.firebase.Team
 
 data class MKTeam(val team: Team?) {
 

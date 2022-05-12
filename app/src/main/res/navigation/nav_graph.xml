@@ -62,7 +62,7 @@
 
             <argument
                 android:name="war"
-                app:argType="fr.harmoniamk.statsmk.model.MKWar"
+                app:argType="fr.harmoniamk.statsmk.model.local.MKWar"
                 app:nullable="false"/>
 
         </action>
@@ -206,7 +206,7 @@
 
             <argument
                 android:name="war"
-                app:argType="fr.harmoniamk.statsmk.model.MKWar"
+                app:argType="fr.harmoniamk.statsmk.model.local.MKWar"
                 app:nullable="false"/>
 
         </action>
@@ -349,7 +349,7 @@
 
             <argument
                 android:name="warTrack"
-                app:argType="fr.harmoniamk.statsmk.database.model.WarTrack"
+                app:argType="fr.harmoniamk.statsmk.model.firebase.NewWarTrack"
                 app:nullable="true"/>
 
             <argument
@@ -385,7 +385,7 @@
 
             <argument
                 android:name="warTrack"
-                app:argType="fr.harmoniamk.statsmk.database.model.WarTrack"
+                app:argType="fr.harmoniamk.statsmk.model.firebase.NewWarTrack"
                 app:nullable="true"/>
 
             <argument
@@ -413,7 +413,7 @@
 
             <argument
                 android:name="war"
-                app:argType="fr.harmoniamk.statsmk.model.MKWar"
+                app:argType="fr.harmoniamk.statsmk.model.local.MKWar"
                 app:nullable="false"/>
 
         </action>

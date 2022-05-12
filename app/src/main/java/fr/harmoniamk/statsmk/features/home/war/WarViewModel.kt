@@ -3,14 +3,13 @@ package fr.harmoniamk.statsmk.features.home.war
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.harmoniamk.statsmk.database.model.Team
-import fr.harmoniamk.statsmk.database.model.War
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.getBests
 import fr.harmoniamk.statsmk.extension.getCurrent
 import fr.harmoniamk.statsmk.extension.getLasts
-import fr.harmoniamk.statsmk.model.MKTeam
-import fr.harmoniamk.statsmk.model.MKWar
+import fr.harmoniamk.statsmk.model.firebase.NewWar
+import fr.harmoniamk.statsmk.model.local.MKTeam
+import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -28,7 +27,7 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
     private val _sharedTeamName = MutableSharedFlow<String>()
     private val _sharedCreateWar = MutableSharedFlow<Unit>()
     private val _sharedCurrentWar = MutableSharedFlow<MKWar?>()
-    private val _sharedCurrentWarClick = MutableSharedFlow<War>()
+    private val _sharedCurrentWarClick = MutableSharedFlow<NewWar>()
     private val _sharedLastWars = MutableSharedFlow<List<MKWar>>()
     private val _sharedBestWars = MutableSharedFlow<List<MKWar>>()
     private val _sharedGoToWar = MutableSharedFlow<MKWar>()
@@ -43,22 +42,24 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
     val sharedBestWars = _sharedBestWars.asSharedFlow()
     val sharedGoToWar = _sharedGoToWar.asSharedFlow()
 
-    fun bind(onCodeTeam: Flow<String>, onTeamClick: Flow<Unit>, onCreateWar: Flow<Unit>, onCurrentWarClick: Flow<Unit>, onWarClick: Flow<War>) {
+    fun bind(onCodeTeam: Flow<String>, onTeamClick: Flow<Unit>, onCreateWar: Flow<Unit>, onCurrentWarClick: Flow<Unit>, onWarClick: Flow<NewWar>) {
 
         var codeTeam: String? = null
         var chosenTeam: String? = null
         var war: MKWar? = null
 
-        val warsFlow = firebaseRepository.getWars()
+        val warsFlow = firebaseRepository.getNewWars()
             .shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
 
-        flowOf(warsFlow, firebaseRepository.listenToWars())
+        flowOf(warsFlow, firebaseRepository.listenToNewWars())
             .flattenMerge()
             .map { war = it.map { w -> MKWar(w) }.getCurrent(preferencesRepository.currentTeam?.mid); war }
             .bind(_sharedCurrentWar, viewModelScope)
 
         warsFlow
-            .map { it.map { w -> MKWar(w) }.getLasts(preferencesRepository.currentTeam?.mid)}
+            .map {
+                it.map { w -> MKWar(w) }.getLasts(preferencesRepository.currentTeam?.mid)
+            }
             .bind(_sharedLastWars, viewModelScope)
 
         warsFlow
@@ -88,7 +89,7 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
             .mapNotNull { chosenTeam }
             .flatMapLatest { firebaseRepository.getTeam(it) }
             .onEach { team ->
-                val wars = firebaseRepository.getWars().first()
+                val wars = firebaseRepository.getNewWars().first()
                 preferencesRepository.currentTeam = team
                 war = wars.map { MKWar(it) }.getCurrent(preferencesRepository.currentTeam?.mid)
                 _sharedHasTeam.emit(true)

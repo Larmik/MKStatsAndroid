@@ -3,12 +3,12 @@ package fr.harmoniamk.statsmk.features.addWar.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.harmoniamk.statsmk.database.model.Team
-import fr.harmoniamk.statsmk.database.model.User
-import fr.harmoniamk.statsmk.database.model.War
+import fr.harmoniamk.statsmk.model.firebase.Team
+import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.getCurrent
-import fr.harmoniamk.statsmk.model.MKWar
+import fr.harmoniamk.statsmk.model.firebase.NewWar
+import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -38,7 +38,7 @@ class AddWarViewModel @Inject constructor(private val firebaseRepository: Fireba
 
         var chosenOpponent: Team? = null
         var warName: String? = null
-        var war: War?
+        var war: NewWar?
 
         onTeamClick.onEach {
             chosenOpponent = it
@@ -47,7 +47,7 @@ class AddWarViewModel @Inject constructor(private val firebaseRepository: Fireba
         }.launchIn(viewModelScope)
 
         val createWar = onCreateWar
-            .flatMapLatest { firebaseRepository.getWars() }
+            .flatMapLatest { firebaseRepository.getNewWars() }
             .map { it.map { w -> MKWar(w) }.getCurrent(preferencesRepository.currentTeam?.mid) }
             .shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
 
@@ -55,15 +55,14 @@ class AddWarViewModel @Inject constructor(private val firebaseRepository: Fireba
             .filter { it == null}
             .mapNotNull { chosenOpponent?.mid }
             .mapNotNull {
-                war = War(
+                war = NewWar(
                     mid = System.currentTimeMillis().toString(),
                     name = warName,
                     teamHost = preferencesRepository.currentTeam?.mid,
                     playerHostId = preferencesRepository.currentUser?.mid,
                     teamOpponent = it,
-                    trackPlayed = 0,
-                    createdDate = date,
-                    updatedDate = date)
+                    createdDate = date
+                )
                 war
             }
             .onEach {
@@ -71,8 +70,9 @@ class AddWarViewModel @Inject constructor(private val firebaseRepository: Fireba
                     val new = user.apply { this.currentWar = it.mid }
                     firebaseRepository.writeUser(new).first()
                 }
+                preferencesRepository.currentWar = it
             }
-            .flatMapLatest { firebaseRepository.writeWar(it) }
+            .flatMapLatest { firebaseRepository.writeNewWar(it) }
             .bind(_sharedStarted, viewModelScope)
 
         createWar

@@ -1,4 +1,4 @@
-package fr.harmoniamk.statsmk.database.model
+package fr.harmoniamk.statsmk.model.firebase
 
 data class User(
     val mid: String?,

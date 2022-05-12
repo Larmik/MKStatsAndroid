@@ -9,8 +9,9 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
-import fr.harmoniamk.statsmk.database.model.Team
-import fr.harmoniamk.statsmk.database.model.User
+import fr.harmoniamk.statsmk.model.firebase.NewWar
+import fr.harmoniamk.statsmk.model.firebase.Team
+import fr.harmoniamk.statsmk.model.firebase.User
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
@@ -21,6 +22,7 @@ interface PreferencesRepositoryInterface {
     var hasCurrentTournament: Boolean
     var currentUser: User?
     var currentTeam: Team?
+    var currentWar: NewWar?
 }
 
 @FlowPreview
@@ -49,4 +51,7 @@ class PreferencesRepository @Inject constructor(
     override var currentTeam: Team?
         get() = Gson().fromJson(preferences.getString("currentTeam", null), Team::class.java)
         set(value) = preferences.edit().putString("currentTeam", Gson().toJson(value)).apply()
+    override var currentWar: NewWar?
+        get() = Gson().fromJson(preferences.getString("currentWar", null), NewWar::class.java)
+        set(value) = preferences.edit().putString("currentWar", Gson().toJson(value)).apply()
 }

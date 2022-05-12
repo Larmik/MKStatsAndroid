@@ -1,7 +1,7 @@
 package fr.harmoniamk.statsmk.features.managePlayers
 
 import android.view.View
-import fr.harmoniamk.statsmk.database.model.User
+import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi

@@ -5,10 +5,10 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import fr.harmoniamk.statsmk.R
-import fr.harmoniamk.statsmk.database.model.War
 import fr.harmoniamk.statsmk.databinding.BestTournamentItemBinding
 import fr.harmoniamk.statsmk.extension.clicks
-import fr.harmoniamk.statsmk.model.MKWar
+import fr.harmoniamk.statsmk.model.firebase.NewWar
+import fr.harmoniamk.statsmk.model.local.MKWar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -22,7 +22,7 @@ import kotlin.coroutines.CoroutineContext
 class BestWarAdapter(val items: MutableList<MKWar> = mutableListOf()) :
     RecyclerView.Adapter<BestWarAdapter.BestWarViewHolder>(), CoroutineScope {
 
-    private val _sharedItemClick = MutableSharedFlow<War>()
+    private val _sharedItemClick = MutableSharedFlow<NewWar>()
     val sharedItemClick = _sharedItemClick.asSharedFlow()
 
     class BestWarViewHolder(val binding: BestTournamentItemBinding) :
@@ -31,7 +31,7 @@ class BestWarAdapter(val items: MutableList<MKWar> = mutableListOf()) :
         fun bind(war: MKWar, position: Int) {
             binding.nameTv.text = war.war?.name
             binding.totalScoreTv.text = war.displayedScore
-            binding.timeTv.text = war.war?.updatedDate
+            binding.timeTv.text = war.war?.createdDate
             binding.tmInfos.isVisible = false
             binding.ratioScoreTv.text = war.displayedAverage
             binding.trophy.setImageResource(

@@ -11,7 +11,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentWarDetailsBinding
 import fr.harmoniamk.statsmk.features.currentWar.CurrentWarTrackAdapter
-import fr.harmoniamk.statsmk.model.MKWar
+import fr.harmoniamk.statsmk.model.local.MKWar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn

@@ -1,10 +1,9 @@
-package fr.harmoniamk.statsmk.database.model
+package fr.harmoniamk.statsmk.model.firebase
 
 import java.io.Serializable
 
 
 const val TOTAL_TRACKS = 12
-const val TOTAL_WAR_SCORE = 984
 const val TOTAL_TRACK_SCORE = 82
 
 data class War(

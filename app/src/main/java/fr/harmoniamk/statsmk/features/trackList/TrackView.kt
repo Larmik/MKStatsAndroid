@@ -12,7 +12,7 @@ import fr.harmoniamk.statsmk.database.model.PlayedTrack
 import fr.harmoniamk.statsmk.databinding.TrackItemBinding
 import fr.harmoniamk.statsmk.databinding.TrackItemCollapsedBinding
 import fr.harmoniamk.statsmk.enums.Maps
-import fr.harmoniamk.statsmk.model.MKWarTrack
+import fr.harmoniamk.statsmk.model.local.MKWarTrack
 
 class TrackView : CardView {
 

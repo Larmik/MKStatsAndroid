@@ -3,12 +3,14 @@ package fr.harmoniamk.statsmk.features.position
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.harmoniamk.statsmk.database.model.User
-import fr.harmoniamk.statsmk.database.model.WarPosition
+import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.database.model.PlayedTrack
 import fr.harmoniamk.statsmk.extension.bind
+import fr.harmoniamk.statsmk.model.firebase.NewWarPositions
+import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PlayedTrackRepositoryInterface
+import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import fr.harmoniamk.statsmk.repository.TournamentRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -21,13 +23,14 @@ import javax.inject.Inject
 class PositionViewModel @Inject constructor(
     private val playedTrackRepository: PlayedTrackRepositoryInterface,
     private val tournamentRepository: TournamentRepositoryInterface,
-    private val firebaseRepository: FirebaseRepositoryInterface
+    private val firebaseRepository: FirebaseRepositoryInterface,
+    private val preferencesRepository: PreferencesRepositoryInterface
 ) : ViewModel() {
 
     private val _sharedPos = MutableSharedFlow<Int>()
     private val _validateTrack = MutableSharedFlow<Unit>()
     private val _sharedQuit = MutableSharedFlow<Unit>()
-    private val _sharedGoToResult = MutableSharedFlow<String>()
+    private val _sharedGoToResult = MutableSharedFlow<String?>()
     private val _sharedSelectedPositions = MutableSharedFlow<List<Int>>()
     private val _sharedPlayerLabel = MutableSharedFlow<String?>()
 
@@ -82,55 +85,57 @@ class PositionViewModel @Inject constructor(
                 .launchIn(viewModelScope)
         }
 
-        warTrackId?.let { id ->
+        preferencesRepository.currentWar?.let { war ->
+            val back = onBack.shareIn(viewModelScope, SharingStarted.Eagerly, 1)
+            val positions = mutableListOf<NewWarPositions>()
             var currentUser: User? = null
             var currentUsers: List<User> = listOf()
-            var index = 0
-            val back = onBack.shareIn(viewModelScope, SharingStarted.Eagerly, 1)
 
-
-            back.filter { index == 0 }
-                .flatMapLatest { firebaseRepository.deleteWarTrack(id) }
-                .bind(_sharedQuit, viewModelScope)
-
-            back.filter { index > 0 }
-                .flatMapLatest { firebaseRepository.getWarPositions() }
-                .map { it.filter { pos -> pos.warTrackId == id }.last() }
-                .flatMapLatest { firebaseRepository.deleteWarPosition(it) }
+            firebaseRepository.getUsers()
                 .onEach {
-                    index--
-                    currentUser = currentUsers[index]
-                }
-                .map { currentUser?.name }
-                .bind(_sharedPlayerLabel, viewModelScope)
-
-            firebaseRepository.getWarTrack(id)
-                .mapNotNull { it?.warId }
-                .flatMapLatest { firebaseRepository.getWar(it) }
-                .zip(firebaseRepository.getUsers()) { war , users ->
-                    currentUsers = users.filter { user -> user.currentWar == war?.mid }.sortedBy { it.name }
-                    currentUser = currentUsers[index]
+                    currentUsers = it.filter { user -> user.currentWar == war.mid }.sortedBy { it.name }
+                    currentUser = currentUsers[0]
                     _sharedPlayerLabel.emit(currentUser?.name)
                 }.launchIn(viewModelScope)
 
-            _sharedPos
-                .map { WarPosition(mid = System.currentTimeMillis().toString(), warTrackId = id, position = it, playerId = currentUser?.name) }
-                .flatMapLatest { firebaseRepository.writeWarPosition(it) }
-                .mapNotNull { id }
-                .onEach {
-                    if (index == currentUsers.size-1) _sharedGoToResult.emit(it)
-                    else {
-                        index++
-                        currentUser = currentUsers[index]
-                        _sharedPlayerLabel.emit(currentUser?.name)
+            war.warTracks?.singleOrNull{ it.mid == warTrackId}?.let { track ->
+
+                back.filter { positions.isEmpty() }
+                    .bind(_sharedQuit, viewModelScope)
+
+                back.filterNot { positions.isEmpty() }
+                    .onEach {
+                        positions.remove(positions.last())
+                        currentUser = currentUsers[positions.size]
                     }
-                }
-                .launchIn(viewModelScope)
+                    .map { currentUser?.name }
+                    .bind(_sharedPlayerLabel, viewModelScope)
 
-            firebaseRepository.listenToWarPositions()
-                .mapNotNull { it.filter { position -> position.warTrackId == id }.mapNotNull { warPosition -> warPosition.position } }
-                .bind(_sharedSelectedPositions, viewModelScope)
+                flowOf(positions)
+                    .map { it.mapNotNull { pos -> pos.position } }
+                    .bind(_sharedSelectedPositions, viewModelScope)
 
+                _sharedPos
+                    .map { NewWarPositions(mid = System.currentTimeMillis().toString(), position = it, playerId = currentUser?.name) }
+                    .onEach {
+                        positions.add(it)
+                        if (positions.size == currentUsers.size) {
+                            val tracks = mutableListOf<NewWarTrack>()
+                            tracks.addAll(preferencesRepository.currentWar?.warTracks.orEmpty())
+                            val updatedTrack = track.apply { this.warPositions = positions }
+                            tracks[tracks.indexOf(track)] = updatedTrack
+                            preferencesRepository.currentWar = preferencesRepository.currentWar.apply {
+                                this?.warTracks = tracks
+                            }
+                            _sharedGoToResult.emit(it.mid)
+                        }
+                        else {
+                            currentUser = currentUsers[positions.indexOf(it)]
+                            _sharedPlayerLabel.emit(currentUser?.name)
+                        }
+                    }
+                    .launchIn(viewModelScope)
+            }
         }
     }
 }
