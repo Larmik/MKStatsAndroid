@@ -1,5 +1,7 @@
 package fr.harmoniamk.statsmk.extension
 
+import fr.harmoniamk.statsmk.model.firebase.NewWarPositions
+import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
 import fr.harmoniamk.statsmk.model.local.MKWar
 
 fun List<MKWar>.getLasts(teamId: String?) = this.filter {
@@ -18,4 +20,21 @@ fun <T> List<T>.safeSubList(from: Int, to: Int): List<T> = when {
     else -> this.subList(from, to)
 }
 
-fun Any.toMapList(): List<Map<*,*>>? = this as? List<Map<*,*>>
+fun Any?.toMapList(): List<Map<*,*>> = this as List<Map<*,*>>
+
+fun List<Map<*,*>>.parseTracks() : List<NewWarTrack> =
+    this.map { track ->
+        NewWarTrack(
+            mid = track["mid"].toString(),
+            trackIndex = track["trackIndex"].toString().toInt(),
+            warPositions = (track["warPositions"]?.toMapList())
+                ?.map {
+                    NewWarPositions(
+                        mid = it["mid"].toString(),
+                        playerId = it["playerId"].toString(),
+                        position = it["position"].toString().toInt()
+                    )
+                }
+        )
+
+}

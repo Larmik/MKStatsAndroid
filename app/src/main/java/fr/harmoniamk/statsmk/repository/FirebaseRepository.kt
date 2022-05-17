@@ -15,6 +15,7 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
+import fr.harmoniamk.statsmk.extension.parseTracks
 import fr.harmoniamk.statsmk.extension.toMapList
 import fr.harmoniamk.statsmk.model.firebase.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -28,11 +29,6 @@ import javax.inject.Inject
 
 interface FirebaseRepositoryInterface{
     val deviceId: String?
-
-    //Used only for migration
-    fun getWars(): Flow<List<War>>
-    fun getWarPositions(): Flow<List<WarPosition>>
-    fun getWarTracks(): Flow<List<WarTrack>>
 
     //Write and edit methods
     fun writeUser(user: User): Flow<Unit>
@@ -124,27 +120,6 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
         awaitClose {  }
     }
 
-    override fun getWars(): Flow<List<War>> = callbackFlow {
-        database.child("wars").get().addOnSuccessListener { snapshot ->
-            val wars: List<War> = snapshot.children
-                .map { it.value as Map<*, *> }
-                .map {map -> War(
-                    mid = map["mid"].toString(),
-                    playerHostId = map["playerHostId"].toString(),
-                    name = map["name"].toString(),
-                    teamHost = map["teamHost"].toString(),
-                    scoreHost = map["scoreHost"].toString().toInt(),
-                    teamOpponent = map["teamOpponent"].toString(),
-                    scoreOpponent = map["scoreOpponent"].toString().toInt(),
-                    trackPlayed = map["trackPlayed"].toString().toInt(),
-                    updatedDate = map["updatedDate"].toString(),
-                    createdDate = map["createdDate"].toString())
-                }
-            if (isActive) offer(wars)
-        }
-        awaitClose {  }
-    }
-
     override fun getNewWars(): Flow<List<NewWar>> = callbackFlow {
         database.child("newWars").get().addOnSuccessListener { snapshot ->
             val wars: List<NewWar> = snapshot.children
@@ -156,38 +131,7 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
                     teamHost = map["teamHost"].toString(),
                     teamOpponent = map["teamOpponent"].toString(),
                     createdDate = map["createdDate"].toString(),
-                    warTracks = parseTracks(map["warTracks"]?.toMapList()))
-                }
-            if (isActive) offer(wars)
-        }
-        awaitClose {  }
-    }
-
-    override fun getWarPositions(): Flow<List<WarPosition>> = callbackFlow {
-        database.child("warPositions").get().addOnSuccessListener { snapshot ->
-            val wars: List<WarPosition> = snapshot.children
-                .map { it.value as Map<*, *> }
-                .map {map -> WarPosition(
-                    mid = map["mid"].toString(),
-                    warTrackId = map["warTrackId"].toString(),
-                    playerId = map["playerId"].toString(),
-                    position = map["position"].toString().toInt())
-                }
-            if (isActive) offer(wars)
-        }
-        awaitClose {  }
-    }
-
-    override fun getWarTracks(): Flow<List<WarTrack>> = callbackFlow {
-        database.child("warTracks").get().addOnSuccessListener { snapshot ->
-            val wars: List<WarTrack> = snapshot.children
-                .map { it.value as Map<*, *> }
-                .map {map -> WarTrack(
-                    mid = map["mid"].toString(),
-                    warId = map["warId"].toString(),
-                    trackIndex = map["trackIndex"].toString().toInt(),
-                    isOver = map["over"].toString().toBoolean(),
-                    teamScore = map["teamScore"].toString().toInt())
+                    warTracks = map["warTracks"].toMapList().parseTracks())
                 }
             if (isActive) offer(wars)
         }
@@ -221,7 +165,7 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
                     teamOpponent = map["teamOpponent"].toString(),
                     teamHost = map["teamHost"].toString(),
                     createdDate = map["createdDate"].toString(),
-                    warTracks = parseTracks(map["warTracks"]?.toMapList())
+                    warTracks = map["warTracks"].toMapList().parseTracks()
                 )
             )
         }
@@ -245,7 +189,6 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
         awaitClose {  }
     }
 
-
     override fun listenToNewWars(): Flow<List<NewWar>> = callbackFlow {
         val postListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -257,8 +200,8 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
                     teamOpponent = it["teamOpponent"].toString(),
                     teamHost = it["teamHost"].toString(),
                     createdDate = it["createdDate"].toString(),
-                    warTracks = parseTracks(it["warTracks"]?.toMapList())
-                )  }
+                    warTracks = it["warTracks"].toMapList().parseTracks())
+                  }
                 if (isActive) offer(wars)
             }
 
@@ -305,19 +248,4 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
         emit(Unit)
     }
 
-    private fun parseTracks(array: List<Map<*,*>>?) =
-        array?.map { track ->
-                NewWarTrack(
-                    mid = track["mid"].toString(),
-                    trackIndex = track["trackIndex"].toString().toInt(),
-                    warPositions = (track["warPositions"]?.toMapList())
-                        ?.map {
-                            NewWarPositions(
-                                mid = it["mid"].toString(),
-                                playerId = it["playerId"].toString(),
-                                position = it["position"].toString().toInt()
-                            )
-                        }
-                )
-            }
 }

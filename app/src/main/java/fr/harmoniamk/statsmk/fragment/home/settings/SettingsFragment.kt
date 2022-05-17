@@ -29,7 +29,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.bind(binding.logoutLayout.clicks(), binding.manageTeamBtn.clicks(), binding.themeBtn.clicks(), binding.managePlayersBtn.clicks(), binding.migrateBtn.clicks())
+        viewModel.bind(binding.logoutLayout.clicks(), binding.manageTeamBtn.clicks(), binding.themeBtn.clicks(), binding.managePlayersBtn.clicks())
         viewModel.sharedDisconnect
             .filter { findNavController().currentDestination?.id == R.id.homeFragment }
             .onEach { findNavController().navigate(HomeFragmentDirections.backToWelcome()) }
