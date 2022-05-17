@@ -254,17 +254,16 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:paddingVertical="10dp"
+        android:layout_margin="10dp"
+        android:visibility="gone"
         android:background="@drawable/rounded_bg"
         android:backgroundTint="@color/waluigi_second"
-        android:visibility="gone"
-        android:text="Annuler la war"
-        android:id="@+id/delete_war"
-        android:textColor="@color/white"
-        android:textSize="16sp"
+        android:text="Supprimer la war"
+        android:id="@+id/delete_war_btn"
         android:fontFamily="@font/montserrat_bold"
-        android:layout_marginTop="10dp"/>
+        android:textColor="@color/white"
+        android:gravity="center"/>
 
 
 </LinearLayout>

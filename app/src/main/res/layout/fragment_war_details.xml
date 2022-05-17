@@ -392,6 +392,20 @@
 
         </LinearLayout>
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="10dp"
+            android:layout_margin="10dp"
+            android:background="@drawable/rounded_bg"
+            android:backgroundTint="@color/waluigi_second"
+            android:fontFamily="@font/montserrat_bold"
+            android:text="Supprimer la war"
+            android:visibility="gone"
+            android:id="@+id/delete_war_btn"
+            android:textColor="@color/white"
+            android:gravity="center"/>
+
 
     </LinearLayout>
 

@@ -2,6 +2,7 @@ package fr.harmoniamk.statsmk.fragment.warDetails
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -10,13 +11,16 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentWarDetailsBinding
+import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.fragment.currentWar.CurrentWarTrackAdapter
 import fr.harmoniamk.statsmk.model.local.MKWar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
+@FlowPreview
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class WarDetailsFragment : Fragment(R.layout.fragment_war_details) {
@@ -39,7 +43,7 @@ class WarDetailsFragment : Fragment(R.layout.fragment_war_details) {
             binding.warDateTv.text = war.war?.createdDate
             binding.scoreTv.text = war.displayedScore
             binding.diffScoreTv.text = war.displayedDiff
-            viewModel.bind(war.war?.mid, adapter.sharedClick)
+            viewModel.bind(war.war?.mid, adapter.sharedClick, binding.deleteWarBtn.clicks())
             viewModel.sharedBestTrack.onEach { binding.bestTrack.bind(it) }.launchIn(lifecycleScope)
             viewModel.sharedWorstTrack.onEach { binding.worstTrack.bind(it) }.launchIn(lifecycleScope)
             viewModel.sharedWarPlayers.onEach { bindPlayers(it) }.launchIn(lifecycleScope)
@@ -49,6 +53,13 @@ class WarDetailsFragment : Fragment(R.layout.fragment_war_details) {
             viewModel.sharedTrackClick
                 .filter { findNavController().currentDestination?.id == R.id.warDetailsFragment }
                 .onEach { findNavController().navigate(WarDetailsFragmentDirections.toTrackDetails(warTrack = it.second, warName = war.war?.name, number = it.first)) }
+                .launchIn(lifecycleScope)
+            viewModel.sharedWarDeleted
+                .filter { findNavController().currentDestination?.id == R.id.warDetailsFragment }
+                .onEach { findNavController().popBackStack() }
+                .launchIn(lifecycleScope)
+            viewModel.sharedDeleteWarVisible
+                .onEach { binding.deleteWarBtn.isVisible = it }
                 .launchIn(lifecycleScope)
         }
     }

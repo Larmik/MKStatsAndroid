@@ -31,7 +31,7 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
         super.onViewCreated(view, savedInstanceState)
         val adapter = CurrentWarTrackAdapter()
         binding.currentTracksRv.adapter = adapter
-        viewModel.bind(requireActivity().backPressedDispatcher(viewLifecycleOwner), binding.nextTrackBtn.clicks(), adapter.sharedClick, binding.deleteWar.clicks())
+        viewModel.bind(requireActivity().backPressedDispatcher(viewLifecycleOwner), binding.nextTrackBtn.clicks(), adapter.sharedClick, binding.deleteWarBtn.clicks())
 
         viewModel.sharedCurrentWar
             .onEach {
@@ -46,7 +46,7 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
 
         viewModel.sharedButtonVisible.onEach {
             binding.nextTrackBtn.isVisible = it
-            binding.deleteWar.isVisible = it
+            binding.deleteWarBtn.isVisible = it
         }.launchIn(lifecycleScope)
 
         viewModel.sharedQuit

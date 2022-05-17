@@ -61,8 +61,13 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
             .map { list -> list.filter { user -> user.currentWar == preferencesRepository.currentWar?.mid } }
             .onEach { list ->
                 list.forEach { firebaseRepository.writeUser(it.apply { this.currentWar = "-1" }).first() }
-            }.mapNotNull { preferencesRepository.currentWar }
+            }.mapNotNull { preferencesRepository.currentWar?.mid }
             .flatMapLatest { firebaseRepository.deleteNewWar(it) }
+            .bind(_sharedQuit, viewModelScope)
+
+        firebaseRepository.listenToUsers()
+            .mapNotNull { it.singleOrNull { user -> user.currentWar == "-1" && preferencesRepository.currentWar?.playerHostId != user.mid && user.mid == preferencesRepository.currentUser?.mid } }
+            .map { preferencesRepository.currentUser = it }
             .bind(_sharedQuit, viewModelScope)
     }
 

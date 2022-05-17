@@ -50,11 +50,12 @@ interface FirebaseRepositoryInterface{
 
     //Firebase event listeners methods
     fun listenToNewWars(): Flow<List<NewWar>>
+    fun listenToUsers(): Flow<List<User>>
 
     //delete methods
     fun deleteUser(user: User): Flow<Unit>
     fun deleteTeam(team: Team): Flow<Unit>
-    fun deleteNewWar(war: NewWar): Flow<Unit>
+    fun deleteNewWar(warId: String): Flow<Unit>
 
 }
 
@@ -249,6 +250,27 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
         awaitClose {  }
     }
 
+    override fun listenToUsers(): Flow<List<User>> = callbackFlow {
+        val postListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val users: List<User> = dataSnapshot.child("users").children.map { it.value as Map<*, *> }.map {
+                    User(
+                        mid = it["mid"].toString(),
+                        name = it["name"].toString(),
+                        team = it["team"].toString(),
+                        currentWar = it["currentWar"].toString(),
+                        isAdmin = it["admin"].toString().toBoolean(),
+                    )  }
+                if (isActive) offer(users)
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+            }
+        }
+        database.addValueEventListener(postListener)
+        awaitClose {  }
+    }
+
     override fun deleteUser(user: User) = flow {
         database.child("users").child(user.mid.toString()).removeValue()
         emit(Unit)
@@ -259,8 +281,8 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
         emit(Unit)
     }
 
-    override fun deleteNewWar(war: NewWar) = flow {
-        database.child("newWars").child(war.mid.toString()).removeValue()
+    override fun deleteNewWar(warId: String) = flow {
+        database.child("newWars").child(warId).removeValue()
         emit(Unit)
     }
 
