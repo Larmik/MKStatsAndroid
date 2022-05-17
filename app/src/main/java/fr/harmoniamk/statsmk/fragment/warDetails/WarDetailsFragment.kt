@@ -61,6 +61,9 @@ class WarDetailsFragment : Fragment(R.layout.fragment_war_details) {
             viewModel.sharedDeleteWarVisible
                 .onEach { binding.deleteWarBtn.isVisible = it }
                 .launchIn(lifecycleScope)
+            viewModel.sharedPlayerHost
+                .onEach { binding.playerHostTv.text = it }
+                .launchIn(lifecycleScope)
         }
     }
 

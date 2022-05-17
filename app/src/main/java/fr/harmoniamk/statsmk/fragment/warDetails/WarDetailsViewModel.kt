@@ -28,6 +28,7 @@ class WarDetailsViewModel @Inject constructor(private val firebaseRepository: Fi
     private val _sharedTrackClick = MutableSharedFlow<Int>()
     private val _sharedWarDeleted = MutableSharedFlow<Unit>()
     private val _sharedDeleteWarVisible = MutableSharedFlow<Boolean>()
+    private val _sharedPlayerHost = MutableSharedFlow<String>()
 
     val sharedWarPlayers = _sharedWarPlayers.asSharedFlow()
     val sharedTracks = _sharedTracks.asSharedFlow()
@@ -36,10 +37,12 @@ class WarDetailsViewModel @Inject constructor(private val firebaseRepository: Fi
     val sharedTrackClick = _sharedTrackClick.asSharedFlow()
     val sharedWarDeleted = _sharedWarDeleted.asSharedFlow()
     val sharedDeleteWarVisible = _sharedDeleteWarVisible.asSharedFlow()
+    val sharedPlayerHost = _sharedPlayerHost.asSharedFlow()
 
     fun bind(warId: String?, onTrackClick: Flow<Int>, onDeleteWar: Flow<Unit>) {
         warId?.let { id ->
             firebaseRepository.getNewWar(id)
+                .onEach { _sharedPlayerHost.emit("Créée par ${firebaseRepository.getUser(it?.playerHostId ?: "").firstOrNull()?.name ?: ""}") }
                 .mapNotNull { it?.warTracks?.map { MKWarTrack(it) } }
                 .onEach {
                     val positions = mutableListOf<Pair<String?, Int>>()
@@ -54,7 +57,8 @@ class WarDetailsViewModel @Inject constructor(private val firebaseRepository: Fi
                     }
                     _sharedWarPlayers.emit(positions.groupBy { it.first }.map { Pair(it.key, it.value.map { it.second }.sum()) })
                     _sharedDeleteWarVisible.emit(preferencesRepository.currentUser?.isAdmin.isTrue)
-                }.launchIn(viewModelScope)
+                }
+                .launchIn(viewModelScope)
             onTrackClick.bind(_sharedTrackClick, viewModelScope)
             onDeleteWar
                 .flatMapLatest { firebaseRepository.deleteNewWar(id) }
