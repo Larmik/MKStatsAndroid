@@ -59,7 +59,7 @@ class TrackDetailsFragment : Fragment(R.layout.fragment_track_details) {
 
         viewModel.sharedEditTrackClick
             .onEach {
-                val dialog = EditWarTrackFragment(war, index ?: 0)
+                val dialog = EditWarTrackFragment(war, index)
                 if (!dialog.isAdded)
                     dialog.show(childFragmentManager, null)
                 dialog.onDismiss
@@ -71,7 +71,7 @@ class TrackDetailsFragment : Fragment(R.layout.fragment_track_details) {
 
         viewModel.sharedEditPositionsClick
             .onEach {
-                val dialog = EditWarPositionsFragment(war, index ?: 0)
+                val dialog = EditWarPositionsFragment(war, index)
                 if (!dialog.isAdded)
                     dialog.show(childFragmentManager, null)
                 dialog.onDismiss

@@ -3,10 +3,7 @@ package fr.harmoniamk.statsmk.fragment.home.war
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.harmoniamk.statsmk.extension.bind
-import fr.harmoniamk.statsmk.extension.getBests
-import fr.harmoniamk.statsmk.extension.getCurrent
-import fr.harmoniamk.statsmk.extension.getLasts
+import fr.harmoniamk.statsmk.extension.*
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.local.MKTeam
 import fr.harmoniamk.statsmk.model.local.MKWar
@@ -31,6 +28,7 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
     private val _sharedLastWars = MutableSharedFlow<List<MKWar>>()
     private val _sharedBestWars = MutableSharedFlow<List<MKWar>>()
     private val _sharedGoToWar = MutableSharedFlow<MKWar>()
+    private val _sharedButtonVisible = MutableSharedFlow<Boolean>()
 
     val sharedTeam = _sharedTeam.asSharedFlow()
     val sharedHasTeam = _sharedHasTeam.asSharedFlow()
@@ -41,6 +39,7 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
     val sharedLastWars = _sharedLastWars.asSharedFlow()
     val sharedBestWars = _sharedBestWars.asSharedFlow()
     val sharedGoToWar = _sharedGoToWar.asSharedFlow()
+    val sharedButtonVisible = _sharedButtonVisible.asSharedFlow()
 
     fun bind(onCodeTeam: Flow<String>, onTeamClick: Flow<Unit>, onCreateWar: Flow<Unit>, onCurrentWarClick: Flow<Unit>, onWarClick: Flow<NewWar>) {
 
@@ -54,7 +53,10 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
 
         warsFlow
             .map { war = it.map { w -> MKWar(w) }.getCurrent(preferencesRepository.currentTeam?.mid); war }
-            .bind(_sharedCurrentWar, viewModelScope)
+            .onEach {
+                _sharedCurrentWar.emit(it)
+                _sharedButtonVisible.emit(preferencesRepository.currentUser?.isAdmin.isTrue)
+            }.launchIn(viewModelScope)
 
         warsFlow
             .map { it.map { w -> MKWar(w) }.getLasts(preferencesRepository.currentTeam?.mid) }

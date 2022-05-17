@@ -107,6 +107,12 @@ class WarFragment : Fragment(R.layout.fragment_war) {
                 .filter { findNavController().currentDestination?.id == R.id.homeFragment }
                 .onEach { findNavController().navigate(HomeFragmentDirections.goToAllWars()) }
                 .launchIn(lifecycleScope)
+
+            viewModel.sharedButtonVisible
+                .onEach {
+                    binding.createWarBtn.isVisible = it
+                    binding.warHostTv.isVisible = it
+                }.launchIn(lifecycleScope)
         }
 
     }
