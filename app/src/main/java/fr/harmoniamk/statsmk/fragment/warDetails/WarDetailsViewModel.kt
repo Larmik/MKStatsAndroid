@@ -25,7 +25,7 @@ class WarDetailsViewModel @Inject constructor(private val firebaseRepository: Fi
     private val _sharedTracks = MutableSharedFlow<List<MKWarTrack>>()
     private val _sharedBestTrack = MutableSharedFlow<MKWarTrack>()
     private val _sharedWorstTrack = MutableSharedFlow<MKWarTrack>()
-    private val _sharedTrackClick = MutableSharedFlow<Pair<Int, NewWarTrack>>()
+    private val _sharedTrackClick = MutableSharedFlow<Int>()
     private val _sharedWarDeleted = MutableSharedFlow<Unit>()
     private val _sharedDeleteWarVisible = MutableSharedFlow<Boolean>()
 
@@ -37,7 +37,7 @@ class WarDetailsViewModel @Inject constructor(private val firebaseRepository: Fi
     val sharedWarDeleted = _sharedWarDeleted.asSharedFlow()
     val sharedDeleteWarVisible = _sharedDeleteWarVisible.asSharedFlow()
 
-    fun bind(warId: String?, onTrackClick: Flow<Pair<Int, NewWarTrack>>, onDeleteWar: Flow<Unit>) {
+    fun bind(warId: String?, onTrackClick: Flow<Int>, onDeleteWar: Flow<Unit>) {
         warId?.let { id ->
             firebaseRepository.getNewWar(id)
                 .mapNotNull { it?.warTracks?.map { MKWarTrack(it) } }

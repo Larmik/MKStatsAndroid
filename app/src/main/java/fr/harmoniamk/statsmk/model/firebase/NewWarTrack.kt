@@ -4,6 +4,6 @@ import java.io.Serializable
 
 data class NewWarTrack(
     val mid: String? = null,
-    val trackIndex: Int? = null,
+    var trackIndex: Int? = null,
     var warPositions: List<NewWarPositions>? = null
 ) : Serializable

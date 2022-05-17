@@ -13,6 +13,8 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentCurrentWarBinding
 import fr.harmoniamk.statsmk.extension.backPressedDispatcher
 import fr.harmoniamk.statsmk.extension.clicks
+import fr.harmoniamk.statsmk.extension.isResumed
+import fr.harmoniamk.statsmk.model.firebase.NewWar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
@@ -24,8 +26,7 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
 
     private val binding : FragmentCurrentWarBinding by viewBinding()
     private val viewModel: CurrentWarViewModel by viewModels()
-    private var warId: String? = null
-    private var warName: String? = null
+    private var war: NewWar? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -34,9 +35,9 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
         viewModel.bind(requireActivity().backPressedDispatcher(viewLifecycleOwner), binding.nextTrackBtn.clicks(), adapter.sharedClick, binding.deleteWarBtn.clicks())
 
         viewModel.sharedCurrentWar
+            .filter { lifecycle.isResumed }
             .onEach {
-                warId = it.war?.mid
-                warName = it.war?.name
+                war = it.war
                 binding.warTitleTv.text = it.war?.name
                 binding.warDateTv.text = it.war?.createdDate
                 binding.currentWarTv.text = it.displayedState
@@ -44,10 +45,12 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
                 binding.diffScoreTv.text = it.displayedDiff
             }.launchIn(lifecycleScope)
 
-        viewModel.sharedButtonVisible.onEach {
-            binding.nextTrackBtn.isVisible = it
-            binding.deleteWarBtn.isVisible = it
-        }.launchIn(lifecycleScope)
+        viewModel.sharedButtonVisible
+            .filter { lifecycle.isResumed }
+            .onEach {
+                binding.nextTrackBtn.isVisible = it
+                binding.deleteWarBtn.isVisible = it
+            }.launchIn(lifecycleScope)
 
         viewModel.sharedQuit
             .filter { findNavController().currentDestination?.id == R.id.currentWarFragment }
@@ -56,11 +59,12 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
 
         viewModel.sharedSelectTrack
             .filter { findNavController().currentDestination?.id == R.id.currentWarFragment }
-            .mapNotNull { warId }
+            .mapNotNull { war?.mid }
             .onEach { findNavController().navigate(CurrentWarFragmentDirections.addTrack(it)) }
             .launchIn(lifecycleScope)
 
         viewModel.sharedTracks
+            .filter { lifecycle.isResumed }
             .onEach {
                 binding.playedLabel.isVisible = it.isNotEmpty()
                 adapter.addTracks(it)
@@ -68,6 +72,7 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
             .launchIn(lifecycleScope)
 
         viewModel.sharedPlayers
+            .filter { lifecycle.isResumed }
             .onEach {
                 it.forEachIndexed { index, s ->
                     when (index) {
@@ -83,7 +88,7 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
 
         viewModel.sharedTrackClick
             .filter { findNavController().currentDestination?.id == R.id.currentWarFragment }
-            .onEach { findNavController().navigate(CurrentWarFragmentDirections.toTrackDetails(warTrack = it.second, warName = warName, number = it.first)) }
+            .onEach { findNavController().navigate(CurrentWarFragmentDirections.toTrackDetails(war = war, index = it)) }
             .launchIn(lifecycleScope)
     }
 

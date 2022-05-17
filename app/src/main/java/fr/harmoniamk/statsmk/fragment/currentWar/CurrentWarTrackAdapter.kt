@@ -23,7 +23,7 @@ import kotlin.coroutines.CoroutineContext
 class CurrentWarTrackAdapter(val items: MutableList<MKWarTrack> = mutableListOf()) :
     RecyclerView.Adapter<CurrentWarTrackAdapter.CurrentTrackViewHolder>(), CoroutineScope {
 
-    private val _sharedClick = MutableSharedFlow<Pair<Int, NewWarTrack>>()
+    private val _sharedClick = MutableSharedFlow<Int>()
     val sharedClick = _sharedClick.asSharedFlow()
 
     class CurrentTrackViewHolder(val binding: TrackItemBinding) :
@@ -51,11 +51,10 @@ class CurrentWarTrackAdapter(val items: MutableList<MKWarTrack> = mutableListOf(
     override fun onBindViewHolder(holder: CurrentTrackViewHolder, position: Int) {
         val item = items[position]
         holder.bind(item)
-        item.track?.let { tr ->
-            holder.binding.root.clicks()
-                .onEach { _sharedClick.emit(Pair(position+1, tr)) }
-                .launchIn(this)
-        }
+        holder.binding.root.clicks()
+            .onEach { _sharedClick.emit(position) }
+            .launchIn(this)
+
     }
 
     override fun getItemCount() = items.size

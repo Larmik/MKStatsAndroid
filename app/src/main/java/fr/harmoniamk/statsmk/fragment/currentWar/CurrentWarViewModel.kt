@@ -26,7 +26,7 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
     private val  _sharedQuit = MutableSharedFlow<Unit>()
     private val _sharedSelectTrack = MutableSharedFlow<Unit>()
     private val _sharedTracks = MutableSharedFlow<List<MKWarTrack>>()
-    private val _sharedTrackClick = MutableSharedFlow<Pair<Int, NewWarTrack>>()
+    private val _sharedTrackClick = MutableSharedFlow<Int>()
     private val _sharedPlayers = MutableSharedFlow<List<String>>()
 
     val sharedButtonVisible = _sharedButtonVisible.asSharedFlow()
@@ -37,7 +37,7 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
     val sharedTrackClick = _sharedTrackClick.asSharedFlow()
     val sharedPlayers = _sharedPlayers.asSharedFlow()
 
-    fun bind(onBack: Flow<Unit>, onNextTrack: Flow<Unit>, onTrackClick: Flow<Pair<Int, NewWarTrack>>, onDelete: Flow<Unit>) {
+    fun bind(onBack: Flow<Unit>, onNextTrack: Flow<Unit>, onTrackClick: Flow<Int>, onDelete: Flow<Unit>) {
 
         flowOf(firebaseRepository.getNewWars(), firebaseRepository.listenToNewWars())
             .flattenMerge()

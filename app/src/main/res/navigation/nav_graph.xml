@@ -330,16 +330,12 @@
             app:popExitAnim="@anim/exit_to_right">
 
             <argument
-                android:name="warTrack"
-                app:argType="fr.harmoniamk.statsmk.model.firebase.NewWarTrack"
+                android:name="war"
+                app:argType="fr.harmoniamk.statsmk.model.firebase.NewWar"
                 app:nullable="true"/>
 
             <argument
-                android:name="warName"
-                app:argType="string"
-                app:nullable="true"/>
-            <argument
-                android:name="number"
+                android:name="index"
                 app:argType="integer"/>
 
         </action>
@@ -367,16 +363,12 @@
             app:popExitAnim="@anim/exit_to_right">
 
             <argument
-                android:name="warTrack"
-                app:argType="fr.harmoniamk.statsmk.model.firebase.NewWarTrack"
+                android:name="war"
+                app:argType="fr.harmoniamk.statsmk.model.firebase.NewWar"
                 app:nullable="true"/>
 
             <argument
-                android:name="warName"
-                app:argType="string"
-                app:nullable="true"/>
-            <argument
-                android:name="number"
+                android:name="index"
                 app:argType="integer"/>
 
         </action>
