@@ -56,7 +56,4 @@ class SettingsViewModel @Inject constructor(private val preferencesRepository: P
             .bind(_sharedUserLabel, viewModelScope)
 
     }
-
-
-
 }

@@ -63,7 +63,6 @@ class WarDetailsViewModel @Inject constructor(private val firebaseRepository: Fi
             onDeleteWar
                 .flatMapLatest { firebaseRepository.deleteNewWar(id) }
                 .bind(_sharedWarDeleted, viewModelScope)
-
         }
     }
 
