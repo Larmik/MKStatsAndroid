@@ -30,6 +30,11 @@ import javax.inject.Inject
 interface FirebaseRepositoryInterface{
     val deviceId: String?
 
+    //Used only for migration
+    fun getWars(): Flow<List<War>>
+    fun getWarPositions(): Flow<List<WarPosition>>
+    fun getWarTracks(): Flow<List<WarTrack>>
+
     //Write and edit methods
     fun writeUser(user: User): Flow<Unit>
     fun writeNewWar(war: NewWar): Flow<Unit>
@@ -120,6 +125,27 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
         awaitClose {  }
     }
 
+    override fun getWars(): Flow<List<War>> = callbackFlow {
+        database.child("wars").get().addOnSuccessListener { snapshot ->
+            val wars: List<War> = snapshot.children
+                .map { it.value as Map<*, *> }
+                .map {map -> War(
+                    mid = map["mid"].toString(),
+                    playerHostId = map["playerHostId"].toString(),
+                    name = map["name"].toString(),
+                    teamHost = map["teamHost"].toString(),
+                    scoreHost = map["scoreHost"].toString().toInt(),
+                    teamOpponent = map["teamOpponent"].toString(),
+                    scoreOpponent = map["scoreOpponent"].toString().toInt(),
+                    trackPlayed = map["trackPlayed"].toString().toInt(),
+                    updatedDate = map["updatedDate"].toString(),
+                    createdDate = map["createdDate"].toString())
+                }
+            if (isActive) offer(wars)
+        }
+        awaitClose {  }
+    }
+
     override fun getNewWars(): Flow<List<NewWar>> = callbackFlow {
         database.child("newWars").get().addOnSuccessListener { snapshot ->
             val wars: List<NewWar> = snapshot.children
@@ -132,6 +158,37 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
                     teamOpponent = map["teamOpponent"].toString(),
                     createdDate = map["createdDate"].toString(),
                     warTracks = map["warTracks"].toMapList().parseTracks())
+                }
+            if (isActive) offer(wars)
+        }
+        awaitClose {  }
+    }
+
+    override fun getWarPositions(): Flow<List<WarPosition>> = callbackFlow {
+        database.child("warPositions").get().addOnSuccessListener { snapshot ->
+            val wars: List<WarPosition> = snapshot.children
+                .map { it.value as Map<*, *> }
+                .map {map -> WarPosition(
+                    mid = map["mid"].toString(),
+                    warTrackId = map["warTrackId"].toString(),
+                    playerId = map["playerId"].toString(),
+                    position = map["position"].toString().toInt())
+                }
+            if (isActive) offer(wars)
+        }
+        awaitClose {  }
+    }
+
+    override fun getWarTracks(): Flow<List<WarTrack>> = callbackFlow {
+        database.child("warTracks").get().addOnSuccessListener { snapshot ->
+            val wars: List<WarTrack> = snapshot.children
+                .map { it.value as Map<*, *> }
+                .map {map -> WarTrack(
+                    mid = map["mid"].toString(),
+                    warId = map["warId"].toString(),
+                    trackIndex = map["trackIndex"].toString().toInt(),
+                    isOver = map["over"].toString().toBoolean(),
+                    teamScore = map["teamScore"].toString().toInt())
                 }
             if (isActive) offer(wars)
         }
