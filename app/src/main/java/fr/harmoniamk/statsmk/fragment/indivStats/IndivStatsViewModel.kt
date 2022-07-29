@@ -24,23 +24,32 @@ class IndivStatsViewModel @Inject constructor(private val firebaseRepository: Fi
     private val _sharedWarsWon = MutableSharedFlow<Int?>()
     private val _sharedWinRate = MutableSharedFlow<Int?>()
     private val _sharedAveragePoints = MutableSharedFlow<Int?>()
-    private val _sharedHighestScore = MutableSharedFlow<Int?>()
-    private val _sharedLowestScore = MutableSharedFlow<Int?>()
-    private val _sharedBestMap = MutableSharedFlow<Pair<Maps, Int>?>()
-    private val _sharedWorstMap = MutableSharedFlow<Pair<Maps, Int>?>()
+    private val _sharedAverageMapPoints = MutableSharedFlow<Int?>()
+    private val _sharedHighestScore = MutableSharedFlow<Pair<MKWar?, Int>?>()
+    private val _sharedLowestScore = MutableSharedFlow<Pair<MKWar?, Int>?>()
+    //First int of second pair is score, and last is total of played
+    private val _sharedBestMap = MutableSharedFlow<Pair<Maps, Pair<Int, Int>>?>()
+    private val _sharedMostPlayedMap = MutableSharedFlow<Pair<Maps, Pair<Int, Int>>?>()
+    private val _sharedWorstMap = MutableSharedFlow<Pair<Maps, Pair<Int, Int>>?>()
+    private val _sharedLessPlayedMap = MutableSharedFlow<Pair<Maps, Pair<Int, Int>>?>()
     private val _sharedHighestVictory = MutableSharedFlow<MKWar?>()
     private val _sharedHighestDefeat = MutableSharedFlow<MKWar?>()
+    private val _sharedMostPlayedTeam = MutableSharedFlow<Pair<String?, Int?>?>()
 
     val sharedWarsPlayed = _sharedWarsPlayed.asSharedFlow()
     val sharedWarsWon = _sharedWarsWon.asSharedFlow()
     val sharedWinRate = _sharedWinRate.asSharedFlow()
     val sharedAveragePoints = _sharedAveragePoints.asSharedFlow()
+    val sharedAverageMapPoints = _sharedAverageMapPoints.asSharedFlow()
     val sharedHighestScore = _sharedHighestScore.asSharedFlow()
     val sharedLowestScore = _sharedLowestScore.asSharedFlow()
     val sharedBestMap = _sharedBestMap.asSharedFlow()
+    val sharedMostPlayedMap = _sharedMostPlayedMap.asSharedFlow()
     val sharedWorstMap = _sharedWorstMap.asSharedFlow()
+    val sharedLessPlayedMap = _sharedLessPlayedMap.asSharedFlow()
     val sharedHighestVictory = _sharedHighestVictory.asSharedFlow()
     val sharedHighestDefeat = _sharedHighestDefeat.asSharedFlow()
+    val sharedMostPlayedTeam = _sharedMostPlayedTeam.asSharedFlow()
 
     fun bind() {
 
@@ -57,39 +66,57 @@ class IndivStatsViewModel @Inject constructor(private val firebaseRepository: Fi
                 val warsPlayed = list.count()
                 val warsWon = list.filterNot { war -> war.displayedDiff.contains('-') }.count()
                 val maps = mutableListOf<Pair<Int?, Int?>>()
-                val warScores = mutableListOf<Int>()
-                val averageForMaps = mutableListOf<Pair<Maps, Int>>()
+                val warScores = mutableListOf<Pair<MKWar?, Int>>()
+                val averageForMaps = mutableListOf<Pair<Maps, Pair<Int, Int>>>()
+                val mostPlayedTeamId = list.groupBy { it.war?.teamOpponent }
+                    .toList()
+                    .sortedByDescending { it.second.size }
+                    .firstOrNull()
 
-                list.mapNotNull { mkWar -> mkWar.war?.warTracks?.map { MKWarTrack(it) } }.forEach {
-                    var currentPoints = 0
-                    it.forEach { track ->
-                        val scoreForTrack = track.track?.warPositions
-                            ?.singleOrNull { pos -> pos.playerId == preferencesRepository.currentUser?.name }
-                            ?.position.positionToPoints()
-                        currentPoints += scoreForTrack
-                        maps.add(Pair(track.track?.trackIndex, scoreForTrack))
+                val mostPlayedTeamData = firebaseRepository.getTeam(mostPlayedTeamId?.first ?: "")
+                    .mapNotNull { Pair(it?.name, mostPlayedTeamId?.second?.size) }
+                    .firstOrNull()
+
+                list.map { Pair(it, it.war?.warTracks?.map { MKWarTrack(it) }) }
+                    .forEach {
+                        var currentPoints = 0
+                        it.second?.forEach { track ->
+                            val scoreForTrack = track.track?.warPositions
+                                ?.singleOrNull { pos -> pos.playerId == preferencesRepository.currentUser?.name }
+                                ?.position.positionToPoints()
+                            currentPoints += scoreForTrack
+                            maps.add(Pair(track.track?.trackIndex, scoreForTrack))
+                        }
+                        warScores.add(Pair(it.first, currentPoints))
+                        currentPoints = 0
                     }
-                    warScores += currentPoints
-                    currentPoints = 0
-                }
-                maps.groupBy { it.first }.forEach { entry ->
-                    averageForMaps.add(
-                        Pair(
-                            Maps.values()[entry.key ?: -1],
-                            (entry.value.map { it.second }.sum() / entry.value.map { it.second }.count())
+                maps.groupBy { it.first }
+                    .filter { it.value.isNotEmpty() }
+                    .forEach { entry ->
+                        averageForMaps.add(
+                            Pair(
+                                Maps.values()[entry.key ?: -1],
+                                Pair(
+                                    (entry.value.map { it.second }.sum() / entry.value.map { it.second }.count()),
+                                    entry.value.size
+                                )
+                            )
                         )
-                    )
-                }
+                    }
                 _sharedWarsPlayed.emit(warsPlayed)
                 _sharedWarsWon.emit(warsWon)
                 _sharedWinRate.emit((warsWon*100) / warsPlayed)
-                _sharedAveragePoints.emit(warScores.sum() / warScores.count())
-                _sharedHighestScore.emit(warScores.maxByOrNull { it })
-                _sharedLowestScore.emit(warScores.minByOrNull { it })
-                _sharedBestMap.emit(averageForMaps.maxByOrNull { it.second })
-                _sharedWorstMap.emit(averageForMaps.minByOrNull { it.second })
+                _sharedAveragePoints.emit(warScores.map { it.second }.sum() / warScores.count())
+                _sharedAverageMapPoints.emit(maps.map { it.second }.sum() / maps.size)
+                _sharedHighestScore.emit(warScores.maxByOrNull { it.second })
+                _sharedLowestScore.emit(warScores.minByOrNull { it.second })
+                _sharedBestMap.emit(averageForMaps.maxByOrNull { it.second.first })
+                _sharedWorstMap.emit(averageForMaps.minByOrNull { it.second.first })
                 _sharedHighestVictory.emit(list.maxByOrNull { war -> war.scoreHost })
                 _sharedHighestDefeat.emit(list.minByOrNull { war -> war.scoreHost })
+                _sharedMostPlayedTeam.emit(mostPlayedTeamData)
+                _sharedMostPlayedMap.emit(averageForMaps.maxByOrNull { it.second.second })
+                _sharedLessPlayedMap.emit(averageForMaps.minByOrNull { it.second.second })
             }.launchIn(viewModelScope)
     }
 

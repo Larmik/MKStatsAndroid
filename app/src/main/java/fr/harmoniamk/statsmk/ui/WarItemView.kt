@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.viewbinding.ViewBinding
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.WarItemBinding
@@ -13,6 +14,7 @@ import fr.harmoniamk.statsmk.model.local.MKWar
 class WarItemView : CardView {
 
     private var binding: ViewBinding? = null
+    private var isGreen = false
 
     constructor(context: Context) : this(context, null)
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
@@ -22,6 +24,7 @@ class WarItemView : CardView {
             true -> WarItemVerticalBinding.inflate(LayoutInflater.from(context), this, true)
             else -> WarItemBinding.inflate(LayoutInflater.from(context), this, true)
         }
+        isGreen = ta.getBoolean(R.styleable.WarItemView_win, false)
         ta.recycle()
     }
 
@@ -33,6 +36,12 @@ class WarItemView : CardView {
             it.warDiff.text = war?.displayedDiff
             it.nameTv.text = war?.war?.name
             it.timeTv.text = war?.war?.createdDate
+            it.root.background.setTint(
+                ContextCompat.getColor(
+                    it.root.context,
+                    if (isGreen) R.color.win else R.color.lose
+                )
+            )
         }
     }
 

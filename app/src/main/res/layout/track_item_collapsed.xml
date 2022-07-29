@@ -39,6 +39,22 @@
             android:id="@+id/best_track_name"
             tools:targetApi="o" />
 
+        <TextView
+            android:textSize="14sp"
+            tools:text="jouée 26 fois"
+            android:maxLines="1"
+            android:gravity="center"
+            android:layout_marginBottom="5dp"
+            android:autoSizeTextType="uniform"
+            android:textColor="@color/white"
+            android:layout_width="match_parent"
+            android:fontFamily="@font/montserrat_regular"
+            android:layout_height="wrap_content"
+            android:id="@+id/total_played"
+            android:translationY="-5dp"
+            android:visibility="gone"
+            tools:targetApi="o" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -74,10 +90,10 @@
                     android:fontFamily="@font/montserrat_regular"
                     android:gravity="center"
                     android:maxLines="1"
+                    android:text="Score moyen"
                     android:textColor="@color/waluigi_second"
                     android:textSize="14sp"
-                    tools:targetApi="o"
-                    android:text="Score moyen" />
+                    tools:targetApi="o" />
 
             </RelativeLayout>
 

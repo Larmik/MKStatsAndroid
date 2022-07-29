@@ -38,11 +38,20 @@ class IndivStatsFragment : Fragment(R.layout.fragment_indiv_stats) {
         viewModel.sharedAveragePoints
             .onEach { binding.totalAverage.text = it.toString() }
             .launchIn(lifecycleScope)
-        viewModel.sharedHighestScore
-            .onEach { binding.highestScore.text = it.toString() }
+        viewModel.sharedAverageMapPoints
+            .onEach { binding.mapAverage.text = it.toString() }
             .launchIn(lifecycleScope)
+        viewModel.sharedHighestScore
+            .onEach {
+                binding.highestScore.text = it?.second.toString()
+                binding.highestScoreWarName.text = "vs ${it?.first?.war?.name?.split('-')?.lastOrNull()?.trim()}"
+                binding.highestScoreWarDate.text = it?.first?.war?.createdDate
+            }.launchIn(lifecycleScope)
         viewModel.sharedLowestScore
-            .onEach { binding.lowestScore.text = it.toString() }
+            .onEach {
+                binding.lowestScore.text = it?.second.toString()
+                binding.lowestScoreWarName.text = "vs ${it?.first?.war?.name?.split('-')?.lastOrNull()?.trim()}"
+                binding.lowestScoreWarDate.text = it?.first?.war?.createdDate}
             .launchIn(lifecycleScope)
         viewModel.sharedBestMap
             .onEach { binding.bestTrackview.bind(it) }
@@ -55,6 +64,17 @@ class IndivStatsFragment : Fragment(R.layout.fragment_indiv_stats) {
             .launchIn(lifecycleScope)
         viewModel.sharedHighestDefeat
             .onEach { binding.highestDefeat.bind(it) }
+            .launchIn(lifecycleScope)
+        viewModel.sharedMostPlayedTeam
+            .onEach {
+                binding.mostPlayedTeam.text = it?.first
+                binding.mostPlayedTeamTotal.text = "${it?.second} matchs joués"
+            }.launchIn(lifecycleScope)
+        viewModel.sharedMostPlayedMap
+            .onEach { binding.mostPlayedTrackview.bind(it) }
+            .launchIn(lifecycleScope)
+        viewModel.sharedLessPlayedMap
+            .onEach { binding.lessPlayedTrackview.bind(it) }
             .launchIn(lifecycleScope)
     }
 

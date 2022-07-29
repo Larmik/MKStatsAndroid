@@ -75,18 +75,7 @@ class TrackView : CardView {
         }
         (binding as? TrackItemCollapsedBinding)?.let { binding ->
             binding.bestTrackIv.clipToOutline = true
-            binding.cardRoot.setCardBackgroundColor(
-                ContextCompat.getColor(
-                    binding.root.context,
-                    R.color.waluigi
-                )
-            )
-            binding.root.background.setTint(
-                ContextCompat.getColor(
-                    binding.root.context,
-                    R.color.waluigi
-                )
-            )
+
             when (track) {
                 is MKWarTrack -> {
                     binding.averageTrackScoreLabel.isVisible = false
@@ -108,13 +97,27 @@ class TrackView : CardView {
                 is Pair<*, *> -> {
                     binding.bestTrackScore.isVisible = false
                     binding.bestTrackDiff.isVisible = false
+                    binding.totalPlayed.isVisible = true
+                    binding.cardRoot.setCardBackgroundColor(
+                        ContextCompat.getColor(
+                            binding.root.context,
+                            R.color.waluigi
+                        )
+                    )
+                    binding.root.background.setTint(
+                        ContextCompat.getColor(
+                            binding.root.context,
+                            R.color.waluigi
+                        )
+                    )
                     binding.bestTrackName.setTextColor(ContextCompat.getColor(binding.root.context, R.color.white))
                     (track.first as? Maps)?.let {
                         binding.bestTrackIv.setImageResource(it.picture)
                         binding.bestTrackName.setText(it.label)
                     }
-                    (track.second as? Int)?.let {
-                        binding.averageTrackScore.text = it.toString()
+                    (track.second as? Pair<*, *>)?.let {
+                        binding.averageTrackScore.text = it.first.toString()
+                        binding.totalPlayed.text = "jouée ${it.second} fois"
                     }
                 }
                 else -> binding.bestTrackName.text = "Données corrompues"            }

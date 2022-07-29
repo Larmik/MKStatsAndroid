@@ -6,5 +6,6 @@
     </declare-styleable>
     <declare-styleable name="WarItemView">
         <attr name="vertical" format="boolean" />
+        <attr name="win" format="boolean" />
     </declare-styleable>
 </resources>
