@@ -8,16 +8,11 @@
     android:background="@color/waluigi"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:orientation="vertical"
-        android:padding="15dp"
-        android:layout_height="wrap_content">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:padding="15dp"
             android:id="@+id/logout_layout">
 
             <TextView
@@ -575,7 +570,6 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="20dp"
                     android:orientation="horizontal">
 
                     <fr.harmoniamk.statsmk.ui.TrackView
@@ -599,15 +593,5 @@
             </LinearLayout>
 
         </LinearLayout>
-
-        <TextView
-            android:id="@+id/current_user_label"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:textColor="@color/white"
-            android:fontFamily="@font/montserrat_regular"
-            android:gravity="bottom|end"/>
-
-    </LinearLayout>
 
 </ScrollView>
