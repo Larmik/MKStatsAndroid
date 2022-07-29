@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/current_tm_card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    app:cardCornerRadius="2dp"
+    app:cardBackgroundColor="@color/white_alphaed"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingVertical="10dp"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_marginHorizontal="10dp"
+            android:gravity="center"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/name_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/orbitron_semibold"
+                android:textSize="16sp"
+                android:textColor="@color/black"
+                tools:text="HR vs OF" />
+
+            <TextView
+                android:id="@+id/time_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/montserrat_regular"
+                android:textColor="@color/black"
+                android:textSize="13sp"
+                android:gravity="center"
+                tools:text="18/01/2022 \n 21h" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/black"
+            android:layout_marginVertical="5dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:id="@+id/war_total">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:textColor="@color/black"
+                    android:layout_height="wrap_content"
+                    android:textSize="20sp"
+                    android:fontFamily="@font/orbitron_semibold"
+                    tools:text="505-479"
+                    android:id="@+id/total_war_score_tv" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:fontFamily="@font/orbitron_semibold"
+                    android:layout_height="wrap_content"
+                    android:text="+26"
+                    android:textSize="13sp"
+                    android:textColor="@color/black"
+                    android:id="@+id/war_diff"/>
+
+            </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

@@ -28,12 +28,14 @@
         <entry key="app/src/main/res/layout/fragment_edit_war_positions.xml" value="0.3458333333333333" />
         <entry key="app/src/main/res/layout/fragment_edit_war_track.xml" value="0.3458333333333333" />
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.2203125" />
+        <entry key="app/src/main/res/layout/fragment_indiv_stats.xml" value="0.33541666666666664" />
         <entry key="app/src/main/res/layout/fragment_manage_players.xml" value="0.32760416666666664" />
         <entry key="app/src/main/res/layout/fragment_manage_teams.xml" value="0.2953125" />
         <entry key="app/src/main/res/layout/fragment_position.xml" value="0.2203125" />
         <entry key="app/src/main/res/layout/fragment_progress_dialog.xml" value="0.2734375" />
         <entry key="app/src/main/res/layout/fragment_result_war_track.xml" value="0.5181422351233672" />
         <entry key="app/src/main/res/layout/fragment_settings.xml" value="0.3890625" />
+        <entry key="app/src/main/res/layout/fragment_stats.xml" value="0.33541666666666664" />
         <entry key="app/src/main/res/layout/fragment_theme.xml" value="0.32760416666666664" />
         <entry key="app/src/main/res/layout/fragment_time_trial.xml" value="0.2203125" />
         <entry key="app/src/main/res/layout/fragment_tournaments.xml" value="0.25" />
@@ -54,7 +56,9 @@
         <entry key="app/src/main/res/layout/track_item.xml" value="0.35864978902953587" />
         <entry key="app/src/main/res/layout/track_item_collapsed.xml" value="0.2953125" />
         <entry key="app/src/main/res/layout/user_item.xml" value="0.3098958333333333" />
+        <entry key="app/src/main/res/layout/vertical_war_item.xml" value="0.2677083333333333" />
         <entry key="app/src/main/res/layout/war_item.xml" value="0.284375" />
+        <entry key="app/src/main/res/layout/war_item_vertical.xml" value="0.2677083333333333" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/hr_logo.xml" value="0.27282051282051284" />
       </map>
     </option>

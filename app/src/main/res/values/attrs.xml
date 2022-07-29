@@ -4,4 +4,7 @@
         <attr name="collapsed" format="boolean" />
         <attr name="isBest" format="boolean" />
     </declare-styleable>
+    <declare-styleable name="WarItemView">
+        <attr name="vertical" format="boolean" />
+    </declare-styleable>
 </resources>

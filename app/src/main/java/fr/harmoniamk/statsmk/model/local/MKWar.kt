@@ -22,4 +22,11 @@ data class MKWar(val war: NewWar?) : Serializable {
             val diff = scoreHost - scoreOpponent
             return if (diff > 0) "+$diff" else "$diff"
         }
+
+    fun hasPlayer(playerId: String?): Boolean {
+        war?.warTracks?.mapNotNull { it.warPositions }?.forEach {
+            return it.any { pos -> pos.playerId == playerId }
+        }
+        return false
+    }
 }

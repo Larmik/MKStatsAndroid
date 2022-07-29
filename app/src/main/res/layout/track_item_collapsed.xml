@@ -5,7 +5,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     app:cardCornerRadius="2dp"
     android:outlineSpotShadowColor="@android:color/transparent"
-    app:cardBackgroundColor="@color/win"
     android:id="@+id/card_root"
     android:orientation="vertical"
     tools:targetApi="p"
@@ -14,7 +13,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
+        android:padding="5dp"
         android:gravity="center"
         android:orientation="vertical">
 
@@ -48,33 +47,74 @@
             android:backgroundTint="@color/white_alphaed"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/best_track_score"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:autoSizeMinTextSize="12sp"
-                android:autoSizeTextType="uniform"
-                android:fontFamily="@font/orbitron_semibold"
-                android:gravity="center"
-                android:maxLines="1"
-                android:textColor="@color/waluigi_second"
-                android:textSize="14sp"
-                tools:targetApi="o"
-                tools:text="58 - 24" />
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/best_track_diff"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:autoSizeMinTextSize="9sp"
-                android:autoSizeTextType="uniform"
-                android:fontFamily="@font/orbitron_semibold"
-                android:gravity="center"
-                android:maxLines="1"
-                android:textColor="@color/waluigi_second"
-                android:textSize="11sp"
-                tools:targetApi="o"
-                tools:text="+34" />
+                <TextView
+                    android:id="@+id/best_track_score"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:autoSizeMinTextSize="12sp"
+                    android:autoSizeTextType="uniform"
+                    android:fontFamily="@font/orbitron_semibold"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:textColor="@color/waluigi_second"
+                    android:textSize="14sp"
+                    tools:targetApi="o"
+                    tools:text="58 - 24" />
+
+                <TextView
+                    android:id="@+id/average_track_score_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:autoSizeMinTextSize="12sp"
+                    android:autoSizeTextType="uniform"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:textColor="@color/waluigi_second"
+                    android:textSize="14sp"
+                    tools:targetApi="o"
+                    android:text="Score moyen" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/best_track_diff"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:autoSizeMinTextSize="9sp"
+                    android:autoSizeTextType="uniform"
+                    android:fontFamily="@font/orbitron_semibold"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:textColor="@color/waluigi_second"
+                    android:textSize="11sp"
+                    tools:targetApi="o"
+                    tools:text="+34" />
+
+                <TextView
+                    android:id="@+id/average_track_score"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:autoSizeMinTextSize="9sp"
+                    android:autoSizeTextType="uniform"
+                    android:fontFamily="@font/orbitron_semibold"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:textColor="@color/waluigi_second"
+                    android:textSize="14sp"
+                    tools:targetApi="o"
+                    tools:text="9" />
+
+            </RelativeLayout>
+
         </LinearLayout>
 
     </LinearLayout>
