@@ -1,20 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/current_tm_card"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:layout_marginEnd="15dp"
-    app:cardCornerRadius="2dp"
-    app:cardBackgroundColor="@color/white_alphaed"
-    android:layout_marginTop="10dp"
-    xmlns:tools="http://schemas.android.com/tools">
+
 
     <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingVertical="10dp"
+        android:layout_marginEnd="15dp"
+        android:background="@drawable/rounded_bg"
+        android:layout_marginTop="10dp"
         android:orientation="horizontal">
 
         <LinearLayout
@@ -137,4 +133,3 @@
 
 
 
-</androidx.cardview.widget.CardView>

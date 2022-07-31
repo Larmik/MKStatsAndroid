@@ -3,6 +3,7 @@ package fr.harmoniamk.statsmk.ui
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.widget.LinearLayout
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -14,7 +15,7 @@ import fr.harmoniamk.statsmk.databinding.TrackItemCollapsedBinding
 import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
 
-class TrackView : CardView {
+class TrackView : LinearLayout {
 
     private var binding: ViewBinding? = null
 
@@ -34,12 +35,11 @@ class TrackView : CardView {
         lp.setMargins(0,0,0,0)
         (binding as? TrackItemBinding)?.let { binding ->
             binding.root.layoutParams = lp
-            binding.root.cardElevation = 0f
             binding.trackIv.clipToOutline = true
             when (track) {
                 is MKWarTrack -> {
                     binding.teamScoreTv.isVisible = true
-                    binding.root.background.setTint(
+                    binding.root.background.mutate().setTint(
                         ContextCompat.getColor(
                             binding.root.context,
                             track.backgroundColor
@@ -80,7 +80,7 @@ class TrackView : CardView {
                 is MKWarTrack -> {
                     binding.averageTrackScoreLabel.isVisible = false
                     binding.averageTrackScore.isVisible = false
-                    binding.cardRoot.setCardBackgroundColor(
+                    binding.root.background.mutate().setTint(
                         ContextCompat.getColor(
                             binding.root.context,
                             track.backgroundColor
@@ -98,16 +98,10 @@ class TrackView : CardView {
                     binding.bestTrackScore.isVisible = false
                     binding.bestTrackDiff.isVisible = false
                     binding.totalPlayed.isVisible = true
-                    binding.cardRoot.setCardBackgroundColor(
+                    binding.root.background.mutate().setTint(
                         ContextCompat.getColor(
                             binding.root.context,
-                            R.color.waluigi
-                        )
-                    )
-                    binding.root.background.setTint(
-                        ContextCompat.getColor(
-                            binding.root.context,
-                            R.color.waluigi
+                            R.color.transparent_white
                         )
                     )
                     binding.bestTrackName.setTextColor(ContextCompat.getColor(binding.root.context, R.color.white))

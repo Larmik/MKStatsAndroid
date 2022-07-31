@@ -37,8 +37,8 @@ data class MKWarTrack(val track: NewWarTrack?) {
 
     val backgroundColor : Int
         get() = when {
-            diffScore > 0 -> R.color.win
-            diffScore < 0 -> R.color.lose
+            diffScore > 0 -> R.color.win_alphaed
+            diffScore < 0 -> R.color.lose_alphaed
             else -> R.color.white_alphaed
         }
 }

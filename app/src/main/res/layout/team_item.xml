@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardCornerRadius="2dp"
-    app:cardBackgroundColor="@color/white_alphaed"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_marginTop="15dp"
-    android:orientation="vertical">
 
     <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_marginTop="15dp"
+    android:background="@drawable/rounded_bg"
+
         android:layout_margin="5dp"
         android:orientation="horizontal">
 
@@ -23,7 +19,7 @@
             android:fontFamily="@font/orbitron_semibold"
             android:layout_width="0dp"
             android:gravity="center"
-            android:textSize="24sp"
+            android:textSize="18sp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:id="@+id/shortname"/>
@@ -33,7 +29,7 @@
             android:background="@color/waluigi_second"/>
 
         <TextView
-            android:textSize="20sp"
+            android:textSize="16sp"
             tools:text="Bowser Castle"
             android:maxLines="1"
             android:paddingVertical="10dp"
@@ -43,7 +39,6 @@
             android:layout_weight="4"
             android:gravity="center"
             android:fontFamily="@font/montserrat_bold"
-            android:layout_marginBottom="10dp"
             android:layout_height="wrap_content"
             android:id="@+id/name"
             tools:targetApi="o" />
@@ -53,4 +48,3 @@
     </LinearLayout>
 
 
-</androidx.cardview.widget.CardView>

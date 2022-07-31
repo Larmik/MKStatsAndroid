@@ -1,20 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardCornerRadius="2dp"
-    android:outlineSpotShadowColor="@android:color/transparent"
-    android:id="@+id/root"
+    <LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_marginTop="15dp"
-    android:orientation="vertical"
-    tools:targetApi="p">
-
-    <LinearLayout
+android:background="@drawable/rounded_bg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
+    android:padding="5dp"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
@@ -127,4 +119,3 @@
     </LinearLayout>
 
 
-</androidx.cardview.widget.CardView>

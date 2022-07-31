@@ -3,6 +3,7 @@ package fr.harmoniamk.statsmk.ui
 import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
+import android.widget.LinearLayout
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.viewbinding.ViewBinding
@@ -11,7 +12,7 @@ import fr.harmoniamk.statsmk.databinding.WarItemBinding
 import fr.harmoniamk.statsmk.databinding.WarItemVerticalBinding
 import fr.harmoniamk.statsmk.model.local.MKWar
 
-class WarItemView : CardView {
+class WarItemView : LinearLayout {
 
     private var binding: ViewBinding? = null
     private var isGreen = false
@@ -39,7 +40,7 @@ class WarItemView : CardView {
             it.root.background.setTint(
                 ContextCompat.getColor(
                     it.root.context,
-                    if (isGreen) R.color.win else R.color.lose
+                    if (isGreen) R.color.win_alphaed else R.color.lose_alphaed
                 )
             )
         }

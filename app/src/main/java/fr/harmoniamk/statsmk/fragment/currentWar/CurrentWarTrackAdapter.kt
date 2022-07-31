@@ -31,7 +31,7 @@ class CurrentWarTrackAdapter(val items: MutableList<MKWarTrack> = mutableListOf(
 
         fun bind(track: MKWarTrack) {
             binding.teamScoreTv.isVisible = true
-            binding.root.background.setTint(ContextCompat.getColor(binding.root.context, track.backgroundColor))
+            binding.root.background.mutate().setTint(ContextCompat.getColor(binding.root.context, track.backgroundColor))
             track.track?.trackIndex?.let {
                 val map = Maps.values()[it]
                 binding.trackIv.clipToOutline = true

@@ -21,6 +21,7 @@
     <color name="harmonie">#BB81D5C9</color>
     <color name="waluigi_second">#BB02010A</color>
     <color name="white_alphaed">#BBFFFFFF</color>
+    <color name="transparent_white">#88FFFFFF</color>
     <color name="transparent">#00FFFFFF</color>
     <color name="pos_1">#D4AF37</color>
     <color name="pos_2">#C0C0C0</color>
@@ -33,5 +34,7 @@
     <color name="pos_11">#DC6601</color>
     <color name="pos_12">#D24E01</color>
     <color name="win">#9cffa1</color>
+    <color name="win_alphaed">#aa9cffa1</color>
     <color name="lose">#ff8282</color>
+    <color name="lose_alphaed">#aaff8282</color>
 </resources>

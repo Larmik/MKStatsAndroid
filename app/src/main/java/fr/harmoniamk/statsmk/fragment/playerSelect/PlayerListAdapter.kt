@@ -32,12 +32,12 @@ class PlayerListAdapter(val items: MutableList<UserSelector> = mutableListOf()) 
         val item = items[position]
         holder.binding.separator.isVisible = false
         holder.binding.playerPos.isVisible = false
-        holder.binding.root.background.setTint(ContextCompat.getColor(holder.binding.root.context, if (item.isSelected) R.color.luigi else R.color.white))
+        holder.binding.root.background.mutate().setTint(ContextCompat.getColor(holder.binding.root.context, if (item.isSelected) R.color.win_alphaed else R.color.lose_alphaed))
         holder.binding.name.text = items[position].user.name
         holder.binding.root.clicks()
             .onEach {
                 item.isSelected = !item.isSelected
-                holder.binding.root.background.setTint(ContextCompat.getColor(holder.binding.root.context, if (item.isSelected) R.color.luigi else R.color.white))
+                holder.binding.root.background.mutate().setTint(ContextCompat.getColor(holder.binding.root.context, if (item.isSelected) R.color.win_alphaed else R.color.lose_alphaed))
                 _sharedUserSelected.emit(item)
             }.launchIn(this)
     }

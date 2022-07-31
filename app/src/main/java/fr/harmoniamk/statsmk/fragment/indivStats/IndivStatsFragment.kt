@@ -26,6 +26,9 @@ class IndivStatsFragment : Fragment(R.layout.fragment_indiv_stats) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.bind()
 
+        binding.highestDefeat.clipToOutline = true
+        binding.highestVictory.clipToOutline = true
+
         viewModel.sharedWarsPlayed
             .onEach { binding.warPlayed.text = it.toString() }
             .launchIn(lifecycleScope)
