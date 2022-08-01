@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.google.android.material.tabs.TabLayoutMediator
@@ -24,7 +23,6 @@ import kotlinx.coroutines.flow.onEach
 class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private val binding: FragmentHomeBinding by viewBinding()
-    private val viewModel: HomeViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -37,9 +35,13 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         TabLayoutMediator(binding.tablayout, binding.homepager) { tab, position ->
             tab.text = adapter.getTabTitle(position)
         }.attach()
-        viewModel.bind(requireActivity().backPressedDispatcher(viewLifecycleOwner))
-        viewModel.sharedClose
-            .onEach { requireActivity().finish() }
-            .launchIn(lifecycleScope)
+
+        requireActivity().backPressedDispatcher(viewLifecycleOwner).onEach {
+            when (binding.homepager.currentItem) {
+                0 -> requireActivity().finish()
+                else -> binding.homepager.currentItem = 0
+            }
+        }.launchIn(lifecycleScope)
+
     }
 }
