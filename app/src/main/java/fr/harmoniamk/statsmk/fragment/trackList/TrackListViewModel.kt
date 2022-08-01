@@ -6,6 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.application.MainApplication
 import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.extension.bind
+import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
@@ -23,15 +24,17 @@ class TrackListViewModel @Inject constructor(private val firebaseRepository: Fir
     private val _sharedSearchedItems = MutableSharedFlow<List<Maps>>()
     private val _sharedGoToWarPos = MutableSharedFlow<NewWarTrack>()
     private val _sharedGoToTmPos = MutableSharedFlow<Int>()
+    private val _sharedGoToStats = MutableSharedFlow<Int>()
     private val _sharedQuit = MutableSharedFlow<Unit>()
 
     val sharedSearchedItems = _sharedSearchedItems.asSharedFlow()
     val sharedGoToWarPos = _sharedGoToWarPos.asSharedFlow()
     val sharedGoToTmPos = _sharedGoToTmPos.asSharedFlow()
+    val sharedGoToStats = _sharedGoToStats.asSharedFlow()
     val sharedQuit = _sharedQuit.asSharedFlow()
 
 
-    fun bind(tournamentId: Int? = null, warId: String? = null, onTrackAdded: Flow<Int>, onSearch: Flow<String>,  onBack: Flow<Unit>) {
+    fun bind(tournamentId: Int? = null, warId: String? = null, onTrackAdded: Flow<Int>, onSearch: Flow<String>,  onBack: Flow<Unit>, forStats: Boolean?) {
 
         onBack.bind(_sharedQuit, viewModelScope)
         onSearch
@@ -56,6 +59,10 @@ class TrackListViewModel @Inject constructor(private val firebaseRepository: Fir
                     track
                 }.bind(_sharedGoToWarPos, viewModelScope)
 
+        }
+
+        forStats.takeIf { it.isTrue }?.let {
+            onTrackAdded.bind(_sharedGoToStats, viewModelScope)
         }
         //////////////////////////////////////////////////////////////////////
     }

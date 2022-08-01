@@ -31,18 +31,20 @@ class TrackListFragment(val onTrack: MutableSharedFlow<Int>? = null) :
 
     private var tmId : Int? = null
     private var warId: String? = null
+    private var forStats: Boolean? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         tmId = arguments?.getInt("tmId").takeIf { it != 0 }
         warId = arguments?.getString("warId")
+        forStats = arguments?.getBoolean("forStats")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val adapter = TrackListAdapter()
         binding.trackRv.adapter = adapter
-        viewModel.bind(tmId, warId, adapter.sharedClick, binding.searchEt.onTextChanged(), requireActivity().backPressedDispatcher(viewLifecycleOwner))
+        viewModel.bind(tmId, warId, adapter.sharedClick, binding.searchEt.onTextChanged(), requireActivity().backPressedDispatcher(viewLifecycleOwner), forStats)
         viewModel.sharedSearchedItems
             .onEach { adapter.addTracks(it) }
             .launchIn(lifecycleScope)
@@ -64,6 +66,11 @@ class TrackListFragment(val onTrack: MutableSharedFlow<Int>? = null) :
         viewModel.sharedQuit
             .filter { findNavController().currentDestination?.id == R.id.trackListFragment }
             .onEach { findNavController().popBackStack() }
+            .launchIn(lifecycleScope)
+
+        viewModel.sharedGoToStats
+            .filter { findNavController().currentDestination?.id == R.id.trackListFragment }
+            .onEach { findNavController().navigate(TrackListFragmentDirections.toMapStats(it)) }
             .launchIn(lifecycleScope)
 
     }

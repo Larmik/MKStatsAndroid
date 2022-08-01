@@ -111,6 +111,17 @@
             app:exitAnim="@anim/exit_to_left"
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right"/>
+        <action
+            android:id="@+id/to_track_list"
+            app:destination="@id/trackListFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right">
+            <argument
+                android:name="forStats"
+                app:argType="boolean"/>
+        </action>
 
     </fragment>
 
@@ -148,6 +159,20 @@
                 android:name="warTrackId"
                 app:nullable="true"
                 app:argType="string"/>
+
+        </action>
+
+        <action android:id="@+id/to_map_stats"
+            app:destination="@id/mapStatsFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right">
+
+            <argument
+                android:name="trackId"
+                app:argType="integer"
+                app:nullable="false"/>
 
         </action>
 
@@ -423,5 +448,10 @@
         android:name="fr.harmoniamk.statsmk.fragment.teamStats.TeamStatsFragment"
         tools:layout="@layout/fragment_indiv_stats"
         android:label="TeamStatsFragment"/>
+    <fragment
+        android:id="@+id/mapStatsFragment"
+        android:name="fr.harmoniamk.statsmk.fragment.mapStats.MapStatsFragment"
+        tools:layout="@layout/fragment_map_stats"
+        android:label="MapStatsFragment"/>
 
 </navigation>

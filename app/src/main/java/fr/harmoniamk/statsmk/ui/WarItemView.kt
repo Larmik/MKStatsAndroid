@@ -11,6 +11,7 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.WarItemBinding
 import fr.harmoniamk.statsmk.databinding.WarItemVerticalBinding
 import fr.harmoniamk.statsmk.model.local.MKWar
+import fr.harmoniamk.statsmk.model.local.MKWarTrack
 
 class WarItemView : LinearLayout {
 
@@ -29,12 +30,12 @@ class WarItemView : LinearLayout {
         ta.recycle()
     }
 
-    fun bind(war: MKWar?) {
+    fun bind(war: MKWar?, track: MKWarTrack? = null) {
         val lp = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
         lp.setMargins(0,0,0,0)
         (binding as? WarItemVerticalBinding)?.let {
-            it.totalWarScoreTv.text = war?.displayedScore
-            it.warDiff.text = war?.displayedDiff
+            it.totalWarScoreTv.text = track?.displayedResult ?: war?.displayedScore
+            it.warDiff.text = track?.displayedDiff ?: war?.displayedDiff
             it.nameTv.text = war?.war?.name
             it.timeTv.text = war?.war?.createdDate
             it.root.background.setTint(
