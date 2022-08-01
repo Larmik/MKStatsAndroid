@@ -26,6 +26,10 @@ class StatsFragment : Fragment(R.layout.fragment_stats) {
             .filter { findNavController().currentDestination?.id == R.id.homeFragment }
             .onEach { findNavController().navigate(HomeFragmentDirections.toIndivStats()) }
             .launchIn(lifecycleScope)
+        binding.teamStats.clicks()
+            .filter { findNavController().currentDestination?.id == R.id.homeFragment }
+            .onEach { findNavController().navigate(HomeFragmentDirections.toTeamStats()) }
+            .launchIn(lifecycleScope)
     }
 
 }

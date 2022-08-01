@@ -104,6 +104,13 @@
             app:exitAnim="@anim/exit_to_left"
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right"/>
+        <action
+            android:id="@+id/to_team_stats"
+            app:destination="@id/teamStatsFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right"/>
 
     </fragment>
 
@@ -410,5 +417,11 @@
         android:name="fr.harmoniamk.statsmk.fragment.indivStats.IndivStatsFragment"
         tools:layout="@layout/fragment_indiv_stats"
         android:label="IndivStatsFragment"/>
+
+    <fragment
+        android:id="@+id/teamStatsFragment"
+        android:name="fr.harmoniamk.statsmk.fragment.teamStats.TeamStatsFragment"
+        tools:layout="@layout/fragment_indiv_stats"
+        android:label="TeamStatsFragment"/>
 
 </navigation>
