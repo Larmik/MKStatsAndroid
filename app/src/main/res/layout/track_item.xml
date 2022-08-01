@@ -50,10 +50,9 @@ android:background="@drawable/rounded_bg"
         </LinearLayout>
 
         <RelativeLayout
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:gravity="center"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
+            android:layout_height="match_parent">
 
             <ImageView
                 android:id="@+id/cup_iv"
@@ -109,6 +108,44 @@ android:background="@drawable/rounded_bg"
                     android:textSize="11sp"
                     tools:targetApi="o"
                     tools:text="+34" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/map_stats"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:visibility="gone"
+                tools:visibility="visible"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/total_played"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:autoSizeMinTextSize="12sp"
+                    android:autoSizeTextType="uniform"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:textColor="@color/waluigi_second"
+                    android:textSize="12sp"
+                    tools:targetApi="o"
+                    tools:text="Jouée 13 fois" />
+
+                <TextView
+                    android:id="@+id/winrate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:autoSizeMinTextSize="9sp"
+                    android:autoSizeTextType="uniform"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:gravity="center"
+                    android:maxLines="1"
+                    android:textColor="@color/waluigi_second"
+                    android:textSize="12sp"
+                    tools:targetApi="o"
+                    tools:text="Win rate: 67%" />
             </LinearLayout>
 
 

@@ -156,7 +156,7 @@
                             android:fontFamily="@font/orbitron_semibold"
                             android:textSize="20sp"
                             android:gravity="center"
-                            android:id="@+id/winrate"
+                            android:id="@+id/stat_winrate"
                             android:paddingBottom="5dp"
                             tools:text="72%"/>
 

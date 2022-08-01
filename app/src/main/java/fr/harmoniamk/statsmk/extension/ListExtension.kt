@@ -3,6 +3,7 @@ package fr.harmoniamk.statsmk.extension
 import fr.harmoniamk.statsmk.model.firebase.NewWarPositions
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
 import fr.harmoniamk.statsmk.model.local.MKWar
+import fr.harmoniamk.statsmk.model.local.MKWarTrack
 
 fun List<MKWar>.getLasts(teamId: String?) = this.filter {
         war -> war.isOver && war.war?.teamHost == teamId
@@ -38,3 +39,7 @@ fun List<Map<*,*>>?.parseTracks() : List<NewWarTrack>? =
         )
 
 }
+
+fun List<NewWarTrack>.sortBySize() = this.groupBy { it.trackIndex }.toList().sortedByDescending { it.second.size }
+fun List<NewWarTrack>.sortByVictory() = this.groupBy { it.trackIndex }.toList().sortedByDescending { it.second.filter { MKWarTrack(it).displayedDiff.contains('+') }.size * 100 / it.second.size }
+fun List<NewWarTrack>.sortByDefeat() = this.groupBy { it.trackIndex }.toList().sortedByDescending { it.second.filter { MKWarTrack(it).displayedDiff.contains('-') }.size * 100 / it.second.size }

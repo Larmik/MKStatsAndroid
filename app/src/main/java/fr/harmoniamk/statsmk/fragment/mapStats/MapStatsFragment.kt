@@ -51,7 +51,9 @@ class MapStatsFragment : Fragment(R.layout.fragment_map_stats) {
                 .onEach { binding.mapWon.text = it.toString() }
                 .launchIn(lifecycleScope)
             viewModel.sharedWinRate
-                .onEach { binding.winrate.text = "$it %" }
+                .onEach {
+                    binding.statWinrate.text = "$it %"
+                }
                 .launchIn(lifecycleScope)
             viewModel.sharedTeamScore
                 .onEach { binding.mapTeamAverage.text = it.toString() }

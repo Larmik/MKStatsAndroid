@@ -73,5 +73,6 @@ class TrackListFragment(val onTrack: MutableSharedFlow<Int>? = null) :
             .onEach { findNavController().navigate(TrackListFragmentDirections.toMapStats(it)) }
             .launchIn(lifecycleScope)
 
+
     }
 }

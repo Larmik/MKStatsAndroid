@@ -32,7 +32,7 @@ class StatsFragment : Fragment(R.layout.fragment_stats) {
             .launchIn(lifecycleScope)
         binding.mapStats.clicks()
             .filter { findNavController().currentDestination?.id == R.id.homeFragment }
-            .onEach { findNavController().navigate(HomeFragmentDirections.toTrackList(true)) }
+            .onEach { findNavController().navigate(HomeFragmentDirections.toMapRanking()) }
             .launchIn(lifecycleScope)
     }
 

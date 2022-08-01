@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/waluigi">
+
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/main_war_layout"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="10dp"
+            android:textColor="@color/white"
+            android:text="Statistiques des circuits"
+            android:textSize="20sp"
+            android:fontFamily="@font/montserrat_bold"
+            android:gravity="center"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/white"
+            android:layout_marginBottom="15dp"
+            android:layout_marginHorizontal="10dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:fontFamily="@font/montserrat_regular"
+                android:textSize="18sp"
+                android:layout_marginStart="20dp"
+                android:text="Les plus joués"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/most_played_rv"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never"
+                android:layout_marginBottom="15dp"
+                android:paddingHorizontal="10dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:orientation="vertical" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/white"
+            android:layout_marginBottom="15dp"
+            android:layout_marginHorizontal="10dp"/>
+
+
+
+            <TextView  android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:fontFamily="@font/montserrat_regular"
+                android:textSize="18sp"
+                android:layout_marginStart="20dp"
+                android:text="Les plus gagnés"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/most_won_rv"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginBottom="15dp"
+                android:paddingHorizontal="10dp"
+                android:nestedScrollingEnabled="false"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:orientation="vertical"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/white"
+            android:layout_marginBottom="15dp"
+            android:layout_marginHorizontal="10dp"/>
+
+            <TextView  android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:fontFamily="@font/montserrat_regular"
+                android:textSize="18sp"
+                android:layout_marginStart="20dp"
+                android:text="Les moins gagnés"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/most_lose_rv"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:paddingHorizontal="10dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:layout_marginBottom="15dp"
+                android:nestedScrollingEnabled="false"
+                android:orientation="vertical"/>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/white"
+            android:layout_marginBottom="15dp"
+            android:layout_marginHorizontal="10dp"/>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingVertical="10dp"
+            android:text="Voir tous les circuits"
+            android:id="@+id/all_maps_button"
+            android:background="@drawable/rounded_bg"
+            android:backgroundTint="@color/waluigi_second"
+            android:textSize="16sp"
+            android:fontFamily="@font/roboto"
+            android:gravity="center"
+            android:layout_marginHorizontal="15dp"
+            android:layout_marginBottom="10dp"
+            android:textColor="@color/white"/>
+
+        </LinearLayout>
+
+</ScrollView>
