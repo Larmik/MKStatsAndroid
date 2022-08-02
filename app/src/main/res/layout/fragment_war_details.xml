@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@color/waluigi"
+    android:background="?android:colorPrimary"
     android:layout_height="match_parent">
 
     <LinearLayout
@@ -117,7 +117,8 @@
             android:paddingVertical="10dp"
             android:layout_marginHorizontal="15dp"
             android:background="@drawable/rounded_bg"
-            android:backgroundTint="@color/waluigi_second"
+            android:backgroundTint="?android:colorAccent"
+            tools:targetApi="n_mr1"
             android:orientation="vertical">
 
             <TextView
@@ -417,7 +418,8 @@
             android:paddingVertical="10dp"
             android:layout_margin="10dp"
             android:background="@drawable/rounded_bg"
-            android:backgroundTint="@color/waluigi_second"
+            android:backgroundTint="?android:colorAccent"
+            tools:targetApi="n_mr1"
             android:fontFamily="@font/montserrat_bold"
             android:text="Supprimer la war"
             android:visibility="gone"

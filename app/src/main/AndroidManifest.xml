@@ -8,7 +8,7 @@
         android:label="${appLabel}"
         android:supportsRtl="true"
         android:name=".application.MainApplication"
-        android:theme="@style/Theme.StatsMK">
+        android:theme="@style/AppThemeWaluigi">
         <activity
             android:name=".activity.MainActivity"
             android:exported="true"/>

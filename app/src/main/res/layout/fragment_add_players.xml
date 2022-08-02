@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:padding="15dp"
-    android:background="@color/waluigi"
+    android:background="?android:colorPrimary"
     android:gravity="center"
     android:layout_height="match_parent">
 
@@ -64,7 +65,8 @@
             android:layout_height="wrap_content"
             android:paddingVertical="10dp"
             android:background="@drawable/rounded_bg"
-            android:backgroundTint="@color/waluigi_second"
+            android:backgroundTint="?android:colorAccent"
+            tools:targetApi="n_mr1"
             android:textColor="@color/white"
             android:layout_marginBottom="10dp"
             android:id="@+id/next_btn"

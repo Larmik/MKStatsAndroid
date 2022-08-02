@@ -1,6 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <style name="tab_text" parent="@android:style/TextAppearance.Widget.TabWidget">
         <item name="android:fontFamily">@font/orbitron_semibold</item>
+    </style>
+
+    <style name="AppThemeWaluigi" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:forceDarkAllowed" tools:targetApi="q"> false </item>
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/waluigi</item>
+        <item name="colorSecondary">@color/white</item>
+        <item name="colorAccent">@color/waluigi_second</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">@color/waluigi</item>
+        <!-- Customize your theme here. -->
+    </style>
+
+    <style name="AppThemeWario" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:forceDarkAllowed" tools:targetApi="q"> false </item>
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/wario</item>
+        <item name="colorSecondary">@color/white</item>
+        <item name="colorAccent">@color/waluigi</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">@color/wario</item>
+        <!-- Customize your theme here. -->
+    </style>
+    <style name="AppThemeMario" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:forceDarkAllowed" tools:targetApi="q"> false </item>
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/mario</item>
+        <item name="colorSecondary">@color/white</item>
+        <item name="colorAccent">@color/mario_second</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">@color/mario</item>
+        <!-- Customize your theme here. -->
+    </style>
+    <style name="AppThemeLuigi" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:forceDarkAllowed" tools:targetApi="q"> false </item>
+        <!-- Primary brand color. -->
+        <item name="colorPrimary">@color/luigi</item>
+        <item name="colorSecondary">@color/white</item>
+        <item name="colorAccent">@color/mario_second</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">@color/luigi</item>
+        <!-- Customize your theme here. -->
     </style>
 </resources>

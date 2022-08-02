@@ -38,7 +38,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="80dp"
                     android:layout_marginVertical="10dp"
-                    app:cardBackgroundColor="@color/waluigi_second"
+                    app:cardBackgroundColor="?android:colorAccent"
+                    tools:targetApi="n_mr1"
                     app:cardCornerRadius="2dp">
 
                     <LinearLayout
@@ -156,7 +157,8 @@
                     android:textAllCaps="true"
                     android:layout_marginBottom="10dp"
                     android:textColor="@color/white"
-                    android:backgroundTint="@color/waluigi_second"
+                    android:backgroundTint="?android:colorAccent"
+                    tools:targetApi="n_mr1"
                     android:paddingVertical="10dp"/>
 
                 <View

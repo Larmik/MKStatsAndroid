@@ -10,13 +10,13 @@
         android:layout_height="wrap_content"
         app:tabIndicatorColor="@color/white_alphaed"
         app:tabTextAppearance="@style/tab_text"
-        app:tabBackground="@color/waluigi"
+        app:tabBackground="?android:colorPrimary"
         app:tabTextColor="@color/white"
         android:id="@+id/tablayout"/>
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/homepager"
-        android:background="@color/waluigi"
+        android:background="?android:colorPrimary"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="@color/waluigi"
+    android:background="?android:colorPrimary"
     android:layout_height="match_parent">
 
     <TextView

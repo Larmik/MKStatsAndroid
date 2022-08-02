@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:orientation="vertical"
     android:padding="15dp"
@@ -19,10 +20,11 @@
             android:id="@+id/modify_label"
             android:gravity="center"
             android:fontFamily="@font/montserrat_regular"
-            android:textColor="@color/waluigi_second"
+            android:textColor="?android:colorAccent"
             android:textSize="16sp"
             android:text="Modifier le nom :"
-            android:layout_marginBottom="15dp" />
+            android:layout_marginBottom="15dp"
+            tools:targetApi="n_mr1" />
 
         <EditText
             android:layout_width="match_parent"
@@ -47,10 +49,11 @@
             android:paddingVertical="10dp"
             android:gravity="center"
             android:fontFamily="@font/montserrat_regular"
-            android:textColor="@color/waluigi_second"
+            android:textColor="?android:colorAccent"
+            tools:targetApi="n_mr1"
             android:textSize="16sp"
             android:text="Modifier l'abréviation :"
-            android:layout_marginBottom="15dp" />
+            android:layout_marginBottom="15dp"/>
 
         <EditText
             android:layout_width="match_parent"
@@ -77,7 +80,8 @@
             android:paddingVertical="10dp"
             android:gravity="center"
             android:fontFamily="@font/montserrat_regular"
-            android:textColor="@color/waluigi_second"
+            android:textColor="?android:colorAccent"
+            tools:targetApi="n_mr1"
             android:textSize="16sp"
             android:text="Modifier le code :"
             android:layout_marginBottom="15dp" />
@@ -99,7 +103,7 @@
         android:layout_height="wrap_content"
         android:paddingVertical="10dp"
         android:background="@drawable/rounded_bg"
-        android:backgroundTint="@color/waluigi"
+        android:backgroundTint="?android:colorPrimary"
         android:textColor="@color/white"
         android:layout_marginBottom="40dp"
         android:id="@+id/next_btn"

@@ -43,7 +43,8 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             .onEach { findNavController().navigate(HomeFragmentDirections.managePlayers()) }
             .launchIn(lifecycleScope)
         viewModel.sharedThemeClick
-            .onEach { Toast.makeText(requireContext(), "Bientôt disponible", Toast.LENGTH_SHORT).show() }
+            .filter { findNavController().currentDestination?.id == R.id.homeFragment }
+            .onEach { findNavController().navigate(HomeFragmentDirections.manageTheme()) }
             .launchIn(lifecycleScope)
         viewModel.sharedToast
             .onEach { Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show() }

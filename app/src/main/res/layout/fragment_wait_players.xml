@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/waluigi"
+    android:background="?android:colorPrimary"
     android:padding="15dp"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
@@ -54,7 +54,8 @@
         <ProgressBar
             android:layout_width="100dp"
             android:layout_height="100dp"
-            android:progressTint="@color/waluigi_second"
+            android:progressTint="?android:colorAccent"
+            tools:targetApi="n_mr1"
             android:indeterminate="true"/>
         <TextView
             android:layout_width="match_parent"

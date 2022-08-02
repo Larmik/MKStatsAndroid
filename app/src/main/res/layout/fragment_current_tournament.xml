@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="@color/waluigi"
+    android:background="?android:colorPrimary"
     android:padding="15dp"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -116,7 +116,8 @@
         android:fontFamily="@font/roboto"
         android:gravity="center"
         android:background="@drawable/rounded_bg"
-        android:backgroundTint="@color/waluigi_second"
+        android:backgroundTint="?android:colorAccent"
+        tools:targetApi="n_mr1"
         android:layout_marginBottom="15dp"/>
 
 
@@ -147,7 +148,8 @@
         android:textAllCaps="true"
         android:text="Annuler le tournoi"
         android:layout_marginTop="15dp"
-        android:textColor="@color/waluigi_second"
+        android:textColor="?android:colorAccent"
+        tools:targetApi="n_mr1"
         android:fontFamily="@font/roboto"
         android:gravity="center"
         android:background="@drawable/rounded_bg"

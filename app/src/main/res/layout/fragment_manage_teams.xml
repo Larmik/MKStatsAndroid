@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    android:background="@color/waluigi"
+    android:background="?android:colorPrimary"
     android:padding="15dp"
     android:layout_height="match_parent">
 
@@ -51,7 +51,8 @@
             android:textAllCaps="true"
             android:text="Quitter l'équipe"
             android:background="@drawable/rounded_bg"
-            android:backgroundTint="@color/waluigi_second"/>
+            android:backgroundTint="?android:colorAccent"
+            tools:targetApi="n_mr1"/>
 
         <View
             android:layout_width="match_parent"
@@ -93,7 +94,8 @@
             android:textAllCaps="true"
             android:text="Ajouter une équipe"
             android:background="@drawable/rounded_bg"
-            android:backgroundTint="@color/waluigi_second"/>
+            android:backgroundTint="?android:colorAccent"
+            tools:targetApi="n_mr1"/>
 
 
 </LinearLayout>

@@ -4,7 +4,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="@color/waluigi"
+    android:background="?android:colorPrimary"
     android:padding="15dp"
     xmlns:tools="http://schemas.android.com/tools">
 
@@ -93,7 +93,8 @@
                         android:id="@+id/player1"
                         tools:text="Akioze"
                         android:fontFamily="@font/montserrat_regular"
-                        android:textColor="@color/white"/>
+                        android:textColor="@color/white"
+                        />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -101,7 +102,8 @@
                         android:id="@+id/player2"
                         android:fontFamily="@font/montserrat_regular"
                         tools:text="Skyoshi"
-                        android:textColor="@color/white"/>
+                        android:textColor="@color/white"
+                        />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -109,7 +111,8 @@
                         android:id="@+id/player3"
                         android:fontFamily="@font/montserrat_regular"
                         tools:text="Cami"
-                        android:textColor="@color/white"/>
+                        android:textColor="@color/white"
+                        />
 
                 </LinearLayout>
 
@@ -127,24 +130,24 @@
                         android:layout_height="wrap_content"
                         android:id="@+id/player4"
                         android:fontFamily="@font/montserrat_regular"
-                        tools:text="Lari"
-                        android:textColor="@color/white"/>
+                        tools:text="Lari"            android:textColor="@color/white"
+                        />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/montserrat_regular"
                         android:id="@+id/player5"
-                        tools:text="Guyal"
-                        android:textColor="@color/white"/>
+                        tools:text="Guyal"            android:textColor="@color/white"
+                        />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:fontFamily="@font/montserrat_regular"
                         android:layout_height="wrap_content"
                         android:id="@+id/player6"
-                        tools:text="nsdive"
-                        android:textColor="@color/white"/>
+                        tools:text="nsdive"            android:textColor="@color/white"
+                        />
 
 
                 </LinearLayout>
@@ -226,7 +229,8 @@
             android:fontFamily="@font/roboto"
             android:gravity="center"
             android:background="@drawable/rounded_bg"
-            android:backgroundTint="@color/waluigi_second"
+            android:backgroundTint="?android:colorAccent"
+            tools:targetApi="n_mr1"
             android:layout_marginBottom="15dp"/>
 
     </RelativeLayout>
@@ -258,7 +262,8 @@
         android:layout_margin="10dp"
         android:visibility="gone"
         android:background="@drawable/rounded_bg"
-        android:backgroundTint="@color/waluigi_second"
+        android:backgroundTint="?android:colorAccent"
+        tools:targetApi="n_mr1"
         android:text="Supprimer la war"
         android:id="@+id/delete_war_btn"
         android:fontFamily="@font/montserrat_bold"

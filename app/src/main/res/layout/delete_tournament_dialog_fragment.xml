@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/white"
     android:orientation="vertical"
     android:padding="20dp">
@@ -13,7 +14,8 @@
         android:fontFamily="@font/montserrat_regular"
         android:gravity="center"
         android:text="Êtes-vous sûr de vouloir annuler ce tournoi ? Ses données seront perdues et vous ne le retrouverez pas dans votre liste de tournois jouées ni vos statistiques."
-        android:textColor="@color/waluigi_second"
+        android:textColor="?android:colorAccent"
+        tools:targetApi="n_mr1"
         android:textSize="14sp" />
 
     <LinearLayout
@@ -30,12 +32,13 @@
             android:background="@drawable/rounded_bg"
             android:fontFamily="@font/roboto"
             android:gravity="center"
-            android:backgroundTint="@color/waluigi_second"
+            android:backgroundTint="?android:colorAccent"
             android:padding="10dp"
             android:text="Annuler le tournoi"
             android:textAllCaps="true"
             android:textColor="@color/white"
-            android:textSize="15sp" />
+            android:textSize="15sp"
+            tools:targetApi="n_mr1" />
 
         <TextView
             android:id="@+id/cancel_btn"
@@ -48,7 +51,8 @@
             android:padding="10dp"
             android:text="Retour"
             android:textAllCaps="true"
-            android:textColor="@color/waluigi_second"
+            android:textColor="?android:colorAccent"
+            tools:targetApi="n_mr1"
             android:textSize="15sp" />
 
     </LinearLayout>

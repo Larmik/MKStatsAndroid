@@ -5,6 +5,7 @@
       <map>
         <entry key="app/src/main/res/drawable/ronded_bg.xml" value="0.39897435897435896" />
         <entry key="app/src/main/res/drawable/rounded_bg.xml" value="0.39897435897435896" />
+        <entry key="app/src/main/res/layout-v25/fragment_tournaments.xml" value="0.2677083333333333" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.20625" />
         <entry key="app/src/main/res/layout/activity_splash.xml" value="0.2203125" />
         <entry key="app/src/main/res/layout/best_tournament_item.xml" value="0.4036458333333333" />
@@ -28,7 +29,7 @@
         <entry key="app/src/main/res/layout/fragment_edit_war_positions.xml" value="0.3458333333333333" />
         <entry key="app/src/main/res/layout/fragment_edit_war_track.xml" value="0.3458333333333333" />
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.2203125" />
-        <entry key="app/src/main/res/layout/fragment_indiv_stats.xml" value="0.6842105263157895" />
+        <entry key="app/src/main/res/layout/fragment_indiv_stats.xml" value="0.2841409691629956" />
         <entry key="app/src/main/res/layout/fragment_manage_players.xml" value="0.32760416666666664" />
         <entry key="app/src/main/res/layout/fragment_manage_teams.xml" value="0.2953125" />
         <entry key="app/src/main/res/layout/fragment_map_ranking.xml" value="0.32864583333333336" />
@@ -39,7 +40,7 @@
         <entry key="app/src/main/res/layout/fragment_settings.xml" value="0.3890625" />
         <entry key="app/src/main/res/layout/fragment_stats.xml" value="0.33541666666666664" />
         <entry key="app/src/main/res/layout/fragment_team_stats.xml" value="0.3296875" />
-        <entry key="app/src/main/res/layout/fragment_theme.xml" value="0.32760416666666664" />
+        <entry key="app/src/main/res/layout/fragment_theme.xml" value="0.22060709705002138" />
         <entry key="app/src/main/res/layout/fragment_time_trial.xml" value="0.2203125" />
         <entry key="app/src/main/res/layout/fragment_tournaments.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_track_details.xml" value="0.20052083333333334" />

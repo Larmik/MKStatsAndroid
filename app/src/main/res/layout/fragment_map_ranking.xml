@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/waluigi">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="?android:colorPrimary">
 
 
 
@@ -120,7 +121,8 @@
             android:text="Voir tous les circuits"
             android:id="@+id/all_maps_button"
             android:background="@drawable/rounded_bg"
-            android:backgroundTint="@color/waluigi_second"
+            android:backgroundTint="?android:colorAccent"
+            tools:targetApi="n_mr1"
             android:textSize="16sp"
             android:fontFamily="@font/roboto"
             android:gravity="center"

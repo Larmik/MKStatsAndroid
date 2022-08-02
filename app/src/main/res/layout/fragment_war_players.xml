@@ -63,7 +63,8 @@
             android:text="Démarrer la war"
             android:textAllCaps="true"
             android:background="@drawable/rounded_bg"
-            android:backgroundTint="@color/waluigi_second"/>
+            android:backgroundTint="?android:colorAccent"
+            tools:targetApi="n_mr1"/>
 
     </LinearLayout>
 

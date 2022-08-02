@@ -26,7 +26,8 @@
         <View
             android:layout_width="1dp"
             android:layout_height="match_parent"
-            android:background="@color/waluigi_second"/>
+            android:background="?android:colorAccent"
+            tools:targetApi="n_mr1"/>
 
         <TextView
             android:textSize="16sp"

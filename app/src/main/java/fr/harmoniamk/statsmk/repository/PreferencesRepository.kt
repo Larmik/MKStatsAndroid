@@ -9,6 +9,7 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
+import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
 import fr.harmoniamk.statsmk.model.firebase.Team
@@ -25,6 +26,7 @@ interface PreferencesRepositoryInterface {
     var currentTeam: Team?
     var currentWar: NewWar?
     var currentWarTrack: NewWarTrack?
+    var currentTheme: Int
 }
 
 @FlowPreview
@@ -59,4 +61,7 @@ class PreferencesRepository @Inject constructor(
     override var currentWarTrack: NewWarTrack?
         get() = Gson().fromJson(preferences.getString("currentWarTrack", null), NewWarTrack::class.java)
         set(value) = preferences.edit().putString("currentWarTrack", Gson().toJson(value)).apply()
+    override var currentTheme: Int
+        get() = preferences.getInt("currentTheme", R.style.AppThemeWaluigi)
+        set(value) { preferences.edit().putInt("currentTheme", value).apply() }
 }

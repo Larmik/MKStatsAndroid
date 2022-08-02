@@ -83,6 +83,14 @@
             app:popExitAnim="@anim/exit_to_right"/>
 
         <action
+            android:id="@+id/manageTheme"
+            app:destination="@id/themeFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right"/>
+
+        <action
             android:id="@+id/go_to_current_war"
             app:destination="@id/currentWarFragment"
             app:enterAnim="@anim/enter_from_right"
@@ -432,6 +440,12 @@
         </action>
 
     </fragment>
+
+    <fragment
+        android:id="@+id/themeFragment"
+        android:name="fr.harmoniamk.statsmk.fragment.theme.ThemeFragment"
+        tools:layout="@layout/fragment_theme"
+        android:label="ThemeFragment"/>
 
     <fragment
         android:id="@+id/indivStatsFragment"
