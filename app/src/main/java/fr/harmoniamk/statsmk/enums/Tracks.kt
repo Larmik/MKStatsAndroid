@@ -19,7 +19,9 @@ enum class Cups(
     CROSSING(R.string.crossing, R.drawable.crossing),
     BELL(R.string.bell, R.drawable.bell),
     GOLDEN_DASH(R.string.goldendash, R.drawable.goldendash),
-    LUCKY_CAT(R.string.luckycat, R.drawable.luckycat)
+    LUCKY_CAT(R.string.luckycat, R.drawable.luckycat),
+    TURNIP(R.string.turnip, R.drawable.turnip),
+    PROPELLER(R.string.propeller, R.drawable.propeller)
 }
 
 enum class Maps(val label: Int, val picture: Int, val cup: Cups)  {
@@ -78,5 +80,13 @@ enum class Maps(val label: Int, val picture: Int, val cup: Cups)  {
     bTB(R.string.btb, R.drawable.btb, Cups.LUCKY_CAT),
     bSR(R.string.bsr, R.drawable.bsr, Cups.LUCKY_CAT),
     bSG(R.string.bsg, R.drawable.bsg, Cups.LUCKY_CAT),
-    bNH(R.string.bnh, R.drawable.bnh, Cups.LUCKY_CAT)
+    bNH(R.string.bnh, R.drawable.bnh, Cups.LUCKY_CAT),
+    bNYM(R.string.bnym, R.drawable.bnym, Cups.TURNIP),
+    bMC3(R.string.bmc3, R.drawable.bmc3, Cups.TURNIP),
+    bKD(R.string.bkd, R.drawable.bkd, Cups.TURNIP),
+    bWP(R.string.bwp, R.drawable.bwp, Cups.TURNIP),
+    bSS(R.string.bss, R.drawable.bss, Cups.PROPELLER),
+    bSL(R.string.bsl, R.drawable.bsl, Cups.PROPELLER),
+    bMG(R.string.bmg, R.drawable.bmg, Cups.PROPELLER),
+    bSHS(R.string.bshs, R.drawable.bshs, Cups.PROPELLER),
 }
