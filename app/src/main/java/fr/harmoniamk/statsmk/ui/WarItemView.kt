@@ -17,6 +17,7 @@ class WarItemView : LinearLayout {
 
     private var binding: ViewBinding? = null
     private var isGreen = false
+    private var isWhite = false
 
     constructor(context: Context) : this(context, null)
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
@@ -27,6 +28,7 @@ class WarItemView : LinearLayout {
             else -> WarItemBinding.inflate(LayoutInflater.from(context), this, true)
         }
         isGreen = ta.getBoolean(R.styleable.WarItemView_win, false)
+        isWhite = ta.getBoolean(R.styleable.WarItemView_white, false)
         ta.recycle()
     }
 
@@ -41,7 +43,11 @@ class WarItemView : LinearLayout {
             it.root.background.setTint(
                 ContextCompat.getColor(
                     it.root.context,
-                    if (isGreen) R.color.win_alphaed else R.color.lose_alphaed
+                    when {
+                        isGreen -> R.color.win_alphaed
+                        isWhite -> R.color.white
+                        else -> R.color.lose_alphaed
+                    }
                 )
             )
         }

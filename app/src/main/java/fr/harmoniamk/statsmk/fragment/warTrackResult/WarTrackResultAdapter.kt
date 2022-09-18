@@ -34,7 +34,7 @@ class WarTrackResultAdapter(val items: MutableList<NewWarPositions> = mutableLis
     fun addResults(results: List<NewWarPositions>) {
         notifyItemRangeRemoved(0, itemCount)
         items.clear()
-        items.addAll(results)
+        items.addAll(results.sortedBy { it.position })
         notifyItemRangeInserted(0, itemCount)
     }
 }

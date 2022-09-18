@@ -55,7 +55,7 @@ class WarDetailsViewModel @Inject constructor(private val firebaseRepository: Fi
                             positions.add(Pair(entry.key, entry.value.map { pos -> pos.position.positionToPoints() }.sum()))
                         }
                     }
-                    _sharedWarPlayers.emit(positions.groupBy { it.first }.map { Pair(it.key, it.value.map { it.second }.sum()) })
+                    _sharedWarPlayers.emit(positions.groupBy { it.first }.map { Pair(it.key, it.value.map { it.second }.sum()) }.sortedByDescending { it.second })
                     _sharedDeleteWarVisible.emit(preferencesRepository.currentUser?.isAdmin.isTrue)
                 }
                 .launchIn(viewModelScope)

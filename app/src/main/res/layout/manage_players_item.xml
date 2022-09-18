@@ -4,15 +4,15 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:cardCornerRadius="2dp"
-    app:cardBackgroundColor="@color/white_alphaed"
+    app:cardBackgroundColor="@color/transparent"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_marginTop="15dp"
+    android:layout_marginTop="5dp"
     android:orientation="horizontal">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
+        android:background="@drawable/rounded_bg"
         android:orientation="horizontal">
 
         <ImageView

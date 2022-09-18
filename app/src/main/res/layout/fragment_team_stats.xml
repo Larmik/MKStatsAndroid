@@ -18,11 +18,18 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingVertical="10dp"
-            android:text="Statistiques individuelles"
-            android:layout_marginBottom="10dp"
+            android:text="Statistiques de l'équipe"
             android:gravity="center"
             android:textSize="18sp"
+            android:fontFamily="@font/montserrat_bold"
+            android:textColor="@color/white"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Harmonia"
+            android:layout_marginBottom="10dp"
+            android:gravity="center"
+            android:textSize="15sp"
             android:fontFamily="@font/montserrat_bold"
             android:textColor="@color/white"/>
 
@@ -171,7 +178,7 @@
                     android:orientation="horizontal"
                     android:paddingVertical="5dp"
                     android:background="@drawable/rounded_bg"
-                    android:backgroundTint="@color/white_alphaed">
+                    android:backgroundTint="@color/white">
 
                     <TextView
                         android:layout_width="0dp"
@@ -194,7 +201,7 @@
                         android:id="@+id/most_played_team_total"
                         android:fontFamily="@font/montserrat_regular"
                         android:textSize="16sp"
-                        android:textColor="@color/white"
+                        android:textColor="@color/black"
                         android:gravity="center"
                         tools:text="14 matchs joués"/>
 
@@ -238,7 +245,7 @@
                             android:paddingVertical="5dp"
                             android:gravity="center"
                             android:background="@drawable/rounded_bg"
-                            android:backgroundTint="@color/white_alphaed">
+                            android:backgroundTint="@color/white">
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -262,7 +269,7 @@
                                 android:id="@+id/most_defeated_team_total"
                                 android:fontFamily="@font/montserrat_regular"
                                 android:textSize="16sp"
-                                android:textColor="@color/white"
+                                android:textColor="@color/black"
                                 android:gravity="center"
                                 tools:text="14 matchs joués"/>
 
@@ -304,7 +311,7 @@
                             android:paddingVertical="5dp"
                             android:gravity="center"
                             android:background="@drawable/rounded_bg"
-                            android:backgroundTint="@color/white_alphaed">
+                            android:backgroundTint="@color/white">
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -327,7 +334,7 @@
                                 android:id="@+id/less_defeated_team_total"
                                 android:fontFamily="@font/montserrat_regular"
                                 android:textSize="16sp"
-                                android:textColor="@color/white"
+                                android:textColor="@color/black"
                                 android:gravity="center"
                                 tools:text="14 matchs joués"/>
 
@@ -419,9 +426,10 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="15dp"
             android:layout_marginBottom="10dp"
-            android:paddingHorizontal="5dp"
+            android:background="@drawable/rounded_bg"
+            android:backgroundTint="?android:colorAccent"
+            android:padding="10dp"
             android:orientation="vertical">
 
             <LinearLayout
@@ -465,7 +473,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="5dp"
                     android:layout_weight="1"
-                    app:win="true"
+                    app:white="true"
                     app:vertical="true"/>
 
                 <fr.harmoniamk.statsmk.ui.WarItemView
@@ -474,7 +482,7 @@
                     android:layout_marginHorizontal="5dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    app:win="false"
+                    app:white="true"
                     app:vertical="true"/>
 
             </LinearLayout>
@@ -484,21 +492,26 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:background="@color/white"/>
+            android:textColor="@color/white"
+            />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="10dp"
             android:text="Circuits"
+            android:layout_marginBottom="5dp"
             android:gravity="center"
             android:textSize="15sp"
-            android:fontFamily="@font/montserrat_bold"
-            android:textColor="@color/white"/>
+            android:fontFamily="@font/montserrat_bold"            android:textColor="@color/white"
+            />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@drawable/rounded_bg"
+            android:padding="10dp"
+            android:layout_marginBottom="10dp"
+            android:backgroundTint="@color/waluigi_second"
             android:orientation="vertical">
 
             <LinearLayout
@@ -512,38 +525,27 @@
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
-                    android:gravity="center"
                     android:fontFamily="@font/montserrat_regular"
                     android:textSize="16sp"
-                    android:paddingTop="5dp"
-                    android:text="Pire circuit"/>
+                    android:gravity="center"
+                    android:text="Meilleur circuit"/>
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
+                    android:gravity="center"
                     android:fontFamily="@font/montserrat_regular"
                     android:textSize="16sp"
-                    android:gravity="center"
-                    android:paddingTop="5dp"
-                    android:text="Meilleur circuit"/>
+                    android:text="Pire circuit"/>
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
                 android:orientation="horizontal">
-
-                <fr.harmoniamk.statsmk.ui.TrackView
-                    android:id="@+id/worst_trackview"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="5dp"
-                    android:layout_weight="1"
-                    app:collapsed="true"/>
 
                 <fr.harmoniamk.statsmk.ui.TrackView
                     android:id="@+id/best_trackview"
@@ -553,6 +555,15 @@
                     android:layout_weight="1"
                     app:collapsed="true"/>
 
+                <fr.harmoniamk.statsmk.ui.TrackView
+                    android:id="@+id/worst_trackview"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="5dp"
+                    android:layout_weight="1"
+                    app:collapsed="true"/>
+
+
             </LinearLayout>
 
         </LinearLayout>
@@ -560,6 +571,9 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/waluigi_second"
+            android:padding="10dp"
+            android:background="@drawable/rounded_bg"
             android:orientation="vertical">
 
             <LinearLayout
