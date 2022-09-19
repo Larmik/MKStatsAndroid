@@ -253,15 +253,31 @@
         android:textSize="16sp"
         android:visibility="gone"
         android:fontFamily="@font/montserrat_bold"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/current_tracks_rv"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
         android:layout_marginTop="7dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        android:orientation="vertical"/>
+        android:layout_weight="1">
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/montserrat_regular"
+            android:textSize="14sp"
+            android:textAlignment="center"
+            android:id="@+id/empty_track"
+            android:visibility="gone"
+            android:text="Le match est sur le point de commencer. Vous pourrez ajouter une première course dès que le résultat du vote sera connu. \n \n Bonne chance, faites preuve de fair-play et de bienveillance, et surtout n'oubliez pas : le plaisir avant tout !"
+            android:textColor="@color/white"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/current_tracks_rv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+    </RelativeLayout>
+
+
 
 
 

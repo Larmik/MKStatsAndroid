@@ -92,6 +92,7 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
             .filter { lifecycle.isResumed }
             .onEach {
                 binding.playedLabel.isVisible = it.isNotEmpty()
+                binding.emptyTrack.isVisible = it.isEmpty()
                 adapter.addTracks(it)
             }
             .launchIn(lifecycleScope)
