@@ -22,14 +22,14 @@ import kotlin.coroutines.CoroutineContext
 class BestWarAdapter(val items: MutableList<MKWar> = mutableListOf()) :
     RecyclerView.Adapter<BestWarAdapter.BestWarViewHolder>(), CoroutineScope {
 
-    private val _sharedItemClick = MutableSharedFlow<NewWar>()
+    private val _sharedItemClick = MutableSharedFlow<MKWar>()
     val sharedItemClick = _sharedItemClick.asSharedFlow()
 
     class BestWarViewHolder(val binding: BestTournamentItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(war: MKWar, position: Int) {
-            binding.nameTv.text = war.war?.name
+            binding.nameTv.text = war.name
             binding.totalScoreTv.text = war.displayedScore
             binding.timeTv.text = war.war?.createdDate
             binding.tmInfos.isVisible = false
@@ -53,11 +53,10 @@ class BestWarAdapter(val items: MutableList<MKWar> = mutableListOf()) :
     override fun onBindViewHolder(holder: BestWarViewHolder, position: Int) {
         val item = items[position]
         holder.bind(item, position)
-        item.war?.let { war ->
-            holder.binding.root.clicks()
-                .onEach { _sharedItemClick.emit(war) }
-                .launchIn(this)
-        }
+        holder.binding.root.clicks()
+            .onEach { _sharedItemClick.emit(item) }
+            .launchIn(this)
+
 
     }
 

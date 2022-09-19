@@ -39,7 +39,7 @@ class WarDetailsFragment : Fragment(R.layout.fragment_war_details) {
         val adapter = CurrentWarTrackAdapter()
         binding.currentTracksRv.adapter = adapter
         war?.let { war ->
-            binding.warTitleTv.text = war.war?.name
+            binding.warTitleTv.text = war.name
             binding.warDateTv.text = war.war?.createdDate
             binding.scoreTv.text = war.displayedScore
             binding.diffScoreTv.text = war.displayedDiff

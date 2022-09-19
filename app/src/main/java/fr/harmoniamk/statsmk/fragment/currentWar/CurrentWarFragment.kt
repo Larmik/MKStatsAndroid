@@ -15,6 +15,7 @@ import fr.harmoniamk.statsmk.extension.backPressedDispatcher
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.extension.isResumed
 import fr.harmoniamk.statsmk.model.firebase.NewWar
+import fr.harmoniamk.statsmk.model.local.MKWar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
@@ -26,7 +27,7 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
 
     private val binding : FragmentCurrentWarBinding by viewBinding()
     private val viewModel: CurrentWarViewModel by viewModels()
-    private var war: NewWar? = null
+    private var war: MKWar? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -37,8 +38,8 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
         viewModel.sharedCurrentWar
             .filter { lifecycle.isResumed }
             .onEach {
-                war = it.war
-                binding.warTitleTv.text = it.war?.name
+                war = it
+                binding.warTitleTv.text = it.name
                 binding.warDateTv.text = it.war?.createdDate
                 binding.currentWarTv.text = it.displayedState
                 binding.scoreTv.text = it.displayedScore
@@ -59,7 +60,7 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
 
         viewModel.sharedSelectTrack
             .filter { findNavController().currentDestination?.id == R.id.currentWarFragment }
-            .mapNotNull { war?.mid }
+            .mapNotNull { war?.war?.mid }
             .onEach { findNavController().navigate(CurrentWarFragmentDirections.addTrack(it)) }
             .launchIn(lifecycleScope)
 
@@ -88,7 +89,7 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
 
         viewModel.sharedTrackClick
             .filter { findNavController().currentDestination?.id == R.id.currentWarFragment }
-            .onEach { findNavController().navigate(CurrentWarFragmentDirections.toTrackDetails(war = war, index = it)) }
+            .onEach { findNavController().navigate(CurrentWarFragmentDirections.toTrackDetails(war = war?.war, index = it)) }
             .launchIn(lifecycleScope)
     }
 

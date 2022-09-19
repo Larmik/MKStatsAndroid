@@ -3,11 +3,9 @@ package fr.harmoniamk.statsmk.fragment.mapStats
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.positionToPoints
 import fr.harmoniamk.statsmk.extension.sum
-import fr.harmoniamk.statsmk.model.firebase.NewWarPositions
-import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
+import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
@@ -51,9 +49,11 @@ class MapStatsViewModel @Inject constructor(private val preferencesRepository: P
             .mapNotNull {
                 val finalList = mutableListOf<Pair<MKWar, MKWarTrack>>()
                 it.forEach { war ->
-                    war.warTracks?.filter { track -> track.trackIndex == trackIndex }?.forEach { track ->
-                        finalList.add(Pair(MKWar(war), MKWarTrack(track)))
-                    }
+                   listOf(MKWar(war)).withName(firebaseRepository).first().singleOrNull()?.let { finalWar ->
+                       war.warTracks?.filter { track -> track.trackIndex == trackIndex }?.forEach { track ->
+                           finalList.add(Pair(finalWar, MKWarTrack(track)))
+                       }
+                   }
                 }
                 finalList
             }
@@ -62,9 +62,9 @@ class MapStatsViewModel @Inject constructor(private val preferencesRepository: P
                 val mapPlayed = it.size
                 val mapWon = it.filter { pair -> pair.second.displayedDiff.contains('+')}.size
                 val playerScore = it
-                    .filter { pair -> pair.first.hasPlayer(preferencesRepository.currentUser?.name) }
+                    .filter { pair -> pair.first.hasPlayer(preferencesRepository.currentUser?.mid) }
                     .mapNotNull { it.second.track?.warPositions }
-                    .map { it.singleOrNull { it.playerId == preferencesRepository.currentUser?.name } }
+                    .map { it.singleOrNull { it.playerId == preferencesRepository.currentUser?.mid } }
                     .mapNotNull { it?.position.positionToPoints() }
                 _sharedTrackList.emit(it)
                 _sharedTrackPlayed.emit(mapPlayed)

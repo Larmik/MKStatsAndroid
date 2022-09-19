@@ -51,7 +51,12 @@ class TrackDetailsFragment : Fragment(R.layout.fragment_track_details) {
         binding.trackScore.text = item.displayedResult
         binding.trackDiff.text = item.displayedDiff
 
-        viewModel.bind(war, index, binding.editTrackBtn.clicks(), binding.resetPositionsBtn.clicks())
+        viewModel.bind(
+            war = war,
+            index = index,
+            onEditTrack = binding.editTrackBtn.clicks(),
+            onEditPositions = binding.resetPositionsBtn.clicks()
+        )
 
         viewModel.sharedPositions
             .onEach { adapter.addResults(it) }

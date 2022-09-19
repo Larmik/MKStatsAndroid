@@ -110,7 +110,7 @@ class PositionViewModel @Inject constructor(
                     .bind(_sharedPlayerLabel, viewModelScope)
 
                 _sharedPos
-                    .map { NewWarPositions(mid = System.currentTimeMillis().toString(), position = it, playerId = currentUser?.name) }
+                    .map { NewWarPositions(mid = System.currentTimeMillis().toString(), position = it, playerId = currentUser?.mid) }
                     .onEach {
                         positions.add(it)
                         _sharedSelectedPositions.emit(positions.mapNotNull { pos -> pos.position })

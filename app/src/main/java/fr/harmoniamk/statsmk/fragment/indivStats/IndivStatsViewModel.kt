@@ -6,6 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.extension.positionToPoints
 import fr.harmoniamk.statsmk.extension.sum
+import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
@@ -61,8 +62,10 @@ class IndivStatsViewModel @Inject constructor(private val firebaseRepository: Fi
                 || it.map {war -> war.teamOpponent}.contains(preferencesRepository.currentTeam?.mid)
             }.mapNotNull { list -> list
                 .map { MKWar(it) }
-                .filter { it.hasPlayer(preferencesRepository.currentUser?.name) }
-            }.onEach { list ->
+                .filter { it.hasPlayer(preferencesRepository.currentUser?.mid) }
+            }
+            .flatMapLatest { it.withName(firebaseRepository) }
+            .onEach { list ->
                 val warsPlayed = list.count()
                 val warsWon = list.filterNot { war -> war.displayedDiff.contains('-') }.count()
                 val maps = mutableListOf<Pair<Int?, Int?>>()
@@ -82,7 +85,7 @@ class IndivStatsViewModel @Inject constructor(private val firebaseRepository: Fi
                         var currentPoints = 0
                         it.second?.forEach { track ->
                             val scoreForTrack = track.track?.warPositions
-                                ?.singleOrNull { pos -> pos.playerId == preferencesRepository.currentUser?.name }
+                                ?.singleOrNull { pos -> pos.playerId == preferencesRepository.currentUser?.mid }
                                 ?.position.positionToPoints()
                             currentPoints += scoreForTrack
                             maps.add(Pair(track.track?.trackIndex, scoreForTrack))

@@ -7,9 +7,9 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.PlayerItemBinding
-import fr.harmoniamk.statsmk.model.firebase.NewWarPositions
+import fr.harmoniamk.statsmk.model.local.MKWarPosition
 
-class WarTrackResultAdapter(val items: MutableList<NewWarPositions> = mutableListOf()) : RecyclerView.Adapter<WarTrackResultAdapter.PlayerViewHolder>() {
+class WarTrackResultAdapter(val items: MutableList<MKWarPosition> = mutableListOf()) : RecyclerView.Adapter<WarTrackResultAdapter.PlayerViewHolder>() {
 
     class PlayerViewHolder(val binding: PlayerItemBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -25,16 +25,16 @@ class WarTrackResultAdapter(val items: MutableList<NewWarPositions> = mutableLis
         )
         holder.binding.separator.isVisible = true
         holder.binding.playerPos.isVisible = true
-        holder.binding.name.text = items[position].playerId
-        holder.binding.playerPos.text = items[position].position.toString()
+        holder.binding.name.text = items[position].playerName
+        holder.binding.playerPos.text = items[position].position.position.toString()
     }
 
     override fun getItemCount() = items.size
 
-    fun addResults(results: List<NewWarPositions>) {
+    fun addResults(results: List<MKWarPosition>) {
         notifyItemRangeRemoved(0, itemCount)
         items.clear()
-        items.addAll(results.sortedBy { it.position })
+        items.addAll(results.sortedBy { it.position.position })
         notifyItemRangeInserted(0, itemCount)
     }
 }

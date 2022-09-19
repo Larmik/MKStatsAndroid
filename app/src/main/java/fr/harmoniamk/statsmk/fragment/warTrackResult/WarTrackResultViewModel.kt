@@ -4,14 +4,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.extension.bind
-import fr.harmoniamk.statsmk.model.firebase.NewWarPositions
+import fr.harmoniamk.statsmk.extension.withPlayerName
 import fr.harmoniamk.statsmk.model.local.MKWar
+import fr.harmoniamk.statsmk.model.local.MKWarPosition
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
@@ -20,7 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class WarTrackResultViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface) : ViewModel() {
 
-    private val _sharedWarPos = MutableSharedFlow<List<NewWarPositions>>()
+    private val _sharedWarPos = MutableSharedFlow<List<MKWarPosition>>()
     private val _sharedBack = MutableSharedFlow<Unit>()
     private val _sharedBackToCurrent = MutableSharedFlow<Unit>()
     private val _sharedGoToWarResume = MutableSharedFlow<MKWar>()
@@ -36,10 +36,8 @@ class WarTrackResultViewModel @Inject constructor(private val firebaseRepository
 
         preferencesRepository.currentWarTrack?.let { track ->
             flowOf(track.warPositions.orEmpty().sortedBy { it.position })
-                .onEach {
-                    delay(20)
-                    _sharedWarPos.emit(it)
-                }
+                .flatMapLatest { it.withPlayerName(firebaseRepository) }
+                .onEach { _sharedWarPos.emit(it) }
                 .filter { it.size == 6 }
                 .map { MKWarTrack(track) }
                 .bind(_sharedScore, viewModelScope)

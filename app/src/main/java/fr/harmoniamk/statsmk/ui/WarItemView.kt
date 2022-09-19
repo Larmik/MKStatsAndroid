@@ -38,7 +38,7 @@ class WarItemView : LinearLayout {
         (binding as? WarItemVerticalBinding)?.let {
             it.totalWarScoreTv.text = track?.displayedResult ?: war?.displayedScore
             it.warDiff.text = track?.displayedDiff ?: war?.displayedDiff
-            it.nameTv.text = war?.war?.name
+            it.nameTv.text = war?.name
             it.timeTv.text = war?.war?.createdDate
             it.root.background.setTint(
                 ContextCompat.getColor(

@@ -6,6 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.extension.positionToPoints
 import fr.harmoniamk.statsmk.extension.sum
+import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
@@ -59,6 +60,7 @@ class TeamStatsViewModel @Inject constructor(private val firebaseRepository: Fir
             .filter { it.mapNotNull { war -> war.teamHost}.contains(preferencesRepository.currentTeam?.mid)
                         || it.map {war -> war.teamOpponent}.contains(preferencesRepository.currentTeam?.mid) }
             .mapNotNull { list -> list.map { MKWar(it) }.filter { it.isOver } }
+            .flatMapLatest { it.withName(firebaseRepository) }
             .onEach { list ->
                 val warsPlayed = list.count()
                 val warsWon = list.filterNot { war -> war.displayedDiff.contains('-') }.count()

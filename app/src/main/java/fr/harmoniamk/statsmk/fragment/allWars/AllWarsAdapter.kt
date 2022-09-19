@@ -21,7 +21,7 @@ class AllWarsAdapter(private val items: MutableList<MKWar> = mutableListOf()) : 
 
     class WarViewHolder(val binding: WarItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(war: MKWar) {
-            binding.nameTv.text = war.war?.name
+            binding.nameTv.text = war.name
             binding.timeTv.text = war.war?.createdDate
             binding.totalScoreTv.text = war.displayedScore
             binding.totalDiffTv.text = war.displayedDiff

@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.getCurrent
-import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
+import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
@@ -42,6 +42,8 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
         flowOf(firebaseRepository.getNewWars(), firebaseRepository.listenToNewWars())
             .flattenMerge()
             .mapNotNull { it.map { w -> MKWar(w) }.getCurrent(preferencesRepository.currentTeam?.mid) }
+            .flatMapLatest { listOf(it).withName(firebaseRepository) }
+            .mapNotNull { it.singleOrNull() }
             .onEach { war ->
                 preferencesRepository.currentWar = war.war
                 val players = firebaseRepository.getUsers().first().filter { it.currentWar == war.war?.mid }

@@ -26,7 +26,7 @@ class MapStatsAdapter(val items: MutableList<Pair<MKWar, MKWarTrack>> = mutableL
                 binding.trackScore.text = track.second.displayedResult
                 binding.trackDiff.text = track.second.displayedDiff
                 binding.shortname.text = track.first.war?.createdDate
-                binding.name.text = track.first.war?.name
+                binding.name.text = track.first.name
             }
         }
     }

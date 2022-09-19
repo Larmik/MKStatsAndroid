@@ -5,14 +5,14 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.isTrue
+import fr.harmoniamk.statsmk.extension.withPlayerName
 import fr.harmoniamk.statsmk.model.firebase.NewWar
-import fr.harmoniamk.statsmk.model.firebase.NewWarPositions
+import fr.harmoniamk.statsmk.model.local.MKWarPosition
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
@@ -21,7 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class TrackDetailsViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface): ViewModel() {
 
-    private val _sharedPositions = MutableSharedFlow<List<NewWarPositions>>()
+    private val _sharedPositions = MutableSharedFlow<List<MKWarPosition>>()
     private val _sharedEditTrackClick = MutableSharedFlow<Unit>()
     private val _sharedEditPositionsClick = MutableSharedFlow<Unit>()
     private val _sharedButtonsVisible = MutableSharedFlow<Boolean>()
@@ -35,6 +35,7 @@ class TrackDetailsViewModel @Inject constructor(private val firebaseRepository: 
 
     var warId: String = ""
     var index = 0
+    var warTrackId: String = ""
 
     fun bind(war: NewWar, index: Int, onEditTrack: Flow<Unit>, onEditPositions: Flow<Unit>) {
 
@@ -43,10 +44,10 @@ class TrackDetailsViewModel @Inject constructor(private val firebaseRepository: 
 
         flowOf(war.warTracks?.get(index)?.warPositions)
             .filterNotNull()
+            .flatMapLatest { it.withPlayerName(firebaseRepository) }
             .onEach {
-                delay(20)
                 _sharedPositions.emit(it)
-                _sharedButtonsVisible.emit(preferencesRepository.currentUser?.isAdmin.isTrue)
+                _sharedButtonsVisible.emit(preferencesRepository.currentUser?.isAdmin.isTrue || preferencesRepository.currentUser?.mid == war.playerHostId)
             }.launchIn(viewModelScope)
 
         onEditTrack.bind(_sharedEditTrackClick, viewModelScope)
@@ -58,6 +59,7 @@ class TrackDetailsViewModel @Inject constructor(private val firebaseRepository: 
             .mapNotNull { MKWarTrack(it?.warTracks?.get(index)) }
             .onEach { _sharedTrackRefreshed.emit(it) }
             .mapNotNull { it.track?.warPositions }
+            .flatMapLatest { it.withPlayerName(firebaseRepository) }
             .bind(_sharedPositions, viewModelScope)
     }
 

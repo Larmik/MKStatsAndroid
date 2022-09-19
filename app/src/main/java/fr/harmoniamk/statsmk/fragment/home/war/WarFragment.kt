@@ -76,7 +76,7 @@ class WarFragment : Fragment(R.layout.fragment_war) {
                 .onEach {
                     binding.createWarLayout.isVisible = it == null
                     binding.currentWarLayout.isVisible = it != null
-                    binding.nameTv.text = it?.war?.name
+                    binding.nameTv.text = it?.name
                     binding.timeTv.text = it?.war?.createdDate
                     binding.currentWarRemaining.text = it?.displayedState
                     binding.currentWarScore.text = it?.scoreLabel

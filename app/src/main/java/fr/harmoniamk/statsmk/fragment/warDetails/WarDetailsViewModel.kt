@@ -3,11 +3,7 @@ package fr.harmoniamk.statsmk.fragment.warDetails
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.harmoniamk.statsmk.extension.bind
-import fr.harmoniamk.statsmk.extension.isTrue
-import fr.harmoniamk.statsmk.extension.positionToPoints
-import fr.harmoniamk.statsmk.extension.sum
-import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
+import fr.harmoniamk.statsmk.extension.*
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
@@ -50,9 +46,11 @@ class WarDetailsViewModel @Inject constructor(private val firebaseRepository: Fi
                     _sharedBestTrack.emit(it.sortedByDescending { track -> track.teamScore }.first())
                     _sharedWorstTrack.emit(it.sortedBy { track -> track.teamScore }.first())
                     it.forEach {
-                        val trackPositions = it.track?.warPositions?.groupBy { pos -> pos.playerId }
-                        trackPositions?.entries?.forEach { entry ->
-                            positions.add(Pair(entry.key, entry.value.map { pos -> pos.position.positionToPoints() }.sum()))
+                        it.track?.warPositions?.let {
+                            val trackPositions = it.withPlayerName(firebaseRepository).firstOrNull()
+                            trackPositions?.groupBy { it.playerName }?.entries?.forEach { entry ->
+                                positions.add(Pair(entry.key, entry.value.map { pos -> pos.position.position.positionToPoints() }.sum()))
+                            }
                         }
                     }
                     _sharedWarPlayers.emit(positions.groupBy { it.first }.map { Pair(it.key, it.value.map { it.second }.sum()) }.sortedByDescending { it.second })

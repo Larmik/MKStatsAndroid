@@ -8,8 +8,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.google.gson.GsonBuilder
-import com.google.gson.reflect.TypeToken
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -21,9 +19,7 @@ import fr.harmoniamk.statsmk.model.firebase.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.isActive
 import javax.inject.Inject
 
@@ -46,9 +42,9 @@ interface FirebaseRepositoryInterface{
     fun getNewWars(): Flow<List<NewWar>>
 
     //Get objects methods
-    fun getTeam(id: String): Flow<Team?>
+    fun getTeam(id: String?): Flow<Team?>
     fun getNewWar(id: String): Flow<NewWar?>
-    fun getUser(id: String): Flow<User?>
+    fun getUser(id: String?): Flow<User?>
 
     //Firebase event listeners methods
     fun listenToNewWars(): Flow<List<NewWar>>
@@ -58,6 +54,9 @@ interface FirebaseRepositoryInterface{
     fun deleteUser(user: User): Flow<Unit>
     fun deleteTeam(team: Team): Flow<Unit>
     fun deleteNewWar(warId: String): Flow<Unit>
+
+    //migrate players name to id
+    fun migrateNameToId(): Flow<Unit>
 
 }
 
@@ -195,19 +194,22 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
         awaitClose {  }
     }
 
-    override fun getTeam(id: String): Flow<Team?> = callbackFlow {
-        database.child("teams").child(id).get().addOnSuccessListener { snapshot ->
-            val map = (snapshot.value as? Map<*,*>)
+    override fun getTeam(id: String?): Flow<Team?> = callbackFlow {
+        id?.let {
+            database.child("teams").child(it).get().addOnSuccessListener { snapshot ->
+                val map = (snapshot.value as? Map<*, *>)
                 if (isActive) offer(
                     if (map == null) null
                     else Team(
                         mid = map["mid"].toString(),
                         accessCode = map["accessCode"].toString(),
                         name = map["name"].toString(),
-                        shortName = map["shortName"].toString())
+                        shortName = map["shortName"].toString()
+                    )
                 )
+            }
+            awaitClose { }
         }
-        awaitClose {  }
     }
 
     override fun getNewWar(id: String): Flow<NewWar?> = callbackFlow {
@@ -229,21 +231,23 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
         awaitClose {  }
     }
 
-    override fun getUser(id: String): Flow<User?> = callbackFlow {
-        database.child("users").child(id).get().addOnSuccessListener { snapshot ->
-            val map = (snapshot.value as? Map<*,*>)
-            if (isActive) offer(
-                if (map == null) null
-                else User(
-                    mid = map["mid"].toString(),
-                    name = map["name"].toString(),
-                    team = map["team"].toString(),
-                    currentWar = map["currentWar"].toString(),
-                    isAdmin = map["admin"].toString().toBoolean()
+    override fun getUser(id: String?): Flow<User?> = callbackFlow {
+        id?.let {
+            database.child("users").child(id).get().addOnSuccessListener { snapshot ->
+                val map = (snapshot.value as? Map<*, *>)
+                if (isActive) offer(
+                    if (map == null) null
+                    else User(
+                        mid = map["mid"].toString(),
+                        name = map["name"].toString(),
+                        team = map["team"].toString(),
+                        currentWar = map["currentWar"].toString(),
+                        isAdmin = map["admin"].toString().toBoolean()
+                    )
                 )
-            )
+            }
         }
-        awaitClose {  }
+        awaitClose { }
     }
 
     override fun listenToNewWars(): Flow<List<NewWar>> = callbackFlow {
@@ -304,5 +308,29 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
         database.child("newWars").child(warId).removeValue()
         emit(Unit)
     }
+
+    override fun migrateNameToId(): Flow<Unit> =
+        getNewWars()
+            .map {
+                it.forEach { war ->
+                    war.warTracks?.forEachIndexed { index, track ->
+                        track.warPositions?.forEachIndexed { posIndex, pos ->
+                            val playerId =
+                                getUsers().first().filter { it.name.equals(pos.playerId) }
+                                    .singleOrNull()?.mid
+                            database
+                                .child("newWars")
+                                .child(war.mid.toString())
+                                .child("warTracks")
+                                .child(index.toString())
+                                .child("warPositions")
+                                .child(posIndex.toString())
+                                .setValue(pos.apply { this.playerId = playerId })
+
+                        }
+                    }
+                }
+            }
+
 
 }

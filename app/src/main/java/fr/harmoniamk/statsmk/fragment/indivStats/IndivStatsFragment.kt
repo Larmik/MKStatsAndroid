@@ -47,13 +47,13 @@ class IndivStatsFragment : Fragment(R.layout.fragment_indiv_stats) {
         viewModel.sharedHighestScore
             .onEach {
                 binding.highestScore.text = it?.second.toString()
-                binding.highestScoreWarName.text = "vs ${it?.first?.war?.name?.split('-')?.lastOrNull()?.trim()}"
+                binding.highestScoreWarName.text = "vs ${it?.first?.name?.split('-')?.lastOrNull()?.trim()}"
                 binding.highestScoreWarDate.text = it?.first?.war?.createdDate
             }.launchIn(lifecycleScope)
         viewModel.sharedLowestScore
             .onEach {
                 binding.lowestScore.text = it?.second.toString()
-                binding.lowestScoreWarName.text = "vs ${it?.first?.war?.name?.split('-')?.lastOrNull()?.trim()}"
+                binding.lowestScoreWarName.text = "vs ${it?.first?.name?.split('-')?.lastOrNull()?.trim()}"
                 binding.lowestScoreWarDate.text = it?.first?.war?.createdDate}
             .launchIn(lifecycleScope)
         viewModel.sharedBestMap

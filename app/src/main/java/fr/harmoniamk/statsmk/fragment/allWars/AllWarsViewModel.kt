@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.formatToDate
+import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
@@ -30,6 +31,7 @@ class AllWarsViewModel @Inject constructor(private val firebaseRepository: Fireb
         firebaseRepository.getNewWars()
             .onEach { _sharedTeamName.emit(preferencesRepository.currentTeam?.name) }
             .mapNotNull { list -> list.filter { war -> war.teamHost == preferencesRepository.currentTeam?.mid }.sortedByDescending { it.createdDate?.formatToDate() }.map { MKWar(it) } }
+            .flatMapLatest { it.withName(firebaseRepository) }
             .bind(_sharedWars, viewModelScope)
         onItemClick.bind(_sharedWarClick, viewModelScope)
     }

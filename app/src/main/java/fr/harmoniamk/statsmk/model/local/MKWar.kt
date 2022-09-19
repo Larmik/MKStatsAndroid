@@ -29,4 +29,5 @@ data class MKWar(val war: NewWar?) : Serializable {
         }
         return false
     }
+    var name: String? = null
 }
