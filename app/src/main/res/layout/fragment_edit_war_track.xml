@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:background="@color/white"
     android:orientation="vertical"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
@@ -11,7 +12,7 @@
         android:gravity="center"
         android:text="Edition du circuit"
         android:fontFamily="@font/montserrat_bold"
-        android:textSize="16sp"
+        android:textSize="20sp"
         android:paddingVertical="10dp"
         android:textColor="@color/black"/>
 

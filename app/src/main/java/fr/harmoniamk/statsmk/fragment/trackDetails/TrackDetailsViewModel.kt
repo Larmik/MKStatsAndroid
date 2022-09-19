@@ -8,6 +8,7 @@ import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.extension.withPlayerName
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
+import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarPosition
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
@@ -53,7 +54,7 @@ class TrackDetailsViewModel @Inject constructor(private val firebaseRepository: 
             .flatMapLatest { it.withPlayerName(firebaseRepository) }
             .onEach {
                 _sharedPositions.emit(it)
-                _sharedButtonsVisible.emit(preferencesRepository.currentUser?.isAdmin.isTrue || preferencesRepository.currentUser?.mid == war.playerHostId)
+                _sharedButtonsVisible.emit(preferencesRepository.currentUser?.mid == war.playerHostId && !MKWar(war).isOver)
             }.launchIn(viewModelScope)
 
         onEditTrack.bind(_sharedEditTrackClick, viewModelScope)

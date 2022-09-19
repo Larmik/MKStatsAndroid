@@ -31,7 +31,7 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
     private val binding : FragmentCurrentWarBinding by viewBinding()
     private val viewModel: CurrentWarViewModel by viewModels()
     private var war: MKWar? = null
-    private val popup by lazy { PopupFragment("Êtes-vous sûr de vouloir supprimer la war ?", "Supprimer")}
+    private val popup by lazy { PopupFragment("Êtes-vous sûr de vouloir supprimer le match ?", "Supprimer")}
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

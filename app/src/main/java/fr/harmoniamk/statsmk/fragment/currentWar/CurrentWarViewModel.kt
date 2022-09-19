@@ -72,10 +72,6 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
             .flatMapLatest { firebaseRepository.deleteNewWar(it) }
             .bind(_sharedBackToWars, viewModelScope)
 
-        firebaseRepository.listenToUsers()
-            .mapNotNull { it.singleOrNull { user -> user.currentWar == "-1" && preferencesRepository.currentWar?.playerHostId != user.mid && user.mid == preferencesRepository.currentUser?.mid } }
-            .map { preferencesRepository.currentUser = it }
-            .bind(_sharedQuit, viewModelScope)
     }
 
 }

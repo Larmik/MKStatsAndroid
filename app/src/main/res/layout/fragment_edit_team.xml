@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:background="@color/white"
     android:orientation="vertical"
     android:padding="15dp"
     android:gravity="center"
@@ -16,21 +17,21 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingVertical="10dp"
             android:id="@+id/modify_label"
             android:gravity="center"
             android:fontFamily="@font/montserrat_regular"
             android:textColor="?android:colorAccent"
             android:textSize="16sp"
             android:text="Modifier le nom :"
-            android:layout_marginBottom="15dp"
+            android:layout_marginBottom="10dp"
             tools:targetApi="n_mr1" />
 
         <EditText
             android:layout_width="match_parent"
-            android:layout_height="70dp"
+            android:layout_height="50dp"
             android:background="@drawable/rounded_bg"
-            android:layout_marginBottom="15dp"
+            android:textColor="@color/black"
+            android:layout_marginBottom="10dp"
             android:gravity="center"
             android:id="@+id/teamname_et"
             android:layout_marginHorizontal="40dp" />
@@ -46,20 +47,20 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingVertical="10dp"
             android:gravity="center"
             android:fontFamily="@font/montserrat_regular"
             android:textColor="?android:colorAccent"
             tools:targetApi="n_mr1"
             android:textSize="16sp"
             android:text="Modifier l'abréviation :"
-            android:layout_marginBottom="15dp"/>
+            android:layout_marginBottom="10dp"/>
 
         <EditText
             android:layout_width="match_parent"
-            android:layout_height="70dp"
+            android:layout_height="50dp"
             android:background="@drawable/rounded_bg"
-            android:layout_marginBottom="15dp"
+            android:layout_marginBottom="10dp"
+            android:textColor="@color/black"
             android:gravity="center"
             android:id="@+id/teamshort_et"
             android:layout_marginHorizontal="40dp" />
@@ -84,14 +85,15 @@
             tools:targetApi="n_mr1"
             android:textSize="16sp"
             android:text="Modifier le code :"
-            android:layout_marginBottom="15dp" />
+            android:layout_marginBottom="10dp" />
 
         <EditText
             android:layout_width="match_parent"
-            android:layout_height="70dp"
+            android:layout_height="50dp"
             android:background="@drawable/rounded_bg"
-            android:layout_marginBottom="25dp"
+            android:layout_marginBottom="10dp"
             android:gravity="center"
+            android:textColor="@color/black"
             android:id="@+id/teamcode_et"
             android:backgroundTint="@color/white_alphaed"
             android:layout_marginHorizontal="40dp" />
@@ -105,11 +107,11 @@
         android:background="@drawable/rounded_bg"
         android:backgroundTint="?android:colorPrimary"
         android:textColor="@color/white"
-        android:layout_marginBottom="40dp"
+        android:layout_marginBottom="10dp"
         android:id="@+id/next_btn"
-        android:textSize="18sp"
+        android:fontFamily="@font/roboto"
+        android:textSize="14sp"
         android:text="Enregistrer"
-        android:textAllCaps="true"
         android:gravity="center"
         android:layout_gravity="bottom"/>
 
@@ -118,11 +120,12 @@
         android:layout_height="wrap_content"
         android:paddingVertical="5dp"
         android:background="@drawable/rounded_bg"
+        android:fontFamily="@font/roboto"
         android:backgroundTint="@color/mario"
         android:textColor="@color/white"
         android:layout_marginBottom="10dp"
         android:id="@+id/delete_btn"
-        android:textSize="15sp"
+        android:textSize="14sp"
         android:text="Supprimer l'équipe"
         android:gravity="center"
         android:layout_gravity="bottom" />
