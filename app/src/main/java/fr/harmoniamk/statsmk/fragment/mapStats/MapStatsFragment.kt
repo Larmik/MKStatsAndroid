@@ -6,13 +6,16 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentMapStatsBinding
 import fr.harmoniamk.statsmk.enums.Maps
+import fr.harmoniamk.statsmk.extension.clicks
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -37,7 +40,12 @@ class MapStatsFragment : Fragment(R.layout.fragment_map_stats) {
             val adapter = MapStatsAdapter()
             binding.statTrackview.bind(it)
             binding.mapDetailsRv.adapter = adapter
-            viewModel.bind(it)
+            viewModel.bind(
+                trackIndex = it,
+                onMapClick = adapter.onMapClick,
+                onVictoryClick = binding.highestVictory.clicks(),
+                onDefeatClick = binding.loudestDefeat.clicks()
+            )
             viewModel.sharedTrackList
                 .onEach {
                     binding.emptyLayout.isVisible = false
@@ -77,6 +85,11 @@ class MapStatsFragment : Fragment(R.layout.fragment_map_stats) {
                     binding.loudestDefeat.bind(it.first, it.second)
                 }
                 .launchIn(lifecycleScope)
+            viewModel.sharedMapClick
+                .filter { findNavController().currentDestination?.id == R.id.mapStatsFragment }
+                .onEach { findNavController().navigate(MapStatsFragmentDirections.toTrackDetails(it.first.war, it.second.track)) }
+                .launchIn(lifecycleScope)
+
         }
     }
 

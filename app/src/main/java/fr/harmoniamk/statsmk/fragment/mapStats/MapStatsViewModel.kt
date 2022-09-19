@@ -3,9 +3,7 @@ package fr.harmoniamk.statsmk.fragment.mapStats
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.harmoniamk.statsmk.extension.positionToPoints
-import fr.harmoniamk.statsmk.extension.sum
-import fr.harmoniamk.statsmk.extension.withName
+import fr.harmoniamk.statsmk.extension.*
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
@@ -28,6 +26,7 @@ class MapStatsViewModel @Inject constructor(private val preferencesRepository: P
     private val _sharedPlayerScore = MutableSharedFlow<String>()
     private val _sharedHighestVictory = MutableSharedFlow<Pair<MKWar, MKWarTrack>?>()
     private val _sharedLoudestDefeat = MutableSharedFlow<Pair<MKWar, MKWarTrack>?>()
+    private val _sharedMapClick = MutableSharedFlow<Pair<MKWar, MKWarTrack>>()
 
     val sharedTrackList = _sharedTrackList.asSharedFlow()
     val sharedTrackPlayed = _sharedTrackPlayed.asSharedFlow()
@@ -37,10 +36,15 @@ class MapStatsViewModel @Inject constructor(private val preferencesRepository: P
     val sharedPlayerScore = _sharedPlayerScore.asSharedFlow()
     val sharedHighestVictory = _sharedHighestVictory.asSharedFlow()
     val sharedLoudestDefeat = _sharedLoudestDefeat.asSharedFlow()
+    val sharedMapClick = _sharedMapClick.asSharedFlow()
 
 
-    fun bind(trackIndex: Int) {
-
+    fun bind(trackIndex: Int,
+             onMapClick: Flow<Pair<MKWar, MKWarTrack>>,
+             onVictoryClick: Flow<Unit>,
+             onDefeatClick: Flow<Unit>
+    ) {
+        var list: List<Pair<MKWar, MKWarTrack>>? = null
         flowOf(preferencesRepository.currentTeam?.mid)
             .filterNotNull()
             .flatMapLatest { firebaseRepository.getNewWars() }
@@ -59,6 +63,7 @@ class MapStatsViewModel @Inject constructor(private val preferencesRepository: P
             }
             .filter { it.isNotEmpty() }
             .onEach {
+                list = it
                 val mapPlayed = it.size
                 val mapWon = it.filter { pair -> pair.second.displayedDiff.contains('+')}.size
                 val playerScore = it
@@ -72,10 +77,19 @@ class MapStatsViewModel @Inject constructor(private val preferencesRepository: P
                 _sharedWinRate.emit((mapWon*100) / mapPlayed)
                 _sharedTeamScore.emit(it.map { pair -> pair.second }.map { it.teamScore }.sum() / it.size)
                 _sharedPlayerScore.emit(playerScore.takeIf { it.isNotEmpty() }?.let {  (playerScore.sum() / playerScore.size).toString() } ?: "N/A")
-                _sharedHighestVictory.emit(it.maxByOrNull { it.second.teamScore }?.takeIf { it.second.displayedDiff.contains('+') })
-                _sharedLoudestDefeat.emit(it.minByOrNull { it.second.teamScore }?.takeIf { it.second.displayedDiff.contains('-') })
+                _sharedHighestVictory.emit(it.getVictory())
+                _sharedLoudestDefeat.emit(it.getDefeat())
+
             }
             .launchIn(viewModelScope)
+
+        flowOf(
+            onMapClick,
+            onVictoryClick.mapNotNull { list?.getVictory() },
+            onDefeatClick.mapNotNull { list?.getDefeat() }
+        )
+            .flattenMerge()
+            .bind(_sharedMapClick, viewModelScope)
 
     }
 

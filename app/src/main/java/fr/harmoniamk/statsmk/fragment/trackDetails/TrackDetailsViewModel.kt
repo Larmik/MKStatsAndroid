@@ -7,6 +7,7 @@ import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.extension.withPlayerName
 import fr.harmoniamk.statsmk.model.firebase.NewWar
+import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
 import fr.harmoniamk.statsmk.model.local.MKWarPosition
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
@@ -37,13 +38,18 @@ class TrackDetailsViewModel @Inject constructor(private val firebaseRepository: 
     var index = 0
     var warTrackId: String = ""
 
-    fun bind(war: NewWar, index: Int, onEditTrack: Flow<Unit>, onEditPositions: Flow<Unit>) {
+    fun bind(war: NewWar, warTrack: NewWarTrack?, index: Int, onEditTrack: Flow<Unit>, onEditPositions: Flow<Unit>) {
 
         warId = war.mid ?: ""
+        warTrackId = warTrack?.mid ?: ""
         this.index = index
 
-        flowOf(war.warTracks?.get(index)?.warPositions)
-            .filterNotNull()
+        val positionsFlow = when (warTrackId.isEmpty()) {
+            true -> flowOf(war.warTracks?.get(index)?.warPositions).filterNotNull()
+            else -> firebaseRepository.getPositions(warId, warTrackId)
+        }
+
+        positionsFlow
             .flatMapLatest { it.withPlayerName(firebaseRepository) }
             .onEach {
                 _sharedPositions.emit(it)

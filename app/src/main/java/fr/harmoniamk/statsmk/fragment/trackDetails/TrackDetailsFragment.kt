@@ -16,6 +16,7 @@ import fr.harmoniamk.statsmk.fragment.editWarTrack.EditWarTrackFragment
 import fr.harmoniamk.statsmk.ui.TrackView
 import fr.harmoniamk.statsmk.fragment.warTrackResult.WarTrackResultAdapter
 import fr.harmoniamk.statsmk.model.firebase.NewWar
+import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -31,10 +32,12 @@ class TrackDetailsFragment : Fragment(R.layout.fragment_track_details) {
     private val viewModel: TrackDetailsViewModel by viewModels()
     private var war: NewWar? = null
     private var index: Int = 0
+    private var warTrack: NewWarTrack? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         war = arguments?.get("war") as? NewWar
+        warTrack = arguments?.get("warTrack") as? NewWarTrack
         index = arguments?.getInt("index") ?: 0
     }
 
@@ -43,7 +46,7 @@ class TrackDetailsFragment : Fragment(R.layout.fragment_track_details) {
         val adapter = WarTrackResultAdapter()
         binding.resultRv.adapter = adapter
         war?.let { war ->
-        val item = MKWarTrack(war.warTracks?.get(index))
+        val item = MKWarTrack(warTrack ?: war.warTracks?.get(index))
         val trackView = TrackView(requireContext())
         trackView.bind(item.track?.trackIndex)
         binding.trackView.addView(trackView)
@@ -53,6 +56,7 @@ class TrackDetailsFragment : Fragment(R.layout.fragment_track_details) {
 
         viewModel.bind(
             war = war,
+            warTrack = warTrack,
             index = index,
             onEditTrack = binding.editTrackBtn.clicks(),
             onEditPositions = binding.resetPositionsBtn.clicks()

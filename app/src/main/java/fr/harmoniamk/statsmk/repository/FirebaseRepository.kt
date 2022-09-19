@@ -8,6 +8,9 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.reflect.TypeToken
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -45,6 +48,7 @@ interface FirebaseRepositoryInterface{
     fun getTeam(id: String?): Flow<Team?>
     fun getNewWar(id: String): Flow<NewWar?>
     fun getUser(id: String?): Flow<User?>
+    fun getPositions(warId: String, trackId: String): Flow<List<NewWarPositions>>
 
     //Firebase event listeners methods
     fun listenToNewWars(): Flow<List<NewWar>>
@@ -249,6 +253,24 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
         }
         awaitClose { }
     }
+
+    override fun getPositions(warId: String, trackId: String): Flow<List<NewWarPositions>> = callbackFlow {
+        database.child("newWars").child(warId).child("warTracks").get().addOnSuccessListener { snapshot ->
+            val tracks: List<NewWarTrack> = snapshot.children
+                .map { it.value as Map<*, *> }
+                .map {map -> NewWarTrack(
+                    mid = map["mid"].toString(),
+                    trackIndex = map["trackIndex"].toString().toInt(),
+                    warPositions = GsonBuilder().serializeNulls().create().fromJson(map["warPositions"].toString(), object: TypeToken<List<NewWarPositions>>(){}.type ))
+                }
+            tracks.singleOrNull { it.mid == trackId }?.warPositions?.let {
+                if (isActive) offer(it)
+            }
+
+        }
+        awaitClose {  }
+    }
+
 
     override fun listenToNewWars(): Flow<List<NewWar>> = callbackFlow {
         val postListener = object : ValueEventListener {

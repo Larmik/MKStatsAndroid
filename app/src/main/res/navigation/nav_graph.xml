@@ -462,7 +462,29 @@
         android:id="@+id/mapStatsFragment"
         android:name="fr.harmoniamk.statsmk.fragment.mapStats.MapStatsFragment"
         tools:layout="@layout/fragment_map_stats"
-        android:label="MapStatsFragment"/>
+        android:label="MapStatsFragment">
+
+        <action
+            android:id="@+id/to_track_details"
+            app:destination="@id/trackDetailsFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right">
+
+            <argument
+                android:name="war"
+                app:argType="fr.harmoniamk.statsmk.model.firebase.NewWar"
+                app:nullable="true"/>
+
+            <argument
+                android:name="warTrack"
+                app:argType="fr.harmoniamk.statsmk.model.firebase.NewWarTrack"
+                app:nullable="true"/>
+
+        </action>
+
+    </fragment>
     <fragment
         android:id="@+id/mapRankingFragment"
         android:name="fr.harmoniamk.statsmk.fragment.mapRanking.MapRankingFragment"

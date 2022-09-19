@@ -66,3 +66,6 @@ fun List<NewWarPositions>.withPlayerName(firebaseRepository: FirebaseRepositoryI
     }
     emit(temp)
 }
+
+fun List<Pair<MKWar, MKWarTrack>>.getVictory() = this.maxByOrNull { it.second.teamScore }?.takeIf { it.second.displayedDiff.contains('+') }
+fun List<Pair<MKWar, MKWarTrack>>.getDefeat() = this.minByOrNull { it.second.teamScore }?.takeIf { it.second.displayedDiff.contains('-') }
