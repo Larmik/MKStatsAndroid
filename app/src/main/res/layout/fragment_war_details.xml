@@ -282,14 +282,6 @@
             android:gravity="center"
             android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:fontFamily="@font/montserrat_bold"
-                android:text="Circuits joués"
-                android:textColor="@color/white"
-                android:textSize="16sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -311,6 +303,7 @@
                         android:text="Meilleur circuit :"
                         android:textColor="@color/white"
                         android:layout_marginBottom="5dp"
+                        android:fontFamily="@font/montserrat_bold"
                         android:textSize="14sp" />
 
                     <fr.harmoniamk.statsmk.ui.TrackView
@@ -334,6 +327,7 @@
                         android:layout_height="wrap_content"
                         android:text="Pire circuit :"
                         android:textColor="@color/white"
+                        android:fontFamily="@font/montserrat_bold"
                         android:layout_marginBottom="5dp"
                         android:textSize="14sp" />
 
@@ -373,7 +367,7 @@
                 android:layout_marginBottom="7dp"
                 android:fontFamily="@font/montserrat_bold"
                 android:layout_gravity="center"
-                android:textSize="16sp"/>
+                android:textSize="14sp"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/current_tracks_rv"
