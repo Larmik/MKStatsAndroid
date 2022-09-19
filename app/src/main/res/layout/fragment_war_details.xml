@@ -16,12 +16,11 @@
             android:id="@+id/war_title_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
             android:layout_marginHorizontal="15dp"
             android:fontFamily="@font/orbitron_semibold"
             android:gravity="center"
             android:textColor="@color/white"
-            android:textSize="24sp"
+            android:textSize="20sp"
             tools:text="HR vs OF" />
 
         <LinearLayout
@@ -56,79 +55,18 @@
 
         </LinearLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginVertical="10dp"
-            android:layout_marginHorizontal="15dp"
-            android:background="@color/white" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_marginHorizontal="15dp"
-
-            android:orientation="vertical">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:fontFamily="@font/montserrat_bold"
-                android:text="Score de l'équipe :"
-                android:textColor="@color/white"
-                android:textSize="16sp" />
-
-            <TextView
-                android:id="@+id/score_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:autoSizeTextType="uniform"
-                android:fontFamily="@font/orbitron_semibold"
-                android:maxLines="1"
-                android:textColor="@color/white"
-                android:textSize="28sp"
-                tools:targetApi="o"
-                tools:text="229 - 190" />
-
-            <TextView
-                android:id="@+id/diff_score_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/orbitron_semibold"
-                android:textColor="@color/white"
-                android:textSize="20sp"
-                tools:text="+39" />
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginVertical="10dp"
-            android:layout_marginHorizontal="15dp"
-            android:background="@color/white" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:paddingVertical="10dp"
             android:layout_marginHorizontal="15dp"
+            android:layout_marginTop="10dp"
             android:background="@drawable/rounded_bg"
             android:backgroundTint="?android:colorAccent"
             tools:targetApi="n_mr1"
             android:orientation="vertical">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:fontFamily="@font/montserrat_bold"
-                android:text="Score des joueurs :"
-                android:textColor="@color/white"
-                android:textSize="16sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -295,6 +233,42 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:background="@drawable/rounded_bg"
+            android:layout_marginTop="10dp"
+            android:backgroundTint="@color/white_alphaed"
+            android:layout_marginHorizontal="15dp"
+            android:orientation="vertical">
+
+
+            <TextView
+                android:id="@+id/score_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:autoSizeTextType="uniform"
+                android:fontFamily="@font/orbitron_semibold"
+                android:maxLines="1"
+                android:textColor="@color/black"
+                android:textSize="30sp"
+                tools:targetApi="o"
+                tools:text="229 - 190" />
+
+            <TextView
+                android:id="@+id/diff_score_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/orbitron_semibold"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                tools:text="+39" />
+
+        </LinearLayout>
+
+
+
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -320,7 +294,6 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
                 android:layout_marginHorizontal="15dp"
                 android:orientation="horizontal">
 
@@ -383,13 +356,13 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
+            android:layout_marginVertical="10dp"
             android:layout_marginHorizontal="15dp"
             android:background="@color/white" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="5dp"
             android:orientation="vertical">
 
             <TextView
@@ -397,6 +370,7 @@
                 android:layout_height="wrap_content"
                 android:text="Tous les circuits :"
                 android:textColor="@color/white"
+                android:layout_marginBottom="7dp"
                 android:fontFamily="@font/montserrat_bold"
                 android:layout_gravity="center"
                 android:textSize="16sp"/>
@@ -404,6 +378,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/current_tracks_rv"
                 android:layout_width="match_parent"
+                android:layout_marginHorizontal="15dp"
                 android:layout_height="0dp"
                 android:layout_weight="1"
                 android:orientation="vertical"

@@ -25,19 +25,13 @@
             android:fontFamily="@font/montserrat_bold"
             android:gravity="center"/>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/white"
-            android:layout_marginBottom="15dp"
-            android:layout_marginHorizontal="10dp"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
-                android:fontFamily="@font/montserrat_regular"
-                android:textSize="18sp"
-                android:layout_marginStart="20dp"
+                android:fontFamily="@font/montserrat_bold"
+                android:textSize="16sp"
+                android:layout_marginStart="15dp"
                 android:text="Les plus joués"/>
 
             <androidx.recyclerview.widget.RecyclerView
@@ -55,7 +49,7 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/white"
-            android:layout_marginBottom="15dp"
+            android:layout_marginBottom="10dp"
             android:layout_marginHorizontal="10dp"/>
 
 
@@ -63,9 +57,9 @@
             <TextView  android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
-                android:fontFamily="@font/montserrat_regular"
-                android:textSize="18sp"
-                android:layout_marginStart="20dp"
+                android:fontFamily="@font/montserrat_bold"
+                android:textSize="16sp"
+                android:layout_marginStart="15dp"
                 android:text="Les plus gagnés"/>
 
             <androidx.recyclerview.widget.RecyclerView
@@ -83,15 +77,15 @@
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/white"
-            android:layout_marginBottom="15dp"
+            android:layout_marginBottom="10dp"
             android:layout_marginHorizontal="10dp"/>
 
             <TextView  android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
-                android:fontFamily="@font/montserrat_regular"
-                android:textSize="18sp"
-                android:layout_marginStart="20dp"
+                android:fontFamily="@font/montserrat_bold"
+                android:textSize="16sp"
+                android:layout_marginStart="15dp"
                 android:text="Les moins gagnés"/>
 
             <androidx.recyclerview.widget.RecyclerView

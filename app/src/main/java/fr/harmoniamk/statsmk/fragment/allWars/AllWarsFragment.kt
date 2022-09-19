@@ -30,7 +30,6 @@ class AllWarsFragment : Fragment(R.layout.fragment_all_wars) {
         binding.warRv.adapter = adapter
         viewModel.bind(adapter.sharedItemClick)
         viewModel.sharedWars.onEach { adapter.addWars(it) }.launchIn(lifecycleScope)
-        viewModel.sharedTeamName.onEach { binding.teamName.text = it }.launchIn(lifecycleScope)
         viewModel.sharedWarClick
             .filter { findNavController().currentDestination?.id == R.id.allWarsFragment }
             .onEach { findNavController().navigate(AllWarsFragmentDirections.goToWarDetails(it)) }

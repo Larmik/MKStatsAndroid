@@ -1,7 +1,9 @@
 package fr.harmoniamk.statsmk.fragment.warDetails
 
+import android.os.Build
 import android.os.Bundle
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -43,6 +45,16 @@ class WarDetailsFragment : Fragment(R.layout.fragment_war_details) {
             binding.warDateTv.text = war.war?.createdDate
             binding.scoreTv.text = war.displayedScore
             binding.diffScoreTv.text = war.displayedDiff
+            val textColor = when  {
+                war.displayedDiff.contains("-") -> R.color.lose
+                war.displayedDiff.contains("+") -> R.color.win
+                else -> R.color.black
+            }
+            binding.diffScoreTv.setTextColor(
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                    requireContext().getColor(textColor)
+                else ContextCompat.getColor(requireContext(), textColor)
+            )
             viewModel.bind(war.war?.mid, adapter.sharedClick, binding.deleteWarBtn.clicks())
             viewModel.sharedBestTrack.onEach { binding.bestTrack.bind(it) }.launchIn(lifecycleScope)
             viewModel.sharedWorstTrack.onEach { binding.worstTrack.bind(it) }.launchIn(lifecycleScope)

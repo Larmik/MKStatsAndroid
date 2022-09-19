@@ -6,6 +6,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.BestTournamentItemBinding
+import fr.harmoniamk.statsmk.databinding.LastTournamentItemBinding
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.local.MKWar
@@ -25,34 +26,26 @@ class BestWarAdapter(val items: MutableList<MKWar> = mutableListOf()) :
     private val _sharedItemClick = MutableSharedFlow<MKWar>()
     val sharedItemClick = _sharedItemClick.asSharedFlow()
 
-    class BestWarViewHolder(val binding: BestTournamentItemBinding) :
+    class BestWarViewHolder(val binding: LastTournamentItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(war: MKWar, position: Int) {
+        fun bind(war: MKWar) {
+            binding.tmTotal.isVisible = false
+            binding.warTotal.isVisible = true
             binding.nameTv.text = war.name
-            binding.totalScoreTv.text = war.displayedScore
-            binding.timeTv.text = war.war?.createdDate
-            binding.tmInfos.isVisible = false
-            binding.ratioScoreTv.text = war.displayedAverage
-            binding.trophy.setImageResource(
-                when (position) {
-                    0 -> R.drawable.gold
-                    1 -> R.drawable.silver
-                    else -> R.drawable.bronze
-                }
-            )
-            binding.topScoreTv.text = war.displayedDiff
-            binding.currentTmTop.text = "Diff."
+            binding.totalWarScoreTv.text = war.displayedScore
+            binding.timeTv.text = war.war?.createdDate?.replace("-", "\n")
+            binding.warDiff.text = war.displayedDiff
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = BestWarViewHolder(
-        BestTournamentItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        LastTournamentItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
     )
 
     override fun onBindViewHolder(holder: BestWarViewHolder, position: Int) {
         val item = items[position]
-        holder.bind(item, position)
+        holder.bind(item)
         holder.binding.root.clicks()
             .onEach { _sharedItemClick.emit(item) }
             .launchIn(this)

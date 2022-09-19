@@ -1,7 +1,9 @@
 package fr.harmoniamk.statsmk.fragment.currentWar
 
+import android.os.Build
 import android.os.Bundle
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -52,6 +54,16 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
                 binding.currentWarTv.text = it.displayedState
                 binding.scoreTv.text = it.displayedScore
                 binding.diffScoreTv.text = it.displayedDiff
+                val textColor = when  {
+                    it.displayedDiff.contains("-") -> R.color.lose
+                    it.displayedDiff.contains("+") -> R.color.win
+                    else -> R.color.black
+                }
+                binding.diffScoreTv.setTextColor(
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                        requireContext().getColor(textColor)
+                        else ContextCompat.getColor(requireContext(), textColor)
+                )
             }.launchIn(lifecycleScope)
 
         viewModel.sharedButtonVisible

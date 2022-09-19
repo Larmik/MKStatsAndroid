@@ -8,7 +8,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="15dp"
+        android:paddingHorizontal="15dp"
         android:gravity="center"
         android:orientation="vertical">
         <LinearLayout
@@ -76,6 +76,7 @@
             <ProgressBar
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                tools:visibility="gone"
                 android:id="@+id/progress"/>
 
             <LinearLayout
@@ -83,27 +84,20 @@
                 android:layout_height="match_parent"
                 android:id="@+id/main_war_layout"
                 android:visibility="gone"
+                tools:visibility="visible"
+                tools:background="@color/waluigi"
                 android:orientation="vertical">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="10dp"
-                    android:text="Mon équipe actuelle :"
-                    android:gravity="center"
-                    android:textColor="@color/white"
-                    android:fontFamily="@font/montserrat_regular"/>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textSize="18sp"
+                    android:textSize="20sp"
                     android:id="@+id/current_team_tv"
                     tools:text="Harmonia"
                     android:gravity="center"
                     android:textColor="@color/white"
-                    android:layout_marginBottom="10dp"
-                    android:fontFamily="@font/roboto"/>
+                    android:layout_marginVertical="10dp"
+                    android:fontFamily="@font/montserrat_bold"/>
 
                 <View
                     android:layout_width="match_parent"
@@ -119,15 +113,15 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:paddingTop="15dp"
+                        android:paddingTop="10dp"
                         android:id="@+id/current_war_layout">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textColor="@color/white"
-                            android:fontFamily="@font/roboto"
-                            android:textSize="20sp"
+                            android:fontFamily="@font/montserrat_bold"
+                            android:textSize="16sp"
                             android:text="War en cours :"/>
 
                         <LinearLayout
@@ -217,19 +211,20 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:paddingTop="15dp"
                         android:visibility="gone"
+                        tools:visibility="visible"
+                        android:paddingTop="10dp"
                         android:id="@+id/create_war_layout">
 
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:paddingVertical="10dp"
                             android:gravity="center"
+                            android:layout_marginBottom="5dp"
                             android:text="Votre équipe ne joue actuellement aucune war."
                             android:layout_gravity="center"
-                            android:layout_marginBottom="15dp"
                             android:fontFamily="@font/montserrat_regular"
+                            android:textSize="14sp"
                             android:textColor="@color/white" />
                         <TextView
                             android:id="@+id/war_host_tv"
@@ -239,7 +234,8 @@
                             android:text="Soyez l'hôte d'une war en démarrant une session ci-dessous."
                             android:layout_gravity="center"
                             android:fontFamily="@font/montserrat_regular"
-                            android:layout_marginBottom="15dp"
+                            android:textSize="14sp"
+                            android:layout_marginBottom="10dp"
                             android:textColor="@color/white" />
 
                         <TextView
@@ -250,9 +246,8 @@
                             android:backgroundTint="?android:colorAccent"
                             tools:targetApi="n_mr1"
                             android:textColor="@color/white"
-                            android:textAllCaps="true"
                             android:id="@+id/create_war_btn"
-                            android:fontFamily="@font/montserrat_bold"
+                            android:fontFamily="@font/roboto"
                             android:text="Créer une war"
                             android:layout_marginBottom="10dp"
                             android:gravity="center"/>
@@ -269,11 +264,59 @@
 
                 </RelativeLayout>
 
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:paddingTop="15dp"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    android:paddingTop="10dp"
+                    android:id="@+id/last_war_layout">
+
+                    <TextView  android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:fontFamily="@font/montserrat_bold"
+                        android:textSize="16sp"
+                        android:text="Dernières wars"/>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/last_war_rv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginVertical="7dp"
+                        android:nestedScrollingEnabled="true"
+                        android:orientation="vertical"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+                    <TextView
+                        android:id="@+id/all_wars_btn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingVertical="10dp"
+                        android:textSize="14sp"
+                        android:textColor="@color/white"
+                        android:textAlignment="center"
+                        android:background="@drawable/rounded_bg"
+                        android:backgroundTint="?attr/colorAccent"
+                        android:fontFamily="@font/roboto"
+                        android:text="Voir toutes les wars"/>
+
+                </LinearLayout>
+
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginVertical="10dp"
+                    android:background="@color/white_alphaed"/>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
                     android:visibility="gone"
                     tools:visibility="visible"
                     android:id="@+id/best_war_layout">
@@ -282,8 +325,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textColor="@color/white"
-                        android:fontFamily="@font/roboto"
-                        android:textSize="20sp"
+                        android:fontFamily="@font/montserrat_bold"
+                        android:textSize="16sp"
                         android:text="Top 3 Wars"/>
 
                     <androidx.recyclerview.widget.RecyclerView
@@ -292,73 +335,16 @@
                         android:layout_height="wrap_content"
                         android:nestedScrollingEnabled="false"
                         android:overScrollMode="never"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginVertical="7dp"
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                        android:orientation="vertical" />
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/white_alphaed"/>
-
+                        android:orientation="horizontal" />
 
                 </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:visibility="gone"
-                    tools:visibility="visible"
-                    android:paddingTop="15dp"
-                    android:id="@+id/last_war_layout">
-
-                    <TextView  android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/white"
-                        android:fontFamily="@font/roboto"
-                        android:textSize="20sp"
-                        android:text="Dernières wars"/>
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/last_war_rv"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="10dp"
-                        android:nestedScrollingEnabled="true"
-                        android:orientation="horizontal"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-
-                    <TextView
-                        android:id="@+id/all_wars_btn"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:paddingVertical="10dp"
-                        android:gravity="end"
-                        android:textSize="14sp"
-                        android:textColor="@color/white"
-                        android:fontFamily="@font/montserrat_bold"
-                        android:text="Toutes les wars"/>
-
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/white_alphaed"/>
-
-
-                </LinearLayout>
-
-
-
-
 
             </LinearLayout>
+
         </RelativeLayout>
 
-
     </LinearLayout>
-
-
-
 
 </ScrollView>

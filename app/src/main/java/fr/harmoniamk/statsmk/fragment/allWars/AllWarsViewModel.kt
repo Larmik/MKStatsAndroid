@@ -20,16 +20,13 @@ import javax.inject.Inject
 class AllWarsViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface) : ViewModel() {
 
     private val _sharedWars = MutableSharedFlow<List<MKWar>>()
-    private val _sharedTeamName = MutableSharedFlow<String?>()
     private val _sharedWarClick = MutableSharedFlow<MKWar>()
 
     val sharedWars = _sharedWars.asSharedFlow()
-    val sharedTeamName = _sharedTeamName.asSharedFlow()
     val sharedWarClick = _sharedWarClick.asSharedFlow()
 
     fun bind(onItemClick: Flow<MKWar>) {
         firebaseRepository.getNewWars()
-            .onEach { _sharedTeamName.emit(preferencesRepository.currentTeam?.name) }
             .mapNotNull { list -> list.filter { war -> war.teamHost == preferencesRepository.currentTeam?.mid }.sortedByDescending { it.createdDate?.formatToDate() }.map { MKWar(it) } }
             .flatMapLatest { it.withName(firebaseRepository) }
             .bind(_sharedWars, viewModelScope)

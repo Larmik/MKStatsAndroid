@@ -9,10 +9,10 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingVertical="10dp"
         android:text="Sélectionnez les six joueurs de votre équipe."
         android:gravity="center"
-        android:layout_marginBottom="15dp"
+        android:layout_marginBottom="10dp"
+        android:textSize="16sp"
         android:fontFamily="@font/montserrat_bold"
         android:textColor="@color/white"/>
 
@@ -21,33 +21,30 @@
         android:layout_height="0dp"
         android:id="@+id/players_rv"
         android:layout_weight="1"
-        android:layout_marginBottom="15dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:orientation="vertical"/>
 
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_margin="10dp"
-        android:background="@color/white"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/create_war_layout"
-        android:visibility="invisible"
+        android:visibility="gone"
         android:orientation="vertical"
         android:gravity="center">
-
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_margin="10dp"
+            android:background="@color/white"/>
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/montserrat_regular"
             android:textColor="@color/white"
-            android:layout_marginBottom="15dp"
-            android:paddingVertical="10dp"
+            android:textSize="14sp"
+            android:layout_marginBottom="10dp"
             android:gravity="center"
             android:text="En démarrant une session, vous serez chargé de sélectionner les circuits pour toute l'équipe (les autres joueurs n'auront pas accès aux écrans de sélection). \n Êtes-vous prêts à endosser cette responsabilité ?"/>
 
@@ -61,7 +58,7 @@
             android:gravity="center"
             android:id="@+id/start_war_btn"
             android:text="Démarrer la war"
-            android:textAllCaps="true"
+            android:textSize="14sp"
             android:background="@drawable/rounded_bg"
             android:backgroundTint="?android:colorAccent"
             tools:targetApi="n_mr1"/>

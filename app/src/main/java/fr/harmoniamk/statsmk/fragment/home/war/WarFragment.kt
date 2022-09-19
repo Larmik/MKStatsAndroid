@@ -32,7 +32,6 @@ class WarFragment : Fragment(R.layout.fragment_war) {
         val lastAdapter = LastWarAdapter()
 
         lifecycleScope.launchWhenResumed {
-            binding.createWarLayout.isVisible = true
             binding.bestWarRv.adapter = bestAdapter
             binding.lastWarRv.adapter = lastAdapter
             viewModel.bind(
@@ -64,6 +63,7 @@ class WarFragment : Fragment(R.layout.fragment_war) {
                 .onEach {
                     binding.progress.isVisible = false
                     binding.currentTeamTv.text = it
+                    binding.createWarLayout.isVisible = true
                 }
                 .launchIn(lifecycleScope)
 

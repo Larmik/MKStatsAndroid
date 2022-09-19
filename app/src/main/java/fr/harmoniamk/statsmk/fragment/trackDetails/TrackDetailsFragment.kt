@@ -1,7 +1,9 @@
 package fr.harmoniamk.statsmk.fragment.trackDetails
 
+import android.os.Build
 import android.os.Bundle
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -50,9 +52,20 @@ class TrackDetailsFragment : Fragment(R.layout.fragment_track_details) {
         val trackView = TrackView(requireContext())
         trackView.bind(item.track?.trackIndex)
         binding.trackView.addView(trackView)
-        binding.title.text = "${war.name}\nCourse ${index + 1}/12"
+        binding.title.text = war.name
+        binding.subtitle.text = "Course ${index + 1}/12"
         binding.trackScore.text = item.displayedResult
         binding.trackDiff.text = item.displayedDiff
+        val textColor = when  {
+            item.displayedDiff.contains("-") -> R.color.lose
+            item.displayedDiff.contains("+") -> R.color.win
+            else -> R.color.black
+        }
+        binding.trackDiff.setTextColor(
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                requireContext().getColor(textColor)
+            else ContextCompat.getColor(requireContext(), textColor)
+        )
 
         viewModel.bind(
             war = war,

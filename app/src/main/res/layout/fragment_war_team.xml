@@ -2,16 +2,18 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
+    tools:background="@color/waluigi"
     android:layout_height="match_parent">
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingVertical="10dp"
         android:text="Sélectionnez un adversaire :"
+        android:textSize="16sp"
         android:gravity="center"
-        android:layout_marginBottom="15dp"
+        android:layout_marginBottom="10dp"
         android:fontFamily="@font/montserrat_bold"
         android:textColor="@color/white"/>
 
@@ -20,7 +22,6 @@
         android:layout_height="0dp"
         android:id="@+id/team_rv"
         android:layout_weight="1"
-        android:layout_marginBottom="15dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:orientation="vertical"/>
 
