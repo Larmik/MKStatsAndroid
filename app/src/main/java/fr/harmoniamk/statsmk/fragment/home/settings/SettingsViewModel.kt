@@ -22,23 +22,26 @@ class SettingsViewModel @Inject constructor(private val preferencesRepository: P
 
 
     private val _sharedDisconnect = MutableSharedFlow<Unit>()
+    private val _sharedPopupShowing = MutableSharedFlow<Boolean>()
     private val _sharedManageTeam = MutableSharedFlow<Unit>()
     private val _sharedManagePlayers= MutableSharedFlow<Unit>()
     private val _sharedThemeClick = MutableSharedFlow<Unit>()
     private val _sharedToast = MutableSharedFlow<String>()
     private val _sharedUserLabel = MutableSharedFlow<String>()
     val sharedDisconnect = _sharedDisconnect.asSharedFlow()
+    val sharedPopupShowing = _sharedPopupShowing.asSharedFlow()
     val sharedManageTeam = _sharedManageTeam.asSharedFlow()
     val sharedManagePlayers = _sharedManagePlayers.asSharedFlow()
     val sharedThemeClick = _sharedThemeClick.asSharedFlow()
     val sharedToast = _sharedToast.asSharedFlow()
     val sharedUserLabel = _sharedUserLabel.asSharedFlow()
 
-    fun bind(onLogout: Flow<Unit>, onManageTeam: Flow<Unit>, onTheme: Flow<Unit>, onManagePlayers: Flow<Unit>, onMigrate: Flow<Unit>) {
+    fun bind(onLogout: Flow<Unit>, onManageTeam: Flow<Unit>, onTheme: Flow<Unit>, onManagePlayers: Flow<Unit>, onMigrate: Flow<Unit>, onPopup: Flow<Boolean>) {
         onLogout.onEach {
             preferencesRepository.currentUser = null
             preferencesRepository.currentTeam = null
         }.bind(_sharedDisconnect, viewModelScope)
+        onPopup.bind(_sharedPopupShowing, viewModelScope)
         val teamClick = onManageTeam.shareIn(viewModelScope, SharingStarted.Eagerly, 1)
         val playersClick = onManagePlayers.shareIn(viewModelScope, SharingStarted.Eagerly, 1)
 
