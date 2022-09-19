@@ -48,21 +48,22 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
         var war: MKWar? = null
 
        // firebaseRepository.migrateNameToId().launchIn(viewModelScope)
+        flowOf(preferencesRepository.currentUser?.isAdmin.isTrue)
+            .bind(_sharedButtonVisible, viewModelScope)
 
         val warsFlow = flowOf(firebaseRepository.getNewWars(), firebaseRepository.listenToNewWars())
             .flattenMerge()
+            .map { it.map { MKWar(it) } }
             .shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
 
         warsFlow
-            .mapNotNull { war = it.map { w -> MKWar(w) }.getCurrent(preferencesRepository.currentTeam?.mid); war}
+            .mapNotNull { war = it.getCurrent(preferencesRepository.currentTeam?.mid); war}
             .flatMapLatest { listOf(it).withName(firebaseRepository) }
-            .onEach {
-                _sharedCurrentWar.emit(it.singleOrNull())
-                _sharedButtonVisible.emit(preferencesRepository.currentUser?.isAdmin.isTrue)
-            }.launchIn(viewModelScope)
+            .onEach { _sharedCurrentWar.emit(it.singleOrNull()) }
+            .launchIn(viewModelScope)
 
         warsFlow
-            .map { it.map { w -> MKWar(w) }.getLasts(preferencesRepository.currentTeam?.mid) }
+            .map { it.getLasts(preferencesRepository.currentTeam?.mid) }
             .map {
                 val temp = mutableListOf<MKWar>()
                 it.forEach {
@@ -75,7 +76,7 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
             .bind(_sharedLastWars, viewModelScope)
 
         warsFlow
-            .flatMapLatest { it.map { w -> MKWar(w) }.getBests(preferencesRepository.currentTeam?.mid).withName(firebaseRepository) }
+            .flatMapLatest { it.getBests(preferencesRepository.currentTeam?.mid).withName(firebaseRepository) }
             .bind(_sharedBestWars, viewModelScope)
 
         warsFlow

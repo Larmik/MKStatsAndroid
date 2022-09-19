@@ -32,7 +32,7 @@ class WarFragment : Fragment(R.layout.fragment_war) {
         val lastAdapter = LastWarAdapter()
 
         lifecycleScope.launchWhenResumed {
-
+            binding.createWarLayout.isVisible = true
             binding.bestWarRv.adapter = bestAdapter
             binding.lastWarRv.adapter = lastAdapter
             viewModel.bind(

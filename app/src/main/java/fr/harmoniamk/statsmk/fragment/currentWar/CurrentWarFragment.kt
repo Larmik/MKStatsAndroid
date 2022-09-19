@@ -14,6 +14,7 @@ import fr.harmoniamk.statsmk.databinding.FragmentCurrentWarBinding
 import fr.harmoniamk.statsmk.extension.backPressedDispatcher
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.extension.isResumed
+import fr.harmoniamk.statsmk.fragment.popup.PopupFragment
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.local.MKWar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -28,12 +29,19 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
     private val binding : FragmentCurrentWarBinding by viewBinding()
     private val viewModel: CurrentWarViewModel by viewModels()
     private var war: MKWar? = null
+    private val popup by lazy { PopupFragment("Êtes-vous sûr de vouloir supprimer la war ?", "Supprimer")}
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val adapter = CurrentWarTrackAdapter()
         binding.currentTracksRv.adapter = adapter
-        viewModel.bind(requireActivity().backPressedDispatcher(viewLifecycleOwner), binding.nextTrackBtn.clicks(), adapter.sharedClick, binding.deleteWarBtn.clicks())
+        viewModel.bind(
+            onBack = requireActivity().backPressedDispatcher(viewLifecycleOwner),
+            onNextTrack = binding.nextTrackBtn.clicks(),
+            onTrackClick = adapter.sharedClick,
+            onDelete = popup.onPositiveClick,
+            onPopup = flowOf(popup.onNegativeClick.map { false }, binding.deleteWarBtn.clicks().map { true }).flattenMerge()
+        )
 
         viewModel.sharedCurrentWar
             .filter { lifecycle.isResumed }
@@ -56,6 +64,10 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
         viewModel.sharedQuit
             .filter { findNavController().currentDestination?.id == R.id.currentWarFragment }
             .onEach { findNavController().popBackStack() }
+            .launchIn(lifecycleScope)
+        viewModel.sharedBackToWars
+            .filter { findNavController().currentDestination?.id == R.id.currentWarFragment }
+            .onEach { findNavController().navigate(CurrentWarFragmentDirections.backToWars()) }
             .launchIn(lifecycleScope)
 
         viewModel.sharedSelectTrack
@@ -90,6 +102,15 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
         viewModel.sharedTrackClick
             .filter { findNavController().currentDestination?.id == R.id.currentWarFragment }
             .onEach { findNavController().navigate(CurrentWarFragmentDirections.toTrackDetails(war = war?.war, index = it)) }
+            .launchIn(lifecycleScope)
+
+        viewModel.sharedPopupShowing
+            .onEach {
+                when (it) {
+                    true -> popup.takeIf { !it.isAdded }?.show(childFragmentManager, null)
+                    else -> popup.dismiss()
+                }
+            }
             .launchIn(lifecycleScope)
     }
 

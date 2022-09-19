@@ -24,20 +24,24 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
     private val _sharedButtonVisible = MutableSharedFlow<Boolean>()
     private val _sharedCurrentWar = MutableSharedFlow<MKWar>()
     private val  _sharedQuit = MutableSharedFlow<Unit>()
+    private val  _sharedBackToWars = MutableSharedFlow<Unit>()
     private val _sharedSelectTrack = MutableSharedFlow<Unit>()
     private val _sharedTracks = MutableSharedFlow<List<MKWarTrack>>()
     private val _sharedTrackClick = MutableSharedFlow<Int>()
     private val _sharedPlayers = MutableSharedFlow<List<String>>()
+    private val _sharedPopupShowing = MutableSharedFlow<Boolean>()
 
     val sharedButtonVisible = _sharedButtonVisible.asSharedFlow()
     val sharedCurrentWar = _sharedCurrentWar.asSharedFlow()
     val sharedQuit = _sharedQuit.asSharedFlow()
+    val sharedBackToWars = _sharedBackToWars.asSharedFlow()
     val sharedSelectTrack = _sharedSelectTrack.asSharedFlow()
     val sharedTracks = _sharedTracks.asSharedFlow()
     val sharedTrackClick = _sharedTrackClick.asSharedFlow()
     val sharedPlayers = _sharedPlayers.asSharedFlow()
+    val sharedPopupShowing = _sharedPopupShowing.asSharedFlow()
 
-    fun bind(onBack: Flow<Unit>, onNextTrack: Flow<Unit>, onTrackClick: Flow<Int>, onDelete: Flow<Unit>) {
+    fun bind(onBack: Flow<Unit>, onNextTrack: Flow<Unit>, onTrackClick: Flow<Int>, onDelete: Flow<Unit>, onPopup: Flow<Boolean>) {
 
         flowOf(firebaseRepository.getNewWars(), firebaseRepository.listenToNewWars())
             .flattenMerge()
@@ -57,6 +61,7 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
         onBack.bind(_sharedQuit, viewModelScope)
         onNextTrack.bind(_sharedSelectTrack, viewModelScope)
         onTrackClick.bind(_sharedTrackClick, viewModelScope)
+        onPopup.bind(_sharedPopupShowing, viewModelScope)
 
         onDelete
             .flatMapLatest { firebaseRepository.getUsers() }
@@ -65,7 +70,7 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
                 list.forEach { firebaseRepository.writeUser(it.apply { this.currentWar = "-1" }).first() }
             }.mapNotNull { preferencesRepository.currentWar?.mid }
             .flatMapLatest { firebaseRepository.deleteNewWar(it) }
-            .bind(_sharedQuit, viewModelScope)
+            .bind(_sharedBackToWars, viewModelScope)
 
         firebaseRepository.listenToUsers()
             .mapNotNull { it.singleOrNull { user -> user.currentWar == "-1" && preferencesRepository.currentWar?.playerHostId != user.mid && user.mid == preferencesRepository.currentUser?.mid } }

@@ -348,6 +348,16 @@
         tools:layout="@layout/fragment_current_war"
         android:label="CurrentWarFragment">
 
+
+        <action
+            android:id="@+id/back_to_wars"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/nav_graph"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right"/>
+
         <action
             android:id="@+id/add_track"
             app:destination="@id/trackListFragment"
