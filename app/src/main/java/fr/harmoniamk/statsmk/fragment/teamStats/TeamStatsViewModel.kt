@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.enums.Maps
+import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.positionToPoints
 import fr.harmoniamk.statsmk.extension.sum
 import fr.harmoniamk.statsmk.extension.withName
@@ -36,6 +37,8 @@ class TeamStatsViewModel @Inject constructor(private val firebaseRepository: Fir
     private val _sharedMostPlayedTeam = MutableSharedFlow<Pair<String?, Int?>?>()
     private val _sharedMostDefeatedTeam = MutableSharedFlow<Pair<String?, Int?>?>()
     private val _sharedLessDefeatedTeam = MutableSharedFlow<Pair<String?, Int?>?>()
+    private val _sharedTrackClick = MutableSharedFlow<Int>()
+    private val _sharedWarClick = MutableSharedFlow<MKWar>()
 
     val sharedWarsPlayed = _sharedWarsPlayed.asSharedFlow()
     val sharedWarsWon = _sharedWarsWon.asSharedFlow()
@@ -51,8 +54,23 @@ class TeamStatsViewModel @Inject constructor(private val firebaseRepository: Fir
     val sharedMostPlayedTeam = _sharedMostPlayedTeam.asSharedFlow()
     val sharedMostDefeatedTeam = _sharedMostDefeatedTeam.asSharedFlow()
     val sharedLessDefeatedTeam = _sharedLessDefeatedTeam.asSharedFlow()
+    val sharedTrackClick = _sharedTrackClick.asSharedFlow()
+    val sharedWarClick = _sharedWarClick.asSharedFlow()
 
-    fun bind() {
+    private var bestMap: Pair<Maps, Pair<Int, Int>>? = null
+    private var worstMap: Pair<Maps, Pair<Int, Int>>? = null
+    private var mostPlayedMap: Pair<Maps, Pair<Int, Int>>? = null
+    private var lessPlayedMap: Pair<Maps, Pair<Int, Int>>? = null
+    private var highestVicory: MKWar? = null
+    private var loudestDefeat: MKWar? = null
+
+    fun bind(
+        onBestClick: Flow<Unit>,
+        onWorstClick: Flow<Unit>,
+        onMostPlayedClick: Flow<Unit>,
+        onLessPlayedClick: Flow<Unit>,
+        onVictoryClick: Flow<Unit>,
+        onDefeatClick: Flow<Unit>) {
 
         flowOf(preferencesRepository.currentTeam?.mid)
             .filterNotNull()
@@ -109,21 +127,41 @@ class TeamStatsViewModel @Inject constructor(private val firebaseRepository: Fir
                         )
                     }
 
+                bestMap = averageForMaps.maxByOrNull { it.second.first }
+                worstMap = averageForMaps.minByOrNull { it.second.first }
+                mostPlayedMap = averageForMaps.maxByOrNull { it.second.second }
+                lessPlayedMap = averageForMaps.minByOrNull { it.second.second }
+                highestVicory = list.maxByOrNull { war -> war.scoreHost }
+                loudestDefeat = list.minByOrNull { war -> war.scoreHost }
+
                 _sharedWarsPlayed.emit(warsPlayed)
                 _sharedWarsWon.emit(warsWon)
                 _sharedWinRate.emit((warsWon*100) / warsPlayed)
                 _sharedAveragePoints.emit(warScores.map { it.second }.sum() / warScores.count())
                 _sharedAverageMapPoints.emit(maps.map { it.second }.sum() / maps.size)
-                _sharedBestMap.emit(averageForMaps.maxByOrNull { it.second.first })
-                _sharedWorstMap.emit(averageForMaps.minByOrNull { it.second.first })
-                _sharedHighestVictory.emit(list.maxByOrNull { war -> war.scoreHost })
-                _sharedHighestDefeat.emit(list.minByOrNull { war -> war.scoreHost })
                 _sharedMostPlayedTeam.emit(mostPlayedTeamData)
                 _sharedMostDefeatedTeam.emit(mostDefeatedTeamData)
                 _sharedLessDefeatedTeam.emit(lessDefeatedTeamData)
-                _sharedMostPlayedMap.emit(averageForMaps.maxByOrNull { it.second.second })
-                _sharedLessPlayedMap.emit(averageForMaps.minByOrNull { it.second.second })
+                _sharedBestMap.emit(bestMap)
+                _sharedWorstMap.emit(worstMap)
+                _sharedMostPlayedMap.emit(mostPlayedMap)
+                _sharedLessPlayedMap.emit(lessPlayedMap)
+                _sharedHighestVictory.emit(highestVicory)
+                _sharedHighestDefeat.emit(loudestDefeat)
             }.launchIn(viewModelScope)
+
+        flowOf(
+            onBestClick.mapNotNull { bestMap },
+            onWorstClick.mapNotNull { worstMap },
+            onMostPlayedClick.mapNotNull { mostPlayedMap },
+            onLessPlayedClick.mapNotNull { lessPlayedMap }
+        ).flattenMerge()
+            .map { Maps.values().indexOf(it.first) }
+            .bind(_sharedTrackClick, viewModelScope)
+
+        flowOf(onVictoryClick.mapNotNull { highestVicory }, onDefeatClick.mapNotNull { loudestDefeat })
+            .flattenMerge()
+            .bind(_sharedWarClick, viewModelScope)
     }
 
     private fun warsWithOpponentName(list: List<MKWar>): Pair<String?, List<MKWar>>? = list
