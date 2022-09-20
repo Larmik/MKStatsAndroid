@@ -101,10 +101,10 @@ class TrackView : LinearLayout {
                     binding.root.background.mutate().setTint(
                         ContextCompat.getColor(
                             binding.root.context,
-                            R.color.transparent_white
+                            R.color.white_alphaed
                         )
                     )
-                    binding.bestTrackName.setTextColor(ContextCompat.getColor(binding.root.context, R.color.white))
+                    //binding.bestTrackName.setTextColor(ContextCompat.getColor(binding.root.context, R.color.b))
                     (track.first as? Maps)?.let {
                         binding.bestTrackIv.setImageResource(it.picture)
                         binding.bestTrackName.setText(it.label)

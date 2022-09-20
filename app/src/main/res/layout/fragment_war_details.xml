@@ -251,7 +251,7 @@
                 android:autoSizeTextType="uniform"
                 android:fontFamily="@font/orbitron_semibold"
                 android:maxLines="1"
-                android:textColor="@color/black"
+                android:textColor="@color/waluigi_second"
                 android:textSize="30sp"
                 tools:targetApi="o"
                 tools:text="229 - 190" />

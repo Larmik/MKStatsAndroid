@@ -9,6 +9,7 @@
         android:paddingVertical="5dp"
         android:layout_marginEnd="3dp"
         android:background="@drawable/rounded_bg"
+        android:backgroundTint="@color/white_alphaed"
         android:orientation="horizontal">
 
         <LinearLayout
@@ -24,7 +25,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/orbitron_semibold"
                 android:textSize="16sp"
-                android:textColor="@color/black"
+                android:textColor="@color/waluigi_second"
                 tools:text="HR vs OF" />
 
             <TextView
@@ -32,7 +33,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/montserrat_regular"
-                android:textColor="@color/black"
+                android:textColor="@color/waluigi_second"
                 android:textSize="13sp"
                 android:gravity="center"
                 tools:text="18/01/2022 \n 21h" />
@@ -72,11 +73,11 @@
                         android:layout_height="wrap_content"
                         android:text="Total"
                         android:textSize="13sp"
-                        android:textColor="@color/black"
+                        android:textColor="@color/waluigi_second"
                         android:id="@+id/current_tm_tracks"/>
                     <TextView
                         android:layout_width="wrap_content"
-                        android:textColor="@color/black"
+                        android:textColor="@color/waluigi_second"
                         android:layout_height="wrap_content"
                         android:textSize="20sp"
                         android:fontFamily="@font/orbitron_semibold"
@@ -93,7 +94,7 @@
                     android:id="@+id/war_total">
                     <TextView
                         android:layout_width="wrap_content"
-                        android:textColor="@color/black"
+                        android:textColor="@color/waluigi_second"
                         android:layout_height="wrap_content"
                         android:textSize="20sp"
                         android:fontFamily="@font/orbitron_semibold"
@@ -107,7 +108,7 @@
                         android:layout_height="wrap_content"
                         android:text="+26"
                         android:textSize="13sp"
-                        android:textColor="@color/black"
+                        android:textColor="@color/waluigi_second"
                         android:id="@+id/war_diff"/>
 
 

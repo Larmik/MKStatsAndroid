@@ -14,7 +14,7 @@
         android:fontFamily="@font/montserrat_bold"
         android:textSize="20sp"
         android:paddingVertical="10dp"
-        android:textColor="@color/black"/>
+        android:textColor="@color/waluigi_second"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"

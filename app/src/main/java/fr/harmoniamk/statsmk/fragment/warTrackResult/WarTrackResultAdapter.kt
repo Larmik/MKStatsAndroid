@@ -17,6 +17,8 @@ class WarTrackResultAdapter(val items: MutableList<MKWarPosition> = mutableListO
         PlayerViewHolder(PlayerItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
 
     override fun onBindViewHolder(holder: PlayerViewHolder, position: Int) {
+        holder.binding.root.setPadding(0, 20, 0,20)
+        holder.binding.root.background.setTint(ContextCompat.getColor(holder.binding.root.context, R.color.transparent_white))
         holder.binding.name.setTextColor(
             ContextCompat.getColor(
                 holder.binding.root.context,

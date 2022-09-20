@@ -16,6 +16,7 @@
     <color name="daisy">#BBEE830A</color>
     <color name="wario">#FFCD25</color>
     <color name="waluigi">#511A90</color>
+    <color name="waluigi_alphaed">#bb511A90</color>
     <color name="bowser">#BBF8BE10</color>
     <color name="boo">#BB95A4AE</color>
     <color name="dk">#BB742607</color>
@@ -38,4 +39,5 @@
     <color name="win_alphaed">#aa9cffa1</color>
     <color name="lose">#ff8282</color>
     <color name="lose_alphaed">#aaff8282</color>
+    <color name="bluenight_alphaed">#aa06023b</color>
 </resources>

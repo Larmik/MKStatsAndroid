@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="../../../../../layout/custom_preview.xml" value="0.3390625" />
         <entry key="app/src/main/res/drawable/ronded_bg.xml" value="0.39897435897435896" />
         <entry key="app/src/main/res/drawable/rounded_bg.xml" value="0.39897435897435896" />
         <entry key="app/src/main/res/layout-v25/fragment_tournaments.xml" value="0.2677083333333333" />
@@ -37,7 +38,7 @@
         <entry key="app/src/main/res/layout/fragment_popup.xml" value="0.25480974775545107" />
         <entry key="app/src/main/res/layout/fragment_position.xml" value="0.2203125" />
         <entry key="app/src/main/res/layout/fragment_progress_dialog.xml" value="0.2734375" />
-        <entry key="app/src/main/res/layout/fragment_result_war_track.xml" value="0.5181422351233672" />
+        <entry key="app/src/main/res/layout/fragment_result_war_track.xml" value="0.22" />
         <entry key="app/src/main/res/layout/fragment_settings.xml" value="0.3890625" />
         <entry key="app/src/main/res/layout/fragment_stats.xml" value="0.33541666666666664" />
         <entry key="app/src/main/res/layout/fragment_team_stats.xml" value="0.3091517857142857" />

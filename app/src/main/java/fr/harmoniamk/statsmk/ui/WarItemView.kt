@@ -45,7 +45,7 @@ class WarItemView : LinearLayout {
                     it.root.context,
                     when {
                         isGreen -> R.color.win_alphaed
-                        isWhite -> R.color.white
+                        isWhite -> R.color.white_alphaed
                         else -> R.color.lose_alphaed
                     }
                 )

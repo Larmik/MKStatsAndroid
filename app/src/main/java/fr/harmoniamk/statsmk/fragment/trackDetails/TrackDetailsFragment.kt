@@ -59,7 +59,7 @@ class TrackDetailsFragment : Fragment(R.layout.fragment_track_details) {
         val textColor = when  {
             item.displayedDiff.contains("-") -> R.color.lose
             item.displayedDiff.contains("+") -> R.color.win
-            else -> R.color.black
+            else -> R.color.waluigi_second
         }
         binding.trackDiff.setTextColor(
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)

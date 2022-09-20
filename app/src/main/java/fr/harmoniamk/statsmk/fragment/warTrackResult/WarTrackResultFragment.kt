@@ -1,7 +1,9 @@
 package fr.harmoniamk.statsmk.fragment.warTrackResult
 
+import android.os.Build
 import android.os.Bundle
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -51,6 +53,16 @@ class WarTrackResultFragment : Fragment(R.layout.fragment_result_war_track) {
 
         viewModel.sharedScore
             .onEach {
+                val textColor = when  {
+                    it.displayedDiff.contains("-") -> R.color.lose
+                    it.displayedDiff.contains("+") -> R.color.win
+                    else -> R.color.waluigi_second
+                }
+                binding.trackDiff.setTextColor(
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                        requireContext().getColor(textColor)
+                    else ContextCompat.getColor(requireContext(), textColor)
+                )
                 binding.trackScore.text = it.displayedResult
                 binding.trackDiff.text = it.displayedDiff
             }.launchIn(lifecycleScope)

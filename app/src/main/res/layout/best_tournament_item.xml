@@ -2,10 +2,10 @@
 
         <LinearLayout
             xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/rounded_bg"
+    android:backgroundTint="@color/white_alphaed"
             android:layout_marginVertical="3dp"
             xmlns:tools="http://schemas.android.com/tools"
             android:orientation="horizontal">
@@ -40,7 +40,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/orbitron_semibold"
                     android:textSize="16sp"
-                    android:textColor="@color/black"
+                    android:textColor="@color/waluigi_second"
                     tools:text="HR vs OF" />
 
                 <TextView
@@ -48,7 +48,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/montserrat_regular"
-                    android:textColor="@color/black"
+                    android:textColor="@color/waluigi_second"
                     android:textSize="13sp"
                     tools:text="18/01/2022 - 21h" />
 
@@ -58,7 +58,7 @@
                     android:layout_height="wrap_content"
                     tools:text="20 coures - Miroir"
                     android:textSize="13sp"
-                    android:textColor="@color/black"
+                    android:textColor="@color/waluigi_second"
                     android:layout_marginBottom="5dp"
                     android:id="@+id/tm_infos"/>
 
@@ -92,7 +92,7 @@
                         android:layout_height="wrap_content"
                         android:text="Total: "
                         android:textSize="13sp"
-                        android:textColor="@color/black"
+                        android:textColor="@color/waluigi_second"
                         android:id="@+id/current_tm_tracks"/>
                     <TextView
                         android:layout_width="wrap_content"
@@ -100,7 +100,7 @@
                         android:layout_height="wrap_content"
                         android:text="Pts/map: "
                         android:textSize="13sp"
-                        android:textColor="@color/black"
+                        android:textColor="@color/waluigi_second"
                         android:id="@+id/current_tm_ratio"/>
                     <TextView
                         android:layout_width="wrap_content"
@@ -108,7 +108,7 @@
                         android:layout_height="wrap_content"
                         android:text="Podiums: "
                         android:textSize="13sp"
-                        android:textColor="@color/black"
+                        android:textColor="@color/waluigi_second"
                         android:id="@+id/current_tm_top"/>
 
 
@@ -122,7 +122,7 @@
 
                     <TextView
                         android:layout_width="wrap_content"
-                        android:textColor="@color/black"
+                        android:textColor="@color/waluigi_second"
                         android:layout_height="wrap_content"
                         android:maxLines="1"
                         android:autoSizeTextType="uniform"
@@ -133,7 +133,7 @@
                         tools:targetApi="o" />
                     <TextView
                         android:layout_width="wrap_content"
-                        android:textColor="@color/black"
+                        android:textColor="@color/waluigi_second"
                         android:layout_height="wrap_content"
                         android:textSize="14sp"
                         android:fontFamily="@font/orbitron_semibold"
@@ -142,7 +142,7 @@
 
                     <TextView
                         android:layout_width="wrap_content"
-                        android:textColor="@color/black"
+                        android:textColor="@color/waluigi_second"
                         android:layout_height="wrap_content"
                         android:textSize="14sp"
                         android:fontFamily="@font/orbitron_semibold"

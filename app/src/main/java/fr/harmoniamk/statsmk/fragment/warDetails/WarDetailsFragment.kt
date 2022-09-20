@@ -48,7 +48,7 @@ class WarDetailsFragment : Fragment(R.layout.fragment_war_details) {
             val textColor = when  {
                 war.displayedDiff.contains("-") -> R.color.lose
                 war.displayedDiff.contains("+") -> R.color.win
-                else -> R.color.black
+                else -> R.color.waluigi_second
             }
             binding.diffScoreTv.setTextColor(
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)

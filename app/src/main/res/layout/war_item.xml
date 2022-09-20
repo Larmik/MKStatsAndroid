@@ -1,20 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/current_tm_card"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    app:cardCornerRadius="2dp"
-    app:cardBackgroundColor="@color/transparent"
-    android:layout_marginTop="5dp"
-    xmlns:tools="http://schemas.android.com/tools">
 
     <LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/rounded_bg"
+    android:backgroundTint="@color/white_alphaed"
         android:paddingVertical="5dp"
+        android:layout_marginTop="5dp"
         android:orientation="horizontal">
 
         <LinearLayout
@@ -30,7 +25,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/orbitron_semibold"
                 android:textSize="16sp"
-                android:textColor="@color/black"
+                android:textColor="@color/waluigi_second"
                 tools:text="HR vs OF" />
 
             <TextView
@@ -38,7 +33,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/montserrat_regular"
-                android:textColor="@color/black"
+                android:textColor="@color/waluigi_second"
                 android:textSize="13sp"
                 tools:text="18/01/2022 - 21h" />
 
@@ -64,7 +59,7 @@
                     android:layout_height="wrap_content"
                     android:text="Score: "
                     android:textSize="13sp"
-                    android:textColor="@color/black"
+                    android:textColor="@color/waluigi_second"
                     android:id="@+id/current_tm_tracks"/>
                 <TextView
                     android:layout_width="wrap_content"
@@ -72,7 +67,7 @@
                     android:layout_height="wrap_content"
                     android:text="Diff: "
                     android:textSize="13sp"
-                    android:textColor="@color/black"
+                    android:textColor="@color/waluigi_second"
                     android:id="@+id/current_tm_top"/>
 
             </LinearLayout>
@@ -85,7 +80,7 @@
 
                 <TextView
                     android:layout_width="wrap_content"
-                    android:textColor="@color/black"
+                    android:textColor="@color/waluigi_second"
                     android:layout_height="wrap_content"
                     android:maxLines="1"
                     android:autoSizeTextType="uniform"
@@ -97,7 +92,7 @@
 
                 <TextView
                     android:layout_width="wrap_content"
-                    android:textColor="@color/black"
+                    android:textColor="@color/waluigi_second"
                     android:layout_height="wrap_content"
                     android:textSize="14sp"
                     android:fontFamily="@font/orbitron_semibold"
@@ -110,4 +105,3 @@
 
     </LinearLayout>
 
-</androidx.cardview.widget.CardView>

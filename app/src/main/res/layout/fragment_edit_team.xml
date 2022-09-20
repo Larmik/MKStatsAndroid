@@ -30,7 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:background="@drawable/rounded_bg"
-            android:textColor="@color/black"
+            android:textColor="@color/waluigi_second"
             android:layout_marginBottom="10dp"
             android:gravity="center"
             android:id="@+id/teamname_et"
@@ -60,7 +60,7 @@
             android:layout_height="50dp"
             android:background="@drawable/rounded_bg"
             android:layout_marginBottom="10dp"
-            android:textColor="@color/black"
+            android:textColor="@color/waluigi_second"
             android:gravity="center"
             android:id="@+id/teamshort_et"
             android:layout_marginHorizontal="40dp" />
@@ -93,7 +93,7 @@
             android:background="@drawable/rounded_bg"
             android:layout_marginBottom="10dp"
             android:gravity="center"
-            android:textColor="@color/black"
+            android:textColor="@color/waluigi_second"
             android:id="@+id/teamcode_et"
             android:backgroundTint="@color/white_alphaed"
             android:layout_marginHorizontal="40dp" />

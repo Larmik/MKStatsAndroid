@@ -237,7 +237,7 @@
             android:id="@+id/score_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/black"
+            android:textColor="@color/waluigi_second"
             android:maxLines="1"
             android:autoSizeTextType="uniform"
             android:textSize="28sp"

@@ -33,7 +33,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="10dp"
         android:id="@+id/track_view"/>
 
 
@@ -53,7 +53,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textSize="30sp"
-            android:textColor="@color/black"
+            android:textColor="@color/waluigi_second"
             android:fontFamily="@font/orbitron_semibold"
             tools:text="58 - 24"/>
         <TextView

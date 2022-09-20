@@ -31,7 +31,7 @@
             android:layout_height="50dp"
             android:background="@drawable/rounded_bg"
             android:layout_marginBottom="10dp"
-            android:textColor="@color/black"
+            android:textColor="@color/waluigi_second"
             android:gravity="center"
             android:id="@+id/playername_et"
             android:layout_marginHorizontal="40dp" />
@@ -64,7 +64,7 @@
             android:layout_marginBottom="10dp"
             android:gravity="center"
             android:id="@+id/playercode_et"
-            android:textColor="@color/black"
+            android:textColor="@color/waluigi_second"
             android:backgroundTint="@color/white_alphaed"
             android:layout_marginHorizontal="40dp" />
 
@@ -76,7 +76,7 @@
         android:gravity="center"
         android:layout_marginBottom="10dp"
         android:id="@+id/admin_checkbox"
-        android:textColor="@color/black"
+        android:textColor="@color/waluigi_second"
         android:text="Ce joueur est un admin"/>
 
     <TextView
