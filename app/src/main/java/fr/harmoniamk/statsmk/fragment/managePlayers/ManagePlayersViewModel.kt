@@ -6,12 +6,14 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.extension.bind
+import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
+import java.util.*
 import javax.inject.Inject
 
 @FlowPreview
@@ -37,9 +39,11 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
     val sharedRedirectToWelcome = _sharedRedirectToWelcome.asSharedFlow()
     val sharedShowDialog = _sharedShowDialog.asSharedFlow()
 
-    fun bind(onAdd: Flow<Unit>, onEdit: Flow<User>) {
+    private val players = mutableListOf<ManagePlayersItemViewModel>()
+
+    fun bind(onAdd: Flow<Unit>, onEdit: Flow<User>, onSearch: Flow<String>) {
         firebaseRepository.getUsers()
-            .map { list -> list.filter { it.team == preferencesRepository.currentTeam?.mid }.map { ManagePlayersItemViewModel(it, preferencesRepository) } }
+            .map { players.addAll(it.filter { it.team == preferencesRepository.currentTeam?.mid }.map { ManagePlayersItemViewModel(it, preferencesRepository) }); players }
             .onEach {
                 _sharedTitle.emit("Joueurs ${preferencesRepository.currentTeam?.shortName} (${it.size})")
                 _sharedPlayers.emit(it)
@@ -61,6 +65,15 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
             _sharedEdit.emit(it)
             _sharedShowDialog.emit(true)
         }.launchIn(viewModelScope)
+
+        onSearch
+            .map { searched ->
+                players.filter {
+                    it.name?.toLowerCase(Locale.ROOT)
+                        ?.contains(searched.toLowerCase(Locale.ROOT)).isTrue
+                }
+            }
+            .bind(_sharedPlayers, viewModelScope)
     }
 
     fun bindDialog(onDelete: Flow<User>, onPlayerEdited: Flow<User>, onTeamLeft: Flow<User>) {
@@ -82,6 +95,7 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
             .filter { preferencesRepository.currentUser != null }
             .onEach {
                 _sharedShowDialog.emit(false)
+                _sharedTitle.emit("Joueurs ${preferencesRepository.currentTeam?.shortName} (${it.size})")
                 _sharedPlayers.emit(it)
             }.launchIn(viewModelScope)
 
@@ -115,6 +129,7 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
             .map { list -> list.filter { it.team == preferencesRepository.currentTeam?.mid }.map { ManagePlayersItemViewModel(it, preferencesRepository) } }
             .onEach {
                 _sharedShowDialog.emit(false)
+                _sharedTitle.emit("Joueurs ${preferencesRepository.currentTeam?.shortName} (${it.size})")
                 _sharedPlayers.emit(it)
             }.launchIn(viewModelScope)
     }

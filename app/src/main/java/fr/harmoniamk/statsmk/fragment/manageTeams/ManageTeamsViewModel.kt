@@ -6,12 +6,14 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.extension.bind
+import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
+import java.util.*
 import javax.inject.Inject
 
 @FlowPreview
@@ -35,9 +37,11 @@ class ManageTeamsViewModel @Inject constructor(private val preferencesRepository
     val sharedOnEditClick = _sharedOnEditClick.asSharedFlow()
     val sharedShowDialog = _sharedShowDialog.asSharedFlow()
 
-    fun bind(onAddTeam: Flow<Unit>, onQuitTeam: Flow<Unit>, onEditClick: Flow<Team>) {
+    private val teams = mutableListOf<ManageTeamsItemViewModel>()
+
+    fun bind(onAddTeam: Flow<Unit>, onQuitTeam: Flow<Unit>, onEditClick: Flow<Team>, onSearch: Flow<String>) {
         firebaseRepository.getTeams()
-            .map { list -> list.map { ManageTeamsItemViewModel(it, preferencesRepository) } }
+            .map { teams.addAll(it.map { ManageTeamsItemViewModel(it, preferencesRepository) }); teams }
             .bind(_sharedTeams, viewModelScope)
 
         onAddTeam.bind(_sharedAddTeam, viewModelScope)
@@ -69,6 +73,16 @@ class ManageTeamsViewModel @Inject constructor(private val preferencesRepository
             _sharedOnEditClick.emit(it)
             _sharedShowDialog.emit(true)
         }.launchIn(viewModelScope)
+
+        onSearch
+            .map { searched ->
+                teams.filter {
+                    it.shortName?.toLowerCase(Locale.ROOT)
+                        ?.contains(searched.toLowerCase(Locale.ROOT)).isTrue || it.name?.toLowerCase(
+                        Locale.ROOT)?.contains(searched.toLowerCase(Locale.ROOT)) ?: true
+                }
+            }
+            .bind(_sharedTeams, viewModelScope)
     }
 
     fun bindDialog(onTeamEdit: Flow<Team>, onTeamDelete: Flow<Team>) {

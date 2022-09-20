@@ -11,6 +11,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentManagePlayersBinding
 import fr.harmoniamk.statsmk.extension.clicks
+import fr.harmoniamk.statsmk.extension.onTextChanged
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
@@ -31,6 +32,7 @@ class ManagePlayersFragment : Fragment(R.layout.fragment_manage_players) {
         viewModel.bind(
             onAdd = binding.addPlayerBtn.clicks(),
             onEdit = adapter.sharedEdit,
+            onSearch = binding.searchEt.onTextChanged()
         )
         viewModel.sharedPlayers.onEach {
             adapter.addPlayers(it)

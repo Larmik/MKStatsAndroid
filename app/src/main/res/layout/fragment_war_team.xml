@@ -7,15 +7,15 @@
     tools:background="@color/waluigi"
     android:layout_height="match_parent">
 
-    <TextView
+    <EditText
         android:layout_width="match_parent"
+        android:background="@drawable/rounded_bg"
+        android:hint="Rechercher une équipe..."
         android:layout_height="wrap_content"
-        android:text="Sélectionnez un adversaire :"
-        android:textSize="16sp"
-        android:gravity="center"
-        android:layout_marginBottom="10dp"
-        android:fontFamily="@font/montserrat_bold"
-        android:textColor="@color/white"/>
+        android:backgroundTint="@color/white_alphaed"
+        android:padding="15dp"
+        android:layout_marginVertical="10dp"
+        android:id="@+id/search_et"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"

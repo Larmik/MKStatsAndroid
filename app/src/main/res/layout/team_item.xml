@@ -5,10 +5,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         xmlns:tools="http://schemas.android.com/tools"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="5dp"
     android:background="@drawable/rounded_bg"
 android:backgroundTint="@color/white_alphaed"
-        android:layout_margin="5dp"
         android:orientation="horizontal">
 
 

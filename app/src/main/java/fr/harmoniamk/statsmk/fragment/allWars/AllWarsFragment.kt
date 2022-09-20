@@ -10,6 +10,7 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentAllWarsBinding
+import fr.harmoniamk.statsmk.extension.onTextChanged
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.filter
@@ -28,7 +29,7 @@ class AllWarsFragment : Fragment(R.layout.fragment_all_wars) {
         super.onViewCreated(view, savedInstanceState)
         val adapter = AllWarsAdapter()
         binding.warRv.adapter = adapter
-        viewModel.bind(adapter.sharedItemClick)
+        viewModel.bind(adapter.sharedItemClick, binding.searchEt.onTextChanged())
         viewModel.sharedWars.onEach { adapter.addWars(it) }.launchIn(lifecycleScope)
         viewModel.sharedWarClick
             .filter { findNavController().currentDestination?.id == R.id.allWarsFragment }
