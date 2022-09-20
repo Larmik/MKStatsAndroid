@@ -43,7 +43,11 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
 
     fun bind(onAdd: Flow<Unit>, onEdit: Flow<User>, onSearch: Flow<String>) {
         firebaseRepository.getUsers()
-            .map { players.addAll(it.filter { it.team == preferencesRepository.currentTeam?.mid }.map { ManagePlayersItemViewModel(it, preferencesRepository) }); players }
+            .map {
+                players.clear()
+                players.addAll(it.filter { it.team == preferencesRepository.currentTeam?.mid }.map { ManagePlayersItemViewModel(it, preferencesRepository) })
+                players
+            }
             .onEach {
                 _sharedTitle.emit("Joueurs ${preferencesRepository.currentTeam?.shortName} (${it.size})")
                 _sharedPlayers.emit(it)

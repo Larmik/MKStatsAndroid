@@ -38,7 +38,7 @@ class AllWarsViewModel @Inject constructor(private val firebaseRepository: Fireb
             .onEach {
                 wars.clear()
                 wars.addAll(it)
-                _sharedWars.emit(wars)
+                _sharedWars.emit(it)
             }
             .flatMapLatest { firebaseRepository.getTeams() }
             .onEach {
@@ -55,9 +55,14 @@ class AllWarsViewModel @Inject constructor(private val firebaseRepository: Fireb
                 filteredTeams.forEach { team ->
                     filteredWars.addAll(wars.filter { it.war?.teamOpponent?.equals(team.mid).isTrue })
                 }
-                filteredWars
+                when (searched.isEmpty()) {
+                    true -> wars
+                    else -> filteredWars
+                }
             }
-            .bind(_sharedWars, viewModelScope)
+            .onEach {
+                _sharedWars.emit(it)
+            }.launchIn(viewModelScope)
     }
 
 }

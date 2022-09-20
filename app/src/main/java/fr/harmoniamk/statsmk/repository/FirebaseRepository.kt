@@ -8,7 +8,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import dagger.Binds
@@ -58,10 +57,6 @@ interface FirebaseRepositoryInterface{
     fun deleteUser(user: User): Flow<Unit>
     fun deleteTeam(team: Team): Flow<Unit>
     fun deleteNewWar(warId: String): Flow<Unit>
-
-    //migrate players name to id
-    fun migrateNameToId(): Flow<Unit>
-
 }
 
 @FlowPreview
@@ -330,29 +325,4 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
         database.child("newWars").child(warId).removeValue()
         emit(Unit)
     }
-
-    override fun migrateNameToId(): Flow<Unit> =
-        getNewWars()
-            .map {
-                it.forEach { war ->
-                    war.warTracks?.forEachIndexed { index, track ->
-                        track.warPositions?.forEachIndexed { posIndex, pos ->
-                            val playerId =
-                                getUsers().first().filter { it.name.equals(pos.playerId) }
-                                    .singleOrNull()?.mid
-                            database
-                                .child("newWars")
-                                .child(war.mid.toString())
-                                .child("warTracks")
-                                .child(index.toString())
-                                .child("warPositions")
-                                .child(posIndex.toString())
-                                .setValue(pos.apply { this.playerId = playerId })
-
-                        }
-                    }
-                }
-            }
-
-
 }
