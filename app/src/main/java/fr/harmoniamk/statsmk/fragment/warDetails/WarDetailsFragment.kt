@@ -56,15 +56,29 @@ class WarDetailsFragment : Fragment(R.layout.fragment_war_details) {
                 else ContextCompat.getColor(requireContext(), textColor)
             )
             viewModel.bind(war.war?.mid, adapter.sharedClick, binding.deleteWarBtn.clicks())
-            viewModel.sharedBestTrack.onEach { binding.bestTrack.bind(it) }.launchIn(lifecycleScope)
-            viewModel.sharedWorstTrack.onEach { binding.worstTrack.bind(it) }.launchIn(lifecycleScope)
+            viewModel.sharedBestTrack.onEach { track ->
+                binding.bestTrack.bind(track)
+                binding.bestTrack
+                    .clicks()
+                    .filter { findNavController().currentDestination?.id == R.id.warDetailsFragment }
+                    .onEach { findNavController().navigate(WarDetailsFragmentDirections.toTrackDetails(war = war.war, warTrack = track.track, index = 0)) }
+                    .launchIn(lifecycleScope)
+            }.launchIn(lifecycleScope)
+            viewModel.sharedWorstTrack.onEach { track ->
+                binding.worstTrack.bind(track)
+                binding.worstTrack
+                    .clicks()
+                    .filter { findNavController().currentDestination?.id == R.id.warDetailsFragment }
+                    .onEach { findNavController().navigate(WarDetailsFragmentDirections.toTrackDetails(war = war.war, warTrack = track.track, index = 0)) }
+                    .launchIn(lifecycleScope)
+            }.launchIn(lifecycleScope)
             viewModel.sharedWarPlayers.onEach { bindPlayers(it) }.launchIn(lifecycleScope)
             viewModel.sharedTracks.onEach {
                 adapter.addTracks(it)
             }.launchIn(lifecycleScope)
             viewModel.sharedTrackClick
                 .filter { findNavController().currentDestination?.id == R.id.warDetailsFragment }
-                .onEach { findNavController().navigate(WarDetailsFragmentDirections.toTrackDetails(war = war.war, index = it)) }
+                .onEach { findNavController().navigate(WarDetailsFragmentDirections.toTrackDetails(war = war.war, warTrack = null, index = it)) }
                 .launchIn(lifecycleScope)
             viewModel.sharedWarDeleted
                 .filter { findNavController().currentDestination?.id == R.id.warDetailsFragment }

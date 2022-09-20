@@ -1,18 +1,22 @@
 package fr.harmoniamk.statsmk.ui
 
 import android.content.Context
+import android.os.Build
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.widget.LinearLayout
-import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import androidx.viewbinding.ViewBinding
 import fr.harmoniamk.statsmk.R
-import fr.harmoniamk.statsmk.model.local.MKTournamentTrack
 import fr.harmoniamk.statsmk.databinding.TrackItemBinding
 import fr.harmoniamk.statsmk.databinding.TrackItemCollapsedBinding
 import fr.harmoniamk.statsmk.enums.Maps
+import fr.harmoniamk.statsmk.extension.pointsToPosition
+import fr.harmoniamk.statsmk.extension.positionColor
+import fr.harmoniamk.statsmk.model.local.MKTournamentTrack
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
 
 class TrackView : LinearLayout {
@@ -30,7 +34,7 @@ class TrackView : LinearLayout {
         ta.recycle()
     }
 
-    fun bind(track: Any?) {
+    fun bind(track: Any?, shouldDisplayPosition: Boolean = false) {
         val lp = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
         lp.setMargins(0,0,0,0)
         (binding as? TrackItemBinding)?.let { binding ->
@@ -104,13 +108,28 @@ class TrackView : LinearLayout {
                             R.color.white_alphaed
                         )
                     )
-                    //binding.bestTrackName.setTextColor(ContextCompat.getColor(binding.root.context, R.color.b))
                     (track.first as? Maps)?.let {
                         binding.bestTrackIv.setImageResource(it.picture)
                         binding.bestTrackName.setText(it.label)
                     }
                     (track.second as? Pair<*, *>)?.let {
+                        binding.averageTrackScore.typeface = ResourcesCompat.getFont(context, when (shouldDisplayPosition) {
+                            true -> R.font.mk_position
+                            else -> R.font.orbitron_semibold
+                        })
                         binding.averageTrackScore.text = it.first.toString()
+
+                        if (shouldDisplayPosition) {
+                            val position = (it.first as? Int).pointsToPosition()
+                            binding.averageTrackScoreLabel.text = "Position moyenne"
+                            binding.averageTrackScore.text = position.toString()
+                            binding.averageTrackScore.setTextSize(TypedValue.COMPLEX_UNIT_SP, 22f)
+                            binding.averageTrackScore.setTextColor(
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                                    context.getColor(position.positionColor())
+                                else ContextCompat.getColor(context, position.positionColor())
+                            )
+                        }
                         binding.totalPlayed.text = "jouée ${it.second} fois"
                     }
                 }

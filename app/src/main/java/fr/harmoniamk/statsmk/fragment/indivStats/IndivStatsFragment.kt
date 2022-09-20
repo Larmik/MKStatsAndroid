@@ -1,7 +1,9 @@
 package fr.harmoniamk.statsmk.fragment.indivStats
 
+import android.os.Build
 import android.os.Bundle
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -11,6 +13,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentIndivStatsBinding
 import fr.harmoniamk.statsmk.extension.clicks
+import fr.harmoniamk.statsmk.extension.positionColor
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.filter
@@ -52,7 +55,14 @@ class IndivStatsFragment : Fragment(R.layout.fragment_indiv_stats) {
             .onEach { binding.totalAverage.text = it.toString() }
             .launchIn(lifecycleScope)
         viewModel.sharedAverageMapPoints
-            .onEach { binding.mapAverage.text = it.toString() }
+            .onEach {
+                binding.mapAverage.text = it.toString()
+                binding.mapAverage.setTextColor(
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                        requireContext().getColor(it.positionColor())
+                    else ContextCompat.getColor(requireContext(), it.positionColor())
+                )
+            }
             .launchIn(lifecycleScope)
         viewModel.sharedHighestScore
             .onEach {
@@ -67,10 +77,10 @@ class IndivStatsFragment : Fragment(R.layout.fragment_indiv_stats) {
                 binding.lowestScoreWarDate.text = it?.first?.war?.createdDate}
             .launchIn(lifecycleScope)
         viewModel.sharedBestMap
-            .onEach { binding.bestTrackview.bind(it) }
+            .onEach { binding.bestTrackview.bind(it, shouldDisplayPosition = true) }
             .launchIn(lifecycleScope)
         viewModel.sharedWorstMap
-            .onEach { binding.worstTrackview.bind(it) }
+            .onEach { binding.worstTrackview.bind(it, shouldDisplayPosition = true) }
             .launchIn(lifecycleScope)
         viewModel.sharedHighestVictory
             .onEach { binding.highestVictory.bind(it) }
@@ -84,10 +94,10 @@ class IndivStatsFragment : Fragment(R.layout.fragment_indiv_stats) {
                 binding.mostPlayedTeamTotal.text = "${it?.second} matchs joués"
             }.launchIn(lifecycleScope)
         viewModel.sharedMostPlayedMap
-            .onEach { binding.mostPlayedTrackview.bind(it) }
+            .onEach { binding.mostPlayedTrackview.bind(it, shouldDisplayPosition = true) }
             .launchIn(lifecycleScope)
         viewModel.sharedLessPlayedMap
-            .onEach { binding.lessPlayedTrackview.bind(it) }
+            .onEach { binding.lessPlayedTrackview.bind(it, shouldDisplayPosition = true) }
             .launchIn(lifecycleScope)
         viewModel.sharedTrackClick
             .filter { findNavController().currentDestination?.id == R.id.indivStatsFragment }

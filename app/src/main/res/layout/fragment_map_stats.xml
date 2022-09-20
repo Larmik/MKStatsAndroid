@@ -169,7 +169,7 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Score moyen"
+                        android:text="Moyennes"
                         android:gravity="center"
                         android:textColor="@color/white"
                         android:fontFamily="@font/montserrat_bold"
@@ -191,7 +191,7 @@
                             android:fontFamily="@font/montserrat_bold"
                             android:textSize="14sp"
                             android:paddingTop="5dp"
-                            android:text="Equipe"/>
+                            android:text="Score équipe"/>
 
                         <TextView
                             android:layout_width="0dp"
@@ -202,13 +202,14 @@
                             android:textSize="14sp"
                             android:gravity="center"
                             android:paddingTop="5dp"
-                            android:text="Joueur"/>
+                            android:text="Position joueur"/>
 
                     </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:gravity="center"
                         android:orientation="horizontal">
 
                         <TextView
@@ -228,12 +229,12 @@
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
                             android:textColor="@color/white"
-                            android:fontFamily="@font/orbitron_semibold"
-                            android:textSize="20sp"
+                            android:fontFamily="@font/mk_position"
+                            android:textSize="31sp"
                             android:gravity="center"
                             android:id="@+id/map_player_average"
                             android:paddingBottom="5dp"
-                            tools:text="106"/>
+                            tools:text="7"/>
 
                     </LinearLayout>
 

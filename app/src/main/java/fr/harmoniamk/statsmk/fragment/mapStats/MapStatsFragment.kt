@@ -1,7 +1,9 @@
 package fr.harmoniamk.statsmk.fragment.mapStats
 
+import android.os.Build
 import android.os.Bundle
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -11,8 +13,8 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentMapStatsBinding
-import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.extension.clicks
+import fr.harmoniamk.statsmk.extension.positionColor
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.filter
@@ -67,7 +69,14 @@ class MapStatsFragment : Fragment(R.layout.fragment_map_stats) {
                 .onEach { binding.mapTeamAverage.text = it.toString() }
                 .launchIn(lifecycleScope)
             viewModel.sharedPlayerScore
-                .onEach { binding.mapPlayerAverage.text = it }
+                .onEach {
+                    binding.mapPlayerAverage.text = it.toString()
+                    binding.mapPlayerAverage.setTextColor(
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                            requireContext().getColor(it.positionColor())
+                        else ContextCompat.getColor(requireContext(), it.positionColor())
+                    )
+                }
                 .launchIn(lifecycleScope)
             viewModel.sharedHighestVictory
                 .filterNotNull()

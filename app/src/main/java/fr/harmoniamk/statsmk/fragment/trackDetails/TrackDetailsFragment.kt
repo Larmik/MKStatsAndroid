@@ -53,7 +53,7 @@ class TrackDetailsFragment : Fragment(R.layout.fragment_track_details) {
         trackView.bind(item.track?.trackIndex)
         binding.trackView.addView(trackView)
         binding.title.text = war.name
-        binding.subtitle.text = "Course ${index + 1}/12"
+        binding.subtitle.text = warTrack?.let { war.createdDate } ?: "Course ${index + 1}/12"
         binding.trackScore.text = item.displayedResult
         binding.trackDiff.text = item.displayedDiff
         val textColor = when  {

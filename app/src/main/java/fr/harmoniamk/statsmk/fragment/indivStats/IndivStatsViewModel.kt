@@ -4,10 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.enums.Maps
-import fr.harmoniamk.statsmk.extension.bind
-import fr.harmoniamk.statsmk.extension.positionToPoints
-import fr.harmoniamk.statsmk.extension.sum
-import fr.harmoniamk.statsmk.extension.withName
+import fr.harmoniamk.statsmk.extension.*
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
@@ -135,7 +132,7 @@ class IndivStatsViewModel @Inject constructor(private val firebaseRepository: Fi
                 _sharedWarsWon.emit(warsWon)
                 _sharedWinRate.emit((warsWon*100) / warsPlayed)
                 _sharedAveragePoints.emit(warScores.map { it.second }.sum() / warScores.count())
-                _sharedAverageMapPoints.emit(maps.map { it.second }.sum() / maps.size)
+                _sharedAverageMapPoints.emit((maps.map { it.second }.sum() / maps.size).pointsToPosition())
                 _sharedHighestScore.emit(warScores.maxByOrNull { it.second })
                 _sharedLowestScore.emit(warScores.minByOrNull { it.second })
                 _sharedHighestVictory.emit(highestVicory)

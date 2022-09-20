@@ -424,6 +424,11 @@
                 android:name="index"
                 app:argType="integer"/>
 
+            <argument
+                android:name="warTrack"
+                app:argType="fr.harmoniamk.statsmk.model.firebase.NewWarTrack"
+                app:nullable="true"/>
+
         </action>
 
     </fragment>

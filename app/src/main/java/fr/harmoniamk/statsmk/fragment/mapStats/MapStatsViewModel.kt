@@ -23,7 +23,7 @@ class MapStatsViewModel @Inject constructor(private val preferencesRepository: P
     private val _sharedTrackWon = MutableSharedFlow<Int>()
     private val _sharedWinRate = MutableSharedFlow<Int>()
     private val _sharedTeamScore = MutableSharedFlow<Int>()
-    private val _sharedPlayerScore = MutableSharedFlow<String>()
+    private val _sharedPlayerScore = MutableSharedFlow<Int>()
     private val _sharedHighestVictory = MutableSharedFlow<Pair<MKWar, MKWarTrack>?>()
     private val _sharedLoudestDefeat = MutableSharedFlow<Pair<MKWar, MKWarTrack>?>()
     private val _sharedMapClick = MutableSharedFlow<Pair<MKWar, MKWarTrack>>()
@@ -76,7 +76,7 @@ class MapStatsViewModel @Inject constructor(private val preferencesRepository: P
                 _sharedTrackWon.emit(mapWon)
                 _sharedWinRate.emit((mapWon*100) / mapPlayed)
                 _sharedTeamScore.emit(it.map { pair -> pair.second }.map { it.teamScore }.sum() / it.size)
-                _sharedPlayerScore.emit(playerScore.takeIf { it.isNotEmpty() }?.let {  (playerScore.sum() / playerScore.size).toString() } ?: "N/A")
+                _sharedPlayerScore.emit(playerScore.takeIf { it.isNotEmpty() }?.let {  (playerScore.sum() / playerScore.size).pointsToPosition() } ?: 0)
                 _sharedHighestVictory.emit(it.getVictory())
                 _sharedLoudestDefeat.emit(it.getDefeat())
 
