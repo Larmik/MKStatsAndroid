@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.extension.bind
+import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -28,15 +29,24 @@ class PlayersWarViewModel@Inject constructor(private val firebaseRepository: Fir
         val usersSelected = mutableListOf<User>()
 
         firebaseRepository.getUsers()
-            .map { list -> list
-                .filter { user -> user.team == preferencesRepository.currentTeam?.mid }
-                .sortedBy { it.name?.toLowerCase(Locale.ROOT) }
-                .map { UserSelector(it, false) }
+            .map { list ->
+                 val temp = mutableListOf<UserSelector>()
+                temp.add(UserSelector(isCategory = true))
+                temp.addAll(list.filter { user -> user.team == preferencesRepository.currentTeam?.mid }
+                    .sortedBy { it.name?.toLowerCase(Locale.ROOT) }
+                    .map { UserSelector(it, false) })
+                temp.add(UserSelector(isCategory = true))
+                temp.addAll(list.filterNot { user -> user.team == preferencesRepository.currentTeam?.mid }
+                    .sortedBy { it.name?.toLowerCase(Locale.ROOT) }
+                    .map { UserSelector(it, false) })
+                temp
+
             }.bind(_sharedPlayers, viewModelScope)
 
         onUserSelected
             .onEach {
-                if (it.isSelected) usersSelected.add(it.user)
+                if (it.isSelected.isTrue)
+                    it.user?.let { user -> usersSelected.add(user) }
                 else usersSelected.remove(it.user)
                 _sharedUsersSelected.emit(usersSelected)
             }.launchIn(viewModelScope)

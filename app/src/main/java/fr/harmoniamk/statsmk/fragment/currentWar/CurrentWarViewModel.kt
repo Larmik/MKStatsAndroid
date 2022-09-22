@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.getCurrent
+import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
@@ -53,7 +54,7 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
                 val players = firebaseRepository.getUsers().first().filter { it.currentWar == war.war?.mid }
                     .sortedBy { it.name?.toLowerCase(Locale.ROOT) }.mapNotNull { it.name }
                 _sharedCurrentWar.emit(war)
-                _sharedButtonVisible.emit(war.war?.playerHostId == preferencesRepository.currentUser?.mid && !war.isOver)
+                _sharedButtonVisible.emit(preferencesRepository.currentUser?.isAdmin.isTrue && !war.isOver)
                 _sharedTracks.emit(war.war?.warTracks.orEmpty().map { MKWarTrack(it) })
                 _sharedPlayers.emit(players)
             }.launchIn(viewModelScope)

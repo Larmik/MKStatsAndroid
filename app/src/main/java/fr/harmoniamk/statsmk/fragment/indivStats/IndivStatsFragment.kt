@@ -4,6 +4,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -42,63 +43,45 @@ class IndivStatsFragment : Fragment(R.layout.fragment_indiv_stats) {
         binding.highestDefeat.clipToOutline = true
         binding.highestVictory.clipToOutline = true
 
-        viewModel.sharedWarsPlayed
-            .onEach { binding.warPlayed.text = it.toString() }
-            .launchIn(lifecycleScope)
-        viewModel.sharedWarsWon
-            .onEach { binding.warsWon.text = it.toString() }
-            .launchIn(lifecycleScope)
-        viewModel.sharedWinRate
-            .onEach { binding.winrate.text = "$it %" }
-            .launchIn(lifecycleScope)
-        viewModel.sharedAveragePoints
-            .onEach { binding.totalAverage.text = it.toString() }
-            .launchIn(lifecycleScope)
-        viewModel.sharedAverageMapPoints
-            .onEach {
-                binding.mapAverage.text = it.toString()
-                binding.mapAverage.setTextColor(
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                        requireContext().getColor(it.positionColor())
-                    else ContextCompat.getColor(requireContext(), it.positionColor())
-                )
+        viewModel.sharedStats.onEach {
+            binding.progress.isVisible = false
+            binding.mainLayout.isVisible = true
+            binding.warPlayed.text = it.warStats.warsPlayed.toString()
+            binding.warsWon.text = it.warStats.warsWon.toString()
+            binding.winrate.text = it.warStats.winRate
+            binding.totalAverage.text = it.averagePoints.toString()
+            binding.mapAverage.text = it.averagePlayerMapPoints.toString()
+            binding.mapAverage.setTextColor(
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                    requireContext().getColor(it.averagePlayerMapPoints.positionColor())
+                else ContextCompat.getColor(requireContext(), it.averagePlayerMapPoints.positionColor())
+            )
+            binding.highestScore.text = it.highestScore?.score.toString()
+            binding.highestScoreWarName.text = it.highestScore?.opponentLabel
+            binding.highestScoreWarDate.text = it.highestScore?.war?.war?.createdDate
+            binding.lowestScore.text = it.lowestScore?.score.toString()
+            binding.lowestScoreWarName.text = it.lowestScore?.opponentLabel
+            binding.lowestScoreWarDate.text = it.lowestScore?.war?.war?.createdDate
+            binding.bestTrackview.bind(it.bestMap, shouldDisplayPosition = true)
+            binding.worstTrackview.bind(it.worstMap, shouldDisplayPosition = true)
+            binding.mostPlayedTrackview.bind(it.mostPlayedMap, shouldDisplayPosition = true)
+            binding.lessPlayedTrackview.bind(it.lessPlayedMap, shouldDisplayPosition = true)
+            binding.mostPlayedTeam.text = it.mostPlayedTeam?.teamName
+            binding.mostPlayedTeamTotal.text = it.mostPlayedTeam?.totalPlayedLabel
+
+            it.warStats.highestVictory?.let {
+                binding.noVictory.isVisible = false
+                binding.highestVictory.isVisible = true
+                binding.highestVictory.bind(it)
             }
-            .launchIn(lifecycleScope)
-        viewModel.sharedHighestScore
-            .onEach {
-                binding.highestScore.text = it?.second.toString()
-                binding.highestScoreWarName.text = "vs ${it?.first?.name?.split('-')?.lastOrNull()?.trim()}"
-                binding.highestScoreWarDate.text = it?.first?.war?.createdDate
-            }.launchIn(lifecycleScope)
-        viewModel.sharedLowestScore
-            .onEach {
-                binding.lowestScore.text = it?.second.toString()
-                binding.lowestScoreWarName.text = "vs ${it?.first?.name?.split('-')?.lastOrNull()?.trim()}"
-                binding.lowestScoreWarDate.text = it?.first?.war?.createdDate}
-            .launchIn(lifecycleScope)
-        viewModel.sharedBestMap
-            .onEach { binding.bestTrackview.bind(it, shouldDisplayPosition = true) }
-            .launchIn(lifecycleScope)
-        viewModel.sharedWorstMap
-            .onEach { binding.worstTrackview.bind(it, shouldDisplayPosition = true) }
-            .launchIn(lifecycleScope)
-        viewModel.sharedHighestVictory
-            .onEach { binding.highestVictory.bind(it) }
-            .launchIn(lifecycleScope)
-        viewModel.sharedHighestDefeat
-            .onEach { binding.highestDefeat.bind(it) }
-            .launchIn(lifecycleScope)
-        viewModel.sharedMostPlayedTeam
-            .onEach {
-                binding.mostPlayedTeam.text = it?.first
-                binding.mostPlayedTeamTotal.text = "${it?.second} matchs joués"
-            }.launchIn(lifecycleScope)
-        viewModel.sharedMostPlayedMap
-            .onEach { binding.mostPlayedTrackview.bind(it, shouldDisplayPosition = true) }
-            .launchIn(lifecycleScope)
-        viewModel.sharedLessPlayedMap
-            .onEach { binding.lessPlayedTrackview.bind(it, shouldDisplayPosition = true) }
-            .launchIn(lifecycleScope)
+            it.warStats.loudestDefeat?.let {
+                binding.noDefeat.isVisible = false
+                binding.highestDefeat.isVisible = true
+                binding.highestDefeat.bind(it)
+
+            }
+        }.launchIn(lifecycleScope)
+
         viewModel.sharedTrackClick
             .filter { findNavController().currentDestination?.id == R.id.indivStatsFragment }
             .onEach { findNavController().navigate(IndivStatsFragmentDirections.toMapStats(it)) }

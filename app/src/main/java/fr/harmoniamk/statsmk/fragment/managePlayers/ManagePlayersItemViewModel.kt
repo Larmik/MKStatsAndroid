@@ -9,23 +9,26 @@ import kotlinx.coroutines.FlowPreview
 
 @FlowPreview
 @ExperimentalCoroutinesApi
-class ManagePlayersItemViewModel(val player: User, private val preferencesRepository: PreferencesRepositoryInterface) {
+class ManagePlayersItemViewModel(val player: User? = null, val isCategory: Boolean = false, private val preferencesRepository: PreferencesRepositoryInterface? = null) {
 
     val buttonsVisibility: Int
         get() = when  {
-            preferencesRepository.currentUser?.mid == player.mid ||
-            preferencesRepository.currentUser?.isAdmin.isTrue -> View.VISIBLE
+            preferencesRepository?.currentUser?.mid == player?.mid ||
+            preferencesRepository?.currentUser?.isAdmin.isTrue -> View.VISIBLE
             else -> View.INVISIBLE
         }
 
     val name: String?
-        get() = player.name
+        get() = player?.name
 
     val checkmarkVisibility: Int
         get() = if (hasAccount) View.VISIBLE
                 else View.INVISIBLE
 
     private val hasAccount: Boolean
-        get() = player.accessCode != "null" && !player.accessCode.isNullOrEmpty()
+        get() = player?.accessCode != "null" && !player?.accessCode.isNullOrEmpty()
+
+    val isAlly = player?.team != preferencesRepository?.currentTeam?.mid
+
 
 }

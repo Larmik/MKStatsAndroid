@@ -7,8 +7,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import fr.harmoniamk.statsmk.databinding.TrackItemBinding
 import fr.harmoniamk.statsmk.extension.clicks
-import fr.harmoniamk.statsmk.model.local.MKWar
-import fr.harmoniamk.statsmk.model.local.MKWarTrack
+import fr.harmoniamk.statsmk.model.local.MapDetails
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -18,23 +17,23 @@ import kotlinx.coroutines.flow.onEach
 import kotlin.coroutines.CoroutineContext
 
 @ExperimentalCoroutinesApi
-class MapStatsAdapter(val items: MutableList<Pair<MKWar, MKWarTrack>> = mutableListOf()) :
+class MapStatsAdapter(val items: MutableList<MapDetails> = mutableListOf()) :
     RecyclerView.Adapter<MapStatsAdapter.MapStatsViewHolder>(), CoroutineScope {
 
-    val onMapClick = MutableSharedFlow<Pair<MKWar, MKWarTrack>>()
+    val onMapClick = MutableSharedFlow<MapDetails>()
 
     class MapStatsViewHolder(val binding: TrackItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(track: Pair<MKWar, MKWarTrack>) {
+        fun bind(track: MapDetails) {
             binding.teamScoreTv.isVisible = true
-            binding.root.background.mutate().setTint(ContextCompat.getColor(binding.root.context, track.second.backgroundColor))
-            track.second.track?.trackIndex?.let {
+            binding.root.background.mutate().setTint(ContextCompat.getColor(binding.root.context, track.warTrack.backgroundColor))
+            track.warTrack.track?.trackIndex?.let {
                 binding.trackIv.isVisible = false
-                binding.trackScore.text = track.second.displayedResult
-                binding.trackDiff.text = track.second.displayedDiff
-                binding.shortname.text = track.first.war?.createdDate
-                binding.name.text = track.first.name
+                binding.trackScore.text = track.warTrack.displayedResult
+                binding.trackDiff.text = track.warTrack.displayedDiff
+                binding.shortname.text = track.war.war?.createdDate
+                binding.name.text = track.war.name
             }
         }
     }
@@ -54,7 +53,7 @@ class MapStatsAdapter(val items: MutableList<Pair<MKWar, MKWarTrack>> = mutableL
 
     override fun getItemCount() = items.size
 
-    fun addTracks(tracks: List<Pair<MKWar, MKWarTrack>>) {
+    fun addTracks(tracks: List<MapDetails>) {
         if (tracks.size != itemCount) {
             notifyItemRangeRemoved(0, itemCount)
             items.clear()

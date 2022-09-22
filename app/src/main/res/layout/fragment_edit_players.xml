@@ -84,7 +84,7 @@
         android:layout_height="wrap_content"
         android:paddingVertical="10dp"
         android:background="@drawable/rounded_bg"
-        android:backgroundTint="?android:colorPrimary"
+        android:backgroundTint="?android:colorAccent"
         android:textColor="@color/white"
         android:id="@+id/next_btn"
         android:layout_marginBottom="10dp"

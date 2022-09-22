@@ -25,30 +25,32 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
     private val binding: FragmentSettingsBinding by viewBinding()
     private val viewModel: SettingsViewModel by viewModels()
-    private val popup by lazy { PopupFragment("Êtes-vous sûr de vouloir vous déconnecter ?", "Se déconnecter") }
+    private val disconnectPopup by lazy { PopupFragment("Êtes-vous sûr de vouloir vous déconnecter ?", "Se déconnecter") }
+    private val themePopup by lazy { PopupFragment("La fonctionnalité des thèmes n'a pas pu être testée à fond et est encore au stade expérimental, il se peut qu'elle ne fonctionne pas correctement. Voulez-vous continuer malgré tout ?", positiveText = "Essayer les thèmes") }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.bind(
-            onLogout = popup.onPositiveClick,
+            onLogout = disconnectPopup.onPositiveClick,
             onManageTeam = binding.manageTeamBtn.clicks(),
-            onTheme = binding.themeBtn.clicks(),
+            onTheme = themePopup.onPositiveClick,
             onManagePlayers = binding.managePlayersBtn.clicks(),
             onMigrate = binding.migrateBtn.clicks(),
-            onPopup = flowOf(binding.logoutLayout.clicks().map { true }, popup.onNegativeClick.map { false }).flattenMerge()
+            onPopup = flowOf(binding.logoutLayout.clicks().map { true }, disconnectPopup.onNegativeClick.map { false }).flattenMerge(),
+            onPopupTheme = flowOf(binding.themeBtn.clicks().map { true }, themePopup.onNegativeClick.map { false }).flattenMerge()
         )
-        viewModel.sharedPopupShowing
+        viewModel.sharedDisconnectPopup
             .onEach {
                 when (it) {
-                    true -> popup.takeIf { !it.isAdded }?.show(childFragmentManager, null)
-                    else -> popup.dismiss()
+                    true -> disconnectPopup.takeIf { !it.isAdded }?.show(childFragmentManager, null)
+                    else -> disconnectPopup.dismiss()
                 }
             }
             .launchIn(lifecycleScope)
         viewModel.sharedDisconnect
             .filter { findNavController().currentDestination?.id == R.id.homeFragment }
             .onEach {
-                popup.dismiss()
+                disconnectPopup.dismiss()
                 findNavController().navigate(HomeFragmentDirections.backToWelcome())
             }.launchIn(lifecycleScope)
         viewModel.sharedManageTeam
@@ -59,13 +61,21 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             .filter { findNavController().currentDestination?.id == R.id.homeFragment }
             .onEach { findNavController().navigate(HomeFragmentDirections.managePlayers()) }
             .launchIn(lifecycleScope)
-        /*viewModel.sharedThemeClick
-            .filter { findNavController().currentDestination?.id == R.id.homeFragment }
-            .onEach { findNavController().navigate(HomeFragmentDirections.manageTheme()) }
-            .launchIn(lifecycleScope)*/
         viewModel.sharedThemeClick
-            .onEach { Toast.makeText(requireContext(), "Bientôt disponible", Toast.LENGTH_SHORT).show() }
+            .filter { findNavController().currentDestination?.id == R.id.homeFragment }
+            .onEach {
+                themePopup.dismiss()
+                findNavController().navigate(HomeFragmentDirections.manageTheme())
+            }
             .launchIn(lifecycleScope)
+
+        viewModel.sharedThemePopup
+            .onEach {
+                when (it) {
+                    true -> themePopup.takeIf { !it.isAdded }?.show(childFragmentManager, null)
+                    else -> themePopup.dismiss()
+                }
+            }.launchIn(lifecycleScope)
         viewModel.sharedToast
             .onEach { Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show() }
             .launchIn(lifecycleScope)

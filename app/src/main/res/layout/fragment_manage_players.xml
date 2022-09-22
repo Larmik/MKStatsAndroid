@@ -9,11 +9,11 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/manage_players_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="20sp"
         android:gravity="center"
+        android:text="Gérer les joueurs"
         android:fontFamily="@font/montserrat_bold"
         android:textColor="@color/white" />
 

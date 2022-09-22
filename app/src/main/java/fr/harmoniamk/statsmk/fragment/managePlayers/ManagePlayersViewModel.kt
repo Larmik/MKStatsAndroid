@@ -22,7 +22,6 @@ import javax.inject.Inject
 class ManagePlayersViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface) : ViewModel() {
 
     private val _sharedPlayers = MutableSharedFlow<List<ManagePlayersItemViewModel>>()
-    private val _sharedTitle = MutableSharedFlow<String>()
     private val _sharedAddPlayer = MutableSharedFlow<Unit>()
     private val _sharedAddPlayerVisibility = MutableSharedFlow<Int>()
     private val _sharedEdit = MutableSharedFlow<User>()
@@ -31,7 +30,6 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
     private val _sharedShowDialog = MutableSharedFlow<Boolean>()
 
     val sharedPlayers = _sharedPlayers.asSharedFlow()
-    val sharedTitle = _sharedTitle.asSharedFlow()
     val sharedAddPlayer = _sharedAddPlayer.asSharedFlow()
     val sharedAddPlayerVisibility = _sharedAddPlayerVisibility.asSharedFlow()
     val sharedEdit = _sharedEdit.asSharedFlow()
@@ -40,19 +38,13 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
     val sharedShowDialog = _sharedShowDialog.asSharedFlow()
 
     private val players = mutableListOf<ManagePlayersItemViewModel>()
+    private val allPlayers = mutableListOf<ManagePlayersItemViewModel>()
 
     fun bind(onAdd: Flow<Unit>, onEdit: Flow<User>, onSearch: Flow<String>) {
         firebaseRepository.getUsers()
-            .map {
-                players.clear()
-                players.addAll(it.filter { it.team == preferencesRepository.currentTeam?.mid }.map { ManagePlayersItemViewModel(it, preferencesRepository) })
-                players
-            }
-            .onEach {
-                _sharedTitle.emit("Joueurs ${preferencesRepository.currentTeam?.shortName} (${it.size})")
-                _sharedPlayers.emit(it)
-            }
-            .launchIn(viewModelScope)
+            .map { createPlayersList(list = it) }
+            .onEach { allPlayers.addAll(it) }
+            .bind(_sharedPlayers, viewModelScope)
 
         flowOf(preferencesRepository.currentUser)
             .onEach { delay(20) }
@@ -72,11 +64,7 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
 
         onSearch
             .map { searched ->
-                players.filter {
-                    it.name?.toLowerCase(Locale.ROOT)
-                        ?.contains(searched.toLowerCase(Locale.ROOT)).isTrue
-                }
-            }
+                createPlayersList(modelList = allPlayers.filter { it.name?.toLowerCase(Locale.ROOT)?.contains(searched.toLowerCase(Locale.ROOT)).isTrue })}
             .bind(_sharedPlayers, viewModelScope)
     }
 
@@ -95,11 +83,10 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
             .filter { it.mid != preferencesRepository.currentUser?.mid }
             .flatMapLatest { firebaseRepository.deleteUser(it) }
             .flatMapLatest {  firebaseRepository.getUsers() }
-            .map { list -> list.filter { it.team == preferencesRepository.currentTeam?.mid }.map { ManagePlayersItemViewModel(it, preferencesRepository) } }
+            .map { createPlayersList(list = it) }
             .filter { preferencesRepository.currentUser != null }
             .onEach {
                 _sharedShowDialog.emit(false)
-                _sharedTitle.emit("Joueurs ${preferencesRepository.currentTeam?.shortName} (${it.size})")
                 _sharedPlayers.emit(it)
             }.launchIn(viewModelScope)
 
@@ -110,7 +97,7 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
             }
             .flatMapLatest { firebaseRepository.writeUser(it) }
             .flatMapLatest {  firebaseRepository.getUsers() }
-            .map { list -> list.filter { it.team == preferencesRepository.currentTeam?.mid }.map { ManagePlayersItemViewModel(it, preferencesRepository) } }
+            .map { createPlayersList(list = it) }
             .onEach {
                 _sharedShowDialog.emit(false)
                 _sharedPlayers.emit(it)
@@ -130,11 +117,27 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
             .filter { it.mid != preferencesRepository.currentUser?.mid }
             .flatMapLatest { firebaseRepository.writeUser(it) }
             .flatMapLatest {  firebaseRepository.getUsers() }
-            .map { list -> list.filter { it.team == preferencesRepository.currentTeam?.mid }.map { ManagePlayersItemViewModel(it, preferencesRepository) } }
+            .map { createPlayersList(list = it) }
             .onEach {
                 _sharedShowDialog.emit(false)
-                _sharedTitle.emit("Joueurs ${preferencesRepository.currentTeam?.shortName} (${it.size})")
                 _sharedPlayers.emit(it)
             }.launchIn(viewModelScope)
+
+    }
+
+    private fun createPlayersList(list: List<User>? = null, modelList: List<ManagePlayersItemViewModel>? = null): List<ManagePlayersItemViewModel> {
+        players.clear()
+        players.add(ManagePlayersItemViewModel(isCategory = true))
+        list?.let {
+            players.addAll(list.map { ManagePlayersItemViewModel(player = it, preferencesRepository = preferencesRepository) }.filterNot { it.isAlly }.sortedBy { it.name })
+            players.add(ManagePlayersItemViewModel(isCategory = true))
+            players.addAll(list.map { ManagePlayersItemViewModel(player = it, preferencesRepository = preferencesRepository) }.filter { it.isAlly }.sortedBy { it.name })
+        }
+        modelList?.let {
+            players.addAll(modelList.filterNot { it.isAlly }.sortedBy { it.name })
+            players.add(ManagePlayersItemViewModel(isCategory = true))
+            players.addAll(modelList.filter { it.isAlly }.sortedBy { it.name })
+        }
+        return players
     }
 }

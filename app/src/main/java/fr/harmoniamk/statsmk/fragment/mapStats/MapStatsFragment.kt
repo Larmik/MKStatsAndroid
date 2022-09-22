@@ -38,65 +38,46 @@ class MapStatsFragment : Fragment(R.layout.fragment_map_stats) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        trackIndex?.let {
+        trackIndex?.let { index ->
             val adapter = MapStatsAdapter()
-            binding.statTrackview.bind(it)
+            binding.statTrackview.bind(index)
             binding.mapDetailsRv.adapter = adapter
             viewModel.bind(
-                trackIndex = it,
+                trackIndex = index,
                 onMapClick = adapter.onMapClick,
                 onVictoryClick = binding.highestVictory.clicks(),
                 onDefeatClick = binding.loudestDefeat.clicks()
             )
-            viewModel.sharedTrackList
-                .onEach {
-                    binding.emptyLayout.isVisible = false
-                    binding.mainLayout.isVisible = true
-                    adapter.addTracks(it)
-                }.launchIn(lifecycleScope)
-            viewModel.sharedTrackPlayed
-                .onEach { binding.mapPlayed.text = it.toString() }
-                .launchIn(lifecycleScope)
-            viewModel.sharedTrackWon
-                .onEach { binding.mapWon.text = it.toString() }
-                .launchIn(lifecycleScope)
-            viewModel.sharedWinRate
-                .onEach {
-                    binding.statWinrate.text = "$it %"
-                }
-                .launchIn(lifecycleScope)
-            viewModel.sharedTeamScore
-                .onEach { binding.mapTeamAverage.text = it.toString() }
-                .launchIn(lifecycleScope)
-            viewModel.sharedPlayerScore
-                .onEach {
-                    binding.mapPlayerAverage.text = it.toString()
-                    binding.mapPlayerAverage.setTextColor(
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                            requireContext().getColor(it.positionColor())
-                        else ContextCompat.getColor(requireContext(), it.positionColor())
-                    )
-                }
-                .launchIn(lifecycleScope)
-            viewModel.sharedHighestVictory
-                .filterNotNull()
-                .onEach {
+            viewModel.sharedStats.onEach { stats ->
+                binding.progress.isVisible = false
+                binding.emptyLayout.isVisible = stats.list.isEmpty()
+                binding.mainLayout.isVisible = stats.list.isNotEmpty()
+                adapter.addTracks(stats.list)
+                binding.mapPlayed.text = stats.trackPlayed.toString()
+                binding.mapWon.text = stats.trackWon.toString()
+                binding.statWinrate.text = stats.winRate
+                binding.mapTeamAverage.text = stats.teamScore.toString()
+                binding.mapPlayerAverage.text = stats.playerScore.toString()
+                binding.mapPlayerAverage.setTextColor(
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                        requireContext().getColor(stats.playerScore.positionColor())
+                    else ContextCompat.getColor(requireContext(), stats.playerScore.positionColor())
+                )
+                stats.highestVictory?.let {
                     binding.noVictory.isVisible = false
                     binding.highestVictory.isVisible = true
-                    binding.highestVictory.bind(it.first, it.second)
+                    binding.highestVictory.bind(it.war, it.warTrack)
                 }
-                .launchIn(lifecycleScope)
-            viewModel.sharedLoudestDefeat
-                .filterNotNull()
-                .onEach {
+                stats.loudestDefeat?.let {
                     binding.noDefeat.isVisible = false
                     binding.loudestDefeat.isVisible = true
-                    binding.loudestDefeat.bind(it.first, it.second)
+                    binding.loudestDefeat.bind(it.war, it.warTrack)
                 }
-                .launchIn(lifecycleScope)
+            }.launchIn(lifecycleScope)
+
             viewModel.sharedMapClick
                 .filter { findNavController().currentDestination?.id == R.id.mapStatsFragment }
-                .onEach { findNavController().navigate(MapStatsFragmentDirections.toTrackDetails(it.first.war, it.second.track)) }
+                .onEach { findNavController().navigate(MapStatsFragmentDirections.toTrackDetails(it.war.war, it.warTrack.track)) }
                 .launchIn(lifecycleScope)
 
         }

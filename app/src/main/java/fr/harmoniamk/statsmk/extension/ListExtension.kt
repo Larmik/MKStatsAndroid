@@ -5,6 +5,7 @@ import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarPosition
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
+import fr.harmoniamk.statsmk.model.local.MapDetails
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
@@ -67,5 +68,5 @@ fun List<NewWarPositions>.withPlayerName(firebaseRepository: FirebaseRepositoryI
     emit(temp)
 }
 
-fun List<Pair<MKWar, MKWarTrack>>.getVictory() = this.maxByOrNull { it.second.teamScore }?.takeIf { it.second.displayedDiff.contains('+') }
-fun List<Pair<MKWar, MKWarTrack>>.getDefeat() = this.minByOrNull { it.second.teamScore }?.takeIf { it.second.displayedDiff.contains('-') }
+fun List<MapDetails>.getVictory() = this.maxByOrNull { it.warTrack.teamScore }?.takeIf { it.warTrack.displayedDiff.contains('+') }
+fun List<MapDetails>.getDefeat() = this.minByOrNull { it.warTrack.teamScore }?.takeIf { it.warTrack.displayedDiff.contains('-') }

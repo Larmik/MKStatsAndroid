@@ -54,7 +54,7 @@ class TrackDetailsViewModel @Inject constructor(private val firebaseRepository: 
             .flatMapLatest { it.withPlayerName(firebaseRepository) }
             .onEach {
                 _sharedPositions.emit(it)
-                _sharedButtonsVisible.emit(preferencesRepository.currentUser?.mid == war.playerHostId && !MKWar(war).isOver)
+                _sharedButtonsVisible.emit(preferencesRepository.currentUser?.isAdmin.isTrue && !MKWar(war).isOver)
             }.launchIn(viewModelScope)
 
         onEditTrack.bind(_sharedEditTrackClick, viewModelScope)

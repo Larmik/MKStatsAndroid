@@ -18,6 +18,7 @@ import fr.harmoniamk.statsmk.extension.pointsToPosition
 import fr.harmoniamk.statsmk.extension.positionColor
 import fr.harmoniamk.statsmk.model.local.MKTournamentTrack
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
+import fr.harmoniamk.statsmk.model.local.TrackStats
 
 class TrackView : LinearLayout {
 
@@ -98,7 +99,7 @@ class TrackView : LinearLayout {
                         binding.bestTrackName.setText(map.label)
                     }
                 }
-                is Pair<*, *> -> {
+                is TrackStats -> {
                     binding.bestTrackScore.isVisible = false
                     binding.bestTrackDiff.isVisible = false
                     binding.totalPlayed.isVisible = true
@@ -108,19 +109,18 @@ class TrackView : LinearLayout {
                             R.color.white_alphaed
                         )
                     )
-                    (track.first as? Maps)?.let {
+                    track.map?.let {
                         binding.bestTrackIv.setImageResource(it.picture)
                         binding.bestTrackName.setText(it.label)
                     }
-                    (track.second as? Pair<*, *>)?.let {
                         binding.averageTrackScore.typeface = ResourcesCompat.getFont(context, when (shouldDisplayPosition) {
                             true -> R.font.mk_position
                             else -> R.font.orbitron_semibold
                         })
-                        binding.averageTrackScore.text = it.first.toString()
+                        binding.averageTrackScore.text = track.score.toString()
 
                         if (shouldDisplayPosition) {
-                            val position = (it.first as? Int).pointsToPosition()
+                            val position = track.score.pointsToPosition()
                             binding.averageTrackScoreLabel.text = "Position moyenne"
                             binding.averageTrackScore.text = position.toString()
                             binding.averageTrackScore.setTextSize(TypedValue.COMPLEX_UNIT_SP, 22f)
@@ -130,8 +130,8 @@ class TrackView : LinearLayout {
                                 else ContextCompat.getColor(context, position.positionColor())
                             )
                         }
-                        binding.totalPlayed.text = "jouée ${it.second} fois"
-                    }
+                        binding.totalPlayed.text = "jouée ${track.totalPlayed} fois"
+
                 }
                 else -> binding.bestTrackName.text = "Données corrompues"            }
         }

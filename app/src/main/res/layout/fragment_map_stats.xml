@@ -41,13 +41,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <ProgressBar
+                android:id="@+id/progress"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:progressTint="?android:colorAccent"
+                tools:targetApi="n_mr1"
+                android:indeterminate="true"/>
+
             <TextView
                 android:id="@+id/empty_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:gravity="center"
-                tools:visibility="gone"
+                android:visibility="gone"
                 android:fontFamily="@font/montserrat_regular"
                 android:text="Le circuit n'a jamais été joué. Revenez ici après l'avoir joué au moins une fois pour consulter ses statistiques."
                 android:textColor="@color/white"
@@ -329,10 +337,10 @@
                                 android:id="@+id/no_defeat"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
+                                android:layout_centerInParent="true"
                                 android:layout_marginHorizontal="5dp"
                                 android:fontFamily="@font/montserrat_regular"
                                 android:gravity="center"
-                                android:layout_centerInParent="true"
                                 android:text="Aucune"
                                 android:textColor="@color/white"
                                 android:textSize="16sp" />

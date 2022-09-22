@@ -3,11 +3,13 @@ package fr.harmoniamk.statsmk.repository
 import android.annotation.SuppressLint
 import android.content.Context
 import android.provider.Settings.Secure
+import android.util.Log
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import dagger.Binds
@@ -57,6 +59,7 @@ interface FirebaseRepositoryInterface{
     fun deleteUser(user: User): Flow<Unit>
     fun deleteTeam(team: Team): Flow<Unit>
     fun deleteNewWar(warId: String): Flow<Unit>
+
 }
 
 @FlowPreview

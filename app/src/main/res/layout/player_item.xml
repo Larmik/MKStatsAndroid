@@ -44,7 +44,7 @@
             android:autoSizeTextType="uniform"
             android:visibility="gone"
             android:fontFamily="@font/mk_position"
-            android:textSize="32sp"
+            android:textSize="36sp"
             android:textColor="@color/waluigi_second"
             android:layout_weight="1"
             tools:targetApi="o" />

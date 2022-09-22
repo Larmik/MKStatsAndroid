@@ -72,7 +72,11 @@ class WarDetailsFragment : Fragment(R.layout.fragment_war_details) {
                     .onEach { findNavController().navigate(WarDetailsFragmentDirections.toTrackDetails(war = war.war, warTrack = track.track, index = 0)) }
                     .launchIn(lifecycleScope)
             }.launchIn(lifecycleScope)
-            viewModel.sharedWarPlayers.onEach { bindPlayers(it) }.launchIn(lifecycleScope)
+            viewModel.sharedWarPlayers.onEach {
+                binding.progress.isVisible = false
+                binding.mainLayout.isVisible = true
+                bindPlayers(it)
+            }.launchIn(lifecycleScope)
             viewModel.sharedTracks.onEach {
                 adapter.addTracks(it)
             }.launchIn(lifecycleScope)

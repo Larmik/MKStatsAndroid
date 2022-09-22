@@ -46,6 +46,7 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
         var codeTeam: String? = null
         var chosenTeam: String? = null
         var war: MKWar? = null
+
         flowOf(preferencesRepository.currentUser?.isAdmin.isTrue)
             .bind(_sharedButtonVisible, viewModelScope)
 

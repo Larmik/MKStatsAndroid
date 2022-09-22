@@ -37,7 +37,6 @@ class ManagePlayersFragment : Fragment(R.layout.fragment_manage_players) {
         viewModel.sharedPlayers.onEach {
             adapter.addPlayers(it)
         }.launchIn(lifecycleScope)
-        viewModel.sharedTitle.onEach { binding.managePlayersTitle.text = it }.launchIn(lifecycleScope)
         viewModel.sharedAddPlayer
             .filter { findNavController().currentDestination?.id == R.id.managePlayersFragment }
             .onEach { findNavController().navigate(ManagePlayersFragmentDirections.addPlayer()) }

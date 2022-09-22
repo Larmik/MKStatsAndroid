@@ -30,7 +30,7 @@
         <entry key="app/src/main/res/layout/fragment_edit_war_positions.xml" value="0.3458333333333333" />
         <entry key="app/src/main/res/layout/fragment_edit_war_track.xml" value="0.3458333333333333" />
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.2203125" />
-        <entry key="app/src/main/res/layout/fragment_indiv_stats.xml" value="0.2841409691629956" />
+        <entry key="app/src/main/res/layout/fragment_indiv_stats.xml" value="0.5146666666666667" />
         <entry key="app/src/main/res/layout/fragment_manage_players.xml" value="0.32760416666666664" />
         <entry key="app/src/main/res/layout/fragment_manage_teams.xml" value="0.2953125" />
         <entry key="app/src/main/res/layout/fragment_map_ranking.xml" value="0.32864583333333336" />
@@ -55,6 +55,7 @@
         <entry key="app/src/main/res/layout/fragment_welcome.xml" value="0.3890625" />
         <entry key="app/src/main/res/layout/last_tournament_item.xml" value="0.396078431372549" />
         <entry key="app/src/main/res/layout/manage_players_item.xml" value="0.23125" />
+        <entry key="app/src/main/res/layout/player_category_item.xml" value="0.3180846515604959" />
         <entry key="app/src/main/res/layout/player_item.xml" value="0.33" />
         <entry key="app/src/main/res/layout/quit_war_dialog_fragment.xml" value="0.23072916666666668" />
         <entry key="app/src/main/res/layout/team_item.xml" value="0.22083333333333333" />

@@ -56,7 +56,7 @@ class TrackDetailsFragment : Fragment(R.layout.fragment_track_details) {
         binding.subtitle.text = warTrack?.let { war.createdDate } ?: "Course ${index + 1}/12"
         binding.trackScore.text = item.displayedResult
         binding.trackDiff.text = item.displayedDiff
-        val textColor = when  {
+        var textColor = when  {
             item.displayedDiff.contains("-") -> R.color.lose
             item.displayedDiff.contains("+") -> R.color.win
             else -> R.color.waluigi_second
@@ -107,6 +107,16 @@ class TrackDetailsFragment : Fragment(R.layout.fragment_track_details) {
             .onEach {
                 binding.trackScore.text = it.displayedResult
                 binding.trackDiff.text = it.displayedDiff
+                textColor = when  {
+                    it.displayedDiff.contains("-") -> R.color.lose
+                    it.displayedDiff.contains("+") -> R.color.win
+                    else -> R.color.waluigi_second
+                }
+                binding.trackDiff.setTextColor(
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                        requireContext().getColor(textColor)
+                    else ContextCompat.getColor(requireContext(), textColor)
+                )
             }.launchIn(lifecycleScope)
 
         viewModel.sharedButtonsVisible
