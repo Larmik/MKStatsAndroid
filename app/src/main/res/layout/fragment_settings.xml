@@ -36,6 +36,7 @@
             android:paddingVertical="15dp"
             android:text="Gérer les joueurs"/>
 
+        <!--
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -50,6 +51,7 @@
             android:id="@+id/theme_btn"
             android:paddingVertical="15dp"
             android:text="Thèmes"/>
+            -->
 
         <View
             android:layout_width="match_parent"

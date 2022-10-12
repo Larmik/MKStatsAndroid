@@ -37,7 +37,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             onManagePlayers = binding.managePlayersBtn.clicks(),
             onMigrate = binding.migrateBtn.clicks(),
             onPopup = flowOf(binding.logoutLayout.clicks().map { true }, disconnectPopup.onNegativeClick.map { false }).flattenMerge(),
-            onPopupTheme = flowOf(binding.themeBtn.clicks().map { true }, themePopup.onNegativeClick.map { false }).flattenMerge()
+            onPopupTheme =  themePopup.onNegativeClick.map { false }
         )
         viewModel.sharedDisconnectPopup
             .onEach {

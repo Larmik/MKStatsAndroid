@@ -20,38 +20,38 @@
         <item name="colorSecondary">@color/white</item>
         <item name="colorAccent">@color/harmonia_dark</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor">@color/harmonia_clear</item>
+        <item name="android:statusBarColor">@color/harmonia_dark</item>
         <!-- Customize your theme here. -->
     </style>
 
     <style name="AppThemeWario" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:forceDarkAllowed" tools:targetApi="q"> false </item>
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/wario</item>
+        <item name="colorPrimary">@color/harmonia_clear</item>
         <item name="colorSecondary">@color/white</item>
-        <item name="colorAccent">@color/harmonia_clear</item>
+        <item name="colorAccent">@color/harmonia_dark</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor">@color/wario</item>
+        <item name="android:statusBarColor">@color/harmonia_dark</item>
         <!-- Customize your theme here. -->
     </style>
     <style name="AppThemeMario" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:forceDarkAllowed" tools:targetApi="q"> false </item>
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/mario</item>
+        <item name="colorPrimary">@color/harmonia_clear</item>
         <item name="colorSecondary">@color/white</item>
-        <item name="colorAccent">@color/mario_second</item>
+        <item name="colorAccent">@color/harmonia_dark</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor">@color/mario</item>
+        <item name="android:statusBarColor">@color/harmonia_dark</item>
         <!-- Customize your theme here. -->
     </style>
     <style name="AppThemeLuigi" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:forceDarkAllowed" tools:targetApi="q"> false </item>
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/luigi</item>
+        <item name="colorPrimary">@color/harmonia_clear</item>
         <item name="colorSecondary">@color/white</item>
-        <item name="colorAccent">@color/mario_second</item>
+        <item name="colorAccent">@color/harmonia_dark</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor">@color/luigi</item>
+        <item name="android:statusBarColor">@color/harmonia_dark</item>
         <!-- Customize your theme here. -->
     </style>
 </resources>
