@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         tools:text="HR - OF"
         android:gravity="center"
-        android:textColor="@color/white"
+        android:textColor="@color/harmonia_dark"
         android:fontFamily="@font/orbitron_semibold"
         android:textSize="20sp"/>
     <TextView
@@ -24,7 +24,7 @@
         tools:text="Course 3/12"
         android:layout_marginBottom="10dp"
         android:gravity="center"
-        android:textColor="@color/white"
+        android:textColor="@color/harmonia_dark"
         android:fontFamily="@font/montserrat_regular"
         android:textSize="16sp"/>
 
@@ -53,7 +53,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textSize="30sp"
-            android:textColor="@color/waluigi_second"
+            android:textColor="@color/harmonia_dark"
             android:fontFamily="@font/orbitron_semibold"
             tools:text="58 - 24"/>
         <TextView
@@ -62,7 +62,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:textSize="20sp"
-            android:textColor="@color/white"
+            android:textColor="@color/text_color"
             android:fontFamily="@font/orbitron_semibold"
             tools:text="+34"/>
 
@@ -100,7 +100,7 @@
         android:text="Editer le circuit"
         android:visibility="gone"
         android:id="@+id/edit_track_btn"
-        android:textColor="@color/white"
+        android:textColor="@color/text_color"
         android:gravity="center"/>
     <TextView
         android:layout_width="match_parent"
@@ -113,7 +113,7 @@
         android:text="Ressaisir les positions"
         android:visibility="gone"
         android:id="@+id/reset_positions_btn"
-        android:textColor="@color/white"
+        android:textColor="@color/text_color"
         android:gravity="center"/>
 
 

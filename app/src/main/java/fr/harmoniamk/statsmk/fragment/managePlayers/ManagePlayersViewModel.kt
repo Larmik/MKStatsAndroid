@@ -51,7 +51,7 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
             .mapNotNull {
                 when (it?.isAdmin) {
                     true -> View.VISIBLE
-                    else -> View.INVISIBLE
+                    else -> View.GONE
                 }
             }.bind(_sharedAddPlayerVisibility, viewModelScope)
 

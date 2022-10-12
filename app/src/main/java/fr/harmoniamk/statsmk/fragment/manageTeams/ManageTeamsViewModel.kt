@@ -41,7 +41,10 @@ class ManageTeamsViewModel @Inject constructor(private val preferencesRepository
 
     fun bind(onAddTeam: Flow<Unit>, onQuitTeam: Flow<Unit>, onEditClick: Flow<Team>, onSearch: Flow<String>) {
         firebaseRepository.getTeams()
-            .map { teams.addAll(it.map { ManageTeamsItemViewModel(it, preferencesRepository) }); teams }
+            .map {
+                teams.clear()
+                teams.addAll(it.map { ManageTeamsItemViewModel(it, preferencesRepository) }); teams.sortedBy { it.name }
+            }
             .bind(_sharedTeams, viewModelScope)
 
         onAddTeam.bind(_sharedAddTeam, viewModelScope)

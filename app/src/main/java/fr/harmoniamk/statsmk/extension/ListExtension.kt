@@ -15,12 +15,15 @@ fun List<MKWar>.getLasts(teamId: String?) = this.filter {
 }.sortedByDescending{ it.war?.createdDate?.formatToDate() }.safeSubList(0, 5)
 fun List<MKWar>.getCurrent(teamId: String?) = this.singleOrNull { war -> !war.isOver && war.war?.teamHost == teamId }
 fun List<MKWar>.getBests(teamId: String?) = this.filter { war -> war.isOver && war.war?.teamHost == teamId  }.sortedWith(compareBy<MKWar> { it.scoreHost }.thenBy { it.displayedAverage.toInt() }).reversed().safeSubList(0, 3)
-fun List<MKWar>.withName(firebaseRepository: FirebaseRepositoryInterface) = flow {
+fun List<MKWar?>.withName(firebaseRepository: FirebaseRepositoryInterface) = flow {
     val temp = mutableListOf<MKWar>()
-    this@withName.forEach {
-        val hostName = firebaseRepository.getTeam(it.war?.teamHost).firstOrNull()?.shortName
-        val opponentName = firebaseRepository.getTeam(it.war?.teamOpponent).firstOrNull()?.shortName
-        temp.add(it.apply { this.name = "$hostName - $opponentName" })
+    this@withName.forEach { war ->
+        war?.let {
+            val hostName = firebaseRepository.getTeam(it.war?.teamHost).firstOrNull()?.shortName
+            val opponentName = firebaseRepository.getTeam(it.war?.teamOpponent).firstOrNull()?.shortName
+            temp.add(it.apply { this.name = "$hostName - $opponentName" })
+        }
+
     }
     emit(temp)
 }

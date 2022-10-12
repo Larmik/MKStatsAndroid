@@ -4,14 +4,23 @@
         <item name="android:fontFamily">@font/orbitron_semibold</item>
     </style>
 
+    <!--Custom themes here
+            colorPrimary is for main background color and buttons color
+            colorSecondary is button text color
+            colorAccent is cells backgroundColor and buttons background color
+
+            text color is colorAccent when background is
+
+    -->
+
     <style name="AppThemeWaluigi" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:forceDarkAllowed" tools:targetApi="q"> false </item>
         <!-- Primary brand color. -->
-        <item name="colorPrimary">@color/waluigi</item>
+        <item name="colorPrimary">@color/harmonia_clear</item>
         <item name="colorSecondary">@color/white</item>
-        <item name="colorAccent">@color/waluigi_second</item>
+        <item name="colorAccent">@color/harmonia_dark</item>
         <!-- Status bar color. -->
-        <item name="android:statusBarColor">@color/waluigi</item>
+        <item name="android:statusBarColor">@color/harmonia_clear</item>
         <!-- Customize your theme here. -->
     </style>
 
@@ -20,7 +29,7 @@
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/wario</item>
         <item name="colorSecondary">@color/white</item>
-        <item name="colorAccent">@color/waluigi</item>
+        <item name="colorAccent">@color/harmonia_clear</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor">@color/wario</item>
         <!-- Customize your theme here. -->

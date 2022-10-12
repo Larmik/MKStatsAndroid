@@ -35,20 +35,23 @@ class IndivStatsFragment : Fragment(R.layout.fragment_indiv_stats) {
             onBestClick = binding.bestTrackview.clicks(),
             onWorstClick = binding.worstTrackview.clicks(),
             onMostPlayedClick = binding.mostPlayedTrackview.clicks(),
-            onLessPlayedClick = binding.lessPlayedTrackview.clicks(),
             onVictoryClick = binding.highestVictory.clicks(),
             onDefeatClick = binding.highestDefeat.clicks()
         )
 
         binding.highestDefeat.clipToOutline = true
         binding.highestVictory.clipToOutline = true
+        binding.highestDefeat.isVisible = false
+        binding.highestVictory.isVisible = false
 
         viewModel.sharedStats.onEach {
             binding.progress.isVisible = false
             binding.mainLayout.isVisible = true
+            binding.piechart.bind(it.warStats.winRate)
             binding.warPlayed.text = it.warStats.warsPlayed.toString()
-            binding.warsWon.text = it.warStats.warsWon.toString()
-            binding.winrate.text = it.warStats.winRate
+            binding.winText.text = it.warStats.warsWon.toString()
+            binding.tieText.text = it.warStats.warsTied.toString()
+            binding.loseText.text = it.warStats.warsLoss.toString()
             binding.totalAverage.text = it.averagePoints.toString()
             binding.mapAverage.text = it.averagePlayerMapPoints.toString()
             binding.mapAverage.setTextColor(
@@ -65,7 +68,6 @@ class IndivStatsFragment : Fragment(R.layout.fragment_indiv_stats) {
             binding.bestTrackview.bind(it.bestMap, shouldDisplayPosition = true)
             binding.worstTrackview.bind(it.worstMap, shouldDisplayPosition = true)
             binding.mostPlayedTrackview.bind(it.mostPlayedMap, shouldDisplayPosition = true)
-            binding.lessPlayedTrackview.bind(it.lessPlayedMap, shouldDisplayPosition = true)
             binding.mostPlayedTeam.text = it.mostPlayedTeam?.teamName
             binding.mostPlayedTeamTotal.text = it.mostPlayedTeam?.totalPlayedLabel
 
@@ -81,7 +83,16 @@ class IndivStatsFragment : Fragment(R.layout.fragment_indiv_stats) {
 
             }
         }.launchIn(lifecycleScope)
-
+        viewModel.sharedMostDefeatedTeam
+            .onEach {
+                binding.mostDefeatedTeam.text = it?.first
+                binding.mostDefeatedTeamTotal.text = "${it?.second} victoires"
+            }.launchIn(lifecycleScope)
+        viewModel.sharedLessDefeatedTeam
+            .onEach {
+                binding.lessDefeatedTeam.text = it?.first
+                binding.lessDefeatedTeamTotal.text = "${it?.second} défaites"
+            }.launchIn(lifecycleScope)
         viewModel.sharedTrackClick
             .filter { findNavController().currentDestination?.id == R.id.indivStatsFragment }
             .onEach { findNavController().navigate(IndivStatsFragmentDirections.toMapStats(it)) }

@@ -17,7 +17,6 @@ import fr.harmoniamk.statsmk.extension.backPressedDispatcher
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.extension.isResumed
 import fr.harmoniamk.statsmk.fragment.popup.PopupFragment
-import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.local.MKWar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -57,7 +56,7 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
                 val textColor = when  {
                     it.displayedDiff.contains("-") -> R.color.lose
                     it.displayedDiff.contains("+") -> R.color.win
-                    else -> R.color.waluigi_second
+                    else -> R.color.harmonia_dark
                 }
                 binding.diffScoreTv.setTextColor(
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)

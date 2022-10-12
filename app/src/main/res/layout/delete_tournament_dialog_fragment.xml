@@ -36,7 +36,7 @@
             android:padding="10dp"
             android:text="Annuler le tournoi"
             android:textAllCaps="true"
-            android:textColor="@color/white"
+            android:textColor="@color/text_color"
             android:textSize="15sp"
             tools:targetApi="n_mr1" />
 

@@ -51,12 +51,14 @@ class PlayerListAdapter(val items: MutableList<UserSelector> = mutableListOf()) 
         (holder as? PlayerViewHolder)?.let {
             holder.binding.separator.isVisible = false
             holder.binding.playerPos.isVisible = false
-            holder.binding.root.background.mutate().setTint(ContextCompat.getColor(holder.binding.root.context, if (item.isSelected.isTrue) R.color.win_alphaed else R.color.lose_alphaed))
+            holder.binding.root.background.mutate().setTint(ContextCompat.getColor(holder.binding.root.context, if (item.isSelected.isTrue) R.color.harmonia_dark else R.color.transparent_white))
+            holder.binding.name.setTextColor(ContextCompat.getColor(holder.binding.root.context, if (item.isSelected.isTrue) R.color.white else R.color.harmonia_dark))
             holder.binding.name.text = items[position].user?.name
             holder.binding.root.clicks()
                 .onEach {
                     item.isSelected = !item.isSelected.isTrue
-                    holder.binding.root.background.mutate().setTint(ContextCompat.getColor(holder.binding.root.context, if (item.isSelected.isTrue) R.color.win_alphaed else R.color.lose_alphaed))
+                    holder.binding.root.background.mutate().setTint(ContextCompat.getColor(holder.binding.root.context, if (item.isSelected.isTrue) R.color.harmonia_dark else R.color.transparent_white))
+                    holder.binding.name.setTextColor(ContextCompat.getColor(holder.binding.root.context, if (item.isSelected.isTrue) R.color.white else R.color.harmonia_dark))
                     _sharedUserSelected.emit(item)
                 }.launchIn(this)
         }

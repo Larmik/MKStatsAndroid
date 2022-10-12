@@ -26,7 +26,6 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
     private val _sharedCurrentWar = MutableSharedFlow<MKWar?>()
     private val _sharedCurrentWarClick = MutableSharedFlow<MKWar>()
     private val _sharedLastWars = MutableSharedFlow<List<MKWar>>()
-    private val _sharedBestWars = MutableSharedFlow<List<MKWar>>()
     private val _sharedGoToWar = MutableSharedFlow<MKWar>()
     private val _sharedButtonVisible = MutableSharedFlow<Boolean>()
 
@@ -37,7 +36,6 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
     val sharedCurrentWar = _sharedCurrentWar.asSharedFlow()
     val sharedCurrentWarClick = _sharedCurrentWarClick.asSharedFlow()
     val sharedLastWars = _sharedLastWars.asSharedFlow()
-    val sharedBestWars = _sharedBestWars.asSharedFlow()
     val sharedGoToWar = _sharedGoToWar.asSharedFlow()
     val sharedButtonVisible = _sharedButtonVisible.asSharedFlow()
 
@@ -56,7 +54,7 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
             .shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
 
         warsFlow
-            .mapNotNull { war = it.getCurrent(preferencesRepository.currentTeam?.mid); war}
+            .map { war = it.getCurrent(preferencesRepository.currentTeam?.mid); war}
             .flatMapLatest { listOf(it).withName(firebaseRepository) }
             .onEach { _sharedCurrentWar.emit(it.singleOrNull()) }
             .launchIn(viewModelScope)
@@ -74,9 +72,6 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
             }
             .bind(_sharedLastWars, viewModelScope)
 
-        warsFlow
-            .flatMapLatest { it.getBests(preferencesRepository.currentTeam?.mid).withName(firebaseRepository) }
-            .bind(_sharedBestWars, viewModelScope)
 
         warsFlow
             .mapNotNull { preferencesRepository.currentTeam?.name }

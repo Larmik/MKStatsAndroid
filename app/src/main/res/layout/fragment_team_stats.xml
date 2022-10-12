@@ -10,18 +10,21 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <TextView
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Statistiques de l'équipe"
-            android:gravity="center"
             android:layout_marginVertical="10dp"
-            android:textSize="20sp"
             android:fontFamily="@font/montserrat_bold"
-            android:textColor="@color/white"/>
+            android:gravity="center"
+            android:text="Statistiques de l'équipe"
+            android:textColor="@color/harmonia_dark"
+            android:textSize="20sp" />
 
-    <ProgressBar
+
+
+        <ProgressBar
         android:id="@+id/progress"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -36,8 +39,16 @@
             android:orientation="vertical"
             android:layout_below="@id/title"
             android:visibility="gone"
+            tools:visibility="visible"
             android:paddingHorizontal="15dp"
             android:id="@+id/main_layout">
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/white"/>
+
 
 
 
@@ -45,97 +56,160 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:background="@drawable/rounded_bg"
-                android:backgroundTint="?android:colorAccent"
-                tools:targetApi="n_mr1"
-                android:orientation="vertical">
+                android:orientation="horizontal">
+
 
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:orientation="horizontal">
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
                         android:layout_weight="1"
-                        android:textColor="@color/white"
-                        android:fontFamily="@font/montserrat_bold"
-                        android:textSize="14sp"
-                        android:gravity="center"
-                        android:paddingTop="5dp"
-                        android:text="Wars jouées"/>
+                        android:gravity="bottom"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_height="wrap_content"
+                            android:layout_width="match_parent"
+                            android:textColor="@color/harmonia_dark"
+                            android:fontFamily="@font/orbitron_semibold"
+                            android:textSize="26sp"
+                            android:gravity="center"
+                            android:id="@+id/war_played"
+                            tools:text="73"/>
+                        <TextView
+                            android:layout_height="wrap_content"
+                            android:layout_width="match_parent"
+                            android:textColor="@color/harmonia_dark"
+                            android:fontFamily="@font/orbitron_semibold"
+                            android:textSize="16sp"
+                            android:gravity="center"
+                            android:paddingBottom="5dp"
+                            android:text="wars jouées"/>
+                    </LinearLayout>
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
                         android:layout_weight="1"
-                        android:textColor="@color/white"
-                        android:fontFamily="@font/montserrat_bold"
-                        android:textSize="14sp"
-                        android:gravity="center"
-                        android:paddingTop="5dp"
-                        android:text="Gagnées"/>
+                        android:gravity="bottom"
+                        android:paddingBottom="10dp"
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textColor="@color/white"
-                        android:fontFamily="@font/montserrat_bold"
-                        android:textSize="14sp"
-                        android:gravity="center"
-                        android:paddingTop="5dp"
-                        android:text="Win rate"/>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="10dp"
+                            android:background="@drawable/rounded_bg"
+                            android:backgroundTint="@color/transparent_white"
+                            tools:targetApi="n_mr1"
+                            android:orientation="vertical">
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="5dp"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:textColor="@color/harmonia_dark"
+                                    android:fontFamily="@font/montserrat_bold"
+                                    android:textSize="14sp"
+                                    android:gravity="center"
+                                    android:paddingTop="5dp"
+                                    android:text="V"/>
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:textColor="@color/harmonia_dark"
+                                    android:fontFamily="@font/montserrat_bold"
+                                    android:textSize="14sp"
+                                    android:gravity="center"
+                                    android:paddingTop="5dp"
+                                    android:text="N"/>
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:textColor="@color/harmonia_dark"
+                                    android:fontFamily="@font/montserrat_bold"
+                                    android:textSize="14sp"
+                                    android:gravity="center"
+                                    android:paddingTop="5dp"
+                                    android:text="D"/>
+
+                            </LinearLayout>
+
+
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="horizontal">
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:textColor="@color/harmonia_dark"
+                                    android:fontFamily="@font/orbitron_semibold"
+                                    android:textSize="20sp"
+                                    android:gravity="center"
+                                    android:id="@+id/win_text"
+                                    android:paddingBottom="5dp"
+                                    tools:text="43"/>
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:textColor="@color/harmonia_dark"
+                                    android:fontFamily="@font/orbitron_semibold"
+                                    android:textSize="20sp"
+                                    android:gravity="center"
+                                    android:id="@+id/tie_text"
+                                    android:paddingBottom="5dp"
+                                    tools:text="2"/>
+
+                                <TextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:textColor="@color/harmonia_dark"
+                                    android:fontFamily="@font/orbitron_semibold"
+                                    android:textSize="20sp"
+                                    android:gravity="center"
+                                    android:id="@+id/lose_text"
+                                    android:paddingBottom="5dp"
+                                    tools:text="28"/>
+
+                            </LinearLayout>
+
+
+                        </LinearLayout>
+                    </LinearLayout>
+
+
 
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
+                <fr.harmoniamk.statsmk.ui.PieChart
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textColor="@color/white"
-                        android:fontFamily="@font/orbitron_semibold"
-                        android:textSize="20sp"
-                        android:gravity="center"
-                        android:id="@+id/war_played"
-                        android:paddingBottom="5dp"
-                        tools:text="73"/>
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textColor="@color/white"
-                        android:fontFamily="@font/orbitron_semibold"
-                        android:textSize="20sp"
-                        android:gravity="center"
-                        android:id="@+id/wars_won"
-                        android:paddingBottom="5dp"
-                        tools:text="53"/>
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:textColor="@color/white"
-                        android:fontFamily="@font/orbitron_semibold"
-                        android:textSize="20sp"
-                        android:gravity="center"
-                        android:id="@+id/winrate"
-                        android:paddingBottom="5dp"
-                        tools:text="72%"/>
-
-                </LinearLayout>
-
+                    android:padding="10dp"
+                    android:id="@+id/piechart"/>
             </LinearLayout>
+
 
 
             <LinearLayout
@@ -144,7 +218,7 @@
                 android:layout_marginBottom="10dp"
                 android:paddingVertical="5dp"
                 android:background="@drawable/rounded_bg"
-                android:backgroundTint="?android:colorAccent"
+                android:backgroundTint="@color/transparent_white"
                 tools:targetApi="n_mr1"
                 android:orientation="vertical">
 
@@ -159,20 +233,20 @@
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:gravity="center"
-                        android:textColor="@color/white"
+                        android:textColor="@color/harmonia_dark"
                         android:fontFamily="@font/montserrat_bold"
                         android:textSize="14sp"
-                        android:text="Score moyen"/>
+                        android:text="Moyenne war"/>
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/white"
+                        android:textColor="@color/harmonia_dark"
                         android:fontFamily="@font/montserrat_bold"
                         android:textSize="14sp"
                         android:gravity="center"
-                        android:text="Moyenne pts/map"/>
+                        android:text="Moyenne map"/>
 
                 </LinearLayout>
 
@@ -185,7 +259,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:textColor="@color/white"
+                        android:textColor="@color/text_color"
                         android:fontFamily="@font/orbitron_semibold"
                         android:textSize="20sp"
                         android:gravity="center"
@@ -196,7 +270,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:textColor="@color/white"
+                        android:textColor="@color/text_color"
                         android:fontFamily="@font/orbitron_semibold"
                         android:textSize="20sp"
                         android:gravity="center"
@@ -207,6 +281,13 @@
 
             </LinearLayout>
 
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/white"/>
+
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -216,7 +297,6 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
                     android:orientation="vertical">
                     <TextView
                         android:layout_width="match_parent"
@@ -224,7 +304,7 @@
                         android:text="Equipe la plus jouée"
                         android:gravity="center"
                         android:fontFamily="@font/montserrat_bold"
-                        android:textColor="@color/white"
+                        android:textColor="@color/harmonia_dark"
                         android:paddingTop="5dp"
                         android:textSize="14sp"/>
 
@@ -243,7 +323,7 @@
                             android:id="@+id/most_played_team"
                             android:autoSizeTextType="uniform"
                             android:maxLines="1"
-                            android:textColor="@color/white"
+                            android:textColor="@color/harmonia_dark"
                             android:fontFamily="@font/orbitron_regular"
                             android:gravity="center"
                             android:layout_weight="1"
@@ -258,7 +338,7 @@
                             android:id="@+id/most_played_team_total"
                             android:fontFamily="@font/montserrat_regular"
                             android:textSize="14sp"
-                            android:textColor="@color/white"
+                            android:textColor="@color/harmonia_dark"
                             android:gravity="center"
                             tools:text="14 matchs joués"/>
 
@@ -268,10 +348,6 @@
                 </LinearLayout>
 
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/white"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -291,7 +367,7 @@
                             android:text="La plus vaincue"
                             android:gravity="center"
                             android:fontFamily="@font/montserrat_bold"
-                            android:textColor="@color/white"/>
+                            android:textColor="@color/harmonia_dark"/>
 
 
                         <LinearLayout
@@ -305,7 +381,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:id="@+id/most_defeated_team"
-                                android:textColor="@color/white"
+                                android:textColor="@color/harmonia_dark"
                                 android:fontFamily="@font/orbitron_regular"
                                 android:gravity="center"
                                 android:layout_weight="1"
@@ -323,7 +399,7 @@
                                 android:id="@+id/most_defeated_team_total"
                                 android:fontFamily="@font/montserrat_regular"
                                 android:textSize="14sp"
-                                android:textColor="@color/white"
+                                android:textColor="@color/harmonia_dark"
                                 android:gravity="center"
                                 tools:text="14 matchs joués"/>
 
@@ -332,10 +408,6 @@
 
                     </LinearLayout>
 
-                    <View
-                        android:layout_width="1dp"
-                        android:layout_height="match_parent"
-                        android:background="@color/white"/>
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -348,7 +420,7 @@
                             android:text="La moins vaincue"
                             android:gravity="center"
                             android:fontFamily="@font/montserrat_bold"
-                            android:textColor="@color/white"/>
+                            android:textColor="@color/harmonia_dark"/>
 
 
 
@@ -365,7 +437,7 @@
                                 android:id="@+id/less_defeated_team"
                                 android:autoSizeTextType="uniform"
                                 android:maxLines="1"
-                                android:textColor="@color/white"
+                                android:textColor="@color/harmonia_dark"
                                 android:fontFamily="@font/orbitron_regular"
                                 android:gravity="center"
                                 android:layout_weight="1"
@@ -380,7 +452,7 @@
                                 android:id="@+id/less_defeated_team_total"
                                 android:fontFamily="@font/montserrat_regular"
                                 android:textSize="14sp"
-                                android:textColor="@color/white"
+                                android:textColor="@color/harmonia_dark"
                                 android:gravity="center"
                                 tools:text="14 matchs joués"/>
 
@@ -396,10 +468,16 @@
             </LinearLayout>
 
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/white"/>
+
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginVertical="10dp"
                 android:background="@drawable/rounded_bg"
                 android:backgroundTint="?android:colorAccent"
                 android:padding="10dp"
@@ -415,7 +493,7 @@
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/white"
+                        android:textColor="@color/text_color"
                         android:gravity="center"
                         android:fontFamily="@font/montserrat_bold"
                         android:textSize="14sp"
@@ -425,7 +503,7 @@
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/white"
+                        android:textColor="@color/text_color"
                         android:fontFamily="@font/montserrat_bold"
                         android:textSize="14sp"
                         android:gravity="center"
@@ -444,7 +522,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="5dp"
                         android:layout_weight="1"
-                        app:white="true"
+                        app:win="true"
                         app:vertical="true"/>
 
                     <fr.harmoniamk.statsmk.ui.WarItemView
@@ -453,7 +531,6 @@
                         android:layout_marginHorizontal="5dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        app:white="true"
                         app:vertical="true"/>
 
                 </LinearLayout>
@@ -463,43 +540,77 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:textColor="@color/white"
+                android:textColor="@color/text_color"
                 />
+
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/rounded_bg"
-                android:padding="10dp"
-                android:layout_marginBottom="10dp"
-                android:backgroundTint="?android:colorAccent"
-                android:orientation="vertical">
+                android:layout_marginBottom="15dp"
+                android:backgroundTint="@color/transparent_white"
+                android:orientation="vertical"
+                android:padding="10dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
                     android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/white"
+                        android:layout_weight="1"
                         android:fontFamily="@font/montserrat_bold"
-                        android:textSize="14sp"
                         android:gravity="center"
-                        android:text="Meilleur circuit"/>
+                        android:text="Circuit le plus joué"
+                        android:textColor="@color/harmonia_dark"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:layout_marginBottom="10dp"
+                    android:orientation="horizontal">
+
+                    <fr.harmoniamk.statsmk.ui.TrackView
+                        android:id="@+id/most_played_trackview"
+                        android:layout_width="150dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="5dp"
+                        app:collapsed="true" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="0dp"
-                        android:layout_weight="1"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/white"
-                        android:gravity="center"
+                        android:layout_weight="1"
                         android:fontFamily="@font/montserrat_bold"
-                        android:textSize="14sp"
-                        android:text="Pire circuit"/>
+                        android:gravity="center"
+                        android:text="Meilleur circuit"
+                        android:textColor="@color/harmonia_dark"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/montserrat_bold"
+                        android:gravity="center"
+                        android:text="Pire circuit"
+                        android:textColor="@color/harmonia_dark"
+                        android:textSize="14sp" />
 
                 </LinearLayout>
 
@@ -511,10 +622,10 @@
                     <fr.harmoniamk.statsmk.ui.TrackView
                         android:id="@+id/best_trackview"
                         android:layout_width="0dp"
-                        android:layout_marginHorizontal="5dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="5dp"
                         android:layout_weight="1"
-                        app:collapsed="true"/>
+                        app:collapsed="true" />
 
                     <fr.harmoniamk.statsmk.ui.TrackView
                         android:id="@+id/worst_trackview"
@@ -522,71 +633,11 @@
                         android:layout_height="wrap_content"
                         android:layout_marginHorizontal="5dp"
                         android:layout_weight="1"
-                        app:collapsed="true"/>
+                        app:collapsed="true" />
 
 
                 </LinearLayout>
 
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:backgroundTint="?android:colorAccent"
-                android:padding="10dp"
-                android:background="@drawable/rounded_bg"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/white"
-                        android:gravity="center"
-                        android:fontFamily="@font/montserrat_bold"
-                        android:textSize="14sp"
-                        android:text="Le plus joué"/>
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/white"
-                        android:fontFamily="@font/montserrat_bold"
-                        android:textSize="14sp"
-                        android:gravity="center"
-                        android:text="Le moins joué"/>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <fr.harmoniamk.statsmk.ui.TrackView
-                        android:id="@+id/most_played_trackview"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginHorizontal="5dp"
-                        android:layout_weight="1"
-                        app:collapsed="true"/>
-
-                    <fr.harmoniamk.statsmk.ui.TrackView
-                        android:id="@+id/less_played_trackview"
-                        android:layout_width="0dp"
-                        android:layout_marginHorizontal="5dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        app:collapsed="true"/>
-
-                </LinearLayout>
 
             </LinearLayout>
 

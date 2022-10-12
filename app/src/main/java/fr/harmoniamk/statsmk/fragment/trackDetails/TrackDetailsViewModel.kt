@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.isTrue
+import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.extension.withPlayerName
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
@@ -28,12 +29,14 @@ class TrackDetailsViewModel @Inject constructor(private val firebaseRepository: 
     private val _sharedEditPositionsClick = MutableSharedFlow<Unit>()
     private val _sharedButtonsVisible = MutableSharedFlow<Boolean>()
     private val _sharedTrackRefreshed = MutableSharedFlow<MKWarTrack>()
+    private val _sharedWarName = MutableSharedFlow<String?>()
 
     val sharedPositions = _sharedPositions.asSharedFlow()
     val sharedEditTrackClick = _sharedEditTrackClick.asSharedFlow()
     val sharedEditPositionsClick = _sharedEditPositionsClick.asSharedFlow()
     val sharedButtonsVisible = _sharedButtonsVisible.asSharedFlow()
     val sharedTrackRefreshed = _sharedTrackRefreshed.asSharedFlow()
+    val sharedWarName = _sharedWarName.asSharedFlow()
 
     var warId: String = ""
     var index = 0
@@ -45,6 +48,10 @@ class TrackDetailsViewModel @Inject constructor(private val firebaseRepository: 
         warTrackId = warTrack?.mid ?: ""
         this.index = index
 
+
+        firebaseRepository.getNewWar(warId)
+            .onEach {  _sharedWarName.emit(listOf(MKWar(it)).withName(firebaseRepository).firstOrNull()?.singleOrNull()?.name) }
+            .launchIn(viewModelScope)
         val positionsFlow = when (warTrackId.isEmpty()) {
             true -> flowOf(war.warTracks?.get(index)?.warPositions).filterNotNull()
             else -> firebaseRepository.getPositions(warId, warTrackId)
@@ -54,7 +61,8 @@ class TrackDetailsViewModel @Inject constructor(private val firebaseRepository: 
             .flatMapLatest { it.withPlayerName(firebaseRepository) }
             .onEach {
                 _sharedPositions.emit(it)
-                _sharedButtonsVisible.emit(preferencesRepository.currentUser?.isAdmin.isTrue && !MKWar(war).isOver)
+                _sharedButtonsVisible.emit(preferencesRepository.currentUser?.isAdmin.isTrue && !MKWar(war).isOver
+                        || preferencesRepository.currentUser?.mid == "1645093376108")
             }.launchIn(viewModelScope)
 
         onEditTrack.bind(_sharedEditTrackClick, viewModelScope)

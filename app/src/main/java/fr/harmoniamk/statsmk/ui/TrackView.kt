@@ -106,7 +106,7 @@ class TrackView : LinearLayout {
                     binding.root.background.mutate().setTint(
                         ContextCompat.getColor(
                             binding.root.context,
-                            R.color.white_alphaed
+                            R.color.transparent
                         )
                     )
                     track.map?.let {

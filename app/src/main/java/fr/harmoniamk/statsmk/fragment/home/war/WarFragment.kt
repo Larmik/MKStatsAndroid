@@ -28,18 +28,16 @@ class WarFragment : Fragment(R.layout.fragment_war) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val bestAdapter = BestWarAdapter()
         val lastAdapter = LastWarAdapter()
 
         lifecycleScope.launchWhenResumed {
-            binding.bestWarRv.adapter = bestAdapter
             binding.lastWarRv.adapter = lastAdapter
             viewModel.bind(
                 onCodeTeam = binding.teamCodeEt.onTextChanged(),
                 onTeamClick = binding.nextBtn.clicks(),
                 onCreateWar = binding.createWarBtn.clicks(),
                 onCurrentWarClick = binding.currentWarCard.clicks(),
-                onWarClick = flowOf(lastAdapter.sharedItemClick, bestAdapter.sharedItemClick).flattenMerge()
+                onWarClick = lastAdapter.sharedItemClick
             )
 
             viewModel.sharedTeam
@@ -74,6 +72,8 @@ class WarFragment : Fragment(R.layout.fragment_war) {
 
             viewModel.sharedCurrentWar
                 .onEach {
+                    binding.createWarLayout.isVisible = false
+                    binding.currentWarLayout.isVisible = false
                     binding.createWarLayout.isVisible = it == null
                     binding.currentWarLayout.isVisible = it != null
                     binding.nameTv.text = it?.name
@@ -91,11 +91,6 @@ class WarFragment : Fragment(R.layout.fragment_war) {
                 .onEach {
                     binding.lastWarLayout.isVisible = it.isNotEmpty()
                     lastAdapter.addWars(it)
-                }.launchIn(lifecycleScope)
-            viewModel.sharedBestWars
-                .onEach {
-                    binding.bestWarLayout.isVisible = it.isNotEmpty()
-                    bestAdapter.addWars(it)
                 }.launchIn(lifecycleScope)
 
             viewModel.sharedGoToWar

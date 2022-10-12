@@ -52,14 +52,13 @@ class TrackDetailsFragment : Fragment(R.layout.fragment_track_details) {
         val trackView = TrackView(requireContext())
         trackView.bind(item.track?.trackIndex)
         binding.trackView.addView(trackView)
-        binding.title.text = war.name
         binding.subtitle.text = warTrack?.let { war.createdDate } ?: "Course ${index + 1}/12"
         binding.trackScore.text = item.displayedResult
         binding.trackDiff.text = item.displayedDiff
         var textColor = when  {
             item.displayedDiff.contains("-") -> R.color.lose
             item.displayedDiff.contains("+") -> R.color.win
-            else -> R.color.waluigi_second
+            else -> R.color.harmonia_dark
         }
         binding.trackDiff.setTextColor(
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
@@ -74,6 +73,10 @@ class TrackDetailsFragment : Fragment(R.layout.fragment_track_details) {
             onEditTrack = binding.editTrackBtn.clicks(),
             onEditPositions = binding.resetPositionsBtn.clicks()
         )
+            viewModel.sharedWarName
+                .onEach {
+                    binding.title.text = it
+                }.launchIn(lifecycleScope)
 
         viewModel.sharedPositions
             .onEach { adapter.addResults(it) }
@@ -110,7 +113,7 @@ class TrackDetailsFragment : Fragment(R.layout.fragment_track_details) {
                 textColor = when  {
                     it.displayedDiff.contains("-") -> R.color.lose
                     it.displayedDiff.contains("+") -> R.color.win
-                    else -> R.color.waluigi_second
+                    else -> R.color.harmonia_dark
                 }
                 binding.trackDiff.setTextColor(
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)

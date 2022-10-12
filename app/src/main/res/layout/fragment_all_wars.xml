@@ -14,7 +14,7 @@
         android:text="Toutes les wars en équipe"
         android:gravity="center"
         android:textSize="20sp"
-        android:textColor="@color/white"
+        android:textColor="@color/harmonia_dark"
         android:fontFamily="@font/montserrat_bold"/>
 
 

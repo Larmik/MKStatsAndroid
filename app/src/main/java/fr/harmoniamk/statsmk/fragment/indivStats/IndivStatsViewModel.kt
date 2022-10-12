@@ -19,6 +19,8 @@ import javax.inject.Inject
 class IndivStatsViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface) : ViewModel() {
 
     private val _sharedMostPlayedTeam = MutableSharedFlow<TeamStats?>()
+    private val _sharedMostDefeatedTeam = MutableSharedFlow<Pair<String?, Int?>?>()
+    private val _sharedLessDefeatedTeam = MutableSharedFlow<Pair<String?, Int?>?>()
     private val _sharedTrackClick = MutableSharedFlow<Int>()
     private val _sharedWarClick = MutableSharedFlow<MKWar>()
     private val _sharedStats = MutableSharedFlow<Stats>()
@@ -26,11 +28,12 @@ class IndivStatsViewModel @Inject constructor(private val firebaseRepository: Fi
     val sharedTrackClick = _sharedTrackClick.asSharedFlow()
     val sharedWarClick = _sharedWarClick.asSharedFlow()
     val sharedStats = _sharedStats.asSharedFlow()
+    val sharedMostDefeatedTeam = _sharedMostDefeatedTeam.asSharedFlow()
+    val sharedLessDefeatedTeam = _sharedLessDefeatedTeam.asSharedFlow()
 
     private var bestMap: TrackStats? = null
     private var worstMap: TrackStats? = null
     private var mostPlayedMap: TrackStats? = null
-    private var lessPlayedMap: TrackStats? = null
     private var highestVicory: MKWar? = null
     private var loudestDefeat: MKWar? = null
 
@@ -38,7 +41,6 @@ class IndivStatsViewModel @Inject constructor(private val firebaseRepository: Fi
         onBestClick: Flow<Unit>,
         onWorstClick: Flow<Unit>,
         onMostPlayedClick: Flow<Unit>,
-        onLessPlayedClick: Flow<Unit>,
         onVictoryClick: Flow<Unit>,
         onDefeatClick: Flow<Unit>) {
 
@@ -58,13 +60,18 @@ class IndivStatsViewModel @Inject constructor(private val firebaseRepository: Fi
                 val warScores = mutableListOf<WarScore>()
                 val averageForMaps = mutableListOf<TrackStats>()
 
-                val mostPlayedTeamId = list.groupBy { it.war?.teamOpponent }
-                    .toList()
-                    .sortedByDescending { it.second.size }
-                    .firstOrNull()
+                val mostPlayedTeamId = warsWithOpponentName(list.filterNot { it.war?.teamOpponent == "1652270659565" })
+                val mostDefeatedTeamId = warsWithOpponentName(list.filterNot { it.war?.teamOpponent == "1652270659565" }.filterNot { it.displayedDiff.contains('-') })
+                val lessDefeatedTeamId = warsWithOpponentName(list.filterNot { it.war?.teamOpponent == "1652270659565" }.filter { it.displayedDiff.contains('-') })
 
                 val mostPlayedTeamData = firebaseRepository.getTeam(mostPlayedTeamId?.first ?: "")
                     .mapNotNull { TeamStats(it?.name, mostPlayedTeamId?.second?.size) }
+                    .firstOrNull()
+                val mostDefeatedTeamData = firebaseRepository.getTeam(mostDefeatedTeamId?.first ?: "")
+                    .mapNotNull { Pair(it?.name, mostDefeatedTeamId?.second?.size) }
+                    .firstOrNull()
+                val lessDefeatedTeamData = firebaseRepository.getTeam(lessDefeatedTeamId?.first ?: "")
+                    .mapNotNull { Pair(it?.name, lessDefeatedTeamId?.second?.size) }
                     .firstOrNull()
 
                 list.map { Pair(it, it.war?.warTracks?.map { MKWarTrack(it) }) }
@@ -94,7 +101,6 @@ class IndivStatsViewModel @Inject constructor(private val firebaseRepository: Fi
                 bestMap = averageForMaps.maxByOrNull { it.score }
                 worstMap = averageForMaps.minByOrNull { it.score }
                 mostPlayedMap = averageForMaps.maxByOrNull { it.totalPlayed }
-                lessPlayedMap = averageForMaps.minByOrNull { it.totalPlayed }
                 highestVicory = list.maxByOrNull { war -> war.scoreHost }
                 loudestDefeat = list.minByOrNull { war -> war.scoreHost }
 
@@ -105,6 +111,8 @@ class IndivStatsViewModel @Inject constructor(private val firebaseRepository: Fi
                     averageForMaps = averageForMaps,
                     mostPlayedTeam = mostPlayedTeamData
                 )
+                _sharedMostDefeatedTeam.emit(mostDefeatedTeamData)
+                _sharedLessDefeatedTeam.emit(lessDefeatedTeamData)
                 _sharedStats.emit(newStats)
                 _sharedMostPlayedTeam.emit(mostPlayedTeamData)
             }.launchIn(viewModelScope)
@@ -113,7 +121,6 @@ class IndivStatsViewModel @Inject constructor(private val firebaseRepository: Fi
             onBestClick.mapNotNull { bestMap },
             onWorstClick.mapNotNull { worstMap },
             onMostPlayedClick.mapNotNull { mostPlayedMap },
-            onLessPlayedClick.mapNotNull { lessPlayedMap }
         ).flattenMerge()
             .map { Maps.values().indexOf(it.map) }
             .bind(_sharedTrackClick, viewModelScope)
@@ -122,5 +129,10 @@ class IndivStatsViewModel @Inject constructor(private val firebaseRepository: Fi
             .flattenMerge()
             .bind(_sharedWarClick, viewModelScope)
     }
+
+    private fun warsWithOpponentName(list: List<MKWar>): Pair<String?, List<MKWar>>? = list.groupBy { it.war?.teamOpponent }
+        .toList()
+        .sortedByDescending { it.second.size }
+        .firstOrNull()
 
 }

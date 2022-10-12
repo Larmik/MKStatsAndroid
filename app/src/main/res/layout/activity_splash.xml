@@ -20,7 +20,7 @@
             android:fontFamily="@font/mk_position"
             android:gravity="bottom|center"
             android:text="MARIO KART"
-            android:textColor="@color/white"
+            android:textColor="@color/text_color"
             android:textSize="100sp"/>
         <TextView
             android:layout_width="match_parent"
@@ -30,7 +30,7 @@
             android:fontFamily="@font/orbitron_semibold"
             android:gravity="center"
             android:text="Stats"
-            android:textColor="@color/white"
+            android:textColor="@color/text_color"
             android:textSize="50sp"/>
     </LinearLayout>
 

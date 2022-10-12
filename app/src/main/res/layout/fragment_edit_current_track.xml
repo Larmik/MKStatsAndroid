@@ -13,7 +13,7 @@
         android:paddingVertical="10dp"
         android:gravity="center"
         android:textSize="18sp"
-        android:textColor="@color/white"
+        android:textColor="@color/harmonia_dark"
         android:fontFamily="@font/roboto"
         android:text="Circuit sélectionné"/>
 
@@ -54,7 +54,7 @@
                     tools:text="Bowser Castle"
                     android:maxLines="1"
                     android:autoSizeTextType="uniform"
-                    android:textColor="@color/waluigi_second"
+                    android:textColor="@color/harmonia_dark"
                     android:layout_width="match_parent"
                     android:fontFamily="@font/montserrat_bold"
                     android:layout_marginBottom="10dp"
@@ -64,7 +64,7 @@
 
                 <TextView
                     tools:text="BC"
-                    android:textColor="@color/waluigi_second"
+                    android:textColor="@color/harmonia_dark"
                     android:fontFamily="@font/orbitron_semibold"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -92,7 +92,7 @@
         android:paddingVertical="10dp"
         android:gravity="center"
         android:textSize="18sp"
-        android:textColor="@color/white"
+        android:textColor="@color/text_color"
         android:fontFamily="@font/roboto"
         android:text="Position"/>
     <TextView
@@ -100,7 +100,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:textSize="120sp"
-        android:textColor="@color/white"
+        android:textColor="@color/text_color"
         android:id="@+id/pos_tv"
         android:fontFamily="@font/mk_position"
         android:text="12."/>

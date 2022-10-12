@@ -26,7 +26,7 @@
             android:gravity="center"
             android:layout_marginBottom="5dp"
             android:autoSizeTextType="uniform"
-            android:textColor="@color/waluigi_second"
+            android:textColor="@color/harmonia_dark"
             android:layout_width="match_parent"
             android:fontFamily="@font/montserrat_bold"
             android:layout_height="wrap_content"
@@ -38,9 +38,8 @@
             tools:text="jouée 26 fois"
             android:maxLines="1"
             android:gravity="center"
-            android:layout_marginBottom="5dp"
             android:autoSizeTextType="uniform"
-            android:textColor="@color/waluigi_second"
+            android:textColor="@color/harmonia_dark"
             android:layout_width="match_parent"
             android:fontFamily="@font/montserrat_regular"
             android:layout_height="wrap_content"
@@ -70,7 +69,7 @@
                     android:fontFamily="@font/orbitron_semibold"
                     android:gravity="center"
                     android:maxLines="1"
-                    android:textColor="@color/waluigi_second"
+                    android:textColor="@color/harmonia_dark"
                     android:textSize="14sp"
                     tools:targetApi="o"
                     tools:text="58 - 24" />
@@ -85,7 +84,7 @@
                     android:gravity="center"
                     android:maxLines="1"
                     android:text="Score moyen"
-                    android:textColor="@color/waluigi_second"
+                    android:textColor="@color/harmonia_dark"
                     android:textSize="14sp"
                     tools:targetApi="o" />
 
@@ -104,7 +103,7 @@
                     android:fontFamily="@font/orbitron_semibold"
                     android:gravity="center"
                     android:maxLines="1"
-                    android:textColor="@color/waluigi_second"
+                    android:textColor="@color/harmonia_dark"
                     android:textSize="11sp"
                     tools:targetApi="o"
                     tools:text="+34" />
@@ -117,7 +116,7 @@
                     android:fontFamily="@font/orbitron_semibold"
                     android:gravity="center"
                     android:maxLines="1"
-                    android:textColor="@color/waluigi_second"
+                    android:textColor="@color/harmonia_dark"
                     android:textSize="14sp"
                     tools:targetApi="o"
                     tools:text="9" />

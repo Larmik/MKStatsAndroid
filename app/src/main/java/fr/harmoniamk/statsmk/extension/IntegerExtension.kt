@@ -44,5 +44,30 @@ fun Int?.positionColor() = when (this) {
     9,10 -> R.color.pos_9_10
     11 -> R.color.pos_11
     12 -> R.color.pos_12
-    else -> R.color.waluigi_second
+    else -> R.color.harmonia_dark
+}
+
+fun Int.warScoreToDiff() : String {
+    val halfDiff = when {
+        this > 492 -> this - 492
+        this < 492 -> 492 - this
+        else -> 0
+    }
+    return when {
+        this > 492 -> "+${halfDiff*2}"
+        this < 492 -> "-${halfDiff*2}"
+        else -> "0"
+    }
+}
+fun Int.trackScoreToDiff() : String {
+    val halfDiff = when {
+        this > 41 -> this - 41
+        this < 41 -> 41 - this
+        else -> 0
+    }
+    return when {
+        this > 41 -> "+${halfDiff*2}"
+        this < 41 -> "-${halfDiff*2}"
+        else -> "0"
+    }
 }

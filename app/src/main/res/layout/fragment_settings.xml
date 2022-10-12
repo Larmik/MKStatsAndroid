@@ -14,7 +14,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"
+            android:textColor="@color/harmonia_dark"
             android:fontFamily="@font/montserrat_regular"
             android:textSize="16sp"
             android:id="@+id/manage_team_btn"
@@ -29,7 +29,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"
+            android:textColor="@color/harmonia_dark"
             android:fontFamily="@font/montserrat_regular"
             android:textSize="16sp"
             android:id="@+id/manage_players_btn"
@@ -44,7 +44,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"
+            android:textColor="@color/harmonia_dark"
             android:fontFamily="@font/montserrat_regular"
             android:textSize="16sp"
             android:id="@+id/theme_btn"
@@ -59,7 +59,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"
+            android:textColor="@color/harmonia_dark"
             android:fontFamily="@font/montserrat_regular"
             android:textSize="16sp"
             android:id="@+id/disconnect_btn"
@@ -75,7 +75,7 @@
             android:layout_width="match_parent"
             android:visibility="gone"
             android:layout_height="wrap_content"
-            android:textColor="@color/white"
+            android:textColor="@color/text_color"
             android:fontFamily="@font/montserrat_regular"
             android:textSize="16sp"
             android:id="@+id/migrate_btn"
@@ -94,7 +94,7 @@
         android:id="@+id/current_user_label"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:textColor="@color/white"
+        android:textColor="@color/text_color"
         android:fontFamily="@font/montserrat_regular"
         android:gravity="bottom|end"/>
 

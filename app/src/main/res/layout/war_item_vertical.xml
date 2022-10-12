@@ -21,7 +21,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/orbitron_semibold"
                 android:textSize="16sp"
-                android:textColor="@color/waluigi_second"
+                android:textColor="@color/harmonia_dark"
                 tools:text="HR vs OF" />
 
             <TextView
@@ -29,7 +29,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/montserrat_regular"
-                android:textColor="@color/waluigi_second"
+                android:textColor="@color/harmonia_dark"
                 android:textSize="13sp"
                 android:gravity="center"
                 tools:text="18/01/2022 \n 21h" />
@@ -51,7 +51,7 @@
 
                 <TextView
                     android:layout_width="wrap_content"
-                    android:textColor="@color/waluigi_second"
+                    android:textColor="@color/harmonia_dark"
                     android:layout_height="wrap_content"
                     android:textSize="20sp"
                     android:fontFamily="@font/orbitron_semibold"
@@ -64,7 +64,7 @@
                     android:layout_height="wrap_content"
                     android:text="+26"
                     android:textSize="13sp"
-                    android:textColor="@color/waluigi_second"
+                    android:textColor="@color/harmonia_dark"
                     android:id="@+id/war_diff"/>
 
             </LinearLayout>

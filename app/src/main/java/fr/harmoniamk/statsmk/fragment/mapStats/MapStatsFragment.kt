@@ -18,7 +18,6 @@ import fr.harmoniamk.statsmk.extension.positionColor
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -57,7 +56,10 @@ class MapStatsFragment : Fragment(R.layout.fragment_map_stats) {
                 binding.mapWon.text = stats.trackWon.toString()
                 binding.statWinrate.text = stats.winRate
                 binding.mapTeamAverage.text = stats.teamScore.toString()
-                binding.mapPlayerAverage.text = stats.playerScore.toString()
+                binding.mapPlayerAverage.text = when (stats.playerScore) {
+                    0 -> "-"
+                    else -> stats.playerScore.toString()
+                }
                 binding.mapPlayerAverage.setTextColor(
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
                         requireContext().getColor(stats.playerScore.positionColor())

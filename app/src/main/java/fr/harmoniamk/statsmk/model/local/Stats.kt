@@ -2,7 +2,6 @@ package fr.harmoniamk.statsmk.model.local
 
 import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.extension.*
-import fr.harmoniamk.statsmk.repository.PreferencesRepository
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -16,12 +15,13 @@ class Stats(
 ) {
      val highestScore: WarScore? = warScores.maxByOrNull { it.score }
      val lowestScore: WarScore? = warScores.minByOrNull { it.score }
-     val bestMap: TrackStats? = averageForMaps.maxByOrNull { it.score }
-     val worstMap: TrackStats? = averageForMaps.minByOrNull { it.score }
+     val bestMap: TrackStats? = averageForMaps.filter { it.totalPlayed >= 2 }.maxByOrNull { it.score }
+     val worstMap: TrackStats? = averageForMaps.filter { it.totalPlayed >= 2 }.minByOrNull { it.score }
      val mostPlayedMap: TrackStats? = averageForMaps.maxByOrNull { it.totalPlayed }
-     val lessPlayedMap: TrackStats? = averageForMaps.minByOrNull { it.totalPlayed }
      val averagePoints: Int = warScores.map { it.score }.sum() / warScores.count()
+     val averagePointsLabel: String = averagePoints.warScoreToDiff()
      val averageMapPoints: Int = (maps.map { it.score }.sum() / maps.size)
+     val averageMapPointsLabel = averageMapPoints.trackScoreToDiff()
      val averagePlayerMapPoints: Int = averageMapPoints.pointsToPosition()
  }
 
@@ -46,6 +46,8 @@ class TeamStats(val teamName: String?, totalPlayed: Int?) {
 class WarStats(list : List<MKWar>) {
     val warsPlayed = list.count()
     val warsWon = list.filterNot { war -> war.displayedDiff.contains('-') }.count()
+    val warsTied = list.filter { war -> war.displayedDiff == "0" }.count()
+    val warsLoss = list.filter { war -> war.displayedDiff.contains('-') }.count()
     val winRate = "${((warsWon*100) / warsPlayed)} %"
     val highestVictory = list.maxByOrNull { war -> war.scoreHost }.takeIf { it?.displayedDiff?.contains("+").isTrue }
     val loudestDefeat = list.minByOrNull { war -> war.scoreHost }.takeIf { it?.displayedDiff?.contains("-").isTrue }

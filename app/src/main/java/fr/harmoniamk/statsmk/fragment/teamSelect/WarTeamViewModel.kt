@@ -35,7 +35,7 @@ class WarTeamViewModel @Inject constructor(private val firebaseRepository: Fireb
             .map {
                 teams.clear()
                 teams.addAll(it.filterNot { team -> team.mid == preferencesRepository.currentTeam?.mid })
-                teams
+                teams.sortedBy { it.name }
             }
             .bind(_sharedTeams, viewModelScope)
         onSearch
@@ -43,7 +43,7 @@ class WarTeamViewModel @Inject constructor(private val firebaseRepository: Fireb
                 teams.filter {
                     it.shortName?.toLowerCase(Locale.ROOT)
                         ?.contains(searched.toLowerCase(Locale.ROOT)).isTrue || it.name?.toLowerCase(Locale.ROOT)?.contains(searched.toLowerCase(Locale.ROOT)) ?: true
-                }
+                }.sortedBy { it.name }
             }
             .bind(_sharedTeams, viewModelScope)
 

@@ -14,7 +14,7 @@
         android:fontFamily="@font/montserrat_regular"
         android:gravity="center"
         android:text="Êtes-vous sûr de vouloir quitter la session ? Les résultats de la map en cours de saisie seront perdus."
-        android:textColor="@color/waluigi_second"
+        android:textColor="@color/harmonia_dark"
         android:textSize="14sp" />
 
     <LinearLayout
@@ -36,7 +36,7 @@
             android:padding="10dp"
             android:text="Quitter la session"
             android:textAllCaps="true"
-            android:textColor="@color/white"
+            android:textColor="@color/text_color"
             android:textSize="15sp" />
 
         <TextView
@@ -50,7 +50,7 @@
             android:padding="10dp"
             android:text="Retour"
             android:textAllCaps="true"
-            android:textColor="@color/waluigi_second"
+            android:textColor="@color/harmonia_dark"
             android:textSize="15sp" />
 
     </LinearLayout>

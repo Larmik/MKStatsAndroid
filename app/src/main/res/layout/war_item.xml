@@ -25,7 +25,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/orbitron_semibold"
                 android:textSize="16sp"
-                android:textColor="@color/waluigi_second"
+                android:textColor="@color/harmonia_dark"
                 tools:text="HR vs OF" />
 
             <TextView
@@ -33,7 +33,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/montserrat_regular"
-                android:textColor="@color/waluigi_second"
+                android:textColor="@color/harmonia_dark"
                 android:textSize="13sp"
                 tools:text="18/01/2022 - 21h" />
 
@@ -59,7 +59,7 @@
                     android:layout_height="wrap_content"
                     android:text="Score: "
                     android:textSize="13sp"
-                    android:textColor="@color/waluigi_second"
+                    android:textColor="@color/harmonia_dark"
                     android:id="@+id/current_tm_tracks"/>
                 <TextView
                     android:layout_width="wrap_content"
@@ -67,7 +67,7 @@
                     android:layout_height="wrap_content"
                     android:text="Diff: "
                     android:textSize="13sp"
-                    android:textColor="@color/waluigi_second"
+                    android:textColor="@color/harmonia_dark"
                     android:id="@+id/current_tm_top"/>
 
             </LinearLayout>
@@ -80,7 +80,7 @@
 
                 <TextView
                     android:layout_width="wrap_content"
-                    android:textColor="@color/waluigi_second"
+                    android:textColor="@color/harmonia_dark"
                     android:layout_height="wrap_content"
                     android:maxLines="1"
                     android:autoSizeTextType="uniform"
@@ -92,7 +92,7 @@
 
                 <TextView
                     android:layout_width="wrap_content"
-                    android:textColor="@color/waluigi_second"
+                    android:textColor="@color/harmonia_dark"
                     android:layout_height="wrap_content"
                     android:textSize="14sp"
                     android:fontFamily="@font/orbitron_semibold"

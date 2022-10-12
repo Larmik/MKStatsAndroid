@@ -41,14 +41,13 @@ class WarDetailsFragment : Fragment(R.layout.fragment_war_details) {
         val adapter = CurrentWarTrackAdapter()
         binding.currentTracksRv.adapter = adapter
         war?.let { war ->
-            binding.warTitleTv.text = war.name
             binding.warDateTv.text = war.war?.createdDate
             binding.scoreTv.text = war.displayedScore
             binding.diffScoreTv.text = war.displayedDiff
             val textColor = when  {
                 war.displayedDiff.contains("-") -> R.color.lose
                 war.displayedDiff.contains("+") -> R.color.win
-                else -> R.color.waluigi_second
+                else -> R.color.harmonia_dark
             }
             binding.diffScoreTv.setTextColor(
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
@@ -56,6 +55,10 @@ class WarDetailsFragment : Fragment(R.layout.fragment_war_details) {
                 else ContextCompat.getColor(requireContext(), textColor)
             )
             viewModel.bind(war.war?.mid, adapter.sharedClick, binding.deleteWarBtn.clicks())
+            viewModel.sharedWarName
+                .onEach {
+                    binding.warTitleTv.text = it
+                }.launchIn(lifecycleScope)
             viewModel.sharedBestTrack.onEach { track ->
                 binding.bestTrack.bind(track)
                 binding.bestTrack

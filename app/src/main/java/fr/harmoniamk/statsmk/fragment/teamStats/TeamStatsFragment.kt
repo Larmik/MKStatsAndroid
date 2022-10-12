@@ -36,7 +36,6 @@ class TeamStatsFragment : Fragment(R.layout.fragment_team_stats) {
             onBestClick = binding.bestTrackview.clicks(),
             onWorstClick = binding.worstTrackview.clicks(),
             onMostPlayedClick = binding.mostPlayedTrackview.clicks(),
-            onLessPlayedClick = binding.lessPlayedTrackview.clicks(),
             onVictoryClick = binding.highestVictory.clicks(),
             onDefeatClick = binding.highestDefeat.clicks()
         )
@@ -46,19 +45,41 @@ class TeamStatsFragment : Fragment(R.layout.fragment_team_stats) {
         viewModel.sharedStats.onEach {
             binding.progress.isVisible = false
             binding.mainLayout.isVisible = true
+            binding.piechart.bind(it.warStats.winRate)
             binding.warPlayed.text = it.warStats.warsPlayed.toString()
-            binding.warsWon.text = it.warStats.warsWon.toString()
-            binding.winrate.text = it.warStats.winRate
-            binding.totalAverage.text = it.averagePoints.toString()
-            binding.mapAverage.text = it.averageMapPoints.toString()
+            binding.winText.text = it.warStats.warsWon.toString()
+            binding.tieText.text = it.warStats.warsTied.toString()
+            binding.loseText.text = it.warStats.warsLoss.toString()
+            binding.totalAverage.text = it.averagePointsLabel
+            binding.mapAverage.text = it.averageMapPointsLabel
             binding.bestTrackview.bind(it.bestMap)
             binding.worstTrackview.bind(it.worstMap)
             binding.mostPlayedTrackview.bind(it.mostPlayedMap)
-            binding.lessPlayedTrackview.bind(it.lessPlayedMap)
             binding.highestVictory.bind(it.warStats.highestVictory)
             binding.highestDefeat.bind(it.warStats.loudestDefeat)
             binding.mostPlayedTeam.text = it.mostPlayedTeam?.teamName
             binding.mostPlayedTeamTotal.text = it.mostPlayedTeam?.totalPlayedLabel
+
+            val averageWarColor = when  {
+                it.averagePointsLabel.contains("-") -> R.color.lose
+                it.averagePointsLabel.contains("+") -> R.color.green
+                else -> R.color.harmonia_dark
+            }
+            val averageMapColor = when  {
+                it.averageMapPointsLabel.contains("-") -> R.color.lose
+                it.averageMapPointsLabel.contains("+") -> R.color.green
+                else -> R.color.harmonia_dark
+            }
+            binding.totalAverage.setTextColor(
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                    requireContext().getColor(averageWarColor)
+                else ContextCompat.getColor(requireContext(), averageWarColor)
+            )
+            binding.mapAverage.setTextColor(
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                    requireContext().getColor(averageMapColor)
+                else ContextCompat.getColor(requireContext(), averageMapColor)
+            )
         }.launchIn(lifecycleScope)
 
         viewModel.sharedMostDefeatedTeam

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.extension.*
+import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
@@ -25,6 +26,7 @@ class WarDetailsViewModel @Inject constructor(private val firebaseRepository: Fi
     private val _sharedWarDeleted = MutableSharedFlow<Unit>()
     private val _sharedDeleteWarVisible = MutableSharedFlow<Boolean>()
     private val _sharedPlayerHost = MutableSharedFlow<String>()
+    private val _sharedWarName = MutableSharedFlow<String?>()
 
     val sharedWarPlayers = _sharedWarPlayers.asSharedFlow()
     val sharedTracks = _sharedTracks.asSharedFlow()
@@ -34,6 +36,7 @@ class WarDetailsViewModel @Inject constructor(private val firebaseRepository: Fi
     val sharedWarDeleted = _sharedWarDeleted.asSharedFlow()
     val sharedDeleteWarVisible = _sharedDeleteWarVisible.asSharedFlow()
     val sharedPlayerHost = _sharedPlayerHost.asSharedFlow()
+    val sharedWarName = _sharedWarName.asSharedFlow()
 
     fun bind(warId: String?, onTrackClick: Flow<Int>, onDeleteWar: Flow<Unit>) {
         warId?.let { id ->
@@ -41,7 +44,7 @@ class WarDetailsViewModel @Inject constructor(private val firebaseRepository: Fi
                 .onEach {
                     _sharedPlayerHost.emit("Créée par ${firebaseRepository.getUser(it?.playerHostId ?: "").firstOrNull()?.name ?: ""}")
                     _sharedDeleteWarVisible.emit(preferencesRepository.currentUser?.mid == "1645093376108")
-
+                    _sharedWarName.emit(listOf(MKWar(it)).withName(firebaseRepository).firstOrNull()?.singleOrNull()?.name)
                 }
                 .mapNotNull { it?.warTracks?.map { MKWarTrack(it) } }
                 .onEach {

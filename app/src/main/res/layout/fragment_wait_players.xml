@@ -14,14 +14,14 @@
         android:gravity="center"
         android:fontFamily="@font/montserrat_regular"
         android:textSize="16sp"
-        android:textColor="@color/white"
+        android:textColor="@color/text_color"
         android:text="War en préparation :"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingVertical="10dp"
         android:textSize="20sp"
-        android:textColor="@color/white"
+        android:textColor="@color/text_color"
         android:id="@+id/war_name_tv"
         android:gravity="center"
         android:layout_marginBottom="15dp"
@@ -32,7 +32,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="15dp"
-        android:textColor="@color/white"
+        android:textColor="@color/text_color"
         android:fontFamily="@font/montserrat_regular"
         android:text="Joueurs connectés :"/>
 
@@ -61,7 +61,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingVertical="10dp"
-            android:textColor="@color/white"
+            android:textColor="@color/text_color"
             android:gravity="center"
             android:text="Veuillez patienter pendant que les joueurs se connectent à votre session..."/>
     </LinearLayout>

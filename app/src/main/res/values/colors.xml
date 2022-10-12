@@ -16,11 +16,13 @@
     <color name="daisy">#BBEE830A</color>
     <color name="wario">#FFCD25</color>
     <color name="waluigi">#511A90</color>
+    <color name="harmonia_clear">#89E2D8</color>
     <color name="waluigi_alphaed">#bb511A90</color>
     <color name="bowser">#BBF8BE10</color>
     <color name="boo">#BB95A4AE</color>
     <color name="dk">#BB742607</color>
     <color name="harmonie">#BB81D5C9</color>
+    <color name="harmonia_dark">#051C3F</color>
     <color name="waluigi_second">#BB02010A</color>
     <color name="white_alphaed">#BBFFFFFF</color>
     <color name="transparent_white">#88FFFFFF</color>
@@ -40,4 +42,6 @@
     <color name="lose">#ff8282</color>
     <color name="lose_alphaed">#aaff8282</color>
     <color name="bluenight_alphaed">#aa06023b</color>
+    <color name="text_color">#FFF</color>
+    <color name="green">#008000</color>
 </resources>

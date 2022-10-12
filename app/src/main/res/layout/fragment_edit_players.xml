@@ -31,7 +31,7 @@
             android:layout_height="50dp"
             android:background="@drawable/rounded_bg"
             android:layout_marginBottom="10dp"
-            android:textColor="@color/waluigi_second"
+            android:textColor="@color/harmonia_dark"
             android:gravity="center"
             android:id="@+id/playername_et"
             android:layout_marginHorizontal="40dp" />
@@ -64,7 +64,7 @@
             android:layout_marginBottom="10dp"
             android:gravity="center"
             android:id="@+id/playercode_et"
-            android:textColor="@color/waluigi_second"
+            android:textColor="@color/harmonia_dark"
             android:backgroundTint="@color/white_alphaed"
             android:layout_marginHorizontal="40dp" />
 
@@ -76,7 +76,7 @@
         android:gravity="center"
         android:layout_marginBottom="10dp"
         android:id="@+id/admin_checkbox"
-        android:textColor="@color/waluigi_second"
+        android:textColor="@color/harmonia_dark"
         android:text="Ce joueur est un admin"/>
 
     <TextView
@@ -85,7 +85,7 @@
         android:paddingVertical="10dp"
         android:background="@drawable/rounded_bg"
         android:backgroundTint="?android:colorAccent"
-        android:textColor="@color/white"
+        android:textColor="@color/text_color"
         android:id="@+id/next_btn"
         android:layout_marginBottom="10dp"
         android:fontFamily="@font/roboto"
@@ -115,7 +115,7 @@
             android:paddingVertical="10dp"
             android:background="@drawable/rounded_bg"
             android:backgroundTint="@color/mario"
-            android:textColor="@color/white"
+            android:textColor="@color/text_color"
             android:fontFamily="@font/roboto"
             android:layout_marginBottom="10dp"
             android:id="@+id/delete_btn"

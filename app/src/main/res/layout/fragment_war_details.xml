@@ -19,7 +19,7 @@
             android:layout_marginHorizontal="15dp"
             android:fontFamily="@font/orbitron_semibold"
             android:gravity="center"
-            android:textColor="@color/white"
+            android:textColor="@color/harmonia_dark"
             android:textSize="20sp"
             tools:text="HR vs OF" />
 
@@ -37,7 +37,7 @@
                 android:fontFamily="@font/montserrat_regular"
                 android:gravity="center"
                 android:layout_marginHorizontal="15dp"
-                android:textColor="@color/white"
+                android:textColor="@color/harmonia_dark"
                 tools:text="26/01/2022 - 22h" />
 
             <TextView
@@ -48,7 +48,7 @@
                 android:fontFamily="@font/montserrat_regular"
                 android:gravity="center"
                 android:layout_marginHorizontal="15dp"
-                android:textColor="@color/white"
+                android:textColor="@color/harmonia_dark"
                 tools:text="26/01/2022 - 22h" />
 
         </LinearLayout>
@@ -69,6 +69,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:visibility="gone"
+                tools:visibility="visible"
+                android:gravity="center_horizontal"
                 android:id="@+id/main_layout"
                 android:orientation="vertical">
                 <LinearLayout
@@ -107,7 +109,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/montserrat_regular"
-                                    android:textColor="@color/white"
+                                    android:textColor="@color/text_color"
                                     android:textSize="16sp"
                                     tools:text="Akioze" />
 
@@ -116,7 +118,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/montserrat_regular"
-                                    android:textColor="@color/white"
+                                    android:textColor="@color/text_color"
                                     android:textSize="16sp"
                                     tools:text="Skyoshi" />
 
@@ -125,7 +127,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/montserrat_regular"
-                                    android:textColor="@color/white"
+                                    android:textColor="@color/text_color"
                                     android:textSize="16sp"
                                     tools:text="Cami" />
 
@@ -141,7 +143,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/orbitron_semibold"
-                                    android:textColor="@color/white"
+                                    android:textColor="@color/text_color"
                                     android:textSize="16sp"
                                     tools:text="105" />
 
@@ -150,7 +152,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/orbitron_semibold"
-                                    android:textColor="@color/white"
+                                    android:textColor="@color/text_color"
                                     android:textSize="16sp"
                                     tools:text="93" />
 
@@ -159,7 +161,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/orbitron_semibold"
-                                    android:textColor="@color/white"
+                                    android:textColor="@color/text_color"
                                     android:textSize="16sp"
                                     tools:text="90" />
 
@@ -185,7 +187,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/montserrat_regular"
-                                    android:textColor="@color/white"
+                                    android:textColor="@color/text_color"
                                     android:textSize="16sp"
                                     tools:text="nsdive" />
 
@@ -194,7 +196,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/montserrat_regular"
-                                    android:textColor="@color/white"
+                                    android:textColor="@color/text_color"
                                     android:textSize="16sp"
                                     tools:text="Guyal" />
 
@@ -203,7 +205,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/montserrat_regular"
-                                    android:textColor="@color/white"
+                                    android:textColor="@color/text_color"
                                     android:textSize="16sp"
                                     tools:text="Lari" />
 
@@ -219,7 +221,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/orbitron_semibold"
-                                    android:textColor="@color/white"
+                                    android:textColor="@color/text_color"
                                     android:textSize="16sp"
                                     tools:text="73" />
 
@@ -228,7 +230,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/orbitron_semibold"
-                                    android:textColor="@color/white"
+                                    android:textColor="@color/text_color"
                                     android:textSize="16sp"
                                     tools:text="58" />
 
@@ -237,7 +239,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/orbitron_semibold"
-                                    android:textColor="@color/white"
+                                    android:textColor="@color/text_color"
                                     android:textSize="16sp"
                                     tools:text="42" />
 
@@ -250,11 +252,12 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:background="@drawable/rounded_bg"
                     android:layout_marginTop="10dp"
+                    android:paddingHorizontal="10dp"
                     android:backgroundTint="@color/white_alphaed"
                     android:layout_marginHorizontal="15dp"
                     android:orientation="vertical">
@@ -267,7 +270,7 @@
                         android:autoSizeTextType="uniform"
                         android:fontFamily="@font/orbitron_semibold"
                         android:maxLines="1"
-                        android:textColor="@color/waluigi_second"
+                        android:textColor="@color/harmonia_dark"
                         android:textSize="30sp"
                         tools:targetApi="o"
                         tools:text="229 - 190" />
@@ -277,7 +280,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/orbitron_semibold"
-                        android:textColor="@color/white"
+                        android:textColor="@color/text_color"
                         android:textSize="20sp"
                         tools:text="+39" />
 
@@ -315,7 +318,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Meilleur circuit :"
-                                android:textColor="@color/white"
+                                android:textColor="@color/text_color"
                                 android:layout_marginBottom="5dp"
                                 android:fontFamily="@font/montserrat_bold"
                                 android:textSize="14sp" />
@@ -340,7 +343,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:text="Pire circuit :"
-                                android:textColor="@color/white"
+                                android:textColor="@color/text_color"
                                 android:fontFamily="@font/montserrat_bold"
                                 android:layout_marginBottom="5dp"
                                 android:textSize="14sp" />
@@ -376,7 +379,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Tous les circuits :"
-                        android:textColor="@color/white"
+                        android:textColor="@color/text_color"
                         android:layout_marginBottom="7dp"
                         android:fontFamily="@font/montserrat_bold"
                         android:layout_gravity="center"
@@ -406,7 +409,7 @@
                     android:text="Supprimer la war"
                     android:visibility="gone"
                     android:id="@+id/delete_war_btn"
-                    android:textColor="@color/white"
+                    android:textColor="@color/text_color"
                     android:gravity="center"/>
             </LinearLayout>
 

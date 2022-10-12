@@ -13,7 +13,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/popup_message"
-        android:textColor="@color/waluigi_second"
+        android:textColor="@color/harmonia_dark"
         android:padding="20dp"
         android:textAlignment="center"
         android:fontFamily="@font/montserrat_bold"
@@ -36,7 +36,7 @@
             android:background="@drawable/rounded_bg"
             android:backgroundTint="?attr/colorAccent"
             tools:text="Se déconnecter"
-            android:textColor="@color/white"
+            android:textColor="@color/text_color"
             android:fontFamily="@font/montserrat_bold"
             android:gravity="center" />
         <TextView

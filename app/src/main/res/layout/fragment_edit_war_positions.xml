@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:textSize="20sp"
         android:fontFamily="@font/montserrat_bold"
-        android:textColor="@color/waluigi_second"
+        android:textColor="@color/harmonia_dark"
         android:gravity="center"
         android:paddingVertical="10dp"
         android:text="Position"/>

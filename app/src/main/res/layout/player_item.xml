@@ -22,8 +22,8 @@
             android:gravity="center"
             android:maxLines="1"
             android:paddingVertical="5dp"
-            android:textColor="@color/white"
-            tools:textColor="@color/waluigi_second"
+            android:textColor="@color/text_color"
+            tools:textColor="@color/harmonia_dark"
             android:textSize="20sp"
             tools:targetApi="o"
             tools:text="Lari" />
@@ -32,7 +32,7 @@
             android:id="@+id/separator"
             android:layout_width="1dp"
             android:visibility="gone"
-            android:background="@color/waluigi_second"
+            android:background="@color/harmonia_dark"
             android:layout_height="match_parent"/>
 
 
@@ -45,7 +45,7 @@
             android:visibility="gone"
             android:fontFamily="@font/mk_position"
             android:textSize="36sp"
-            android:textColor="@color/waluigi_second"
+            android:textColor="@color/harmonia_dark"
             android:layout_weight="1"
             tools:targetApi="o" />
 
