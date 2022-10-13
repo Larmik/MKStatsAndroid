@@ -43,12 +43,10 @@ class AllWarsAdapter(private val items: MutableList<MKWar> = mutableListOf()) : 
     override fun getItemCount() = items.size
 
     fun addWars(wars: List<MKWar>) {
-        if (wars.size != itemCount) {
-            notifyItemRangeRemoved(0, itemCount)
-            items.clear()
-            items.addAll(wars)
-            notifyItemRangeInserted(0, itemCount)
-        }
+        notifyItemRangeRemoved(0, itemCount)
+        items.clear()
+        items.addAll(wars)
+        notifyItemRangeInserted(0, itemCount)
     }
 
     override val coroutineContext: CoroutineContext

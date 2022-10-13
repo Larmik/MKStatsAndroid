@@ -3,12 +3,14 @@ package fr.harmoniamk.statsmk.fragment.allWars
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.harmoniamk.statsmk.extension.bind
-import fr.harmoniamk.statsmk.extension.formatToDate
-import fr.harmoniamk.statsmk.extension.isTrue
-import fr.harmoniamk.statsmk.extension.withName
+import fr.harmoniamk.statsmk.enums.Maps
+import fr.harmoniamk.statsmk.enums.TrackSortType
+import fr.harmoniamk.statsmk.enums.WarSortType
+import fr.harmoniamk.statsmk.extension.*
 import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.model.local.MKWar
+import fr.harmoniamk.statsmk.model.local.MKWarTrack
+import fr.harmoniamk.statsmk.model.local.TrackStats
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -24,21 +26,28 @@ class AllWarsViewModel @Inject constructor(private val firebaseRepository: Fireb
 
     private val _sharedWars = MutableSharedFlow<List<MKWar>>()
     private val _sharedWarClick = MutableSharedFlow<MKWar>()
+    private val _sharedSortTypeSelected = MutableStateFlow(WarSortType.DATE)
+
 
     val sharedWars = _sharedWars.asSharedFlow()
     val sharedWarClick = _sharedWarClick.asSharedFlow()
+    val sharedSortTypeSelected = _sharedSortTypeSelected.asStateFlow()
 
     private val wars = mutableListOf<MKWar>()
     private val teams = mutableListOf<Team>()
 
-    fun bind(onItemClick: Flow<MKWar>, onSearch: Flow<String>) {
+    fun bind(onItemClick: Flow<MKWar>, onSearch: Flow<String>, onSortClick: Flow<WarSortType>) {
         firebaseRepository.getNewWars()
             .mapNotNull { list -> list.filter { war -> war.teamHost == preferencesRepository.currentTeam?.mid }.sortedByDescending { it.createdDate?.formatToDate() }.map { MKWar(it) } }
             .flatMapLatest { it.withName(firebaseRepository) }
             .onEach {
                 wars.clear()
                 wars.addAll(it)
-                _sharedWars.emit(it)
+                _sharedWars.emit(when (_sharedSortTypeSelected.value) {
+                    WarSortType.DATE -> it.sortedByDescending { it.war?.mid }
+                    WarSortType.SCORE -> it.sortedByDescending { it.scoreHost }
+                    WarSortType.TEAM -> it.sortedByDescending { it.name }
+                })
             }
             .flatMapLatest { firebaseRepository.getTeams() }
             .onEach {
@@ -62,6 +71,17 @@ class AllWarsViewModel @Inject constructor(private val firebaseRepository: Fireb
             }
             .onEach {
                 _sharedWars.emit(it)
+            }.launchIn(viewModelScope)
+
+        onSortClick
+            .onEach {
+                _sharedSortTypeSelected.emit(it)
+                val sortedWars = when (it) {
+                    WarSortType.DATE -> wars.sortedByDescending { it.war?.createdDate }
+                    WarSortType.TEAM -> wars.sortedBy { it.name }
+                    WarSortType.SCORE -> wars.sortedByDescending { it.scoreHost }
+                }
+                _sharedWars.emit(sortedWars)
             }.launchIn(viewModelScope)
     }
 

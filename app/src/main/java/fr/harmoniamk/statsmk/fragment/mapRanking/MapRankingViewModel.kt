@@ -6,7 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.application.MainApplication
 import fr.harmoniamk.statsmk.enums.Maps
-import fr.harmoniamk.statsmk.enums.SortType
+import fr.harmoniamk.statsmk.enums.TrackSortType
 import fr.harmoniamk.statsmk.extension.*
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
 import fr.harmoniamk.statsmk.model.local.MKWar
@@ -28,7 +28,7 @@ class MapRankingViewModel @Inject constructor(private val preferencesRepository:
 
     private val _sharedMaps = MutableSharedFlow<List<TrackStats>>()
     private val _sharedGoToStats = MutableSharedFlow<Int>()
-    private val _sharedSortTypeSelected = MutableStateFlow(SortType.TOTAL_PLAYED)
+    private val _sharedSortTypeSelected = MutableStateFlow(TrackSortType.TOTAL_PLAYED)
 
 
     val sharedMaps = _sharedMaps.asSharedFlow()
@@ -37,7 +37,7 @@ class MapRankingViewModel @Inject constructor(private val preferencesRepository:
     val temp = mutableListOf<NewWarTrack>()
     val final = mutableListOf<TrackStats>()
 
-    fun bind(onTrackClick: Flow<Int>, onSortClick: Flow<SortType>, onSearch: Flow<String>) {
+    fun bind(onTrackClick: Flow<Int>, onSortClick: Flow<TrackSortType>, onSearch: Flow<String>) {
         flowOf(preferencesRepository.currentTeam?.mid)
             .filterNotNull()
             .flatMapLatest { firebaseRepository.getNewWars() }
@@ -56,10 +56,10 @@ class MapRankingViewModel @Inject constructor(private val preferencesRepository:
                 temp.addAll(list)
                 final.clear()
                 final.addAll(when (_sharedSortTypeSelected.value) {
-                    SortType.TOTAL_PLAYED -> list.sortBySize()
-                    SortType.TOTAL_WIN -> list.sortByVictory()
-                    SortType.WINRATE -> list.sortByWinRate()
-                    SortType.AVERAGE_DIFF -> list.sortByAverage()
+                    TrackSortType.TOTAL_PLAYED -> list.sortBySize()
+                    TrackSortType.TOTAL_WIN -> list.sortByVictory()
+                    TrackSortType.WINRATE -> list.sortByWinRate()
+                    TrackSortType.AVERAGE_DIFF -> list.sortByAverage()
 
                 }.map {
                     TrackStats(
@@ -89,10 +89,10 @@ class MapRankingViewModel @Inject constructor(private val preferencesRepository:
                 _sharedSortTypeSelected.emit(it)
                 final.clear()
                 final.addAll( when (it) {
-                    SortType.TOTAL_PLAYED -> temp.sortBySize()
-                    SortType.TOTAL_WIN -> temp.sortByVictory()
-                    SortType.WINRATE -> temp.sortByWinRate()
-                    SortType.AVERAGE_DIFF -> temp.sortByAverage()
+                    TrackSortType.TOTAL_PLAYED -> temp.sortBySize()
+                    TrackSortType.TOTAL_WIN -> temp.sortByVictory()
+                    TrackSortType.WINRATE -> temp.sortByWinRate()
+                    TrackSortType.AVERAGE_DIFF -> temp.sortByAverage()
 
                 } .map {
                     TrackStats(
