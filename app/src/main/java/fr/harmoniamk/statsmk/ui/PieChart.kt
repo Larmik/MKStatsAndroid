@@ -20,4 +20,14 @@ class PieChart : FrameLayout {
         binding?.winrateProgressbar?.progress = 100 - (winrate.split(" ")[0].toIntOrNull() ?: 0)
         binding?.winrateText?.text = winrate
     }
+
+    fun bind(win: Int, tie: Int, lose: Int) {
+        val total = win+tie+lose
+        binding?.backgroundProgressbar?.max = total
+        binding?.winrateProgressbar?.max = total
+        binding?.tieProgressbar?.max = total
+        binding?.winrateProgressbar?.progress = total - win
+        binding?.tieProgressbar?.progress = tie
+        binding?.winrateText?.text = "${(win*100)/total} %"
+    }
 }

@@ -3,7 +3,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="?android:colorPrimary">
 
     <LinearLayout
@@ -22,80 +21,125 @@
             android:fontFamily="@font/montserrat_bold"
             android:gravity="center"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/harmonia_dark"
-                android:fontFamily="@font/montserrat_bold"
-                android:textSize="16sp"
-                android:layout_marginStart="15dp"
-                android:text="Les plus joués"/>
 
-            <androidx.recyclerview.widget.RecyclerView
+        <EditText
+            android:layout_width="match_parent"
+            android:background="@drawable/rounded_bg"
+            android:hint="Rechercher un nom ou une abréviation..."
+            android:layout_height="wrap_content"
+            android:padding="15dp"
+            android:layout_marginHorizontal="5dp"
+            android:layout_marginBottom="10dp"
+            android:id="@+id/search_et"/>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginHorizontal="5dp"
+            android:background="@color/white"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
+            android:fontFamily="@font/montserrat_bold"
+            android:textColor="@color/harmonia_dark"
+            android:text="Options de tri" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:orientation="vertical">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/total_play_sort_button"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/rounded_bg"
+                            android:paddingVertical="5dp"
+                            android:layout_margin="5dp"
+                            android:fontFamily="@font/montserrat_regular"
+                            android:text="Nb. fois jouées"
+                            android:textAlignment="center" />
+
+                        <TextView
+                            android:id="@+id/total_win_sort_button"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/rounded_bg"
+                            android:layout_margin="5dp"
+                            android:paddingVertical="5dp"
+                            android:text="Nb. fois gagnées"
+                            android:fontFamily="@font/montserrat_regular"
+                            android:textAlignment="center" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/winrate_sort_button"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/rounded_bg"
+                            android:layout_margin="5dp"
+                            android:fontFamily="@font/montserrat_regular"
+                            android:paddingVertical="5dp"
+                            android:text="Winrate"
+                            android:textAlignment="center" />
+
+                        <TextView
+                            android:id="@+id/avg_diff_sort_button"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/rounded_bg"
+                            android:paddingVertical="5dp"
+                            android:layout_margin="5dp"
+                            android:text="Moyenne diff."
+                            android:fontFamily="@font/montserrat_regular"
+                            android:textAlignment="center" />
+                    </LinearLayout>
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginHorizontal="5dp"
+            android:layout_marginBottom="10dp"
+            android:background="@color/white"/>
+
+        <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/most_played_rv"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:nestedScrollingEnabled="false"
-                android:overScrollMode="never"
                 android:layout_marginBottom="15dp"
                 android:paddingHorizontal="10dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 android:orientation="vertical" />
-
-            <TextView  android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/harmonia_dark"
-                android:fontFamily="@font/montserrat_bold"
-                android:textSize="16sp"
-                android:layout_marginStart="15dp"
-                android:text="Les plus gagnés"/>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/most_won_rv"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:layout_marginBottom="15dp"
-                android:paddingHorizontal="10dp"
-                android:nestedScrollingEnabled="false"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                android:orientation="vertical"/>
-
-            <TextView  android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/harmonia_dark"
-                android:fontFamily="@font/montserrat_bold"
-                android:textSize="16sp"
-                android:layout_marginStart="15dp"
-                android:text="Les moins gagnés"/>
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/most_lose_rv"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:paddingHorizontal="10dp"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                android:layout_marginBottom="15dp"
-                android:nestedScrollingEnabled="false"
-                android:orientation="vertical"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingVertical="10dp"
-            android:text="Voir tous les circuits"
-            android:id="@+id/all_maps_button"
-            android:background="@drawable/rounded_bg"
-            android:backgroundTint="?android:colorAccent"
-            tools:targetApi="n_mr1"
-            android:textSize="16sp"
-            android:fontFamily="@font/roboto"
-            android:gravity="center"
-            android:layout_marginHorizontal="15dp"
-            android:layout_marginBottom="10dp"
-            android:textColor="@color/text_color"/>
 
         </LinearLayout>
 

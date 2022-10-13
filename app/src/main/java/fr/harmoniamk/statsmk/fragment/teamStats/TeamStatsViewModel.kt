@@ -99,8 +99,8 @@ class TeamStatsViewModel @Inject constructor(private val firebaseRepository: Fir
                         )
                     }
 
-                bestMap = averageForMaps.filter { it.totalPlayed >= 2 }.maxByOrNull { it.score }
-                worstMap = averageForMaps.filter { it.totalPlayed >= 2 }.minByOrNull { it.score }
+                bestMap = averageForMaps.filter { it.totalPlayed >= 2 }.maxByOrNull { it.score ?: 0}
+                worstMap = averageForMaps.filter { it.totalPlayed >= 2 }.minByOrNull { it.score ?: 0}
                 mostPlayedMap = averageForMaps.maxByOrNull { it.totalPlayed }
                 highestVicory = list.maxByOrNull { war -> war.scoreHost }
                 loudestDefeat = list.minByOrNull { war -> war.scoreHost }

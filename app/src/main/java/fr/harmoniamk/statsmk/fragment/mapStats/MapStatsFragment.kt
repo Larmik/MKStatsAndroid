@@ -15,6 +15,7 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentMapStatsBinding
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.extension.positionColor
+import fr.harmoniamk.statsmk.extension.trackScoreToDiff
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.filter
@@ -52,10 +53,22 @@ class MapStatsFragment : Fragment(R.layout.fragment_map_stats) {
                 binding.emptyLayout.isVisible = stats.list.isEmpty()
                 binding.mainLayout.isVisible = stats.list.isNotEmpty()
                 adapter.addTracks(stats.list)
-                binding.mapPlayed.text = stats.trackPlayed.toString()
-                binding.mapWon.text = stats.trackWon.toString()
-                binding.statWinrate.text = stats.winRate
-                binding.mapTeamAverage.text = stats.teamScore.toString()
+                binding.warPlayed.text = stats.trackPlayed.toString()
+                binding.winText.text = stats.trackWon.toString()
+                binding.tieText.text = stats.trackTie.toString()
+                binding.loseText.text = stats.trackLoss.toString()
+                binding.piechart.bind(stats.trackWon, stats.trackTie, stats.trackLoss)
+                binding.mapTeamAverage.text = stats.teamScore.trackScoreToDiff()
+                val averageDiffColor = when  {
+                    stats.teamScore.trackScoreToDiff().contains("-") -> R.color.lose
+                    stats.teamScore.trackScoreToDiff().contains("+") -> R.color.green
+                    else -> R.color.harmonia_dark
+                }
+                binding.mapTeamAverage.setTextColor(
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                        requireContext().getColor(averageDiffColor)
+                    else ContextCompat.getColor(requireContext(), averageDiffColor)
+                )
                 binding.mapPlayerAverage.text = when (stats.playerScore) {
                     0 -> "-"
                     else -> stats.playerScore.toString()

@@ -98,8 +98,8 @@ class IndivStatsViewModel @Inject constructor(private val firebaseRepository: Fi
                             )
                         )
                     }
-                bestMap = averageForMaps.maxByOrNull { it.score }
-                worstMap = averageForMaps.minByOrNull { it.score }
+                bestMap = averageForMaps.maxByOrNull { it.score ?: 0 }
+                worstMap = averageForMaps.minByOrNull { it.score ?: 0 }
                 mostPlayedMap = averageForMaps.maxByOrNull { it.totalPlayed }
                 highestVicory = list.maxByOrNull { war -> war.scoreHost }
                 loudestDefeat = list.minByOrNull { war -> war.scoreHost }

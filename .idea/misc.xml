@@ -7,6 +7,10 @@
         <entry key="app/src/main/res/drawable/circle_bg.xml" value="0.2535" />
         <entry key="app/src/main/res/drawable/piechart_full.xml" value="0.2075" />
         <entry key="app/src/main/res/drawable/piechart_progress.xml" value="0.2075" />
+        <entry key="app/src/main/res/drawable/piechart_tie.xml" value="0.2535" />
+        <entry key="app/src/main/res/drawable/radiobutton_normal.xml" value="0.2535" />
+        <entry key="app/src/main/res/drawable/radiobutton_selected.xml" value="0.2535" />
+        <entry key="app/src/main/res/drawable/radiobutton_selector.xml" value="0.2535" />
         <entry key="app/src/main/res/drawable/ronded_bg.xml" value="0.39897435897435896" />
         <entry key="app/src/main/res/drawable/rounded_bg.xml" value="0.39897435897435896" />
         <entry key="app/src/main/res/layout-v25/fragment_tournaments.xml" value="0.2677083333333333" />

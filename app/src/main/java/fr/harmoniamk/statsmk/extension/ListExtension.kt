@@ -2,19 +2,12 @@ package fr.harmoniamk.statsmk.extension
 
 import fr.harmoniamk.statsmk.model.firebase.NewWarPositions
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
-import fr.harmoniamk.statsmk.model.local.MKWar
-import fr.harmoniamk.statsmk.model.local.MKWarPosition
-import fr.harmoniamk.statsmk.model.local.MKWarTrack
-import fr.harmoniamk.statsmk.model.local.MapDetails
+import fr.harmoniamk.statsmk.model.local.*
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.*
 
-fun List<MKWar>.getLasts(teamId: String?) = this.filter {
-        war -> war.isOver && war.war?.teamHost == teamId
-}.sortedByDescending{ it.war?.createdDate?.formatToDate() }.safeSubList(0, 5)
+fun List<MKWar>.getLasts(teamId: String?) = this.filter { war -> war.isOver && war.war?.teamHost == teamId }.sortedByDescending{ it.war?.createdDate?.formatToDate() }.safeSubList(0, 5)
 fun List<MKWar>.getCurrent(teamId: String?) = this.singleOrNull { war -> !war.isOver && war.war?.teamHost == teamId }
-fun List<MKWar>.getBests(teamId: String?) = this.filter { war -> war.isOver && war.war?.teamHost == teamId  }.sortedWith(compareBy<MKWar> { it.scoreHost }.thenBy { it.displayedAverage.toInt() }).reversed().safeSubList(0, 3)
 fun List<MKWar?>.withName(firebaseRepository: FirebaseRepositoryInterface) = flow {
     val temp = mutableListOf<MKWar>()
     this@withName.forEach { war ->
@@ -59,8 +52,12 @@ fun List<Map<*,*>>?.parseTracks() : List<NewWarTrack>? =
 }
 
 fun List<NewWarTrack>.sortBySize() = this.groupBy { it.trackIndex }.toList().sortedByDescending { it.second.size }
-fun List<NewWarTrack>.sortByVictory() = this.groupBy { it.trackIndex }.toList().sortedByDescending { it.second.filter { MKWarTrack(it).displayedDiff.contains('+') }.size * 100 / it.second.size }
-fun List<NewWarTrack>.sortByDefeat() = this.groupBy { it.trackIndex }.toList().sortedByDescending { it.second.filter { MKWarTrack(it).displayedDiff.contains('-') }.size * 100 / it.second.size }
+fun List<NewWarTrack>.sortByVictory() = this.groupBy { it.trackIndex }.toList().sortedByDescending { it.second.filter { MKWarTrack(it).displayedDiff.contains('+') }.size }
+fun List<NewWarTrack>.sortByWinRate() = this.groupBy { it.trackIndex }.toList().sortedByDescending { it.second.filter { MKWarTrack(it).displayedDiff.contains('+') }.size * 100 / it.second.size }
+fun List<NewWarTrack>.sortByAverage() = this.groupBy { it.trackIndex }.toList().sortedByDescending { it.second.map { MKWarTrack(it).diffScore }.sum() / it.second.size }
+
+
+
 
 fun List<NewWarPositions>.withPlayerName(firebaseRepository: FirebaseRepositoryInterface) = flow {
     val temp = mutableListOf<MKWarPosition>()

@@ -15,8 +15,8 @@ class Stats(
 ) {
      val highestScore: WarScore? = warScores.maxByOrNull { it.score }
      val lowestScore: WarScore? = warScores.minByOrNull { it.score }
-     val bestMap: TrackStats? = averageForMaps.filter { it.totalPlayed >= 2 }.maxByOrNull { it.score }
-     val worstMap: TrackStats? = averageForMaps.filter { it.totalPlayed >= 2 }.minByOrNull { it.score }
+     val bestMap: TrackStats? = averageForMaps.filter { it.totalPlayed >= 2 }.maxByOrNull { it.score ?: 0 }
+     val worstMap: TrackStats? = averageForMaps.filter { it.totalPlayed >= 2 }.minByOrNull { it.score ?: 0 }
      val mostPlayedMap: TrackStats? = averageForMaps.maxByOrNull { it.totalPlayed }
      val averagePoints: Int = warScores.map { it.score }.sum() / warScores.count()
      val averagePointsLabel: String = averagePoints.warScoreToDiff()
@@ -35,8 +35,9 @@ class WarScore(
 data class TrackStats(
     val map: Maps? = null,
     val trackIndex: Int? = null,
-    val score: Int,
-    val totalPlayed: Int = 0
+    val score: Int? = null,
+    val totalPlayed: Int = 0,
+    val winRate: Int? = null
 )
 
 class TeamStats(val teamName: String?, totalPlayed: Int?) {
@@ -69,9 +70,10 @@ class MapStats(
         .mapNotNull { it.warTrack.track?.warPositions }
         .map { it.singleOrNull { it.playerId == preferencesRepository.currentUser?.mid } }
         .mapNotNull { it?.position.positionToPoints() }
-
     val trackPlayed = list.size
     val trackWon = list.filter { pair -> pair.warTrack.displayedDiff.contains('+')}.size
+    val trackTie = list.filter { pair -> pair.warTrack.displayedDiff == "0" }.count()
+    val trackLoss = list.filter { pair -> pair.warTrack.displayedDiff.contains('-') }.count()
     val winRate = "${(trackWon*100) / trackPlayed} %"
     val teamScore = list.map { pair -> pair.warTrack }.map { it.teamScore }.sum() / list.size
     val playerScore = playerScoreList.takeIf { it.isNotEmpty() }?.let {  (playerScoreList.sum() / playerScoreList.size).pointsToPosition() } ?: 0
