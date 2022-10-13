@@ -16,7 +16,7 @@
         android:textSize="20sp"
         android:gravity="center"
         android:fontFamily="@font/montserrat_bold"
-        android:textColor="@color/text_color"/>
+        android:textColor="@color/harmonia_dark"/>
 
 
     <EditText
@@ -48,7 +48,7 @@
             android:paddingTop="10dp"
             android:text="Mon équipe actuelle :"
             android:gravity="center"
-            android:textColor="@color/text_color"
+            android:textColor="@color/harmonia_dark"
             android:fontFamily="@font/montserrat_regular"/>
 
         <TextView
@@ -59,7 +59,7 @@
             tools:text="Harmonia"
             android:gravity="center"
             android:layout_marginBottom="10dp"
-            android:textColor="@color/text_color"
+            android:textColor="@color/harmonia_dark"
             android:fontFamily="@font/roboto"/>
 
 

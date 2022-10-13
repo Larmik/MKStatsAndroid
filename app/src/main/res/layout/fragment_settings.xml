@@ -96,7 +96,7 @@
         android:id="@+id/current_user_label"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:textColor="@color/text_color"
+        android:textColor="@color/harmonia_dark"
         android:fontFamily="@font/montserrat_regular"
         android:gravity="bottom|end"/>
 

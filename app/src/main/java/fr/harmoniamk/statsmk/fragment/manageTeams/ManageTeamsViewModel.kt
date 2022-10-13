@@ -68,7 +68,7 @@ class ManageTeamsViewModel @Inject constructor(private val preferencesRepository
             .mapNotNull {
                 when (it?.isAdmin) {
                     true -> View.VISIBLE
-                    else -> View.INVISIBLE
+                    else -> View.GONE
                 }
             }.bind(_sharedAddTeamVisibility, viewModelScope)
 
