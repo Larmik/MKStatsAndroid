@@ -47,7 +47,7 @@ class IndivStatsFragment : Fragment(R.layout.fragment_indiv_stats) {
         viewModel.sharedStats.onEach {
             binding.progress.isVisible = false
             binding.mainLayout.isVisible = true
-            binding.piechart.bind(it.warStats.winRate)
+            binding.piechart.bind(it.warStats.warsWon, it.warStats.warsTied, it.warStats.warsLoss)
             binding.warPlayed.text = it.warStats.warsPlayed.toString()
             binding.winText.text = it.warStats.warsWon.toString()
             binding.tieText.text = it.warStats.warsTied.toString()

@@ -1,10 +1,14 @@
 package fr.harmoniamk.statsmk.model.local
 
+import android.os.Build
+import fr.harmoniamk.statsmk.extension.get
+import fr.harmoniamk.statsmk.extension.set
 import fr.harmoniamk.statsmk.extension.sum
 import fr.harmoniamk.statsmk.model.firebase.TOTAL_TRACKS
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.firebase.TOTAL_TRACK_SCORE
 import java.io.Serializable
+import java.util.*
 
 data class MKWar(val war: NewWar?) : Serializable {
 
@@ -30,4 +34,24 @@ data class MKWar(val war: NewWar?) : Serializable {
         return false
     }
     var name: String? = null
+
+    val isThisWeek: Boolean
+      get() {
+          val weekAgo = Date().set(Calendar.WEEK_OF_YEAR, Date().get(Calendar.WEEK_OF_YEAR) - 1)
+          val warDate = war?.mid?.toLong()?.let { Date(it) }
+          warDate?.let {
+              return it.after(weekAgo)
+          }
+          return false
+      }
+
+    val isThisMonth: Boolean
+      get() {
+          val monthAgo = Date().set(Calendar.MONTH, Date().get(Calendar.MONTH) - 1)
+          val warDate = war?.mid?.toLong()?.let { Date(it) }
+          warDate?.let {
+              return it.after(monthAgo)
+          }
+          return false
+      }
 }

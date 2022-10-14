@@ -6,3 +6,6 @@ enum class TrackSortType {
 enum class WarSortType {
     DATE, TEAM, SCORE
 }
+enum class WarFilterType {
+    WEEK, MONTH, PLAY
+}

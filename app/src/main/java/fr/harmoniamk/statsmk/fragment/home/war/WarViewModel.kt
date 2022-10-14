@@ -72,7 +72,6 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
             }
             .bind(_sharedLastWars, viewModelScope)
 
-
         warsFlow
             .mapNotNull { preferencesRepository.currentTeam?.name }
             .bind(_sharedTeamName, viewModelScope)
@@ -103,7 +102,6 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
                 _sharedTeamName.emit(preferencesRepository.currentTeam?.name ?: "")
                 _sharedLastWars.emit(wars.map { w -> MKWar(w) }.getLasts(preferencesRepository.currentTeam?.mid))
                 _sharedCurrentWar.emit(war)
-
             }.launchIn(viewModelScope)
 
         onCurrentWarClick
