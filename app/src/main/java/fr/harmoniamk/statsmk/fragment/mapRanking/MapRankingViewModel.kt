@@ -27,17 +27,19 @@ class MapRankingViewModel @Inject constructor(private val preferencesRepository:
 
 
     private val _sharedMaps = MutableSharedFlow<List<TrackStats>>()
-    private val _sharedGoToStats = MutableSharedFlow<Int>()
+    private val _sharedGoToStats = MutableSharedFlow<Pair<Int, Boolean>>()
     private val _sharedSortTypeSelected = MutableStateFlow(TrackSortType.TOTAL_PLAYED)
+    private val _sharedIndivStatsEnabled = MutableStateFlow(true)
 
 
     val sharedMaps = _sharedMaps.asSharedFlow()
     val sharedGoToStats = _sharedGoToStats.asSharedFlow()
     val sharedSortTypeSelected = _sharedSortTypeSelected.asStateFlow()
+    val sharedIndivStatsEnabled = _sharedIndivStatsEnabled.asStateFlow()
     val temp = mutableListOf<NewWarTrack>()
     val final = mutableListOf<TrackStats>()
 
-    fun bind(onTrackClick: Flow<Int>, onSortClick: Flow<TrackSortType>, onSearch: Flow<String>) {
+    fun bind(onTrackClick: Flow<Int>, onSortClick: Flow<TrackSortType>, onSearch: Flow<String>, onIndivStatsSelected: Flow<Boolean>) {
         flowOf(preferencesRepository.currentTeam?.mid)
             .filterNotNull()
             .flatMapLatest { firebaseRepository.getNewWars() }
@@ -55,13 +57,7 @@ class MapRankingViewModel @Inject constructor(private val preferencesRepository:
                 temp.clear()
                 temp.addAll(list)
                 final.clear()
-                final.addAll(when (_sharedSortTypeSelected.value) {
-                    TrackSortType.TOTAL_PLAYED -> list.sortBySize()
-                    TrackSortType.TOTAL_WIN -> list.sortByVictory()
-                    TrackSortType.WINRATE -> list.sortByWinRate()
-                    TrackSortType.AVERAGE_DIFF -> list.sortByAverage()
-
-                }.map {
+                final.addAll(sortTracks(_sharedSortTypeSelected.value).map {
                     TrackStats(
                         map = Maps.values()[it.first ?: -1],
                         totalPlayed = it.second.size,
@@ -72,7 +68,19 @@ class MapRankingViewModel @Inject constructor(private val preferencesRepository:
             }
             .bind(_sharedMaps, viewModelScope)
 
-        onTrackClick.bind(_sharedGoToStats, viewModelScope)
+        onTrackClick.onEach { _sharedGoToStats.emit(Pair(it, _sharedIndivStatsEnabled.value)) }.launchIn(viewModelScope)
+        onIndivStatsSelected.onEach {
+            _sharedIndivStatsEnabled.emit(it)
+            final.clear()
+            final.addAll(sortTracks(_sharedSortTypeSelected.value).map {
+                TrackStats(
+                    map = Maps.values()[it.first ?: -1],
+                    totalPlayed = it.second.size,
+                    winRate = (it.second.filter { MKWarTrack(it).displayedDiff.contains('+') }.size * 100) / it.second.size
+                )
+            }.filter { it.totalPlayed >= 2 })
+            _sharedMaps.emit(final)
+        }.launchIn(viewModelScope)
 
         onSearch
             .map { searched ->
@@ -88,13 +96,7 @@ class MapRankingViewModel @Inject constructor(private val preferencesRepository:
             .map {
                 _sharedSortTypeSelected.emit(it)
                 final.clear()
-                final.addAll( when (it) {
-                    TrackSortType.TOTAL_PLAYED -> temp.sortBySize()
-                    TrackSortType.TOTAL_WIN -> temp.sortByVictory()
-                    TrackSortType.WINRATE -> temp.sortByWinRate()
-                    TrackSortType.AVERAGE_DIFF -> temp.sortByAverage()
-
-                } .map {
+                final.addAll(sortTracks(it).map {
                     TrackStats(
                         map = Maps.values()[it.first ?: -1],
                         totalPlayed = it.second.size,
@@ -110,5 +112,33 @@ class MapRankingViewModel @Inject constructor(private val preferencesRepository:
 
             }.bind(_sharedMaps, viewModelScope)
     }
+
+    private fun sortTracks(type: TrackSortType) =
+        when (type) {
+            TrackSortType.TOTAL_PLAYED -> temp
+                .filter { !_sharedIndivStatsEnabled.value || (_sharedIndivStatsEnabled.value && MKWarTrack(it).hasPlayer(preferencesRepository.currentUser?.mid)) }
+                .groupBy { it.trackIndex }.toList()
+                .sortedByDescending { it.second.size }
+            TrackSortType.TOTAL_WIN -> temp
+                .filter { !_sharedIndivStatsEnabled.value || (_sharedIndivStatsEnabled.value && MKWarTrack(it).hasPlayer(preferencesRepository.currentUser?.mid)) }
+                .groupBy { it.trackIndex }.toList()
+                .sortedByDescending { it.second.filter { MKWarTrack(it).displayedDiff.contains('+') }.size }
+            TrackSortType.WINRATE -> temp
+                .filter { !_sharedIndivStatsEnabled.value || (_sharedIndivStatsEnabled.value && MKWarTrack(it).hasPlayer(preferencesRepository.currentUser?.mid)) }
+                .groupBy { it.trackIndex }.toList()
+                .sortedByDescending { it.second.filter { MKWarTrack(it).displayedDiff.contains('+') }.size * 100 / it.second.size }
+            TrackSortType.AVERAGE_DIFF -> temp
+                .filter { !_sharedIndivStatsEnabled.value || (_sharedIndivStatsEnabled.value && MKWarTrack(it).hasPlayer(preferencesRepository.currentUser?.mid)) }
+                .groupBy { it.trackIndex }.toList()
+                .sortedByDescending { it.second.map { MKWarTrack(it).diffScore }.sum() / it.second.size }
+
+
+
+
+
+
+
+    }
+
 
 }

@@ -30,10 +30,12 @@ class MapStatsFragment : Fragment(R.layout.fragment_map_stats) {
     private val binding: FragmentMapStatsBinding by viewBinding()
     private val viewModel : MapStatsViewModel by viewModels()
     private var trackIndex: Int? = null
+    private var isIndiv: Boolean? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         trackIndex = arguments?.getInt("trackId")
+        isIndiv = arguments?.getBoolean("indiv")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -46,7 +48,8 @@ class MapStatsFragment : Fragment(R.layout.fragment_map_stats) {
                 trackIndex = index,
                 onMapClick = adapter.onMapClick,
                 onVictoryClick = binding.highestVictory.clicks(),
-                onDefeatClick = binding.loudestDefeat.clicks()
+                onDefeatClick = binding.loudestDefeat.clicks(),
+                isIndiv = isIndiv
             )
             viewModel.sharedStats.onEach { stats ->
                 binding.progress.isVisible = false

@@ -30,9 +30,10 @@ class MapStatsViewModel @Inject constructor(private val preferencesRepository: P
     fun bind(trackIndex: Int,
              onMapClick: Flow<MapDetails>,
              onVictoryClick: Flow<Unit>,
-             onDefeatClick: Flow<Unit>
+             onDefeatClick: Flow<Unit>,
+             isIndiv: Boolean?
     ) {
-        var list: List<MapDetails>? = null
+        val list = mutableListOf<MapDetails>()
         flowOf(preferencesRepository.currentTeam?.mid)
             .filterNotNull()
             .flatMapLatest { firebaseRepository.getNewWars() }
@@ -51,14 +52,15 @@ class MapStatsViewModel @Inject constructor(private val preferencesRepository: P
             }
             .filter { it.isNotEmpty() }
             .onEach {
-                list = it
-                _sharedStats.emit(MapStats(it, preferencesRepository))
+                list.clear()
+                list.addAll(it.filter { !isIndiv.isTrue || (isIndiv.isTrue && it.war.hasPlayer(preferencesRepository.currentUser?.mid)) })
+                _sharedStats.emit(MapStats(list, isIndiv.isTrue, preferencesRepository))
             }.launchIn(viewModelScope)
 
         flowOf(
             onMapClick,
-            onVictoryClick.mapNotNull { list?.getVictory() },
-            onDefeatClick.mapNotNull { list?.getDefeat() }
+            onVictoryClick.mapNotNull { list.getVictory() },
+            onDefeatClick.mapNotNull { list.getDefeat() }
         )
             .flattenMerge()
             .bind(_sharedMapClick, viewModelScope)

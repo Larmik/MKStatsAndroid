@@ -581,6 +581,11 @@
                 app:argType="integer"
                 app:nullable="false"/>
 
+            <argument
+                android:name="indiv"
+                app:argType="boolean"
+                app:nullable="false"/>
+
         </action>
 
         <action android:id="@+id/to_track_list"

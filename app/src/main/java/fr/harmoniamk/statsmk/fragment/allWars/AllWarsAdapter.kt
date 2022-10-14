@@ -3,6 +3,8 @@ package fr.harmoniamk.statsmk.fragment.allWars
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import fr.harmoniamk.statsmk.R
+import fr.harmoniamk.statsmk.databinding.BestWarItemBinding
 import fr.harmoniamk.statsmk.databinding.WarItemBinding
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.model.local.MKWar
@@ -19,17 +21,24 @@ class AllWarsAdapter(private val items: MutableList<MKWar> = mutableListOf()) : 
 
     val sharedItemClick = MutableSharedFlow<MKWar>()
 
-    class WarViewHolder(val binding: WarItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    class WarViewHolder(val binding: BestWarItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(war: MKWar) {
             binding.nameTv.text = war.name
             binding.timeTv.text = war.war?.createdDate
             binding.totalScoreTv.text = war.displayedScore
             binding.totalDiffTv.text = war.displayedDiff
+            binding.diffMapTv.text = war.displayedAverage
+            binding.chip.setImageResource(
+                when (war.displayedDiff.contains("+")) {
+                    true -> R.drawable.checked
+                    else -> R.drawable.close
+                }
+            )
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = WarViewHolder(
-        WarItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        BestWarItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
     )
 
     override fun onBindViewHolder(holder: WarViewHolder, position: Int) {

@@ -51,13 +51,6 @@ fun List<Map<*,*>>?.parseTracks() : List<NewWarTrack>? =
 
 }
 
-fun List<NewWarTrack>.sortBySize() = this.groupBy { it.trackIndex }.toList().sortedByDescending { it.second.size }
-fun List<NewWarTrack>.sortByVictory() = this.groupBy { it.trackIndex }.toList().sortedByDescending { it.second.filter { MKWarTrack(it).displayedDiff.contains('+') }.size }
-fun List<NewWarTrack>.sortByWinRate() = this.groupBy { it.trackIndex }.toList().sortedByDescending { it.second.filter { MKWarTrack(it).displayedDiff.contains('+') }.size * 100 / it.second.size }
-fun List<NewWarTrack>.sortByAverage() = this.groupBy { it.trackIndex }.toList().sortedByDescending { it.second.map { MKWarTrack(it).diffScore }.sum() / it.second.size }
-
-
-
 
 fun List<NewWarPositions>.withPlayerName(firebaseRepository: FirebaseRepositoryInterface) = flow {
     val temp = mutableListOf<MKWarPosition>()

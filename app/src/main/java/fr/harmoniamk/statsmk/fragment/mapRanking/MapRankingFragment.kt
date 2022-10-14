@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.google.firebase.database.core.Context
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentMapRankingBinding
@@ -39,7 +40,8 @@ class MapRankingFragment : Fragment(R.layout.fragment_map_ranking) {
                 binding.winrateSortButton.clicks().map { TrackSortType.WINRATE },
                 binding.avgDiffSortButton.clicks().map { TrackSortType.AVERAGE_DIFF },
             ).flattenMerge(),
-            onSearch = binding.searchEt.onTextChanged()
+            onSearch = binding.searchEt.onTextChanged(),
+            onIndivStatsSelected = flowOf(binding.indivBtn.clicks().map { true }, binding.teamBtn.clicks().map { false }).flattenMerge()
         )
         viewModel.sharedMaps
             .onEach { mostPlayedAdapter.addTracks(it) }
@@ -53,8 +55,25 @@ class MapRankingFragment : Fragment(R.layout.fragment_map_ranking) {
             }.launchIn(lifecycleScope)
         viewModel.sharedGoToStats
             .filter { findNavController().currentDestination?.id == R.id.mapRankingFragment }
-            .onEach { findNavController().navigate(MapRankingFragmentDirections.toMapStats(it)) }
+            .onEach { findNavController().navigate(MapRankingFragmentDirections.toMapStats(it.first, it.second)) }
             .launchIn(lifecycleScope)
+        viewModel.sharedIndivStatsEnabled
+            .onEach {
+                binding.indivBtn.setBackgroundColor(ContextCompat.getColor(requireContext(),
+                    when (it) {
+                        true -> R.color.transparent_white
+                        else -> R.color.transparent
+                    })
+
+                )
+                binding.teamBtn.setBackgroundColor(ContextCompat.getColor(requireContext(),
+                    when (it) {
+                        false -> R.color.transparent_white
+                        else -> R.color.transparent
+                    })
+
+                )
+            }.launchIn(lifecycleScope)
     }
 
     private fun updateSortButton(button: TextView, initialType: TrackSortType, targetType: TrackSortType) {

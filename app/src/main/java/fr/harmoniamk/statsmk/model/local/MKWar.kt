@@ -1,9 +1,7 @@
 package fr.harmoniamk.statsmk.model.local
 
 import android.os.Build
-import fr.harmoniamk.statsmk.extension.get
-import fr.harmoniamk.statsmk.extension.set
-import fr.harmoniamk.statsmk.extension.sum
+import fr.harmoniamk.statsmk.extension.*
 import fr.harmoniamk.statsmk.model.firebase.TOTAL_TRACKS
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.firebase.TOTAL_TRACK_SCORE
@@ -19,7 +17,7 @@ data class MKWar(val war: NewWar?) : Serializable {
     val isOver = trackPlayed >= TOTAL_TRACKS
     val displayedScore = "$scoreHost - $scoreOpponent"
     val scoreLabel = "Score: $displayedScore"
-    val displayedAverage = "${scoreHost / TOTAL_TRACKS}"
+    val displayedAverage = (scoreHost / TOTAL_TRACKS).trackScoreToDiff()
     val displayedState = if (isOver) "War terminée" else "War en cours (${trackPlayed}/$TOTAL_TRACKS)"
     val displayedDiff: String
         get() {

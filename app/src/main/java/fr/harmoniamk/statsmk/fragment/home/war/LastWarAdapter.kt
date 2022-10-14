@@ -6,6 +6,7 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.BestTournamentItemBinding
+import fr.harmoniamk.statsmk.databinding.BestWarItemBinding
 import fr.harmoniamk.statsmk.databinding.LastTournamentItemBinding
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.model.firebase.NewWar
@@ -28,24 +29,26 @@ class LastWarAdapter(val items: MutableList<MKWar> = mutableListOf()) :
     private val _sharedItemClick = MutableSharedFlow<MKWar>()
     val sharedItemClick = _sharedItemClick.asSharedFlow()
 
-    class LastWarViewHolder(val binding: BestTournamentItemBinding) :
+    class LastWarViewHolder(val binding: BestWarItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(war: MKWar, position: Int) {
             binding.nameTv.text = war.name
             binding.totalScoreTv.text = war.displayedScore
             binding.timeTv.text = war.war?.createdDate
-            binding.tmInfos.isVisible = false
-            binding.ratioScoreTv.text = war.displayedAverage
-            binding.trophy.isVisible = false
-            binding.separator.isVisible = false
-            binding.topScoreTv.text = war.displayedDiff
-            binding.currentTmTop.text = "Diff."
+            binding.diffMapTv.text = war.displayedAverage
+            binding.totalDiffTv.text = war.displayedDiff
+            binding.chip.setImageResource(
+                when (war.displayedDiff.contains("+")) {
+                    true -> R.drawable.checked
+                    else -> R.drawable.close
+                }
+            )
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = LastWarViewHolder(
-        BestTournamentItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        BestWarItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
     )
 
     override fun onBindViewHolder(holder: LastWarViewHolder, position: Int) {

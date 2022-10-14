@@ -17,6 +17,7 @@
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.20625" />
         <entry key="app/src/main/res/layout/activity_splash.xml" value="0.2203125" />
         <entry key="app/src/main/res/layout/best_tournament_item.xml" value="0.4036458333333333" />
+        <entry key="app/src/main/res/layout/best_war_item.xml" value="0.2663531423685336" />
         <entry key="app/src/main/res/layout/current_track_item.xml" value="0.2203125" />
         <entry key="app/src/main/res/layout/delete_tournament_dialog_fragment.xml" value="0.325" />
         <entry key="app/src/main/res/layout/fragment_add_players.xml" value="0.3890625" />
@@ -72,7 +73,7 @@
         <entry key="app/src/main/res/layout/track_item_collapsed.xml" value="0.2953125" />
         <entry key="app/src/main/res/layout/user_item.xml" value="0.3098958333333333" />
         <entry key="app/src/main/res/layout/vertical_war_item.xml" value="0.2677083333333333" />
-        <entry key="app/src/main/res/layout/war_item.xml" value="0.284375" />
+        <entry key="app/src/main/res/layout/war_item.xml" value="0.25" />
         <entry key="app/src/main/res/layout/war_item_vertical.xml" value="0.2677083333333333" />
         <entry key="app/src/main/res/mipmap-anydpi-v26/hr_logo.xml" value="0.27282051282051284" />
       </map>

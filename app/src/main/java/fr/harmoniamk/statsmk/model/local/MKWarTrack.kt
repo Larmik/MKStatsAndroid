@@ -1,6 +1,7 @@
 package fr.harmoniamk.statsmk.model.local
 
 import fr.harmoniamk.statsmk.R
+import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.model.firebase.TOTAL_TRACK_SCORE
 import fr.harmoniamk.statsmk.extension.positionToPoints
 import fr.harmoniamk.statsmk.extension.sum
@@ -13,6 +14,8 @@ data class MKWarTrack(val track: NewWarTrack?) {
 
     val isOver: Boolean
         get() = track?.warPositions?.size == 6
+
+    fun hasPlayer(playerId: String?) = track?.warPositions?.any { pos -> pos.playerId == playerId }.isTrue
 
     val opponentScore: Int
         get() {

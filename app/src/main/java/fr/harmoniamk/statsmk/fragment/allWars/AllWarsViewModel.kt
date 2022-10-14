@@ -64,7 +64,7 @@ class AllWarsViewModel @Inject constructor(private val firebaseRepository: Fireb
             }.launchIn(viewModelScope)
 
         onSearch
-            .map { searched ->
+            .onEach { searched ->
                 val filteredWars = mutableListOf<MKWar>()
                 when (searched.isEmpty()) {
                     true -> {
@@ -81,7 +81,7 @@ class AllWarsViewModel @Inject constructor(private val firebaseRepository: Fireb
                         }
                     }
                     else -> {
-                        val filteredTeams = teams.filter { it.name?.toLowerCase()?.contains(searched.toLowerCase()).isTrue }
+                        val filteredTeams = teams.filter { it.name?.toLowerCase()?.contains(searched.toLowerCase()).isTrue || it.shortName?.toLowerCase()?.contains(searched.toLowerCase()).isTrue}
                         filteredTeams.forEach { team -> filteredWars.addAll(wars.filter { it.war?.teamOpponent?.equals(team.mid).isTrue }) }
                         when {
                             filters.contains(WarFilterType.WEEK) -> filteredWars.removeAll(filteredWars.filterNot { it.isThisWeek })
@@ -95,12 +95,11 @@ class AllWarsViewModel @Inject constructor(private val firebaseRepository: Fireb
                         }
                     }
                 }
-                filteredWars.filter { it.isOver }
-            }.bind(_sharedWars, viewModelScope)
+                _sharedWars.emit(filteredWars.filter { it.isOver })
+            }.launchIn(viewModelScope)
 
         onSortClick
             .onEach {
-                _sharedSortTypeSelected.emit(it)
                 val sortedWars = when (it) {
                     WarSortType.DATE -> wars.sortedByDescending { it.war?.mid }
                     WarSortType.TEAM -> wars.sortedBy { it.name }
@@ -112,22 +111,20 @@ class AllWarsViewModel @Inject constructor(private val firebaseRepository: Fireb
                     filters.contains(WarFilterType.PLAY) -> sortedWars.removeAll(wars.filterNot { it.hasPlayer(preferencesRepository.currentUser?.mid) })
                 }
                 _sharedWars.emit(sortedWars.filter { it.isOver })
+                _sharedSortTypeSelected.emit(it)
             }.launchIn(viewModelScope)
 
         onFilterClick
             .onEach {
+                val filteredWars = mutableListOf<MKWar>()
                 when (filters.contains(it)) {
                     true -> filters.remove(it)
                     else -> filters.add(it)
                 }
-                _sharedFilterList.emit(filters)
-                val filteredWars = mutableListOf<MKWar>()
                 when {
                     filters.contains(WarFilterType.WEEK) -> filteredWars.addAll(wars.filter { it.isThisWeek })
                     filters.contains(WarFilterType.MONTH) -> filteredWars.addAll(wars.filter { it.isThisMonth })
-                    filters.contains(WarFilterType.PLAY) -> filteredWars.addAll(wars.filter {
-                        it.hasPlayer(preferencesRepository.currentUser?.mid)
-                    })
+                    filters.contains(WarFilterType.PLAY) -> filteredWars.addAll(wars.filter { it.hasPlayer(preferencesRepository.currentUser?.mid) })
                     !filters.contains(WarFilterType.WEEK) -> filteredWars.addAll(wars.filterNot { it.isThisWeek })
                     !filters.contains(WarFilterType.MONTH) -> filteredWars.addAll(wars.filterNot { it.isThisMonth })
                     !filters.contains(WarFilterType.PLAY) -> filteredWars.addAll(wars.filterNot { it.hasPlayer(preferencesRepository.currentUser?.mid) })
@@ -138,6 +135,7 @@ class AllWarsViewModel @Inject constructor(private val firebaseRepository: Fireb
                     WarSortType.SCORE -> filteredWars.sortByDescending { it.scoreHost }
                 }
                 _sharedWars.emit(filteredWars.filter { it.isOver })
+                _sharedFilterList.emit(filters)
             }.launchIn(viewModelScope)
 
         onItemClick.bind(_sharedWarClick, viewModelScope)
