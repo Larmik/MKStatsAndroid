@@ -2,6 +2,7 @@ package fr.harmoniamk.statsmk.extension
 
 import fr.harmoniamk.statsmk.model.firebase.NewWarPositions
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
+import fr.harmoniamk.statsmk.model.firebase.Penalty
 import fr.harmoniamk.statsmk.model.local.*
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import kotlinx.coroutines.flow.*
@@ -17,6 +18,15 @@ fun List<MKWar?>.withName(firebaseRepository: FirebaseRepositoryInterface) = flo
             temp.add(it.apply { this.name = "$hostName - $opponentName" })
         }
 
+    }
+    emit(temp)
+}
+
+fun List<Penalty>.withTeamName(firebaseRepository: FirebaseRepositoryInterface) = flow {
+    val temp = mutableListOf<Penalty>()
+    this@withTeamName.forEach {
+        val teamName = firebaseRepository.getTeam(it.teamId).firstOrNull()?.name
+        temp.add(it.apply { this.teamName = teamName })
     }
     emit(temp)
 }
@@ -49,6 +59,13 @@ fun List<Map<*,*>>?.parseTracks() : List<NewWarTrack>? =
                 }
         )
 
+}
+fun List<Map<*,*>>?.parsePenalties() : List<Penalty>? =
+    this?.map { item ->
+        Penalty(
+            teamId = item["teamId"].toString(),
+            amount = item["amount"].toString().toInt()
+        )
 }
 
 

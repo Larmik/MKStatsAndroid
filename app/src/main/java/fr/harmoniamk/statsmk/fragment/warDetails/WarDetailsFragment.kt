@@ -15,10 +15,12 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentWarDetailsBinding
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.fragment.currentWar.CurrentWarTrackAdapter
+import fr.harmoniamk.statsmk.fragment.currentWar.PenaltyAdapter
 import fr.harmoniamk.statsmk.model.local.MKWar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -39,7 +41,9 @@ class WarDetailsFragment : Fragment(R.layout.fragment_war_details) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val adapter = CurrentWarTrackAdapter()
+        val penaltiesAdapter = PenaltyAdapter()
         binding.currentTracksRv.adapter = adapter
+        binding.penaltiesRv.adapter = penaltiesAdapter
         war?.let { war ->
             binding.warDateTv.text = war.war?.createdDate
             binding.scoreTv.text = war.displayedScore
@@ -96,6 +100,13 @@ class WarDetailsFragment : Fragment(R.layout.fragment_war_details) {
                 .launchIn(lifecycleScope)
             viewModel.sharedPlayerHost
                 .onEach { binding.playerHostTv.text = it }
+                .launchIn(lifecycleScope)
+            viewModel.sharedPenalties
+                .filterNotNull()
+                .onEach {
+                    binding.penaltiesLayout.isVisible = true
+                    penaltiesAdapter.addPenalties(it)
+                }
                 .launchIn(lifecycleScope)
         }
     }

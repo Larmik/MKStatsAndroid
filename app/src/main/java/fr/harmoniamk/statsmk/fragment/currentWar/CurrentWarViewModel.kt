@@ -3,10 +3,9 @@ package fr.harmoniamk.statsmk.fragment.currentWar
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.harmoniamk.statsmk.extension.bind
-import fr.harmoniamk.statsmk.extension.getCurrent
-import fr.harmoniamk.statsmk.extension.isTrue
-import fr.harmoniamk.statsmk.extension.withName
+import fr.harmoniamk.statsmk.extension.*
+import fr.harmoniamk.statsmk.model.firebase.NewWar
+import fr.harmoniamk.statsmk.model.firebase.Penalty
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
@@ -31,6 +30,8 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
     private val _sharedTrackClick = MutableSharedFlow<Int>()
     private val _sharedPlayers = MutableSharedFlow<List<String>>()
     private val _sharedPopupShowing = MutableSharedFlow<Boolean>()
+    private val _sharedAddPenalty = MutableSharedFlow<NewWar>()
+    private val _sharedPenalties = MutableSharedFlow<List<Penalty>?>()
 
     val sharedButtonVisible = _sharedButtonVisible.asSharedFlow()
     val sharedCurrentWar = _sharedCurrentWar.asSharedFlow()
@@ -41,8 +42,10 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
     val sharedTrackClick = _sharedTrackClick.asSharedFlow()
     val sharedPlayers = _sharedPlayers.asSharedFlow()
     val sharedPopupShowing = _sharedPopupShowing.asSharedFlow()
+    val sharedAddPenalty = _sharedAddPenalty.asSharedFlow()
+    val sharedPenalties = _sharedPenalties.asSharedFlow()
 
-    fun bind(onBack: Flow<Unit>, onNextTrack: Flow<Unit>, onTrackClick: Flow<Int>, onDelete: Flow<Unit>, onPopup: Flow<Boolean>) {
+    fun bind(onBack: Flow<Unit>, onNextTrack: Flow<Unit>, onTrackClick: Flow<Int>, onDelete: Flow<Unit>, onPopup: Flow<Boolean>, onPenalty: Flow<Unit>) {
 
         flowOf(firebaseRepository.getNewWars(), firebaseRepository.listenToNewWars())
             .flattenMerge()
@@ -51,13 +54,15 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
             .mapNotNull { it.singleOrNull() }
             .onEach { war ->
                 preferencesRepository.currentWar = war.war
-                val players = firebaseRepository.getUsers().first().filter { it.currentWar == war.war?.mid }
-                    .sortedBy { it.name?.toLowerCase(Locale.ROOT) }.mapNotNull { it.name }
+                val players = firebaseRepository.getUsers().first().filter { it.currentWar == war.war?.mid }.sortedBy { it.name?.toLowerCase(Locale.ROOT) }.mapNotNull { it.name }
                 _sharedCurrentWar.emit(war)
                 _sharedButtonVisible.emit(preferencesRepository.currentUser?.isAdmin.isTrue && !war.isOver)
                 _sharedTracks.emit(war.war?.warTracks.orEmpty().map { MKWarTrack(it) })
                 _sharedPlayers.emit(players)
-            }.launchIn(viewModelScope)
+            }
+            .mapNotNull { it.war?.penalties }
+            .flatMapLatest { it.withTeamName(firebaseRepository) }
+            .bind(_sharedPenalties, viewModelScope)
 
         onBack.bind(_sharedQuit, viewModelScope)
         onNextTrack.bind(_sharedSelectTrack, viewModelScope)
@@ -72,6 +77,13 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
             }.mapNotNull { preferencesRepository.currentWar?.mid }
             .flatMapLatest { firebaseRepository.deleteNewWar(it) }
             .bind(_sharedBackToWars, viewModelScope)
+
+        onPenalty
+            .mapNotNull {
+                preferencesRepository.currentWar
+            }
+            .bind(_sharedAddPenalty, viewModelScope)
+
 
     }
 

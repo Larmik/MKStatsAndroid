@@ -17,6 +17,7 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
+import fr.harmoniamk.statsmk.extension.parsePenalties
 import fr.harmoniamk.statsmk.extension.parseTracks
 import fr.harmoniamk.statsmk.extension.toMapList
 import fr.harmoniamk.statsmk.model.firebase.*
@@ -29,11 +30,6 @@ import javax.inject.Inject
 
 interface FirebaseRepositoryInterface{
     val deviceId: String?
-
-    //Used only for migration
-    fun getWars(): Flow<List<War>>
-    fun getWarPositions(): Flow<List<WarPosition>>
-    fun getWarTracks(): Flow<List<WarTrack>>
 
     //Write and edit methods
     fun writeUser(user: User): Flow<Unit>
@@ -126,27 +122,6 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
         awaitClose {  }
     }
 
-    override fun getWars(): Flow<List<War>> = callbackFlow {
-        database.child("wars").get().addOnSuccessListener { snapshot ->
-            val wars: List<War> = snapshot.children
-                .map { it.value as Map<*, *> }
-                .map {map -> War(
-                    mid = map["mid"].toString(),
-                    playerHostId = map["playerHostId"].toString(),
-                    name = map["name"].toString(),
-                    teamHost = map["teamHost"].toString(),
-                    scoreHost = map["scoreHost"].toString().toInt(),
-                    teamOpponent = map["teamOpponent"].toString(),
-                    scoreOpponent = map["scoreOpponent"].toString().toInt(),
-                    trackPlayed = map["trackPlayed"].toString().toInt(),
-                    updatedDate = map["updatedDate"].toString(),
-                    createdDate = map["createdDate"].toString())
-                }
-            if (isActive) offer(wars)
-        }
-        awaitClose {  }
-    }
-
     override fun getNewWars(): Flow<List<NewWar>> = callbackFlow {
         database.child("newWars").get().addOnSuccessListener { snapshot ->
             val wars: List<NewWar> = snapshot.children
@@ -154,42 +129,12 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
                 .map {map -> NewWar(
                     mid = map["mid"].toString(),
                     playerHostId = map["playerHostId"].toString(),
-                    name = map["name"].toString(),
                     teamHost = map["teamHost"].toString(),
                     teamOpponent = map["teamOpponent"].toString(),
                     createdDate = map["createdDate"].toString(),
-                    warTracks = map["warTracks"].toMapList().parseTracks())
-                }
-            if (isActive) offer(wars)
-        }
-        awaitClose {  }
-    }
-
-    override fun getWarPositions(): Flow<List<WarPosition>> = callbackFlow {
-        database.child("warPositions").get().addOnSuccessListener { snapshot ->
-            val wars: List<WarPosition> = snapshot.children
-                .map { it.value as Map<*, *> }
-                .map {map -> WarPosition(
-                    mid = map["mid"].toString(),
-                    warTrackId = map["warTrackId"].toString(),
-                    playerId = map["playerId"].toString(),
-                    position = map["position"].toString().toInt())
-                }
-            if (isActive) offer(wars)
-        }
-        awaitClose {  }
-    }
-
-    override fun getWarTracks(): Flow<List<WarTrack>> = callbackFlow {
-        database.child("warTracks").get().addOnSuccessListener { snapshot ->
-            val wars: List<WarTrack> = snapshot.children
-                .map { it.value as Map<*, *> }
-                .map {map -> WarTrack(
-                    mid = map["mid"].toString(),
-                    warId = map["warId"].toString(),
-                    trackIndex = map["trackIndex"].toString().toInt(),
-                    isOver = map["over"].toString().toBoolean(),
-                    teamScore = map["teamScore"].toString().toInt())
+                    warTracks = map["warTracks"].toMapList().parseTracks(),
+                    penalties = map["penalties"].toMapList().parsePenalties()
+                )
                 }
             if (isActive) offer(wars)
         }
@@ -221,12 +166,12 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
                 if (map == null) null
                 else NewWar(
                     mid = map["mid"].toString(),
-                    name = map["name"].toString(),
                     playerHostId = map["playerHostId"].toString(),
                     teamOpponent = map["teamOpponent"].toString(),
                     teamHost = map["teamHost"].toString(),
                     createdDate = map["createdDate"].toString(),
-                    warTracks = map["warTracks"].toMapList().parseTracks()
+                    warTracks = map["warTracks"].toMapList().parseTracks(),
+                    penalties = map["penalties"].toMapList().parsePenalties()
                 )
             )
         }
@@ -269,19 +214,19 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
         awaitClose {  }
     }
 
-
     override fun listenToNewWars(): Flow<List<NewWar>> = callbackFlow {
         val postListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val wars: List<NewWar> = dataSnapshot.child("newWars").children.map { it.value as Map<*, *> }.map {
                     NewWar(
                     mid = it["mid"].toString(),
-                    name = it["name"].toString(),
                     playerHostId = it["playerHostId"].toString(),
                     teamOpponent = it["teamOpponent"].toString(),
                     teamHost = it["teamHost"].toString(),
                     createdDate = it["createdDate"].toString(),
-                    warTracks = it["warTracks"].toMapList().parseTracks())
+                    warTracks = it["warTracks"].toMapList().parseTracks(),
+                        penalties = it["penalties"].toMapList().parsePenalties()
+                    )
                   }
                 if (isActive) offer(wars)
             }

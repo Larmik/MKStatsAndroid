@@ -79,7 +79,6 @@ class MapRankingFragment : Fragment(R.layout.fragment_map_ranking) {
     private fun updateSortButton(button: TextView, initialType: TrackSortType, targetType: TrackSortType) {
         button.background.mutate().setTint(ContextCompat.getColor(requireContext(), if (initialType == targetType) R.color.harmonia_dark else R.color.transparent_white))
         button.setTextColor(ContextCompat.getColor(requireContext(), if (initialType == targetType) R.color.white else R.color.harmonia_dark))
-
     }
 
 }

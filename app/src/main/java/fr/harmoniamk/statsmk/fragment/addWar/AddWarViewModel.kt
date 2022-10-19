@@ -37,13 +37,11 @@ class AddWarViewModel @Inject constructor(private val firebaseRepository: Fireba
         val usersSelected = mutableListOf<User>()
 
         var chosenOpponent: Team? = null
-        var warName: String? = null
         var war: NewWar?
 
         onTeamClick.onEach {
             chosenOpponent = it
-            warName = "${preferencesRepository.currentTeam?.shortName} - ${it.shortName}"
-            _sharedTeamSelected.emit(warName)
+            _sharedTeamSelected.emit( "${preferencesRepository.currentTeam?.shortName} - ${it.shortName}")
         }.launchIn(viewModelScope)
 
         val createWar = onCreateWar
@@ -57,7 +55,6 @@ class AddWarViewModel @Inject constructor(private val firebaseRepository: Fireba
             .mapNotNull {
                 war = NewWar(
                     mid = System.currentTimeMillis().toString(),
-                    name = warName,
                     teamHost = preferencesRepository.currentTeam?.mid,
                     playerHostId = preferencesRepository.currentUser?.mid,
                     teamOpponent = it,

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:background="@color/white"
+    android:gravity="center_horizontal"
+
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/pos_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:fontFamily="@font/montserrat_bold"
+        android:textColor="@color/harmonia_dark"
+        android:gravity="center"
+        android:paddingVertical="10dp"
+        android:text="Pénalité"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:id="@+id/team1_label"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textAlignment="center"
+            android:layout_marginHorizontal="5dp"
+            android:background="@drawable/rounded_bg"
+            android:paddingVertical="10dp"
+            android:text="Harmonia"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/team2_label"
+            android:layout_marginHorizontal="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/rounded_bg"
+            android:textAlignment="center"
+            android:paddingVertical="10dp"
+            android:text="Chan-Clan"/>
+    </LinearLayout>
+
+    <EditText
+        android:layout_width="100dp"
+        android:layout_height="70dp"
+        android:hint="Valeur"
+        android:inputType="number"
+        android:id="@+id/add_penalty_edit"
+        android:textAlignment="center"/>
+
+    <TextView
+        android:id="@+id/add_penalty_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingVertical="10dp"
+        android:textAlignment="center"
+        android:backgroundTint="@color/harmonia_dark"
+        android:background="@drawable/rounded_bg"
+        android:textColor="@color/white"
+        android:fontFamily="@font/roboto"
+        android:text="Infliger la pénalité"
+        android:layout_margin="15dp"/>
+
+
+
+
+</LinearLayout>

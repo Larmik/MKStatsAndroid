@@ -63,29 +63,7 @@ class SettingsViewModel @Inject constructor(private val preferencesRepository: P
 
         onMigrate
             .onEach {
-                val newWarTracks = mutableListOf<NewWarTrack>()
-                val newWarPos = mutableListOf<NewWarPositions>()
-                val wars = firebaseRepository.getWars().first()
-                wars.forEach { war ->
-                    newWarTracks.clear()
-                    val warTracks = firebaseRepository.getWarTracks().first().filter { it.warId == war.mid }
-                    warTracks.forEach { track ->
-                        newWarPos.clear()
-                        val warPositions = firebaseRepository.getWarPositions().first().filter { it.warTrackId ==  track.mid}
-                        newWarTracks.add(NewWarTrack(track.mid, track.trackIndex, warPositions.map { NewWarPositions(
-                            it.mid,
-                            it.playerId ?: "-1",
-                            it.position
-                        ) }))
 
-
-                    }
-                    firebaseRepository.writeNewWar(
-                        NewWar(
-                        war.mid, war.name, war.playerHostId, war.teamHost, war.teamOpponent, war.createdDate, newWarTracks
-                    )
-                    ).first()
-                }
             }.launchIn(viewModelScope)
     }
 

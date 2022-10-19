@@ -16,6 +16,7 @@ import fr.harmoniamk.statsmk.databinding.FragmentCurrentWarBinding
 import fr.harmoniamk.statsmk.extension.backPressedDispatcher
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.extension.isResumed
+import fr.harmoniamk.statsmk.fragment.addPenalty.AddPenaltyFragment
 import fr.harmoniamk.statsmk.fragment.popup.PopupFragment
 import fr.harmoniamk.statsmk.model.local.MKWar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -35,13 +36,16 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val adapter = CurrentWarTrackAdapter()
+        val penaltiesAdapter = PenaltyAdapter()
         binding.currentTracksRv.adapter = adapter
+        binding.penaltiesRv.adapter = penaltiesAdapter
         viewModel.bind(
             onBack = requireActivity().backPressedDispatcher(viewLifecycleOwner),
             onNextTrack = binding.nextTrackBtn.clicks(),
             onTrackClick = adapter.sharedClick,
             onDelete = popup.onPositiveClick,
-            onPopup = flowOf(popup.onNegativeClick.map { false }, binding.deleteWarBtn.clicks().map { true }).flattenMerge()
+            onPopup = flowOf(popup.onNegativeClick.map { false }, binding.deleteWarBtn.clicks().map { true }).flattenMerge(),
+            onPenalty = binding.penaltyBtn.clicks()
         )
 
         viewModel.sharedCurrentWar
@@ -55,7 +59,7 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
                 binding.diffScoreTv.text = it.displayedDiff
                 val textColor = when  {
                     it.displayedDiff.contains("-") -> R.color.lose
-                    it.displayedDiff.contains("+") -> R.color.win
+                    it.displayedDiff.contains("+") -> R.color.green
                     else -> R.color.harmonia_dark
                 }
                 binding.diffScoreTv.setTextColor(
@@ -122,6 +126,21 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
                     true -> popup.takeIf { !it.isAdded }?.show(childFragmentManager, null)
                     else -> popup.dismiss()
                 }
+            }
+            .launchIn(lifecycleScope)
+
+        viewModel.sharedAddPenalty
+            .onEach {
+                val penaltyFragment = AddPenaltyFragment(it)
+                if (!penaltyFragment.isAdded)
+                    penaltyFragment.show(childFragmentManager, null)
+            }.launchIn(lifecycleScope)
+
+        viewModel.sharedPenalties
+            .filterNotNull()
+            .onEach {
+                binding.penaltiesLayout.isVisible = true
+                penaltiesAdapter.addPenalties(it)
             }
             .launchIn(lifecycleScope)
     }
