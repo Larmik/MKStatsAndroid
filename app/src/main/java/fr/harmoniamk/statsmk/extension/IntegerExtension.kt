@@ -18,8 +18,8 @@ fun Int?.positionToPoints() = when (this) {
     else -> 0
 }
 fun Int?.pointsToPosition() = when (this) {
-    15 -> 1
-    12 -> 2
+    14, 15 -> 1
+    11, 12, 13 -> 2
     10 -> 3
     9 -> 4
     8 -> 5

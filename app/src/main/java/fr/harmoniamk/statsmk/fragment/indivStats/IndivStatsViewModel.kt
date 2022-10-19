@@ -1,5 +1,6 @@
 package fr.harmoniamk.statsmk.fragment.indivStats
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -12,6 +13,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
+import kotlin.math.log
 
 @FlowPreview
 @ExperimentalCoroutinesApi
@@ -52,7 +54,9 @@ class IndivStatsViewModel @Inject constructor(private val firebaseRepository: Fi
                 || it.map {war -> war.teamOpponent}.contains(preferencesRepository.currentTeam?.mid)
             }.mapNotNull { list -> list
                 .map { MKWar(it) }
-                .filter { it.hasPlayer(preferencesRepository.currentUser?.mid) }
+                .filter {
+                    it.hasPlayer(preferencesRepository.currentUser?.mid)
+                }
             }
             .flatMapLatest { it.withName(firebaseRepository) }
             .onEach { list ->
@@ -90,13 +94,13 @@ class IndivStatsViewModel @Inject constructor(private val firebaseRepository: Fi
                 maps.groupBy { it.trackIndex }
                     .filter { it.value.isNotEmpty() }
                     .forEach { entry ->
-                        averageForMaps.add(
-                            TrackStats(
-                                map = Maps.values()[entry.key ?: -1],
-                                score = (entry.value.map { it.score }.sum() / entry.value.map { it.score }.count()),
-                                totalPlayed = entry.value.size
-                            )
+                        val stats = TrackStats(
+                            map = Maps.values()[entry.key ?: -1],
+                            score = (entry.value.map { it.score }.sum() / entry.value.map { it.score }.count()),
+                            totalPlayed = entry.value.size
                         )
+                        Log.d("MKDebug", "averageFor map ${stats.map?.name}, score ${stats.score}")
+                        averageForMaps.add(stats)
                     }
                 bestMap = averageForMaps.maxByOrNull { it.score ?: 0 }
                 worstMap = averageForMaps.minByOrNull { it.score ?: 0 }
