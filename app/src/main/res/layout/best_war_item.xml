@@ -26,6 +26,16 @@
             android:layout_marginStart="15dp"
             tools:src="@drawable/checked"/>
 
+
+
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:id="@+id/mku_iv"
+            android:visibility="invisible"
+            android:layout_marginHorizontal="10dp"
+            android:src="@drawable/mku_logo"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -58,7 +68,7 @@
     <LinearLayout
         android:layout_width="0dp"
         android:gravity="center"
-        android:layout_weight="1.5"
+        android:layout_weight="1"
         android:layout_height="match_parent"
         android:orientation="horizontal">
 

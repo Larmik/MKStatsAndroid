@@ -133,7 +133,8 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
                     teamOpponent = map["teamOpponent"].toString(),
                     createdDate = map["createdDate"].toString(),
                     warTracks = map["warTracks"].toMapList().parseTracks(),
-                    penalties = map["penalties"].toMapList().parsePenalties()
+                    penalties = map["penalties"].toMapList().parsePenalties(),
+                    isOfficial = map["official"].toString().toBoolean()
                 )
                 }
             if (isActive) offer(wars)
@@ -171,7 +172,8 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
                     teamHost = map["teamHost"].toString(),
                     createdDate = map["createdDate"].toString(),
                     warTracks = map["warTracks"].toMapList().parseTracks(),
-                    penalties = map["penalties"].toMapList().parsePenalties()
+                    penalties = map["penalties"].toMapList().parsePenalties(),
+                    isOfficial = map["official"].toString().toBoolean()
                 )
             )
         }
@@ -225,7 +227,8 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
                     teamHost = it["teamHost"].toString(),
                     createdDate = it["createdDate"].toString(),
                     warTracks = it["warTracks"].toMapList().parseTracks(),
-                        penalties = it["penalties"].toMapList().parsePenalties()
+                        penalties = it["penalties"].toMapList().parsePenalties(),
+                        isOfficial = it["official"].toString().toBoolean()
                     )
                   }
                 if (isActive) offer(wars)

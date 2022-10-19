@@ -1,6 +1,7 @@
 package fr.harmoniamk.statsmk.fragment.home.war
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
@@ -9,6 +10,7 @@ import fr.harmoniamk.statsmk.databinding.BestTournamentItemBinding
 import fr.harmoniamk.statsmk.databinding.BestWarItemBinding
 import fr.harmoniamk.statsmk.databinding.LastTournamentItemBinding
 import fr.harmoniamk.statsmk.extension.clicks
+import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.local.MKWar
 import kotlinx.coroutines.CoroutineScope
@@ -32,7 +34,7 @@ class LastWarAdapter(val items: MutableList<MKWar> = mutableListOf()) :
     class LastWarViewHolder(val binding: BestWarItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(war: MKWar, position: Int) {
+        fun bind(war: MKWar) {
             binding.nameTv.text = war.name
             binding.totalScoreTv.text = war.displayedScore
             binding.timeTv.text = war.war?.createdDate
@@ -44,6 +46,9 @@ class LastWarAdapter(val items: MutableList<MKWar> = mutableListOf()) :
                     else -> R.drawable.close
                 }
             )
+            war.takeIf { it.war?.isOfficial.isTrue }?.let {
+                binding.mkuIv.visibility = View.VISIBLE
+            }
         }
     }
 
@@ -53,7 +58,7 @@ class LastWarAdapter(val items: MutableList<MKWar> = mutableListOf()) :
 
     override fun onBindViewHolder(holder: LastWarViewHolder, position: Int) {
         val item = items[position]
-        holder.bind(item, position)
+        holder.bind(item)
         holder.binding.root.clicks()
             .onEach { _sharedItemClick.emit(item) }
             .launchIn(this)

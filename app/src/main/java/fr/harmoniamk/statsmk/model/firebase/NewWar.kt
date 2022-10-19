@@ -9,5 +9,6 @@ data class NewWar(
     val teamOpponent: String? = null,
     val createdDate: String? = null,
     var warTracks: List<NewWarTrack>? = null,
-    var penalties: List<Penalty>? = null
+    var penalties: List<Penalty>? = null,
+    val isOfficial: Boolean? = null
 ) : Serializable
