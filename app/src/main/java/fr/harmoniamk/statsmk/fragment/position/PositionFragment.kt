@@ -1,7 +1,9 @@
 package fr.harmoniamk.statsmk.fragment.position
 
+import android.os.Build
 import android.os.Bundle
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -16,6 +18,7 @@ import fr.harmoniamk.statsmk.extension.clicks
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -85,6 +88,32 @@ class PositionFragment : Fragment(R.layout.fragment_position) {
 
         viewModel.sharedPlayerLabel
             .onEach { binding.posTitle.text = "Sélectionnez la position de $it" }
+            .launchIn(lifecycleScope)
+
+        viewModel.sharedScore
+            .onEach { binding.scoreTv.text = it }
+            .launchIn(lifecycleScope)
+        viewModel.sharedDiff
+            .onEach {
+                binding.diffScoreTv.text = it
+                val textColor = when  {
+                    it.contains("-") -> R.color.lose
+                    it.contains("+") -> R.color.green
+                    else -> R.color.harmonia_dark
+                }
+                binding.diffScoreTv.setTextColor(
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                        requireContext().getColor(textColor)
+                    else ContextCompat.getColor(requireContext(), textColor)
+                )
+            }
+            .launchIn(lifecycleScope)
+        viewModel.sharedWarName
+            .filterNotNull()
+            .onEach { binding.warTitleTv.text = it }
+            .launchIn(lifecycleScope)
+        viewModel.sharedTrackNumber
+            .onEach { binding.currentTrackTv.text = "Course $it/12" }
             .launchIn(lifecycleScope)
     }
 

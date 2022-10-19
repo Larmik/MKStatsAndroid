@@ -6,14 +6,17 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.MKTournamentTrack
 import fr.harmoniamk.statsmk.extension.bind
+import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.firebase.NewWarPositions
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
+import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PlayedTrackRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import fr.harmoniamk.statsmk.repository.TournamentRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
@@ -33,12 +36,20 @@ class PositionViewModel @Inject constructor(
     private val _sharedGoToResult = MutableSharedFlow<String?>()
     private val _sharedSelectedPositions = MutableSharedFlow<List<Int>>()
     private val _sharedPlayerLabel = MutableSharedFlow<String?>()
+    private val _sharedScore = MutableSharedFlow<String>()
+    private val _sharedDiff = MutableSharedFlow<String>()
+    private val _sharedWarName = MutableSharedFlow<String?>()
+    private val _sharedTrackNumber = MutableSharedFlow<Int>()
 
     val validateTrack = _validateTrack.asSharedFlow()
     val sharedQuit = _sharedQuit.asSharedFlow()
     val sharedGoToResult = _sharedGoToResult.asSharedFlow()
     val sharedSelectedPositions = _sharedSelectedPositions.asSharedFlow()
     val sharedPlayerLabel = _sharedPlayerLabel.asSharedFlow()
+    val sharedScore = _sharedScore.asSharedFlow()
+    val sharedDiff = _sharedDiff.asSharedFlow()
+    val sharedWarName = _sharedWarName.asSharedFlow()
+    val sharedTrackNumber = _sharedTrackNumber.asSharedFlow()
 
     fun bind(
         tournamentId: Int? = null, warTrackId: String? = null, chosenTrack: Int,
@@ -90,6 +101,19 @@ class PositionViewModel @Inject constructor(
             val positions = mutableListOf<NewWarPositions>()
             var currentUser: User? = null
             var currentUsers: List<User> = listOf()
+
+            flowOf(MKWar(war))
+                .onEach {
+                    delay(50)
+                    _sharedScore.emit(it.displayedScore)
+                    _sharedDiff.emit(it.displayedDiff)
+                    it.war?.warTracks?.let {
+                        _sharedTrackNumber.emit(it.size+1)
+                    }
+                }
+                .flatMapLatest { listOf(it).withName(firebaseRepository) }
+                .mapNotNull { it.singleOrNull()?.name }
+                .bind(_sharedWarName, viewModelScope)
 
             firebaseRepository.getUsers()
                 .onEach {

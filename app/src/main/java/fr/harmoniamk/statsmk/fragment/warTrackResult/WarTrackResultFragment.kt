@@ -55,7 +55,7 @@ class WarTrackResultFragment : Fragment(R.layout.fragment_result_war_track) {
             .onEach {
                 val textColor = when  {
                     it.displayedDiff.contains("-") -> R.color.lose
-                    it.displayedDiff.contains("+") -> R.color.win
+                    it.displayedDiff.contains("+") -> R.color.green
                     else -> R.color.harmonia_dark
                 }
                 binding.trackDiff.setTextColor(

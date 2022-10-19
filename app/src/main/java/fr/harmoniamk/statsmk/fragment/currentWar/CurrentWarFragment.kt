@@ -100,17 +100,37 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
             }
             .launchIn(lifecycleScope)
 
-        viewModel.sharedPlayers
+
+        viewModel.sharedWarPlayers
             .filter { lifecycle.isResumed }
             .onEach {
                 it.forEachIndexed { index, s ->
                     when (index) {
-                        0 -> binding.player1.text = s
-                        1 -> binding.player2.text = s
-                        2 -> binding.player3.text = s
-                        3 -> binding.player4.text = s
-                        4 -> binding.player5.text = s
-                        else -> binding.player6.text = s
+                        0 ->  {
+                            binding.player1.text = s.first
+                            binding.player1score.text = s.second.toString()
+                        }
+                        1 ->  {
+                            binding.player2.text = s.first
+                            binding.player2score.text = s.second.toString()
+                        }
+                        2 ->  {
+                            binding.player3.text = s.first
+                            binding.player3score.text = s.second.toString()
+                        }
+                        3 ->  {
+                            binding.player4.text = s.first
+                            binding.player4score.text = s.second.toString()
+                        }
+                        4 ->  {
+                            binding.player5.text = s.first
+                            binding.player5score.text = s.second.toString()
+                        }
+                        else ->  {
+                            binding.player6.text = s.first
+                            binding.player6score.text = s.second.toString()
+                        }
+
                     }
                 }
             }.launchIn(lifecycleScope)

@@ -57,7 +57,7 @@ class TrackDetailsFragment : Fragment(R.layout.fragment_track_details) {
         binding.trackDiff.text = item.displayedDiff
         var textColor = when  {
             item.displayedDiff.contains("-") -> R.color.lose
-            item.displayedDiff.contains("+") -> R.color.win
+            item.displayedDiff.contains("+") -> R.color.green
             else -> R.color.harmonia_dark
         }
         binding.trackDiff.setTextColor(

@@ -28,10 +28,10 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
     private val _sharedSelectTrack = MutableSharedFlow<Unit>()
     private val _sharedTracks = MutableSharedFlow<List<MKWarTrack>>()
     private val _sharedTrackClick = MutableSharedFlow<Int>()
-    private val _sharedPlayers = MutableSharedFlow<List<String>>()
     private val _sharedPopupShowing = MutableSharedFlow<Boolean>()
     private val _sharedAddPenalty = MutableSharedFlow<NewWar>()
     private val _sharedPenalties = MutableSharedFlow<List<Penalty>?>()
+    private val _sharedWarPlayers = MutableSharedFlow<List<Pair<String?, Int>>>()
 
     val sharedButtonVisible = _sharedButtonVisible.asSharedFlow()
     val sharedCurrentWar = _sharedCurrentWar.asSharedFlow()
@@ -40,29 +40,46 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
     val sharedSelectTrack = _sharedSelectTrack.asSharedFlow()
     val sharedTracks = _sharedTracks.asSharedFlow()
     val sharedTrackClick = _sharedTrackClick.asSharedFlow()
-    val sharedPlayers = _sharedPlayers.asSharedFlow()
     val sharedPopupShowing = _sharedPopupShowing.asSharedFlow()
     val sharedAddPenalty = _sharedAddPenalty.asSharedFlow()
     val sharedPenalties = _sharedPenalties.asSharedFlow()
+    val sharedWarPlayers = _sharedWarPlayers.asSharedFlow()
+
 
     fun bind(onBack: Flow<Unit>, onNextTrack: Flow<Unit>, onTrackClick: Flow<Int>, onDelete: Flow<Unit>, onPopup: Flow<Boolean>, onPenalty: Flow<Unit>) {
-
-        flowOf(firebaseRepository.getNewWars(), firebaseRepository.listenToNewWars())
+        val warFlow =  flowOf(firebaseRepository.getNewWars(), firebaseRepository.listenToNewWars())
             .flattenMerge()
             .mapNotNull { it.map { w -> MKWar(w) }.getCurrent(preferencesRepository.currentTeam?.mid) }
             .flatMapLatest { listOf(it).withName(firebaseRepository) }
             .mapNotNull { it.singleOrNull() }
-            .onEach { war ->
+            .shareIn(viewModelScope, SharingStarted.Lazily)
+
+
+            warFlow.onEach { war ->
                 preferencesRepository.currentWar = war.war
-                val players = firebaseRepository.getUsers().first().filter { it.currentWar == war.war?.mid }.sortedBy { it.name?.toLowerCase(Locale.ROOT) }.mapNotNull { it.name }
                 _sharedCurrentWar.emit(war)
                 _sharedButtonVisible.emit(preferencesRepository.currentUser?.isAdmin.isTrue && !war.isOver)
                 _sharedTracks.emit(war.war?.warTracks.orEmpty().map { MKWarTrack(it) })
-                _sharedPlayers.emit(players)
             }
             .mapNotNull { it.war?.penalties }
             .flatMapLatest { it.withTeamName(firebaseRepository) }
             .bind(_sharedPenalties, viewModelScope)
+
+        warFlow
+            .mapNotNull { it.war?.warTracks?.map { MKWarTrack(it) } }
+            .onEach {
+                val positions = mutableListOf<Pair<String?, Int>>()
+                _sharedTracks.emit(it)
+                it.forEach {
+                    it.track?.warPositions?.let {
+                        val trackPositions = it.withPlayerName(firebaseRepository).firstOrNull()
+                        trackPositions?.groupBy { it.playerName }?.entries?.forEach { entry ->
+                            positions.add(Pair(entry.key, entry.value.map { pos -> pos.position.position.positionToPoints() }.sum()))
+                        }
+                    }
+                }
+                _sharedWarPlayers.emit(positions.groupBy { it.first }.map { Pair(it.key, it.value.map { it.second }.sum()) }.sortedByDescending { it.second })
+            }.launchIn(viewModelScope)
 
         onBack.bind(_sharedQuit, viewModelScope)
         onNextTrack.bind(_sharedSelectTrack, viewModelScope)
@@ -79,9 +96,7 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
             .bind(_sharedBackToWars, viewModelScope)
 
         onPenalty
-            .mapNotNull {
-                preferencesRepository.currentWar
-            }
+            .mapNotNull { preferencesRepository.currentWar }
             .bind(_sharedAddPenalty, viewModelScope)
 
 
