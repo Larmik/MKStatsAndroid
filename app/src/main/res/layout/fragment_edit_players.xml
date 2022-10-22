@@ -30,8 +30,9 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:background="@drawable/rounded_bg"
+            android:textColorHint="@color/boo"
             android:layout_marginBottom="10dp"
-            android:textColor="@color/harmonia_dark"
+            android:textColor="@color/black"
             android:gravity="center"
             android:id="@+id/playername_et"
             android:layout_marginHorizontal="40dp" />
@@ -64,7 +65,8 @@
             android:layout_marginBottom="10dp"
             android:gravity="center"
             android:id="@+id/playercode_et"
-            android:textColor="@color/harmonia_dark"
+            android:textColor="@color/black"
+            android:textColorHint="@color/boo"
             android:backgroundTint="@color/white_alphaed"
             android:layout_marginHorizontal="40dp" />
 

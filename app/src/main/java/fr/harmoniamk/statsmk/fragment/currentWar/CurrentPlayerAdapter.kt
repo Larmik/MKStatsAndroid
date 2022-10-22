@@ -9,10 +9,12 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.CurrentPlayerItemBinding
 import fr.harmoniamk.statsmk.extension.isTrue
 
-class CurrentPlayerAdapter(private val list: MutableList<CurrentPlayerModel> = mutableListOf()) : RecyclerView.Adapter<CurrentPlayerAdapter.CurrentPlayerViewHolder>() {
+class CurrentPlayerAdapter(private val list: MutableList<CurrentPlayerModel> = mutableListOf(), private val isCurrent: Boolean = false) : RecyclerView.Adapter<CurrentPlayerAdapter.CurrentPlayerViewHolder>() {
 
-    class CurrentPlayerViewHolder(val binding: CurrentPlayerItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class CurrentPlayerViewHolder(val binding: CurrentPlayerItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind (item: CurrentPlayerModel) {
+            binding.playerName.setTextColor(ContextCompat.getColor(binding.root.context, if (this@CurrentPlayerAdapter.isCurrent) R.color.harmonia_dark else R.color.white))
+            binding.playerScore.setTextColor(ContextCompat.getColor(binding.root.context, if (this@CurrentPlayerAdapter.isCurrent) R.color.harmonia_dark else R.color.white))
             binding.playerName.text = item.player?.name
             binding.playerScore.text = item.score.toString()
             when {

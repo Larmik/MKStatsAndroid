@@ -40,8 +40,8 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
         super.onViewCreated(view, savedInstanceState)
         val adapter = CurrentWarTrackAdapter()
         val penaltiesAdapter = PenaltyAdapter()
-        val firstsPlayersAdapter = CurrentPlayerAdapter()
-        val lastsPlayersAdapter = CurrentPlayerAdapter()
+        val firstsPlayersAdapter = CurrentPlayerAdapter(isCurrent = true)
+        val lastsPlayersAdapter = CurrentPlayerAdapter(isCurrent = true)
         binding.currentTracksRv.adapter = adapter
         binding.penaltiesRv.adapter = penaltiesAdapter
         binding.firstsPlayersRv.adapter = firstsPlayersAdapter
@@ -108,7 +108,6 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
                 adapter.addTracks(it)
             }
             .launchIn(lifecycleScope)
-
 
         viewModel.sharedWarPlayers
             .filter { lifecycle.isResumed }

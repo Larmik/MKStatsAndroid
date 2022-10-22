@@ -24,6 +24,8 @@
         android:hint="Rechercher un joueur..."
         android:layout_height="wrap_content"
         android:backgroundTint="@color/white_alphaed"
+        android:textColor="@color/black"
+        android:textColorHint="@color/boo"
         android:padding="15dp"
         android:layout_marginVertical="10dp"
         android:id="@+id/search_et"/>

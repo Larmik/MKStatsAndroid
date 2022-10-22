@@ -4,7 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.extension.*
+import fr.harmoniamk.statsmk.fragment.currentWar.CurrentPlayerModel
 import fr.harmoniamk.statsmk.model.firebase.Penalty
+import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
@@ -19,7 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class WarDetailsViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface) : ViewModel() {
 
-    private val _sharedWarPlayers = MutableSharedFlow<List<Pair<String?, Int>>>()
+    private val _sharedWarPlayers = MutableSharedFlow<List<CurrentPlayerModel>>()
     private val _sharedTracks = MutableSharedFlow<List<MKWarTrack>>()
     private val _sharedBestTrack = MutableSharedFlow<MKWarTrack>()
     private val _sharedWorstTrack = MutableSharedFlow<MKWarTrack>()
@@ -54,19 +56,27 @@ class WarDetailsViewModel @Inject constructor(private val firebaseRepository: Fi
                 }
                 .mapNotNull { it?.warTracks?.map { MKWarTrack(it) } }
                 .onEach {
-                    val positions = mutableListOf<Pair<String?, Int>>()
+                    val positions = mutableListOf<Pair<User?, Int>>()
                     _sharedTracks.emit(it)
                     _sharedBestTrack.emit(it.sortedByDescending { track -> track.teamScore }.first())
                     _sharedWorstTrack.emit(it.sortedBy { track -> track.teamScore }.first())
                     it.forEach {
                         it.track?.warPositions?.let {
                             val trackPositions = it.withPlayerName(firebaseRepository).firstOrNull()
-                            trackPositions?.groupBy { it.player?.name }?.entries?.forEach { entry ->
+                            trackPositions?.groupBy { it.player }?.entries?.forEach { entry ->
                                 positions.add(Pair(entry.key, entry.value.map { pos -> pos.position.position.positionToPoints() }.sum()))
                             }
                         }
                     }
-                    _sharedWarPlayers.emit(positions.groupBy { it.first }.map { Pair(it.key, it.value.map { it.second }.sum()) }.sortedByDescending { it.second })
+                    val temp = positions.groupBy { it.first }.map { Pair(it.key, it.value.map { it.second }.sum()) }.sortedByDescending { it.second }
+                    val finalList = mutableListOf<CurrentPlayerModel>()
+                    temp.forEach { pair ->
+                        val isSubPlayer = it.size > it.filter { track -> track.hasPlayer(pair.first?.mid) }.size
+                        val isOld = isSubPlayer && it.firstOrNull()?.hasPlayer(pair.first?.mid).isTrue
+                        val isNew = isSubPlayer && it.lastOrNull()?.hasPlayer(pair.first?.mid).isTrue
+                        finalList.add(CurrentPlayerModel(pair.first, pair.second, isOld, isNew))
+                    }
+                    _sharedWarPlayers.emit(finalList)
                 }
                 .launchIn(viewModelScope)
             onTrackClick.bind(_sharedTrackClick, viewModelScope)

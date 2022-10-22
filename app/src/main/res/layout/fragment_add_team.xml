@@ -34,6 +34,8 @@
             android:gravity="center"
             android:id="@+id/teamname_et"
             android:hint="Nom"
+            android:textColor="@color/black"
+            android:textColorHint="@color/boo"
             android:backgroundTint="@color/white_alphaed"
             android:layout_marginHorizontal="40dp" />
 
@@ -62,6 +64,8 @@
             android:layout_height="70dp"
             android:background="@drawable/rounded_bg"
             android:layout_marginBottom="15dp"
+            android:textColor="@color/black"
+            android:textColorHint="@color/boo"
             android:id="@+id/shortname_et"
             android:gravity="center"
             android:hint="Acronyme"
@@ -97,6 +101,8 @@
             android:id="@+id/code_et"
             android:gravity="center"
             android:inputType="numberPassword"
+            android:textColor="@color/black"
+            android:textColorHint="@color/boo"
             android:hint="Code"
             android:backgroundTint="@color/white_alphaed"
             android:layout_marginHorizontal="40dp" />

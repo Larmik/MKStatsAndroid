@@ -22,6 +22,8 @@
         android:layout_width="match_parent"
         android:background="@drawable/rounded_bg"
         android:hint="Rechercher un advsersaire..."
+        android:textColor="@color/black"
+        android:textColorHint="@color/boo"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/white_alphaed"
         android:padding="15dp"

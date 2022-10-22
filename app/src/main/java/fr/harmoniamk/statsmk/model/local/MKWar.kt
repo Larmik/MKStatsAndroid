@@ -28,8 +28,8 @@ data class MKWar(val war: NewWar?) : Serializable {
         }
 
     fun hasPlayer(playerId: String?): Boolean {
-        war?.warTracks?.mapNotNull { it.warPositions }?.forEach {
-            return it.any { pos -> pos.playerId == playerId }
+        war?.warTracks?.let {
+            return it.size == it.filter { it.warPositions?.any { pos -> pos.playerId == playerId }.isTrue }.size
         }
         return false
     }

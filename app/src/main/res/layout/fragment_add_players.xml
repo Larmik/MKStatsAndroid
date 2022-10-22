@@ -34,6 +34,8 @@
             android:gravity="center"
             android:id="@+id/playername_et"
             android:hint="Nom"
+            android:textColor="@color/black"
+            android:textColorHint="@color/boo"
             android:backgroundTint="@color/white_alphaed"
             android:layout_marginHorizontal="40dp" />
 

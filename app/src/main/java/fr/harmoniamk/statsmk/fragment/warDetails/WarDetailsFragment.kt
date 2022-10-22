@@ -14,6 +14,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentWarDetailsBinding
 import fr.harmoniamk.statsmk.extension.clicks
+import fr.harmoniamk.statsmk.extension.isResumed
+import fr.harmoniamk.statsmk.fragment.currentWar.CurrentPlayerAdapter
 import fr.harmoniamk.statsmk.fragment.currentWar.CurrentWarTrackAdapter
 import fr.harmoniamk.statsmk.fragment.currentWar.PenaltyAdapter
 import fr.harmoniamk.statsmk.model.local.MKWar
@@ -42,6 +44,10 @@ class WarDetailsFragment : Fragment(R.layout.fragment_war_details) {
         super.onViewCreated(view, savedInstanceState)
         val adapter = CurrentWarTrackAdapter()
         val penaltiesAdapter = PenaltyAdapter()
+        val firstsPlayersAdapter = CurrentPlayerAdapter()
+        val lastsPlayersAdapter = CurrentPlayerAdapter()
+        binding.firstsPlayersRv.adapter = firstsPlayersAdapter
+        binding.lastsPlayersRv.adapter = lastsPlayersAdapter
         binding.currentTracksRv.adapter = adapter
         binding.penaltiesRv.adapter = penaltiesAdapter
         war?.let { war ->
@@ -79,11 +85,22 @@ class WarDetailsFragment : Fragment(R.layout.fragment_war_details) {
                     .onEach { findNavController().navigate(WarDetailsFragmentDirections.toTrackDetails(war = war.war, warTrack = track.track, index = 0)) }
                     .launchIn(lifecycleScope)
             }.launchIn(lifecycleScope)
-            viewModel.sharedWarPlayers.onEach {
-                binding.progress.isVisible = false
-                binding.mainLayout.isVisible = true
-                bindPlayers(it)
-            }.launchIn(lifecycleScope)
+            viewModel.sharedWarPlayers
+                .filter { lifecycle.isResumed }
+                .onEach {
+                    val firstHalfList = when (it.size > 6) {
+                        true -> it.subList(0, 4)
+                        else -> it.subList(0, 3)
+                    }
+                    val secondHalfList = when (it.size > 6) {
+                        true -> it.subList(4, it.size)
+                        else -> it.subList(3, it.size)
+                    }
+                    binding.progress.isVisible = false
+                    binding.mainLayout.isVisible = true
+                    firstsPlayersAdapter.addPlayers(firstHalfList)
+                    lastsPlayersAdapter.addPlayers(secondHalfList)
+                }.launchIn(lifecycleScope)
             viewModel.sharedTracks.onEach {
                 adapter.addTracks(it)
             }.launchIn(lifecycleScope)
@@ -108,37 +125,6 @@ class WarDetailsFragment : Fragment(R.layout.fragment_war_details) {
                     penaltiesAdapter.addPenalties(it)
                 }
                 .launchIn(lifecycleScope)
-        }
-    }
-
-    private fun bindPlayers(players : List<Pair<String?, Int>>) {
-        players.forEachIndexed { index, pair ->
-            when (index) {
-                0 -> {
-                    binding.player1.text = pair.first
-                    binding.player1score.text = pair.second.toString()
-                }
-                1 -> {
-                    binding.player2.text = pair.first
-                    binding.player2score.text = pair.second.toString()
-                }
-                2 -> {
-                    binding.player3.text = pair.first
-                    binding.player3score.text = pair.second.toString()
-                }
-                3 -> {
-                    binding.player4.text = pair.first
-                    binding.player4score.text = pair.second.toString()
-                }
-                4 -> {
-                    binding.player5.text = pair.first
-                    binding.player5score.text = pair.second.toString()
-                }
-                5 -> {
-                    binding.player6.text = pair.first
-                    binding.player6score.text = pair.second.toString()
-                }
-            }
         }
     }
 }

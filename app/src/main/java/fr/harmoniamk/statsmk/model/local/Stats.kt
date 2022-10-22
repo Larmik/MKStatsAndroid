@@ -67,27 +67,27 @@ class MapStats(
     preferencesRepository: PreferencesRepositoryInterface
 ) {
     private val playerScoreList = list
-        .filter { pair -> pair.war.hasPlayer(preferencesRepository.currentUser?.mid) }
+        .filter { pair -> pair.war.war?.warTracks?.any { MKWarTrack(it).hasPlayer(preferencesRepository.currentUser?.mid) }.isTrue }
         .mapNotNull { it.warTrack.track?.warPositions }
         .map { it.singleOrNull { it.playerId == preferencesRepository.currentUser?.mid } }
         .mapNotNull { it?.position.positionToPoints() }
-    val trackPlayed = list.filter { !isIndiv || (isIndiv && it.war.hasPlayer(preferencesRepository.currentUser?.mid)) }.size
+    val trackPlayed = list.filter { !isIndiv || (isIndiv && it.war.war?.warTracks?.any { MKWarTrack(it).hasPlayer(preferencesRepository.currentUser?.mid) }.isTrue) }.size
     val trackWon = list
         .filter { pair -> pair.warTrack.displayedDiff.contains('+')}
-        .filter { !isIndiv || (isIndiv && it.war.hasPlayer(preferencesRepository.currentUser?.mid)) }
+        .filter { !isIndiv || (isIndiv && it.war.war?.warTracks?.any { MKWarTrack(it).hasPlayer(preferencesRepository.currentUser?.mid) }.isTrue) }
         .size
     val trackTie = list
         .filter { pair -> pair.warTrack.displayedDiff == "0" }
-        .filter { !isIndiv || (isIndiv && it.war.hasPlayer(preferencesRepository.currentUser?.mid)) }
+        .filter { !isIndiv || (isIndiv && it.war.war?.warTracks?.any { MKWarTrack(it).hasPlayer(preferencesRepository.currentUser?.mid) }.isTrue) }
         .count()
     val trackLoss = list
         .filter { pair -> pair.warTrack.displayedDiff.contains('-') }
-        .filter { !isIndiv || (isIndiv && it.war.hasPlayer(preferencesRepository.currentUser?.mid)) }
+        .filter { !isIndiv || (isIndiv && it.war.war?.warTracks?.any { MKWarTrack(it).hasPlayer(preferencesRepository.currentUser?.mid) }.isTrue) }
         .count()
     val winRate = "${(trackWon*100) / trackPlayed} %"
     val teamScore = list.map { pair -> pair.warTrack }.map { it.teamScore }.sum() / list.size
     val playerScore = playerScoreList.takeIf { it.isNotEmpty() }?.let {  (playerScoreList.sum() / playerScoreList.size).pointsToPosition() } ?: 0
-    val highestVictory = list.filter { !isIndiv || (isIndiv && it.war.hasPlayer(preferencesRepository.currentUser?.mid)) }.getVictory()
+    val highestVictory = list.filter { !isIndiv || (isIndiv && it.war.war?.warTracks?.any { MKWarTrack(it).hasPlayer(preferencesRepository.currentUser?.mid) }.isTrue) }.getVictory()
     val loudestDefeat = list.filter { !isIndiv || (isIndiv && it.war.hasPlayer(preferencesRepository.currentUser?.mid)) }.getDefeat()
 
 }

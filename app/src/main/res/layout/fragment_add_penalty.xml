@@ -52,6 +52,8 @@
         android:layout_height="70dp"
         android:hint="Valeur"
         android:inputType="number"
+        android:textColor="@color/black"
+        android:textColorHint="@color/boo"
         android:id="@+id/add_penalty_edit"
         android:textAlignment="center"/>
 

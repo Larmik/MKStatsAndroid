@@ -12,6 +12,8 @@
         android:background="@drawable/rounded_bg"
         android:hint="Rechercher une équipe..."
         android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:textColorHint="@color/boo"
         android:backgroundTint="@color/white_alphaed"
         android:padding="15dp"
         android:layout_marginVertical="10dp"
