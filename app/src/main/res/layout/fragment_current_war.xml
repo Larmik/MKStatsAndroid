@@ -62,7 +62,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end"
             android:padding="5dp"
-            android:visibility="gone"
             tools:visibility="visible"
             android:background="@drawable/rounded_bg"
             android:backgroundTint="?android:colorAccent"
@@ -140,166 +139,26 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="100dp"
                 android:gravity="center"
                 android:layout_marginBottom="10dp"
                 android:orientation="horizontal">
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="40dp"
-                    android:orientation="vertical">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/firsts_players_rv"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"/>
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:layout_width="80dp"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/player1"
-                            tools:text="Akioze"
-                            android:fontFamily="@font/montserrat_regular"
-                            android:textColor="@color/harmonia_dark"
-                            />
-                        <TextView
-                            android:fontFamily="@font/montserrat_bold"
-                            android:id="@+id/player1score"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/harmonia_dark"
-                            android:text="80"/>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:layout_width="80dp"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/player2"
-                            android:fontFamily="@font/montserrat_regular"
-                            tools:text="Skyoshi"
-                            android:textColor="@color/harmonia_dark"
-                            />
-                        <TextView
-                            android:id="@+id/player2score"
-                            android:fontFamily="@font/montserrat_bold"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/harmonia_dark"
-                            android:text="80"/>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:layout_width="80dp"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/player3"
-                            android:fontFamily="@font/montserrat_regular"
-                            tools:text="Cami"
-                            android:textColor="@color/harmonia_dark"
-                            />
-                        <TextView
-                            android:id="@+id/player3score"
-                            android:fontFamily="@font/montserrat_bold"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/harmonia_dark"
-                            android:text="80"/>
-                    </LinearLayout>
-
-
-
-
-
-
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:layout_marginStart="40dp"
-                    android:orientation="vertical">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:layout_width="80dp"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/player4"
-                            android:fontFamily="@font/montserrat_regular"
-                            tools:text="Lari"            android:textColor="@color/harmonia_dark"
-                            />
-
-                        <TextView
-                            android:id="@+id/player4score"
-                            android:fontFamily="@font/montserrat_bold"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/harmonia_dark"
-                            android:text="80"/>
-                    </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:layout_width="80dp"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/montserrat_regular"
-                            android:id="@+id/player5"
-                            tools:text="Guyal"            android:textColor="@color/harmonia_dark"
-                            />
-
-                        <TextView
-                            android:id="@+id/player5score"
-                            android:fontFamily="@font/montserrat_bold"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textColor="@color/harmonia_dark"
-                            android:text="80"/>
-                    </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="80dp"
-                            android:fontFamily="@font/montserrat_regular"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/player6"
-                            tools:text="nsdive"            android:textColor="@color/harmonia_dark"
-                            />
-
-                        <TextView
-                            android:id="@+id/player6score"
-                            android:fontFamily="@font/montserrat_bold"
-                            android:layout_width="wrap_content"
-                            android:textColor="@color/harmonia_dark"
-                            android:layout_height="wrap_content"
-                            android:text="80"/>
-                    </LinearLayout>
-
-
-
-
-
-
-
-
-
-                </LinearLayout>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/lasts_players_rv"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    android:layout_weight="1"
+                    android:orientation="vertical"/>
 
             </LinearLayout>
 

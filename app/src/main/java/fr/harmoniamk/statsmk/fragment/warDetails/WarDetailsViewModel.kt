@@ -61,7 +61,7 @@ class WarDetailsViewModel @Inject constructor(private val firebaseRepository: Fi
                     it.forEach {
                         it.track?.warPositions?.let {
                             val trackPositions = it.withPlayerName(firebaseRepository).firstOrNull()
-                            trackPositions?.groupBy { it.playerName }?.entries?.forEach { entry ->
+                            trackPositions?.groupBy { it.player?.name }?.entries?.forEach { entry ->
                                 positions.add(Pair(entry.key, entry.value.map { pos -> pos.position.position.positionToPoints() }.sum()))
                             }
                         }

@@ -1,5 +1,6 @@
 package fr.harmoniamk.statsmk.extension
 
+import fr.harmoniamk.statsmk.fragment.currentWar.CurrentPlayerModel
 import fr.harmoniamk.statsmk.model.firebase.NewWarPositions
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
 import fr.harmoniamk.statsmk.model.firebase.Penalty
@@ -72,8 +73,8 @@ fun List<Map<*,*>>?.parsePenalties() : List<Penalty>? =
 fun List<NewWarPositions>.withPlayerName(firebaseRepository: FirebaseRepositoryInterface) = flow {
     val temp = mutableListOf<MKWarPosition>()
     this@withPlayerName.forEach {
-        val playerName = firebaseRepository.getUser(it.playerId).firstOrNull()?.name
-        temp.add(MKWarPosition(position = it, playerName = playerName))
+        val user = firebaseRepository.getUser(it.playerId).firstOrNull()
+        temp.add(MKWarPosition(position = it, player = user))
     }
     emit(temp)
 }

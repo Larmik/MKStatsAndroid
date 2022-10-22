@@ -25,7 +25,7 @@ import kotlin.coroutines.CoroutineContext
 @FlowPreview
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
-class AddPenaltyFragment(val war: NewWar) : BottomSheetDialogFragment(), CoroutineScope {
+class AddPenaltyFragment(val war: NewWar) : BottomSheetDialogFragment() {
 
     lateinit var binding: FragmentAddPenaltyBinding
     private val viewModel: AddPenaltyViewModel by viewModels()
@@ -93,7 +93,4 @@ class AddPenaltyFragment(val war: NewWar) : BottomSheetDialogFragment(), Corouti
 
     }
 
-
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main
 }

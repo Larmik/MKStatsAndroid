@@ -49,7 +49,7 @@ class EditWarPositionsViewModel @Inject constructor(private val firebaseReposito
 
         val playerLabel = warPositions
             ?.withPlayerName(firebaseRepository)
-            ?.map { it[positions.size].playerName }
+            ?.map { it[positions.size].player?.name }
 
 
         playerLabel?.bind(_sharedPlayerLabel, viewModelScope)

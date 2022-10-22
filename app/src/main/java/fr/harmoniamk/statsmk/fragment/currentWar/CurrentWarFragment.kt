@@ -18,6 +18,7 @@ import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.extension.isResumed
 import fr.harmoniamk.statsmk.fragment.addPenalty.AddPenaltyFragment
 import fr.harmoniamk.statsmk.fragment.popup.PopupFragment
+import fr.harmoniamk.statsmk.fragment.subPlayer.SubPlayerFragment
 import fr.harmoniamk.statsmk.model.local.MKWar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -32,20 +33,28 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
     private val viewModel: CurrentWarViewModel by viewModels()
     private var war: MKWar? = null
     private val popup by lazy { PopupFragment("Êtes-vous sûr de vouloir supprimer le match ?", "Supprimer")}
+    private val subFragment by lazy { SubPlayerFragment() }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val adapter = CurrentWarTrackAdapter()
         val penaltiesAdapter = PenaltyAdapter()
+        val firstsPlayersAdapter = CurrentPlayerAdapter()
+        val lastsPlayersAdapter = CurrentPlayerAdapter()
         binding.currentTracksRv.adapter = adapter
         binding.penaltiesRv.adapter = penaltiesAdapter
+        binding.firstsPlayersRv.adapter = firstsPlayersAdapter
+        binding.lastsPlayersRv.adapter = lastsPlayersAdapter
         viewModel.bind(
             onBack = requireActivity().backPressedDispatcher(viewLifecycleOwner),
             onNextTrack = binding.nextTrackBtn.clicks(),
             onTrackClick = adapter.sharedClick,
             onDelete = popup.onPositiveClick,
             onPopup = flowOf(popup.onNegativeClick.map { false }, binding.deleteWarBtn.clicks().map { true }).flattenMerge(),
-            onPenalty = binding.penaltyBtn.clicks()
+            onPenalty = binding.penaltyBtn.clicks(),
+            onSub = binding.subBtn.clicks(),
+            onSubDismiss = subFragment.sharedDismiss
         )
 
         viewModel.sharedCurrentWar
@@ -104,35 +113,16 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
         viewModel.sharedWarPlayers
             .filter { lifecycle.isResumed }
             .onEach {
-                it.forEachIndexed { index, s ->
-                    when (index) {
-                        0 ->  {
-                            binding.player1.text = s.first
-                            binding.player1score.text = s.second.toString()
-                        }
-                        1 ->  {
-                            binding.player2.text = s.first
-                            binding.player2score.text = s.second.toString()
-                        }
-                        2 ->  {
-                            binding.player3.text = s.first
-                            binding.player3score.text = s.second.toString()
-                        }
-                        3 ->  {
-                            binding.player4.text = s.first
-                            binding.player4score.text = s.second.toString()
-                        }
-                        4 ->  {
-                            binding.player5.text = s.first
-                            binding.player5score.text = s.second.toString()
-                        }
-                        else ->  {
-                            binding.player6.text = s.first
-                            binding.player6score.text = s.second.toString()
-                        }
-
-                    }
+                val firstHalfList = when (it.size > 6) {
+                    true -> it.subList(0, 4)
+                    else -> it.subList(0, 3)
                 }
+                val secondHalfList = when (it.size > 6) {
+                    true -> it.subList(4, it.size)
+                    else -> it.subList(3, it.size)
+                }
+                firstsPlayersAdapter.addPlayers(firstHalfList)
+                lastsPlayersAdapter.addPlayers(secondHalfList)
             }.launchIn(lifecycleScope)
 
         viewModel.sharedTrackClick
@@ -156,7 +146,14 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
                     penaltyFragment.show(childFragmentManager, null)
             }.launchIn(lifecycleScope)
 
+        viewModel.sharedSubPlayer
+            .onEach {
+                if (!subFragment.isAdded)
+                    subFragment.show(childFragmentManager, null)
+            }.launchIn(lifecycleScope)
+
         viewModel.sharedPenalties
+            .filter { lifecycle.isResumed }
             .filterNotNull()
             .onEach {
                 binding.penaltiesLayout.isVisible = true

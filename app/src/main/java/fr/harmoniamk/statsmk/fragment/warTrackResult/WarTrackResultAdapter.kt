@@ -30,7 +30,7 @@ class WarTrackResultAdapter(val items: MutableList<MKWarPosition> = mutableListO
         )
         holder.binding.separator.isVisible = true
         holder.binding.playerPos.isVisible = true
-        holder.binding.name.text = items[position].playerName
+        holder.binding.name.text = items[position].player?.name
         holder.binding.playerPos.text = items[position].position.position.toString()
         holder.binding.playerPos.setTextColor(ContextCompat.getColor(context, items[position].position.position.positionColor()))
     }

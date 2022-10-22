@@ -6,6 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.extension.*
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.firebase.Penalty
+import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
@@ -31,7 +32,8 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
     private val _sharedPopupShowing = MutableSharedFlow<Boolean>()
     private val _sharedAddPenalty = MutableSharedFlow<NewWar>()
     private val _sharedPenalties = MutableSharedFlow<List<Penalty>?>()
-    private val _sharedWarPlayers = MutableSharedFlow<List<Pair<String?, Int>>>()
+    private val _sharedWarPlayers = MutableSharedFlow<List<CurrentPlayerModel>>()
+    private val _sharedSubPlayer = MutableSharedFlow<Unit>()
 
     val sharedButtonVisible = _sharedButtonVisible.asSharedFlow()
     val sharedCurrentWar = _sharedCurrentWar.asSharedFlow()
@@ -44,10 +46,11 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
     val sharedAddPenalty = _sharedAddPenalty.asSharedFlow()
     val sharedPenalties = _sharedPenalties.asSharedFlow()
     val sharedWarPlayers = _sharedWarPlayers.asSharedFlow()
+    val sharedSubPlayer = _sharedSubPlayer.asSharedFlow()
 
 
-    fun bind(onBack: Flow<Unit>, onNextTrack: Flow<Unit>, onTrackClick: Flow<Int>, onDelete: Flow<Unit>, onPopup: Flow<Boolean>, onPenalty: Flow<Unit>) {
-        val warFlow =  flowOf(firebaseRepository.getNewWars(), firebaseRepository.listenToNewWars())
+    fun bind(onBack: Flow<Unit>, onNextTrack: Flow<Unit>, onTrackClick: Flow<Int>, onDelete: Flow<Unit>, onPopup: Flow<Boolean>, onPenalty: Flow<Unit>, onSub: Flow<Unit>, onSubDismiss: Flow<Unit>) {
+           val warFlow =  flowOf(firebaseRepository.getNewWars(), firebaseRepository.listenToNewWars())
             .flattenMerge()
             .mapNotNull { it.map { w -> MKWar(w) }.getCurrent(preferencesRepository.currentTeam?.mid) }
             .flatMapLatest { listOf(it).withName(firebaseRepository) }
@@ -60,26 +63,47 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
                 _sharedCurrentWar.emit(war)
                 _sharedButtonVisible.emit(preferencesRepository.currentUser?.isAdmin.isTrue && !war.isOver)
                 _sharedTracks.emit(war.war?.warTracks.orEmpty().map { MKWarTrack(it) })
+                val players = firebaseRepository.getUsers().first().filter { it.currentWar == preferencesRepository.currentWar?.mid }
+                    .sortedBy { it.name?.toLowerCase(Locale.ROOT) }
+                _sharedWarPlayers.takeIf { war.war?.warTracks == null }?.emit(players.map { CurrentPlayerModel(it, 0) })
+
             }
             .mapNotNull { it.war?.penalties }
             .flatMapLatest { it.withTeamName(firebaseRepository) }
             .bind(_sharedPenalties, viewModelScope)
 
-        warFlow
+        val trackPlayersFlow = warFlow
             .mapNotNull { it.war?.warTracks?.map { MKWarTrack(it) } }
-            .onEach {
-                val positions = mutableListOf<Pair<String?, Int>>()
+            .map {
+                val positions = mutableListOf<Pair<User?, Int>>()
                 _sharedTracks.emit(it)
                 it.forEach {
                     it.track?.warPositions?.let {
                         val trackPositions = it.withPlayerName(firebaseRepository).firstOrNull()
-                        trackPositions?.groupBy { it.playerName }?.entries?.forEach { entry ->
+                        trackPositions?.groupBy { it.player }?.entries?.forEach { entry ->
                             positions.add(Pair(entry.key, entry.value.map { pos -> pos.position.position.positionToPoints() }.sum()))
                         }
+
                     }
                 }
-                _sharedWarPlayers.emit(positions.groupBy { it.first }.map { Pair(it.key, it.value.map { it.second }.sum()) }.sortedByDescending { it.second })
-            }.launchIn(viewModelScope)
+                val temp = positions.groupBy { it.first }.map { Pair(it.key, it.value.map { it.second }.sum()) }.sortedByDescending { it.second }
+                val finalList = mutableListOf<CurrentPlayerModel>()
+                temp.forEach { pair ->
+                    val isOld = pair.first?.currentWar == "-1"
+                    val isNew = it.size > it.filter { track -> track.hasPlayer(pair.first?.mid) }.size && pair.first?.currentWar == preferencesRepository.currentWar?.mid
+                    finalList.add(CurrentPlayerModel(pair.first, pair.second, isOld, isNew))
+                }
+                firebaseRepository.getUsers().firstOrNull()
+                    ?.filter { it.currentWar == preferencesRepository.currentWar?.mid && !finalList.map { it.player?.mid }.contains(it.mid)}
+                    ?.forEach { finalList.add(CurrentPlayerModel(it, 0, isNew = true)) }
+                _sharedWarPlayers.emit(finalList)
+            }
+            .shareIn(viewModelScope, SharingStarted.Lazily)
+
+        flowOf(flowOf(Unit), onSubDismiss)
+            .flattenMerge()
+            .flatMapLatest { trackPlayersFlow }
+            .launchIn(viewModelScope)
 
         onBack.bind(_sharedQuit, viewModelScope)
         onNextTrack.bind(_sharedSelectTrack, viewModelScope)
@@ -98,6 +122,7 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
         onPenalty
             .mapNotNull { preferencesRepository.currentWar }
             .bind(_sharedAddPenalty, viewModelScope)
+        onSub.bind(_sharedSubPlayer, viewModelScope)
 
 
     }
