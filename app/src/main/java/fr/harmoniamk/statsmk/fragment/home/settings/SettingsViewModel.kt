@@ -42,6 +42,8 @@ class SettingsViewModel @Inject constructor(private val preferencesRepository: P
         onLogout.onEach {
             preferencesRepository.currentUser = null
             preferencesRepository.currentTeam = null
+            preferencesRepository.authEmail = null
+            preferencesRepository.authPassword = null
         }.bind(_sharedDisconnect, viewModelScope)
         onPopup.bind(_sharedDisconnectPopup, viewModelScope)
         onPopupTheme.bind(_sharedThemePopup, viewModelScope)

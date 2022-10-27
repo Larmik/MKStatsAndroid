@@ -12,7 +12,7 @@
         <activity
             android:name=".activity.MainActivity"
             android:exported="true"/>
-        <activity android:name=".activity.SplashScreenActivity" android:exported="true">
+        <activity android:name=".activity.splash.SplashScreenActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
