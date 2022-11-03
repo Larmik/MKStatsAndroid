@@ -8,6 +8,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.databinding.FragmentEditPlayersBinding
 import fr.harmoniamk.statsmk.extension.bind
@@ -23,6 +24,7 @@ import kotlin.coroutines.CoroutineContext
 
 @FlowPreview
 @ExperimentalCoroutinesApi
+@AndroidEntryPoint
 class EditPlayerFragment(val user: User? = null) : BottomSheetDialogFragment(), CoroutineScope {
 
     lateinit var binding: FragmentEditPlayersBinding
