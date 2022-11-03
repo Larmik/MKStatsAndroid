@@ -23,7 +23,6 @@ import javax.inject.Inject
 @FlowPreview
 interface PreferencesRepositoryInterface {
     var hasCurrentTournament: Boolean
-    var currentUser: User?
     var currentTeam: Team?
     var currentWar: NewWar?
     var currentWarTrack: NewWarTrack?
@@ -31,7 +30,6 @@ interface PreferencesRepositoryInterface {
     var authEmail: String?
     var authPassword: String?
     var firstLaunch: Boolean
-    var userId: String?
 }
 
 @FlowPreview
@@ -60,9 +58,6 @@ class PreferencesRepository @Inject constructor(
     override var hasCurrentTournament: Boolean
         get() = preferences.getBoolean("hasCurrentTournament", false)
         set(value) = preferences.edit().putBoolean("hasCurrentTournament", value).apply()
-    override var currentUser: User?
-        get() = Gson().fromJson(preferences.getString("currentUser", null), User::class.java)
-        set(value) = preferences.edit().putString("currentUser", Gson().toJson(value)).apply()
     override var currentTeam: Team?
         get() = Gson().fromJson(preferences.getString("currentTeam", null), Team::class.java)
         set(value) = preferences.edit().putString("currentTeam", Gson().toJson(value)).apply()
@@ -84,7 +79,4 @@ class PreferencesRepository @Inject constructor(
     override var firstLaunch: Boolean
         get() = preferences.getBoolean("firstLaunch", true)
         set(value) = preferences.edit().putBoolean("firstLaunch", value).apply()
-    override var userId: String?
-        get() = preferences.getString("userId", null)
-        set(value) {preferences.edit().putString("userId", value).apply()}
 }

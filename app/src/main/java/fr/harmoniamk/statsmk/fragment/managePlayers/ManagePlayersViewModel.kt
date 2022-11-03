@@ -70,7 +70,7 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
 
     fun bindDialog(onDelete: Flow<User>, onPlayerEdited: Flow<User>, onTeamLeft: Flow<User>) {
         onDelete
-            .filter { it.mid == preferencesRepository.userId }
+            .filter { it.mid == authenticationRepository.user?.uid }
             .onEach {
                 preferencesRepository.currentTeam = null
             }
@@ -79,7 +79,7 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
             .launchIn(viewModelScope)
 
         onDelete
-            .filter { it.mid != preferencesRepository.userId }
+            .filter { it.mid != authenticationRepository.user?.uid }
             .flatMapLatest { firebaseRepository.deleteUser(it) }
             .flatMapLatest {  firebaseRepository.getUsers() }
             .map { createPlayersList(list = it) }
@@ -99,14 +99,14 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
             }.launchIn(viewModelScope)
 
         onTeamLeft
-            .filter { it.mid == preferencesRepository.userId }
+            .filter { it.mid == authenticationRepository.user?.uid }
             .onEach { preferencesRepository.currentTeam = null }
             .flatMapLatest { firebaseRepository.writeUser(it) }
             .onEach { _sharedRedirectToSettings.emit(Unit) }
             .launchIn(viewModelScope)
 
         onTeamLeft
-            .filter { it.mid != preferencesRepository.userId }
+            .filter { it.mid != authenticationRepository.user?.uid }
             .flatMapLatest { firebaseRepository.writeUser(it) }
             .flatMapLatest {  firebaseRepository.getUsers() }
             .map { createPlayersList(list = it) }

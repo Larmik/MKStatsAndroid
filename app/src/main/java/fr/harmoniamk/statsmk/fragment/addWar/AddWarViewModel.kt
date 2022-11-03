@@ -58,7 +58,7 @@ class AddWarViewModel @Inject constructor(private val firebaseRepository: Fireba
                 war = NewWar(
                     mid = System.currentTimeMillis().toString(),
                     teamHost = preferencesRepository.currentTeam?.mid,
-                    playerHostId = preferencesRepository.userId,
+                    playerHostId = authenticationRepository.user?.uid,
                     teamOpponent = it,
                     createdDate = date
                 )

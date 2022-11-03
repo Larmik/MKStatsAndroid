@@ -50,7 +50,6 @@ class SplashScreenViewModel @Inject constructor(private val preferencesRepositor
 
         authenticate
             .mapNotNull { (it as? AuthUserResponse.Success)?.user?.uid }
-            .onEach { preferencesRepository.userId = it }
             .flatMapLatest { firebaseRepository.getUser(it) }
             .mapNotNull { it?.team }
             .flatMapLatest { firebaseRepository.getTeam(it) }

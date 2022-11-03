@@ -117,19 +117,19 @@ class MapRankingViewModel @Inject constructor(private val preferencesRepository:
     private fun sortTracks(type: TrackSortType) =
         when (type) {
             TrackSortType.TOTAL_PLAYED -> temp
-                .filter { !_sharedIndivStatsEnabled.value || (_sharedIndivStatsEnabled.value && MKWarTrack(it).hasPlayer(preferencesRepository.userId)) }
+                .filter { !_sharedIndivStatsEnabled.value || (_sharedIndivStatsEnabled.value && MKWarTrack(it).hasPlayer(authenticationRepository.user?.uid)) }
                 .groupBy { it.trackIndex }.toList()
                 .sortedByDescending { it.second.size }
             TrackSortType.TOTAL_WIN -> temp
-                .filter { !_sharedIndivStatsEnabled.value || (_sharedIndivStatsEnabled.value && MKWarTrack(it).hasPlayer(preferencesRepository.userId)) }
+                .filter { !_sharedIndivStatsEnabled.value || (_sharedIndivStatsEnabled.value && MKWarTrack(it).hasPlayer(authenticationRepository.user?.uid)) }
                 .groupBy { it.trackIndex }.toList()
                 .sortedByDescending { it.second.filter { MKWarTrack(it).displayedDiff.contains('+') }.size }
             TrackSortType.WINRATE -> temp
-                .filter { !_sharedIndivStatsEnabled.value || (_sharedIndivStatsEnabled.value && MKWarTrack(it).hasPlayer(preferencesRepository.userId)) }
+                .filter { !_sharedIndivStatsEnabled.value || (_sharedIndivStatsEnabled.value && MKWarTrack(it).hasPlayer(authenticationRepository.user?.uid)) }
                 .groupBy { it.trackIndex }.toList()
                 .sortedByDescending { it.second.filter { MKWarTrack(it).displayedDiff.contains('+') }.size * 100 / it.second.size }
             TrackSortType.AVERAGE_DIFF -> temp
-                .filter { !_sharedIndivStatsEnabled.value || (_sharedIndivStatsEnabled.value && MKWarTrack(it).hasPlayer(preferencesRepository.userId)) }
+                .filter { !_sharedIndivStatsEnabled.value || (_sharedIndivStatsEnabled.value && MKWarTrack(it).hasPlayer(authenticationRepository.user?.uid)) }
                 .groupBy { it.trackIndex }.toList()
                 .sortedByDescending { it.second.map { MKWarTrack(it).diffScore }.sum() / it.second.size }
 

@@ -55,7 +55,7 @@ class IndivStatsViewModel @Inject constructor(private val firebaseRepository: Fi
             }.mapNotNull { list -> list
                 .map { MKWar(it) }
                 .filter {
-                    it.hasPlayer(preferencesRepository.userId)
+                    it.hasPlayer(authenticationRepository.user?.uid)
                 }
             }
             .flatMapLatest { it.withName(firebaseRepository) }
@@ -83,7 +83,7 @@ class IndivStatsViewModel @Inject constructor(private val firebaseRepository: Fi
                         var currentPoints = 0
                         it.second?.forEach { track ->
                             val scoreForTrack = track.track?.warPositions
-                                ?.singleOrNull { pos -> pos.playerId == preferencesRepository.userId }
+                                ?.singleOrNull { pos -> pos.playerId == authenticationRepository.user?.uid }
                                 ?.position.positionToPoints()
                             currentPoints += scoreForTrack
                             maps.add(TrackStats(trackIndex = track.track?.trackIndex, score = scoreForTrack))

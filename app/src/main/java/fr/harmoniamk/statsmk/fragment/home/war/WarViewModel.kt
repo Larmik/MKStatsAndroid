@@ -74,7 +74,7 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
             .bind(_sharedTeamName, viewModelScope)
 
         firebaseRepository.getUsers()
-            .map{ it.singleOrNull{ user -> user.mid == preferencesRepository.userId}?.team != "-1" }
+            .map{ it.singleOrNull{ user -> user.mid == authenticationRepository.user?.uid}?.team != "-1" }
             .bind(_sharedHasTeam, viewModelScope)
 
         onCurrentWarClick

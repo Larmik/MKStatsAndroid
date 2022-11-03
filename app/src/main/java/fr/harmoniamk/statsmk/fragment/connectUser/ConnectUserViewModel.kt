@@ -44,7 +44,6 @@ class ConnectUserViewModel @Inject constructor(private val firebaseRepository: F
 
         connectUser
             .mapNotNull { (it as? AuthUserResponse.Success)?.user?.uid }
-            .onEach { preferencesRepository.userId = it }
             .flatMapLatest { firebaseRepository.getUser(it) }
             .filterNotNull()
             .onEach {

@@ -9,6 +9,7 @@ import fr.harmoniamk.statsmk.model.firebase.Penalty
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
+import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -19,7 +20,7 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class WarDetailsViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface) : ViewModel() {
+class WarDetailsViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface) : ViewModel() {
 
     private val _sharedWarPlayers = MutableSharedFlow<List<CurrentPlayerModel>>()
     private val _sharedTracks = MutableSharedFlow<List<MKWarTrack>>()
@@ -48,7 +49,7 @@ class WarDetailsViewModel @Inject constructor(private val firebaseRepository: Fi
             firebaseRepository.getNewWar(id)
                 .onEach {
                     _sharedPlayerHost.emit("Créée par ${firebaseRepository.getUser(it?.playerHostId ?: "").firstOrNull()?.name ?: ""}")
-                    _sharedDeleteWarVisible.emit(preferencesRepository.currentUser?.mid == "1645093376108")
+                    _sharedDeleteWarVisible.emit(authenticationRepository.user?.uid == "ZMqKjfrGfVbL2ca75zPJdWdhaKE2")
                     _sharedWarName.emit(listOf(MKWar(it)).withName(firebaseRepository).firstOrNull()?.singleOrNull()?.name)
                     it?.penalties?.let { penalty ->
                         _sharedPenalties.emit(penalty.withTeamName(firebaseRepository).firstOrNull())

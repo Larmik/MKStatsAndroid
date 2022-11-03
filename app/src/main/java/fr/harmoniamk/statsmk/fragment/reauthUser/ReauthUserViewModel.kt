@@ -39,7 +39,6 @@ class ReauthUserViewModel @Inject constructor(private val firebaseRepository: Fi
 
         connectUser
             .mapNotNull { (it as? AuthUserResponse.Success)?.user?.uid }
-            .onEach { preferencesRepository.userId = it }
             .flatMapLatest { firebaseRepository.getUser(it) }
             .mapNotNull { it?.team }
             .flatMapLatest { firebaseRepository.getTeam(it) }

@@ -39,16 +39,16 @@ class ProfileViewModel @Inject constructor(private val authenticationRepository:
     fun bind(onPictureClick: Flow<Unit>, onPictureEdited: Flow<String>, onChangePasswordClick: Flow<Unit>, onLogout: Flow<Unit>, onPopup: Flow<Boolean>) {
         var url: String? = null
 
-        storageRepository.getPicture(preferencesRepository.userId)
+        storageRepository.getPicture(authenticationRepository.user?.uid)
             .mapNotNull { authenticationRepository.user }
             .bind(_sharedProfile, viewModelScope)
 
         onPopup.bind(_sharedDisconnectPopup, viewModelScope)
 
         onPictureEdited
-            .flatMapLatest { storageRepository.uploadPicture(preferencesRepository.userId, Uri.parse(it)) }
+            .flatMapLatest { storageRepository.uploadPicture(authenticationRepository.user?.uid, Uri.parse(it)) }
             .filter { it is UploadPictureResponse.Success }
-            .mapNotNull { preferencesRepository.userId }
+            .mapNotNull { authenticationRepository.user?.uid }
             .flatMapLatest { storageRepository.getPicture(it) }
             .mapNotNull { url = (it as? PictureResponse.Success)?.url; url }
             .flatMapLatest { authenticationRepository.updateProfile(authenticationRepository.user?.displayName.toString(), it) }

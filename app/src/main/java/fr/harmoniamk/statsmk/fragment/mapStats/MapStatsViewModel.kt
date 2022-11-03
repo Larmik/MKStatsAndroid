@@ -54,8 +54,8 @@ class MapStatsViewModel @Inject constructor(private val preferencesRepository: P
             .filter { it.isNotEmpty() }
             .onEach {
                 list.clear()
-                list.addAll(it.filter { !isIndiv.isTrue || (isIndiv.isTrue && it.war.war?.warTracks?.any { MKWarTrack(it).hasPlayer(preferencesRepository.userId) }.isTrue) })
-                _sharedStats.emit(MapStats(list, isIndiv.isTrue, preferencesRepository.userId))
+                list.addAll(it.filter { !isIndiv.isTrue || (isIndiv.isTrue && it.war.war?.warTracks?.any { MKWarTrack(it).hasPlayer(authenticationRepository.user?.uid) }.isTrue) })
+                _sharedStats.emit(MapStats(list, isIndiv.isTrue, authenticationRepository.user?.uid))
             }.launchIn(viewModelScope)
 
         flowOf(

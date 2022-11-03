@@ -46,7 +46,6 @@ class AddUserViewModel @Inject constructor(private val firebaseRepository: Fireb
 
         createUser
             .mapNotNull { (it as? AuthUserResponse.Success)?.user?.uid }
-            .onEach { preferencesRepository.userId = it }
             .mapNotNull { name }
             .flatMapLatest { authenticationRepository.updateProfile(it, "https://firebasestorage.googleapis.com/v0/b/stats-mk-debug.appspot.com/o/hr_logo.png?alt=media&token=6f4452bf-7028-4203-8d77-0c3eb0d8cd48") }
             .mapNotNull { authenticationRepository.user }

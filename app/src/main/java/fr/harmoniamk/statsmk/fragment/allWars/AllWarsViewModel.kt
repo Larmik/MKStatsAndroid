@@ -48,7 +48,7 @@ class AllWarsViewModel @Inject constructor(private val firebaseRepository: Fireb
                 when {
                     filters.contains(WarFilterType.WEEK) -> wars.removeAll(it.filterNot { it.isThisWeek })
                     filters.contains(WarFilterType.MONTH) -> wars.removeAll(it.filterNot { it.isThisMonth })
-                    filters.contains(WarFilterType.PLAY) -> wars.removeAll(it.filterNot { it.hasPlayer(preferencesRepository.userId) })
+                    filters.contains(WarFilterType.PLAY) -> wars.removeAll(it.filterNot { it.hasPlayer(authenticationRepository.user?.uid) })
                 }
                 _sharedWars.emit(when (_sharedSortTypeSelected.value) {
                     WarSortType.DATE -> wars.sortedByDescending { it.war?.mid }.filter { it.isOver }
@@ -73,7 +73,7 @@ class AllWarsViewModel @Inject constructor(private val firebaseRepository: Fireb
                         when {
                             filters.contains(WarFilterType.WEEK) -> filteredWars.removeAll(wars.filterNot { it.isThisWeek })
                             filters.contains(WarFilterType.MONTH) -> filteredWars.removeAll(wars.filterNot { it.isThisMonth })
-                            filters.contains(WarFilterType.PLAY) -> filteredWars.removeAll(wars.filterNot { it.hasPlayer(preferencesRepository.userId) })
+                            filters.contains(WarFilterType.PLAY) -> filteredWars.removeAll(wars.filterNot { it.hasPlayer(authenticationRepository.user?.uid) })
                         }
                         when (_sharedSortTypeSelected.value) {
                             WarSortType.DATE -> filteredWars.sortByDescending { it.war?.mid }
@@ -87,7 +87,7 @@ class AllWarsViewModel @Inject constructor(private val firebaseRepository: Fireb
                         when {
                             filters.contains(WarFilterType.WEEK) -> filteredWars.removeAll(filteredWars.filterNot { it.isThisWeek })
                             filters.contains(WarFilterType.MONTH) -> filteredWars.removeAll(filteredWars.filterNot { it.isThisMonth })
-                            filters.contains(WarFilterType.PLAY) -> filteredWars.removeAll(filteredWars.filterNot { it.hasPlayer(preferencesRepository.userId) })
+                            filters.contains(WarFilterType.PLAY) -> filteredWars.removeAll(filteredWars.filterNot { it.hasPlayer(authenticationRepository.user?.uid) })
                         }
                         when (_sharedSortTypeSelected.value) {
                             WarSortType.DATE -> filteredWars.sortByDescending { it.war?.mid }
@@ -109,7 +109,7 @@ class AllWarsViewModel @Inject constructor(private val firebaseRepository: Fireb
                 when {
                     filters.contains(WarFilterType.WEEK) -> sortedWars.removeAll(wars.filterNot { it.isThisWeek })
                     filters.contains(WarFilterType.MONTH) -> sortedWars.removeAll(wars.filterNot { it.isThisMonth })
-                    filters.contains(WarFilterType.PLAY) -> sortedWars.removeAll(wars.filterNot { it.hasPlayer(preferencesRepository.userId) })
+                    filters.contains(WarFilterType.PLAY) -> sortedWars.removeAll(wars.filterNot { it.hasPlayer(authenticationRepository.user?.uid) })
                 }
                 _sharedWars.emit(sortedWars.filter { it.isOver })
                 _sharedSortTypeSelected.emit(it)
@@ -125,10 +125,10 @@ class AllWarsViewModel @Inject constructor(private val firebaseRepository: Fireb
                 when {
                     filters.contains(WarFilterType.WEEK) -> filteredWars.addAll(wars.filter { it.isThisWeek })
                     filters.contains(WarFilterType.MONTH) -> filteredWars.addAll(wars.filter { it.isThisMonth })
-                    filters.contains(WarFilterType.PLAY) -> filteredWars.addAll(wars.filter { it.hasPlayer(preferencesRepository.userId) })
+                    filters.contains(WarFilterType.PLAY) -> filteredWars.addAll(wars.filter { it.hasPlayer(authenticationRepository.user?.uid) })
                     !filters.contains(WarFilterType.WEEK) -> filteredWars.addAll(wars.filterNot { it.isThisWeek })
                     !filters.contains(WarFilterType.MONTH) -> filteredWars.addAll(wars.filterNot { it.isThisMonth })
-                    !filters.contains(WarFilterType.PLAY) -> filteredWars.addAll(wars.filterNot { it.hasPlayer(preferencesRepository.userId) })
+                    !filters.contains(WarFilterType.PLAY) -> filteredWars.addAll(wars.filterNot { it.hasPlayer(authenticationRepository.user?.uid) })
                 }
                 when (_sharedSortTypeSelected.value) {
                     WarSortType.DATE -> filteredWars.sortByDescending { it.war?.mid }

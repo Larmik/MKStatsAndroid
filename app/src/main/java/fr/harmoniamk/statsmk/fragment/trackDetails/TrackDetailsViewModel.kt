@@ -64,7 +64,7 @@ class TrackDetailsViewModel @Inject constructor(private val firebaseRepository: 
                 val isAdmin = authenticationRepository.isAdmin.firstOrNull()
                 _sharedPositions.emit(it)
                 _sharedButtonsVisible.emit(isAdmin.isTrue && !MKWar(war).isOver
-                        || preferencesRepository.currentUser?.mid == "1645093376108")
+                        || authenticationRepository.user?.uid == "ZMqKjfrGfVbL2ca75zPJdWdhaKE2")
             }.launchIn(viewModelScope)
 
         onEditTrack.bind(_sharedEditTrackClick, viewModelScope)
