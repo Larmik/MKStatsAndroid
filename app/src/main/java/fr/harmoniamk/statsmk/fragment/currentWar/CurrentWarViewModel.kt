@@ -9,6 +9,7 @@ import fr.harmoniamk.statsmk.model.firebase.Penalty
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
+import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -20,7 +21,7 @@ import javax.inject.Inject
 @ExperimentalCoroutinesApi
 @HiltViewModel
 @FlowPreview
-class CurrentWarViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface) : ViewModel() {
+class CurrentWarViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface) : ViewModel() {
 
     private val _sharedButtonVisible = MutableSharedFlow<Boolean>()
     private val _sharedCurrentWar = MutableSharedFlow<MKWar>()
@@ -59,9 +60,10 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
 
 
             warFlow.onEach { war ->
+                val isAdmin = authenticationRepository.isAdmin.firstOrNull()
                 preferencesRepository.currentWar = war.war
                 _sharedCurrentWar.emit(war)
-                _sharedButtonVisible.emit(preferencesRepository.currentUser?.isAdmin.isTrue && !war.isOver)
+                _sharedButtonVisible.emit(isAdmin.isTrue && !war.isOver)
                 _sharedTracks.emit(war.war?.warTracks.orEmpty().map { MKWarTrack(it) })
                 val players = firebaseRepository.getUsers().first().filter { it.currentWar == preferencesRepository.currentWar?.mid }
                     .sortedBy { it.name?.toLowerCase(Locale.ROOT) }

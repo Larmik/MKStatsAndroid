@@ -8,6 +8,7 @@ import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import fr.harmoniamk.statsmk.model.local.MapDetails
 import fr.harmoniamk.statsmk.model.local.MapStats
+import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -18,7 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 @ExperimentalCoroutinesApi
 @FlowPreview
-class MapStatsViewModel @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val firebaseRepository: FirebaseRepositoryInterface) : ViewModel() {
+class MapStatsViewModel @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val firebaseRepository: FirebaseRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface) : ViewModel() {
 
     private val _sharedMapClick = MutableSharedFlow<MapDetails>()
     private val _sharedStats = MutableSharedFlow<MapStats>()
@@ -53,8 +54,8 @@ class MapStatsViewModel @Inject constructor(private val preferencesRepository: P
             .filter { it.isNotEmpty() }
             .onEach {
                 list.clear()
-                list.addAll(it.filter { !isIndiv.isTrue || (isIndiv.isTrue && it.war.war?.warTracks?.any { MKWarTrack(it).hasPlayer(preferencesRepository.currentUser?.mid) }.isTrue) })
-                _sharedStats.emit(MapStats(list, isIndiv.isTrue, preferencesRepository))
+                list.addAll(it.filter { !isIndiv.isTrue || (isIndiv.isTrue && it.war.war?.warTracks?.any { MKWarTrack(it).hasPlayer(preferencesRepository.userId) }.isTrue) })
+                _sharedStats.emit(MapStats(list, isIndiv.isTrue, preferencesRepository.userId))
             }.launchIn(viewModelScope)
 
         flowOf(

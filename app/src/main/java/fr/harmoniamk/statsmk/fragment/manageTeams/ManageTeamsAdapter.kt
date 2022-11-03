@@ -13,7 +13,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
 import kotlin.coroutines.CoroutineContext
 
 @FlowPreview
@@ -25,11 +27,13 @@ class ManageTeamsAdapter(private val items: MutableList<ManageTeamsItemViewModel
 
     @ExperimentalCoroutinesApi
     @FlowPreview
-    class ManageTeamsViewHolder(val binding: ManagePlayersItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ManageTeamsViewHolder(val binding: ManagePlayersItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(teamVM: ManageTeamsItemViewModel) {
             binding.name.text = teamVM.name
             binding.checkmark.visibility = View.INVISIBLE
-            binding.editBtn.visibility = teamVM.buttonVisibility
+            teamVM.buttonVisibility
+                .onEach { binding.editBtn.visibility = it }
+                .launchIn(this@ManageTeamsAdapter)
             binding.checkmark.visibility = teamVM.checkMarkVisibility
             binding.shortnameTv.visibility = View.VISIBLE
             binding.shortnameTv.text = teamVM.shortName

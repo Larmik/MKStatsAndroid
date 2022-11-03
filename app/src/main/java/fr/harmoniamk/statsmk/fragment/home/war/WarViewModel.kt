@@ -7,6 +7,7 @@ import fr.harmoniamk.statsmk.extension.*
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.local.MKTeam
 import fr.harmoniamk.statsmk.model.local.MKWar
+import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -17,9 +18,8 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface) : ViewModel() {
+class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface) : ViewModel() {
 
-    private val _sharedTeam = MutableSharedFlow<MKTeam?>()
     private val _sharedHasTeam = MutableSharedFlow<Boolean>()
     private val _sharedTeamName = MutableSharedFlow<String>()
     private val _sharedCreateWar = MutableSharedFlow<Unit>()
@@ -29,7 +29,6 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
     private val _sharedGoToWar = MutableSharedFlow<MKWar>()
     private val _sharedButtonVisible = MutableSharedFlow<Boolean>()
 
-    val sharedTeam = _sharedTeam.asSharedFlow()
     val sharedHasTeam = _sharedHasTeam.asSharedFlow()
     val sharedTeamName = _sharedTeamName.asSharedFlow()
     val sharedCreateWar = _sharedCreateWar.asSharedFlow()
@@ -39,13 +38,11 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
     val sharedGoToWar = _sharedGoToWar.asSharedFlow()
     val sharedButtonVisible = _sharedButtonVisible.asSharedFlow()
 
-    fun bind(onCodeTeam: Flow<String>, onTeamClick: Flow<Unit>, onCreateWar: Flow<Unit>, onCurrentWarClick: Flow<Unit>, onWarClick: Flow<MKWar>) {
+    fun bind(onCreateWar: Flow<Unit>, onCurrentWarClick: Flow<Unit>, onWarClick: Flow<MKWar>) {
 
-        var codeTeam: String? = null
-        var chosenTeam: String? = null
         var war: MKWar? = null
 
-        flowOf(preferencesRepository.currentUser?.isAdmin.isTrue)
+        authenticationRepository.isAdmin
             .bind(_sharedButtonVisible, viewModelScope)
 
         val warsFlow = flowOf(firebaseRepository.getNewWars(), firebaseRepository.listenToNewWars())
@@ -77,32 +74,8 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
             .bind(_sharedTeamName, viewModelScope)
 
         firebaseRepository.getUsers()
-            .map{ it.singleOrNull{ user -> user.mid == preferencesRepository.currentUser?.mid}?.team != "-1" }
+            .map{ it.singleOrNull{ user -> user.mid == preferencesRepository.userId}?.team != "-1" }
             .bind(_sharedHasTeam, viewModelScope)
-
-        onCodeTeam
-            .onEach { codeTeam = it }
-            .flatMapLatest { firebaseRepository.getTeams() }
-            .map { it.singleOrNull { team -> team.accessCode == codeTeam } }
-            .onEach { chosenTeam = it?.mid.toString() }
-            .map { MKTeam(it) }
-            .bind(_sharedTeam, viewModelScope)
-
-        onTeamClick
-            .mapNotNull { preferencesRepository.currentUser?.apply { this.team = chosenTeam } }
-            .onEach { preferencesRepository.currentUser = it }
-            .flatMapLatest { firebaseRepository.writeUser(it) }
-            .mapNotNull { chosenTeam }
-            .flatMapLatest { firebaseRepository.getTeam(it) }
-            .onEach { team ->
-                val wars = firebaseRepository.getNewWars().first()
-                preferencesRepository.currentTeam = team
-                war = wars.map { MKWar(it) }.getCurrent(preferencesRepository.currentTeam?.mid)
-                _sharedHasTeam.emit(true)
-                _sharedTeamName.emit(preferencesRepository.currentTeam?.name ?: "")
-                _sharedLastWars.emit(wars.map { w -> MKWar(w) }.getLasts(preferencesRepository.currentTeam?.mid))
-                _sharedCurrentWar.emit(war)
-            }.launchIn(viewModelScope)
 
         onCurrentWarClick
             .mapNotNull { war }

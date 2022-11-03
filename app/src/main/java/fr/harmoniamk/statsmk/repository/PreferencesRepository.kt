@@ -31,6 +31,7 @@ interface PreferencesRepositoryInterface {
     var authEmail: String?
     var authPassword: String?
     var firstLaunch: Boolean
+    var userId: String?
 }
 
 @FlowPreview
@@ -83,4 +84,7 @@ class PreferencesRepository @Inject constructor(
     override var firstLaunch: Boolean
         get() = preferences.getBoolean("firstLaunch", true)
         set(value) = preferences.edit().putBoolean("firstLaunch", value).apply()
+    override var userId: String?
+        get() = preferences.getString("userId", null)
+        set(value) {preferences.edit().putString("userId", value).apply()}
 }

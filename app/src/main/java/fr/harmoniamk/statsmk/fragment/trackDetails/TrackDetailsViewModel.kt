@@ -12,6 +12,7 @@ import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarPosition
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
+import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -22,7 +23,7 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class TrackDetailsViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface): ViewModel() {
+class TrackDetailsViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface): ViewModel() {
 
     private val _sharedPositions = MutableSharedFlow<List<MKWarPosition>>()
     private val _sharedEditTrackClick = MutableSharedFlow<Unit>()
@@ -60,8 +61,9 @@ class TrackDetailsViewModel @Inject constructor(private val firebaseRepository: 
         positionsFlow
             .flatMapLatest { it.withPlayerName(firebaseRepository) }
             .onEach {
+                val isAdmin = authenticationRepository.isAdmin.firstOrNull()
                 _sharedPositions.emit(it)
-                _sharedButtonsVisible.emit(preferencesRepository.currentUser?.isAdmin.isTrue && !MKWar(war).isOver
+                _sharedButtonsVisible.emit(isAdmin.isTrue && !MKWar(war).isOver
                         || preferencesRepository.currentUser?.mid == "1645093376108")
             }.launchIn(viewModelScope)
 

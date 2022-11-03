@@ -33,22 +33,10 @@ class WarFragment : Fragment(R.layout.fragment_war) {
         lifecycleScope.launchWhenResumed {
             binding.lastWarRv.adapter = lastAdapter
             viewModel.bind(
-                onCodeTeam = binding.teamCodeEt.onTextChanged(),
-                onTeamClick = binding.nextBtn.clicks(),
                 onCreateWar = binding.createWarBtn.clicks(),
                 onCurrentWarClick = binding.currentWarCard.clicks(),
                 onWarClick = lastAdapter.sharedItemClick
             )
-
-            viewModel.sharedTeam
-                .onEach { team ->
-                    binding.nextBtn.visibility = View.INVISIBLE
-                    team?.team?.let {
-                        binding.nextBtn.visibility = View.VISIBLE
-                        binding.nextBtn.text = team.integrationLabel
-                    }
-                }
-                .launchIn(lifecycleScope)
 
             viewModel.sharedHasTeam
                 .onEach {

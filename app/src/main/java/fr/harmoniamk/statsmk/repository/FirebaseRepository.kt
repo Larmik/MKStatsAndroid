@@ -183,20 +183,23 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
 
     override fun getUser(id: String?): Flow<User?> = callbackFlow {
         id?.let {
-            database.child("users").child(id).get().addOnSuccessListener { snapshot ->
-                val map = (snapshot.value as? Map<*, *>)
-                if (isActive) offer(
-                    if (map == null) null
-                    else User(
-                        mid = map["mid"].toString(),
-                        name = map["name"].toString(),
-                        team = map["team"].toString(),
-                        currentWar = map["currentWar"].toString(),
-                        isAdmin = map["admin"].toString().toBoolean(),
-                        picture = map["picture"].toString()
+            database.child("users").child(id).get()
+                .addOnSuccessListener { snapshot ->
+                    val map = (snapshot.value as? Map<*, *>)
+                    if (isActive) offer(
+                        if (map == null) null
+                        else User(
+                            mid = map["mid"].toString(),
+                            name = map["name"].toString(),
+                            team = map["team"].toString(),
+                            currentWar = map["currentWar"].toString(),
+                            isAdmin = map["admin"].toString().toBoolean(),
+                            picture = map["picture"].toString()
+                        )
                     )
-                )
-            }
+                }.addOnCompleteListener {
+                    Log.d("MKDebug", "getUser: ${it.result.toString()}")
+                }
         }
         awaitClose { }
     }

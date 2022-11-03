@@ -12,9 +12,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.*
 import kotlin.coroutines.CoroutineContext
 
 @FlowPreview
@@ -30,11 +28,13 @@ class ManagePlayersAdapter(private val items: MutableList<ManagePlayersItemViewM
 
 
     @FlowPreview
-    class ManagePlayersViewHolder(val binding: ManagePlayersItemBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ManagePlayersViewHolder(val binding: ManagePlayersItemBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(player: ManagePlayersItemViewModel) {
             binding.name.text = player.name
             binding.checkmark.visibility = player.checkmarkVisibility
-            binding.editBtn.visibility = player.buttonsVisibility
+            player.buttonsVisibility
+                .onEach { binding.editBtn.visibility = it }
+                .launchIn(this@ManagePlayersAdapter)
         }
     }
 

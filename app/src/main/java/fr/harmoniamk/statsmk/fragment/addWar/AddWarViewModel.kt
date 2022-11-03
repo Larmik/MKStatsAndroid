@@ -9,6 +9,8 @@ import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.getCurrent
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.local.MKWar
+import fr.harmoniamk.statsmk.repository.AuthenticationRepository
+import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -21,7 +23,7 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class AddWarViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface): ViewModel() {
+class AddWarViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface): ViewModel() {
 
     private val _sharedStarted = MutableSharedFlow<Unit>()
     private val _sharedTeamSelected = MutableSharedFlow<String?>()
@@ -56,7 +58,7 @@ class AddWarViewModel @Inject constructor(private val firebaseRepository: Fireba
                 war = NewWar(
                     mid = System.currentTimeMillis().toString(),
                     teamHost = preferencesRepository.currentTeam?.mid,
-                    playerHostId = preferencesRepository.currentUser?.mid,
+                    playerHostId = preferencesRepository.userId,
                     teamOpponent = it,
                     createdDate = date
                 )

@@ -7,18 +7,18 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.extension.*
 import fr.harmoniamk.statsmk.model.local.*
+import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
-import kotlin.math.log
 
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class IndivStatsViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface) : ViewModel() {
+class IndivStatsViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface) : ViewModel() {
 
     private val _sharedMostPlayedTeam = MutableSharedFlow<TeamStats?>()
     private val _sharedMostDefeatedTeam = MutableSharedFlow<Pair<String?, Int?>?>()
@@ -55,7 +55,7 @@ class IndivStatsViewModel @Inject constructor(private val firebaseRepository: Fi
             }.mapNotNull { list -> list
                 .map { MKWar(it) }
                 .filter {
-                    it.hasPlayer(preferencesRepository.currentUser?.mid)
+                    it.hasPlayer(preferencesRepository.userId)
                 }
             }
             .flatMapLatest { it.withName(firebaseRepository) }
@@ -83,7 +83,7 @@ class IndivStatsViewModel @Inject constructor(private val firebaseRepository: Fi
                         var currentPoints = 0
                         it.second?.forEach { track ->
                             val scoreForTrack = track.track?.warPositions
-                                ?.singleOrNull { pos -> pos.playerId == preferencesRepository.currentUser?.mid }
+                                ?.singleOrNull { pos -> pos.playerId == preferencesRepository.userId }
                                 ?.position.positionToPoints()
                             currentPoints += scoreForTrack
                             maps.add(TrackStats(trackIndex = track.track?.trackIndex, score = scoreForTrack))

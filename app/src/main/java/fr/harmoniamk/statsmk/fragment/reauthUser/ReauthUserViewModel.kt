@@ -21,12 +21,10 @@ class ReauthUserViewModel @Inject constructor(private val firebaseRepository: Fi
 
     private val _sharedNext = MutableSharedFlow<Unit>()
     private val _sharedToast = MutableSharedFlow<String>()
-    private val _sharedName = MutableSharedFlow<String>()
     private val _sharedGoToReset = MutableSharedFlow<Unit>()
 
     val sharedNext = _sharedNext.asSharedFlow()
     val sharedToast = _sharedToast.asSharedFlow()
-    val sharedName = _sharedName.asSharedFlow()
     val sharedGoToReset = _sharedGoToReset.asSharedFlow()
 
     fun bind(onPassword: Flow<String>, onConnect: Flow<Unit>, onResetPassword: Flow<Unit>) {
@@ -34,22 +32,16 @@ class ReauthUserViewModel @Inject constructor(private val firebaseRepository: Fi
 
         onPassword.onEach { password = it }.launchIn(viewModelScope)
 
-        flowOf(preferencesRepository.currentUser?.name)
-            .filterNotNull()
-            .onEach { delay(50) }
-            .bind(_sharedName, viewModelScope)
-
         val connectUser = onConnect
             .mapNotNull { password }
             .flatMapLatest { authenticationRepository.reauthenticate(preferencesRepository.authEmail.toString(), it) }
             .shareIn(viewModelScope, SharingStarted.Lazily)
 
         connectUser
-            .mapNotNull { (it as? AuthUserResponse.Success)?.user }
-            .flatMapLatest { firebaseRepository.getUser(it.uid) }
-            .filterNotNull()
-            .onEach { preferencesRepository.currentUser = it }
-            .mapNotNull { it.team }
+            .mapNotNull { (it as? AuthUserResponse.Success)?.user?.uid }
+            .onEach { preferencesRepository.userId = it }
+            .flatMapLatest { firebaseRepository.getUser(it) }
+            .mapNotNull { it?.team }
             .flatMapLatest { firebaseRepository.getTeam(it) }
             .onEach {
                 preferencesRepository.currentTeam = it

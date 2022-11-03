@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.databinding.FragmentEditPlayersBinding
@@ -16,10 +18,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.filterNot
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 import kotlin.coroutines.CoroutineContext
 
 @FlowPreview
@@ -27,6 +26,7 @@ import kotlin.coroutines.CoroutineContext
 class EditPlayerFragment(val user: User? = null) : BottomSheetDialogFragment(), CoroutineScope {
 
     lateinit var binding: FragmentEditPlayersBinding
+    private val viewModel: EditPlayerViewModel by viewModels()
 
     val onPlayerEdit = MutableSharedFlow<User>()
     val onTeamLeave = MutableSharedFlow<User>()
@@ -40,27 +40,21 @@ class EditPlayerFragment(val user: User? = null) : BottomSheetDialogFragment(), 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         user?.let { player ->
-            val current =  PreferencesRepository(requireContext()).currentUser
             val hasAccount = user.accessCode != "null" && !user.accessCode.isNullOrEmpty()
-            val isCurrent = current?.mid == user.mid
             binding.playernameEt.setText(player.name)
             player.accessCode?.let {
                 binding.playercodeEt.setText(it.split('-')[0])
             }
-            binding.playercodeLayout.isVisible = hasAccount && isCurrent
-            binding.adminCheckbox.isVisible = hasAccount && current?.isAdmin.isTrue
+            binding.playercodeLayout.isVisible = false
+            viewModel.sharedIsAdmin
+                .onEach { binding.adminCheckbox.isVisible = hasAccount && it }
+                .launchIn(lifecycleScope)
             binding.adminCheckbox.isChecked = player.isAdmin.isTrue
-            binding.playernameEt.isEnabled = isCurrent || !hasAccount
-            binding.modifyLabel.isVisible = isCurrent || !hasAccount
-            binding.deleteBtn.isVisible = isCurrent || !hasAccount
-            binding.leaveTeamBtn.text = when (isCurrent) {
-                true -> "Quitter l'équipe"
-                else -> "Retirer ce joueur de l'équipe"
-            }
-            binding.deleteBtn.text = when (isCurrent) {
-                true -> "Supprimer mon compte"
-                else -> "Supprimer ce joueur"
-            }
+            binding.playernameEt.isEnabled = !hasAccount
+            binding.modifyLabel.isVisible = !hasAccount
+            binding.deleteBtn.isVisible = !hasAccount
+            binding.leaveTeamBtn.text ="Retirer ce joueur de l'équipe"
+            binding.deleteBtn.text = "Supprimer ce joueur"
             binding.nextBtn
                 .clicks()
                 .filterNot {

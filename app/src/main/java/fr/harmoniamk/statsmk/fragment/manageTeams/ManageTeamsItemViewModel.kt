@@ -2,18 +2,23 @@ package fr.harmoniamk.statsmk.fragment.manageTeams
 
 import android.view.View
 import fr.harmoniamk.statsmk.model.firebase.Team
+import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flow
 
 @FlowPreview
 @ExperimentalCoroutinesApi
-class ManageTeamsItemViewModel(val team: Team, private val preferencesRepository: PreferencesRepositoryInterface) {
+class ManageTeamsItemViewModel(val team: Team, private val authenticationRepository: AuthenticationRepositoryInterface) {
 
-    val buttonVisibility: Int
-        get() = when (preferencesRepository.currentUser?.isAdmin) {
-            true -> View.VISIBLE
-            else -> View.INVISIBLE
+    val buttonVisibility
+        get() = flow {
+            when (authenticationRepository.isAdmin.firstOrNull()) {
+                true -> emit(View.VISIBLE)
+                else -> emit(View.INVISIBLE)
+        }
         }
 
     val checkMarkVisibility: Int

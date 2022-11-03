@@ -18,7 +18,7 @@
         android:textColor="@color/black"
         android:fontFamily="@font/montserrat_bold"
         android:gravity="center"
-        android:text="Ravi de te revoir Lari !"/>
+        android:text="Ravi de te revoir !"/>
 
     <LinearLayout
         android:layout_width="match_parent"

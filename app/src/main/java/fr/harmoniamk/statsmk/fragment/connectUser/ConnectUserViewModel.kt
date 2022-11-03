@@ -43,11 +43,11 @@ class ConnectUserViewModel @Inject constructor(private val firebaseRepository: F
             .shareIn(viewModelScope, SharingStarted.Lazily)
 
         connectUser
-            .mapNotNull { (it as? AuthUserResponse.Success)?.user }
-            .flatMapLatest { firebaseRepository.getUser(it.uid) }
+            .mapNotNull { (it as? AuthUserResponse.Success)?.user?.uid }
+            .onEach { preferencesRepository.userId = it }
+            .flatMapLatest { firebaseRepository.getUser(it) }
             .filterNotNull()
             .onEach {
-                preferencesRepository.currentUser = it
                 preferencesRepository.authEmail = email
                 preferencesRepository.authPassword = password
             }
@@ -57,8 +57,7 @@ class ConnectUserViewModel @Inject constructor(private val firebaseRepository: F
                 preferencesRepository.currentTeam = it
                 preferencesRepository.firstLaunch = false
                 _sharedNext.emit(Unit)
-            }
-            .launchIn(viewModelScope)
+            }.launchIn(viewModelScope)
 
         connectUser
             .mapNotNull { (it as? AuthUserResponse.Error)?.message }

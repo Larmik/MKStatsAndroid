@@ -33,7 +33,7 @@ class ManageTeamsFragment : Fragment(R.layout.fragment_manage_teams) {
         val adapter = ManageTeamsAdapter()
         var dialog = EditTeamFragment()
         binding.teamRv.adapter = adapter
-        viewModel.bind(binding.addTeamBtn.clicks(), binding.quitTeamBtn.clicks(), adapter.sharedEdit, binding.searchEt.onTextChanged())
+        viewModel.bind(binding.addTeamBtn.clicks(), adapter.sharedEdit, binding.searchEt.onTextChanged())
         viewModel.sharedTeams
             .onEach {
                 adapter.addTeams(it)
@@ -45,10 +45,7 @@ class ManageTeamsFragment : Fragment(R.layout.fragment_manage_teams) {
         viewModel.sharedAddTeamVisibility
             .onEach { binding.addTeamBtn.visibility = it }
             .launchIn(lifecycleScope)
-        viewModel.sharedTeamQuit
-            .filter { findNavController().currentDestination?.id == R.id.manageTeamsFragment }
-            .onEach { findNavController().popBackStack() }
-            .launchIn(lifecycleScope)
+
         viewModel.sharedCurrentTeamName
             .onEach {
                 binding.currentTeamLayout.isVisible = true

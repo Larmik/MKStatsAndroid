@@ -44,10 +44,6 @@ class ReauthUserFragment: Fragment(R.layout.fragment_reauth_user) {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
             }.launchIn(lifecycleScope)
 
-        viewModel.sharedName
-            .onEach { binding.reauthTitle.text = "Ravi de te revoir $it !" }
-            .launchIn(lifecycleScope)
-
         viewModel.sharedGoToReset
             .map { ResetPasswordFragment() }
             .onEach { it.show(childFragmentManager, null) }

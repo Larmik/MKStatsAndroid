@@ -7,6 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.isTrue
+import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -19,7 +20,7 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class ManagePlayersViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface) : ViewModel() {
+class ManagePlayersViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface) : ViewModel() {
 
     private val _sharedPlayers = MutableSharedFlow<List<ManagePlayersItemViewModel>>()
     private val _sharedAddPlayer = MutableSharedFlow<Unit>()
@@ -46,10 +47,9 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
             .onEach { allPlayers.addAll(it) }
             .bind(_sharedPlayers, viewModelScope)
 
-        flowOf(preferencesRepository.currentUser)
-            .onEach { delay(20) }
+        authenticationRepository.isAdmin
             .mapNotNull {
-                when (it?.isAdmin) {
+                when (it) {
                     true -> View.VISIBLE
                     else -> View.GONE
                 }
@@ -70,9 +70,8 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
 
     fun bindDialog(onDelete: Flow<User>, onPlayerEdited: Flow<User>, onTeamLeft: Flow<User>) {
         onDelete
-            .filter { it.mid == preferencesRepository.currentUser?.mid }
+            .filter { it.mid == preferencesRepository.userId }
             .onEach {
-                preferencesRepository.currentUser = null
                 preferencesRepository.currentTeam = null
             }
             .flatMapLatest { firebaseRepository.deleteUser(it) }
@@ -80,21 +79,17 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
             .launchIn(viewModelScope)
 
         onDelete
-            .filter { it.mid != preferencesRepository.currentUser?.mid }
+            .filter { it.mid != preferencesRepository.userId }
             .flatMapLatest { firebaseRepository.deleteUser(it) }
             .flatMapLatest {  firebaseRepository.getUsers() }
             .map { createPlayersList(list = it) }
-            .filter { preferencesRepository.currentUser != null }
+            .filter { authenticationRepository.user != null }
             .onEach {
                 _sharedShowDialog.emit(false)
                 _sharedPlayers.emit(it)
             }.launchIn(viewModelScope)
 
         onPlayerEdited
-            .onEach {
-                if (it.mid == preferencesRepository.currentUser?.mid)
-                    preferencesRepository.currentUser = it
-            }
             .flatMapLatest { firebaseRepository.writeUser(it) }
             .flatMapLatest {  firebaseRepository.getUsers() }
             .map { createPlayersList(list = it) }
@@ -104,17 +99,14 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
             }.launchIn(viewModelScope)
 
         onTeamLeft
-            .filter { it.mid == preferencesRepository.currentUser?.mid }
-            .onEach {
-                preferencesRepository.currentUser = it
-                preferencesRepository.currentTeam = null
-            }
+            .filter { it.mid == preferencesRepository.userId }
+            .onEach { preferencesRepository.currentTeam = null }
             .flatMapLatest { firebaseRepository.writeUser(it) }
             .onEach { _sharedRedirectToSettings.emit(Unit) }
             .launchIn(viewModelScope)
 
         onTeamLeft
-            .filter { it.mid != preferencesRepository.currentUser?.mid }
+            .filter { it.mid != preferencesRepository.userId }
             .flatMapLatest { firebaseRepository.writeUser(it) }
             .flatMapLatest {  firebaseRepository.getUsers() }
             .map { createPlayersList(list = it) }
@@ -129,9 +121,9 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
         players.clear()
         players.add(ManagePlayersItemViewModel(isCategory = true))
         list?.let {
-            players.addAll(list.map { ManagePlayersItemViewModel(player = it, preferencesRepository = preferencesRepository) }.filterNot { it.isAlly }.sortedBy { it.name })
+            players.addAll(list.map { ManagePlayersItemViewModel(player = it, preferencesRepository = preferencesRepository, authenticationRepository = authenticationRepository) }.filterNot { it.isAlly }.sortedBy { it.name })
             players.add(ManagePlayersItemViewModel(isCategory = true))
-            players.addAll(list.map { ManagePlayersItemViewModel(player = it, preferencesRepository = preferencesRepository) }.filter { it.isAlly }.sortedBy { it.name })
+            players.addAll(list.map { ManagePlayersItemViewModel(player = it, preferencesRepository = preferencesRepository, authenticationRepository = authenticationRepository) }.filter { it.isAlly }.sortedBy { it.name })
         }
         modelList?.let {
             players.addAll(modelList.filterNot { it.isAlly }.sortedBy { it.name })

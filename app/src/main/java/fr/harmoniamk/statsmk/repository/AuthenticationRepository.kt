@@ -17,8 +17,7 @@ import fr.harmoniamk.statsmk.model.firebase.ResetPasswordResponse
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.isActive
 import javax.inject.Inject
 
@@ -30,6 +29,7 @@ interface AuthenticationRepositoryInterface {
     fun resetPassword(email: String): Flow<ResetPasswordResponse>
     fun updateProfile(username: String, imageUrl: String) : Flow<Unit>
     val user: FirebaseUser?
+    val isAdmin: Flow<Boolean>
 }
 
 @FlowPreview
@@ -125,5 +125,14 @@ class AuthenticationRepository @Inject constructor(@ApplicationContext private v
 
     override val user: FirebaseUser?
         get() = auth.currentUser
+
+    override val isAdmin: Flow<Boolean>
+        get() = flowOf(auth.currentUser?.uid)
+            .flatMapLatest {
+                FirebaseRepository(context).getUser(it)
+            }
+            .mapNotNull {
+                it?.isAdmin
+            }
 
 }

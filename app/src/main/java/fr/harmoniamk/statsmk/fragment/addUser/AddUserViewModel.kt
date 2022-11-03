@@ -45,7 +45,8 @@ class AddUserViewModel @Inject constructor(private val firebaseRepository: Fireb
                 .shareIn(viewModelScope, SharingStarted.Lazily)
 
         createUser
-            .mapNotNull { (it as? AuthUserResponse.Success)?.user }
+            .mapNotNull { (it as? AuthUserResponse.Success)?.user?.uid }
+            .onEach { preferencesRepository.userId = it }
             .mapNotNull { name }
             .flatMapLatest { authenticationRepository.updateProfile(it, "https://firebasestorage.googleapis.com/v0/b/stats-mk-debug.appspot.com/o/hr_logo.png?alt=media&token=6f4452bf-7028-4203-8d77-0c3eb0d8cd48") }
             .mapNotNull { authenticationRepository.user }
@@ -54,12 +55,11 @@ class AddUserViewModel @Inject constructor(private val firebaseRepository: Fireb
                     mid = it.uid,
                     name = name,
                     accessCode = null,
-                    isAdmin = preferencesRepository.currentUser?.isAdmin.isTrue,
+                    isAdmin = false,
                     team = preferencesRepository.currentTeam?.mid ?: "-1",
                     currentWar = preferencesRepository.currentWar?.mid ?: "-1",
                     picture = it.photoUrl.toString()
                 )
-                preferencesRepository.currentUser = user
                 preferencesRepository.authEmail = email
                 preferencesRepository.authPassword = code
                 preferencesRepository.firstLaunch = false

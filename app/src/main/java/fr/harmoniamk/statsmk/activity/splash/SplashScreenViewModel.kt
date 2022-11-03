@@ -6,6 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.enums.WelcomeScreen
 import fr.harmoniamk.statsmk.model.firebase.AuthUserResponse
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
+import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -16,7 +17,7 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class SplashScreenViewModel @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface) : ViewModel() {
+class SplashScreenViewModel @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val firebaseRepository: FirebaseRepositoryInterface) : ViewModel() {
 
     private val _sharedWelcomeScreen = MutableSharedFlow<WelcomeScreen>()
 
@@ -48,12 +49,15 @@ class SplashScreenViewModel @Inject constructor(private val preferencesRepositor
             }.launchIn(viewModelScope)
 
         authenticate
-            .mapNotNull { it as? AuthUserResponse.Success }
+            .mapNotNull { (it as? AuthUserResponse.Success)?.user?.uid }
+            .onEach { preferencesRepository.userId = it }
+            .flatMapLatest { firebaseRepository.getUser(it) }
+            .mapNotNull { it?.team }
+            .flatMapLatest { firebaseRepository.getTeam(it) }
             .onEach {
-                delay(1000)
+                preferencesRepository.currentTeam = it
                 _sharedWelcomeScreen.emit(WelcomeScreen.HOME)
-            }
-            .launchIn(viewModelScope)
+            }.launchIn(viewModelScope)
 
         authenticate
             .mapNotNull { it as? AuthUserResponse.Error }
