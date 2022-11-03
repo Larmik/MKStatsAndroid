@@ -3,7 +3,9 @@ package fr.harmoniamk.statsmk.fragment.addUser
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.extension.bind
+import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.model.firebase.AuthUserResponse
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
@@ -44,19 +46,26 @@ class AddUserViewModel @Inject constructor(private val firebaseRepository: Fireb
 
         createUser
             .mapNotNull { (it as? AuthUserResponse.Success)?.user }
+            .mapNotNull { name }
+            .flatMapLatest { authenticationRepository.updateProfile(it, "https://firebasestorage.googleapis.com/v0/b/stats-mk-debug.appspot.com/o/hr_logo.png?alt=media&token=6f4452bf-7028-4203-8d77-0c3eb0d8cd48") }
+            .mapNotNull { authenticationRepository.user }
             .flatMapLatest {
                 val user = User(
                     mid = it.uid,
                     name = name,
                     accessCode = null,
-                    team = "-1",
-                    currentWar = "-1")
+                    isAdmin = preferencesRepository.currentUser?.isAdmin.isTrue,
+                    team = preferencesRepository.currentTeam?.mid ?: "-1",
+                    currentWar = preferencesRepository.currentWar?.mid ?: "-1",
+                    picture = it.photoUrl.toString()
+                )
                 preferencesRepository.currentUser = user
                 preferencesRepository.authEmail = email
                 preferencesRepository.authPassword = code
                 preferencesRepository.firstLaunch = false
                 firebaseRepository.writeUser(user)
-            }.bind(_sharedNext, viewModelScope)
+            }
+            .bind(_sharedNext, viewModelScope)
 
         createUser
             .mapNotNull { (it as? AuthUserResponse.Error)?.message }

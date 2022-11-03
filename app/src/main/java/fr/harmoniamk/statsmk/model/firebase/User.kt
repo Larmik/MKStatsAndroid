@@ -6,5 +6,6 @@ data class User(
     var accessCode: String? = null,
     var team: String? = null,
     var currentWar: String? = null,
-    var isAdmin: Boolean? = null
+    var isAdmin: Boolean? = null,
+    var picture: String
 )

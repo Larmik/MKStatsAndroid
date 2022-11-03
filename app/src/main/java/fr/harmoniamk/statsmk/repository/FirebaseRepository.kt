@@ -100,7 +100,8 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
                     currentWar = it["currentWar"].toString(),
                     accessCode = it["accessCode"].toString().replace("-$deviceId", ""),
                     team = it["team"].toString(),
-                    isAdmin = it["admin"].toString().toBoolean()
+                    isAdmin = it["admin"].toString().toBoolean(),
+                    picture = it["picture"].toString()
                 ) }
             if (isActive) offer(users)
         }
@@ -191,7 +192,8 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
                         name = map["name"].toString(),
                         team = map["team"].toString(),
                         currentWar = map["currentWar"].toString(),
-                        isAdmin = map["admin"].toString().toBoolean()
+                        isAdmin = map["admin"].toString().toBoolean(),
+                        picture = map["picture"].toString()
                     )
                 )
             }
@@ -251,6 +253,7 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
                         team = it["team"].toString(),
                         currentWar = it["currentWar"].toString(),
                         isAdmin = it["admin"].toString().toBoolean(),
+                        picture = it["picture"].toString()
                     )  }
                 if (isActive) offer(users)
             }

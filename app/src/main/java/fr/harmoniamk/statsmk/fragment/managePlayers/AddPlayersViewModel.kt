@@ -39,6 +39,7 @@ class AddPlayersViewModel @Inject constructor(private val firebaseRepository: Fi
                     mid = System.currentTimeMillis().toString(),
                     name = it,
                     team = preferencesRepository.currentTeam?.mid,
+                    picture = "-1"
                 )
             }
             .flatMapLatest { firebaseRepository.writeUser(it) }

@@ -1,12 +1,17 @@
 package fr.harmoniamk.statsmk.repository
 
+import android.content.Context
+import android.net.Uri
 import android.util.Log
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.UserProfileChangeRequest
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.android.qualifiers.ApplicationContext
 import fr.harmoniamk.statsmk.model.firebase.AuthUserResponse
 import fr.harmoniamk.statsmk.model.firebase.ResetPasswordResponse
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -23,6 +28,8 @@ interface AuthenticationRepositoryInterface {
     fun reauthenticate(email: String, password: String): Flow<AuthUserResponse>
     fun signOut()
     fun resetPassword(email: String): Flow<ResetPasswordResponse>
+    fun updateProfile(username: String, imageUrl: String) : Flow<Unit>
+    val user: FirebaseUser?
 }
 
 @FlowPreview
@@ -36,7 +43,7 @@ interface AuthenticationRepositoryModule {
 
 @FlowPreview
 @ExperimentalCoroutinesApi
-class AuthenticationRepository @Inject constructor() : AuthenticationRepositoryInterface {
+class AuthenticationRepository @Inject constructor(@ApplicationContext private val context: Context) : AuthenticationRepositoryInterface {
 
     private val auth: FirebaseAuth
         get() = FirebaseAuth.getInstance()
@@ -99,5 +106,24 @@ class AuthenticationRepository @Inject constructor() : AuthenticationRepositoryI
             }
         awaitClose {  }
     }
+
+    override fun updateProfile(username: String, imageUrl: String) = callbackFlow {
+        auth.currentUser?.let {
+            val profileUpdate = UserProfileChangeRequest.Builder()
+                .setDisplayName(username)
+                .setPhotoUri(Uri.parse(imageUrl))
+                .build()
+
+            it.updateProfile(profileUpdate).addOnCompleteListener { task ->
+                if (isActive && task.isSuccessful) offer(Unit)
+            }.addOnFailureListener {
+                if (isActive) offer(Unit)
+            }
+        }
+        awaitClose {  }
+    }
+
+    override val user: FirebaseUser?
+        get() = auth.currentUser
 
 }

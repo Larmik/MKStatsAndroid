@@ -17,6 +17,21 @@
             android:textColor="@color/harmonia_dark"
             android:fontFamily="@font/montserrat_regular"
             android:textSize="16sp"
+            android:id="@+id/profile_btn"
+            android:paddingVertical="15dp"
+            android:text="Profil"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/white"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/harmonia_dark"
+            android:fontFamily="@font/montserrat_regular"
+            android:textSize="16sp"
             android:id="@+id/manage_team_btn"
             android:paddingVertical="15dp"
             android:text="Gérer les équipes"/>
@@ -60,21 +75,6 @@
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/harmonia_dark"
-            android:fontFamily="@font/montserrat_regular"
-            android:textSize="16sp"
-            android:id="@+id/disconnect_btn"
-            android:paddingVertical="15dp"
-            android:text="Déconnection"/>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/white"/>
-
-        <TextView
-            android:layout_width="match_parent"
             android:visibility="gone"
             android:layout_height="wrap_content"
             android:textColor="@color/text_color"
@@ -91,14 +91,6 @@
             android:background="@color/white"/>
 
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/current_user_label"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textColor="@color/harmonia_dark"
-        android:fontFamily="@font/montserrat_regular"
-        android:gravity="bottom|end"/>
 
 
 </LinearLayout>

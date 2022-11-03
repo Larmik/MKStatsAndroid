@@ -25,34 +25,19 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
     private val binding: FragmentSettingsBinding by viewBinding()
     private val viewModel: SettingsViewModel by viewModels()
-    private val disconnectPopup by lazy { PopupFragment("Êtes-vous sûr de vouloir vous déconnecter ?", "Se déconnecter") }
     private val themePopup by lazy { PopupFragment("La fonctionnalité des thèmes n'a pas pu être testée à fond et est encore au stade expérimental, il se peut qu'elle ne fonctionne pas correctement. Voulez-vous continuer malgré tout ?", positiveText = "Essayer les thèmes") }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.bind(
-            onLogout = disconnectPopup.onPositiveClick,
             onManageTeam = binding.manageTeamBtn.clicks(),
             onTheme = themePopup.onPositiveClick,
             onManagePlayers = binding.managePlayersBtn.clicks(),
             onMigrate = binding.migrateBtn.clicks(),
-            onPopup = flowOf(binding.logoutLayout.clicks().map { true }, disconnectPopup.onNegativeClick.map { false }).flattenMerge(),
-            onPopupTheme =  themePopup.onNegativeClick.map { false }
+            onPopupTheme =  themePopup.onNegativeClick.map { false },
+            onProfileClick = binding.profileBtn.clicks()
         )
-        viewModel.sharedDisconnectPopup
-            .onEach {
-                when (it) {
-                    true -> disconnectPopup.takeIf { !it.isAdded }?.show(childFragmentManager, null)
-                    else -> disconnectPopup.dismiss()
-                }
-            }
-            .launchIn(lifecycleScope)
-        viewModel.sharedDisconnect
-            .filter { findNavController().currentDestination?.id == R.id.homeFragment }
-            .onEach {
-                disconnectPopup.dismiss()
-                findNavController().navigate(HomeFragmentDirections.backToWelcome())
-            }.launchIn(lifecycleScope)
+
         viewModel.sharedManageTeam
             .filter { findNavController().currentDestination?.id == R.id.homeFragment }
             .onEach { findNavController().navigate(HomeFragmentDirections.manageTeams()) }
@@ -66,9 +51,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             .onEach {
                 themePopup.dismiss()
                 findNavController().navigate(HomeFragmentDirections.manageTheme())
-            }
-            .launchIn(lifecycleScope)
-
+            }.launchIn(lifecycleScope)
         viewModel.sharedThemePopup
             .onEach {
                 when (it) {
@@ -79,8 +62,9 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         viewModel.sharedToast
             .onEach { Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show() }
             .launchIn(lifecycleScope)
-        viewModel.sharedUserLabel
-            .onEach { binding.currentUserLabel.text = "Connecté en tant que $it" }
+        viewModel.sharedGoToProfile
+            .filter { findNavController().currentDestination?.id == R.id.homeFragment }
+            .onEach { findNavController().navigate(HomeFragmentDirections.toProfile()) }
             .launchIn(lifecycleScope)
     }
 }
