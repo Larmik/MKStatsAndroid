@@ -88,10 +88,18 @@ class ManageTeamsViewModel @Inject constructor(private val preferencesRepository
             }
             .flatMapLatest { firebaseRepository.writeTeam(it) }
             .flatMapLatest {  firebaseRepository.getTeams() }
-            .map { list -> list.map { ManageTeamsItemViewModel(it, authenticationRepository) } }
+            .map { list -> list.sortedBy { it.name }.map { ManageTeamsItemViewModel(it, authenticationRepository) } }
             .onEach {
                 _sharedShowDialog.emit(false)
                 _sharedTeams.emit(it)
             }.launchIn(viewModelScope)
     }
+
+    fun bindAddDialog(onTeamAdded: Flow<Unit>) {
+        onTeamAdded
+            .flatMapLatest {  firebaseRepository.getTeams() }
+            .map { list -> list.sortedBy { it.name }.map { ManageTeamsItemViewModel(it, authenticationRepository) } }
+            .bind(_sharedTeams, viewModelScope)
+    }
+
 }

@@ -12,7 +12,6 @@ import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import java.util.*
 import javax.inject.Inject
@@ -66,7 +65,7 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
             .bind(_sharedPlayers, viewModelScope)
     }
 
-    fun bindDialog(onDelete: Flow<User>, onPlayerEdited: Flow<User>, onTeamLeft: Flow<User>) {
+    fun bindEditDialog(onDelete: Flow<User>, onPlayerEdited: Flow<User>, onTeamLeft: Flow<User>) {
 
         onDelete
             .filter { it.mid != authenticationRepository.user?.uid }
@@ -105,6 +104,15 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
                 _sharedPlayers.emit(it)
             }.launchIn(viewModelScope)
 
+    }
+
+    fun bindAddDialog(onPlayedAdded: Flow<Unit>) {
+        onPlayedAdded
+            .flatMapLatest {  firebaseRepository.getUsers() }
+            .map { createPlayersList(list = it) }
+            .filter { authenticationRepository.user != null }
+            .onEach { _sharedPlayers.emit(it) }
+            .launchIn(viewModelScope)
     }
 
     private fun createPlayersList(list: List<User>? = null, modelList: List<ManagePlayersItemViewModel>? = null): List<ManagePlayersItemViewModel> {

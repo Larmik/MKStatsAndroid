@@ -13,6 +13,7 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentManageTeamsBinding
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.extension.onTextChanged
+import fr.harmoniamk.statsmk.fragment.managePlayers.AddPlayersFragment
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collect
@@ -39,9 +40,14 @@ class ManageTeamsFragment : Fragment(R.layout.fragment_manage_teams) {
                 adapter.addTeams(it)
             }.launchIn(lifecycleScope)
         viewModel.sharedAddTeam
-            .filter { findNavController().currentDestination?.id == R.id.manageTeamsFragment }
-            .onEach { findNavController().navigate(ManageTeamsFragmentDirections.addTeam()) }
-            .launchIn(lifecycleScope)
+            .onEach {
+                val addTeamFragment = AddTeamFragment()
+                viewModel.bindAddDialog(addTeamFragment.onTeamAdded)
+                addTeamFragment.takeIf { !it.isAdded }?.show(childFragmentManager, null)
+                addTeamFragment.onTeamAdded
+                    .onEach { addTeamFragment.dismiss() }
+                    .launchIn(lifecycleScope)
+            }.launchIn(lifecycleScope)
         viewModel.sharedAddTeamVisibility
             .onEach {
                 binding.addTeamBtn.visibility = it

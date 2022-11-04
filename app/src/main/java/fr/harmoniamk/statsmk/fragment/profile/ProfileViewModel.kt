@@ -100,7 +100,10 @@ class ProfileViewModel @Inject constructor(private val authenticationRepository:
                 onTextChange.onEach { email = it }.launchIn(viewModelScope)
                 onValidate
                     .flatMapLatest { authenticationRepository.updateEmail(email) }
-                    .onEach { _sharedNewName.emit(email) }
+                    .onEach {
+                        preferencesRepository.authEmail = email
+                        _sharedNewName.emit(email)
+                    }
                     .launchIn(viewModelScope)
                 onDismiss.mapNotNull { email }.bind(_sharedNewName, viewModelScope)
             }

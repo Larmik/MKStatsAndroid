@@ -38,16 +38,21 @@ class ManagePlayersFragment : Fragment(R.layout.fragment_manage_players) {
             adapter.addPlayers(it)
         }.launchIn(lifecycleScope)
         viewModel.sharedAddPlayer
-            .filter { findNavController().currentDestination?.id == R.id.managePlayersFragment }
-            .onEach { findNavController().navigate(ManagePlayersFragmentDirections.addPlayer()) }
-            .launchIn(lifecycleScope)
+            .onEach {
+                val addPlayerFragment = AddPlayersFragment()
+                viewModel.bindAddDialog(addPlayerFragment.onUserAdded)
+                addPlayerFragment.takeIf { !it.isAdded }?.show(childFragmentManager, null)
+                addPlayerFragment.onUserAdded
+                    .onEach { addPlayerFragment.dismiss() }
+                    .launchIn(lifecycleScope)
+            }.launchIn(lifecycleScope)
         viewModel.sharedAddPlayerVisibility
             .onEach { binding.addPlayerBtn.visibility = it }
             .launchIn(lifecycleScope)
         viewModel.sharedEdit
             .onEach {
                 dialog = EditPlayerFragment(it)
-                viewModel.bindDialog(
+                viewModel.bindEditDialog(
                     onDelete = dialog.onPlayerDelete,
                     onTeamLeft = dialog.onTeamLeave,
                     onPlayerEdited = dialog.onPlayerEdit

@@ -107,7 +107,11 @@ class ProfileFragment: Fragment(R.layout.fragment_profile) {
 
         viewModel.sharedEditName
             .onEach {
-                val changeNamePopup = PopupFragment("Modifier le pseudo", "Enregistrer", "Retour", true)
+                val changeNamePopup = PopupFragment(
+                    message = "Modifier le pseudo",
+                    positiveText = "Enregistrer",
+                    editTextHint = binding.username.text.toString()
+                )
                 viewModel.bindDialog(false, changeNamePopup.onTextChange, changeNamePopup.onPositiveClick, changeNamePopup.onNegativeClick)
                 changeNamePopup.takeIf { !it.isAdded }?.show(childFragmentManager, null)
                 viewModel.sharedNewName
@@ -119,7 +123,11 @@ class ProfileFragment: Fragment(R.layout.fragment_profile) {
 
         viewModel.sharedEditEmail
             .onEach {
-                val changeEmailPopup = PopupFragment("Modifier l'adresse mail", "Enregistrer", "Retour", true)
+                val changeEmailPopup = PopupFragment(
+                    message = "Modifier l'adresse mail",
+                    positiveText = "Enregistrer",
+                    editTextHint = binding.email.text.toString()
+                )
                 viewModel.bindDialog(true, changeEmailPopup.onTextChange, changeEmailPopup.onPositiveClick, changeEmailPopup.onNegativeClick)
                 changeEmailPopup.takeIf { !it.isAdded }?.show(childFragmentManager, null)
                 viewModel.sharedNewName

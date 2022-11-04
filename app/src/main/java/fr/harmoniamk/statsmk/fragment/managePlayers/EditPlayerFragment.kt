@@ -27,7 +27,7 @@ import kotlin.coroutines.CoroutineContext
 @FlowPreview
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
-class EditPlayerFragment(val user: User? = null) : BottomSheetDialogFragment(), CoroutineScope {
+class EditPlayerFragment(val user: User? = null) : BottomSheetDialogFragment() {
 
     lateinit var binding: FragmentEditPlayersBinding
     private val viewModel: EditPlayerViewModel by viewModels()
@@ -76,18 +76,17 @@ class EditPlayerFragment(val user: User? = null) : BottomSheetDialogFragment(), 
                         this.name = binding.playernameEt.text.toString()
                         this.isAdmin = binding.adminCheckbox.isChecked
                     }
-                }.bind(onPlayerEdit, this)
+                }.bind(onPlayerEdit, lifecycleScope)
             binding.deleteBtn
                 .clicks()
                 .map { player }
-                .bind(onPlayerDelete, this)
+                .bind(onPlayerDelete, lifecycleScope)
             binding.leaveTeamBtn
                 .clicks()
                 .map { player.apply { this.team = "-1" } }
-                .bind(onTeamLeave, this)
+                .bind(onTeamLeave, lifecycleScope)
         }
     }
 
-    override val coroutineContext: CoroutineContext
-        get() = Dispatchers.Main
+
 }

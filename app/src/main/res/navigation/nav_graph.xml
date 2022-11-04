@@ -126,12 +126,12 @@
             app:popExitAnim="@anim/exit_to_right"/>
 
     </fragment>
-
+<!--
     <fragment
         android:id="@+id/addTournamentFragment"
         android:name="fr.harmoniamk.statsmk.fragment.addTournament.AddTournamentFragment"
         tools:layout="@layout/fragment_add_tournament"
-        android:label="AddTournamentFragment"/>
+        android:label="AddTournamentFragment"/>-->
 
     <fragment
         android:id="@+id/trackListFragment"
@@ -180,7 +180,7 @@
 
     </fragment>
 
-    <fragment
+   <!-- <fragment
         android:id="@+id/currentTournamentFragment"
         android:name="fr.harmoniamk.statsmk.fragment.currentTournament.CurrentTournamentFragment"
         tools:layout="@layout/fragment_current_tournament"
@@ -200,7 +200,7 @@
 
         </action>
 
-    </fragment>
+    </fragment>-->
 
     <fragment
         android:id="@+id/addWarFragment"
@@ -271,17 +271,6 @@
 
     </fragment>
 
-    <fragment
-        android:id="@+id/addTeamFragment"
-        android:name="fr.harmoniamk.statsmk.fragment.manageTeams.AddTeamFragment"
-        tools:layout="@layout/fragment_add_team"
-        android:label="AddTeamFragment"/>
-
-    <fragment
-        android:id="@+id/addPlayersFragment"
-        android:name="fr.harmoniamk.statsmk.fragment.managePlayers.AddPlayersFragment"
-        tools:layout="@layout/fragment_add_players"
-        android:label="AddPlayersFragment"/>
 
     <fragment
         android:id="@+id/managePlayersFragment"
@@ -289,13 +278,6 @@
         tools:layout="@layout/fragment_manage_players"
         android:label="ManagePlayersFragment">
 
-        <action
-            android:id="@+id/add_player"
-            app:destination="@id/addPlayersFragment"
-            app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right"/>
 
         <action
             android:id="@+id/back_to_welcome"
@@ -312,18 +294,7 @@
         android:id="@+id/manageTeamsFragment"
         android:name="fr.harmoniamk.statsmk.fragment.manageTeams.ManageTeamsFragment"
         tools:layout="@layout/fragment_manage_teams"
-        android:label="ManageTeamsFragment">
-
-        <action
-            android:id="@+id/add_team"
-            app:destination="@id/addTeamFragment"
-            app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right"/>
-
-    </fragment>
-
+        android:label="ManageTeamsFragment"/>
 
     <fragment
         android:id="@+id/currentWarFragment"
@@ -511,12 +482,12 @@
         </action>
 
     </fragment>
-
+<!--
     <fragment
         android:id="@+id/themeFragment"
         android:name="fr.harmoniamk.statsmk.fragment.theme.ThemeFragment"
         tools:layout="@layout/fragment_theme"
-        android:label="ThemeFragment"/>
+        android:label="ThemeFragment"/>-->
 
     <fragment
         android:id="@+id/indivStatsFragment"

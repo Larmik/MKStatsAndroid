@@ -19,14 +19,12 @@ class AddTeamViewModel @Inject constructor(private val firebaseRepository: Fireb
     val sharedTeamAdded = _sharedTeamAdded.asSharedFlow()
     val sharedToast = _sharedToast.asSharedFlow()
 
-    fun bind(onTeamName: Flow<String>, onShortname: Flow<String>, onCode: Flow<String>, onAddClick: Flow<Unit>) {
+    fun bind(onTeamName: Flow<String>, onShortname: Flow<String>, onAddClick: Flow<Unit>) {
         var name: String? = null
         var shortName: String? = null
-        var code: String? = null
 
         onTeamName.onEach { name = it }.launchIn(viewModelScope)
         onShortname.onEach { shortName = it }.launchIn(viewModelScope)
-        onCode.onEach { code = it }.launchIn(viewModelScope)
 
         val addClick =  onAddClick
             .filter { name != null && shortName != null }
@@ -40,7 +38,7 @@ class AddTeamViewModel @Inject constructor(private val firebaseRepository: Fireb
                     mid = System.currentTimeMillis().toString(),
                     name = name,
                     shortName = shortName,
-                    accessCode = code)
+                    accessCode = "-1")
                 )
             }
             .onEach { _sharedTeamAdded.emit(Unit) }
