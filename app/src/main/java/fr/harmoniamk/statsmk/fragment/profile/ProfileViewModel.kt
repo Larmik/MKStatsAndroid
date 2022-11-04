@@ -9,9 +9,7 @@ import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.model.firebase.PictureResponse
 import fr.harmoniamk.statsmk.model.firebase.ResetPasswordResponse
 import fr.harmoniamk.statsmk.model.firebase.UploadPictureResponse
-import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
-import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
-import fr.harmoniamk.statsmk.repository.StorageRepository
+import fr.harmoniamk.statsmk.repository.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
@@ -20,7 +18,7 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class ProfileViewModel @Inject constructor(private val authenticationRepository: AuthenticationRepositoryInterface, private val storageRepository: StorageRepository, private val preferencesRepository: PreferencesRepositoryInterface) : ViewModel() {
+class ProfileViewModel @Inject constructor(private val authenticationRepository: AuthenticationRepositoryInterface, private val storageRepository: StorageRepository, private val preferencesRepository: PreferencesRepositoryInterface, private val firebaseRepository: FirebaseRepositoryInterface) : ViewModel() {
 
     private val _sharedProfile = MutableSharedFlow<FirebaseUser>()
     private val _sharedEditPicture = MutableSharedFlow<Unit>()
@@ -28,6 +26,11 @@ class ProfileViewModel @Inject constructor(private val authenticationRepository:
     private val _sharedPictureLoaded = MutableSharedFlow<String?>()
     private val _showResetPopup = MutableSharedFlow<String>()
     private val _sharedDisconnect = MutableSharedFlow<Unit>()
+    private val _sharedTeam = MutableSharedFlow<String?>()
+    private val _sharedNewName = MutableSharedFlow<String>()
+    private val _sharedEditName = MutableSharedFlow<Unit>()
+    private val _sharedEditEmail = MutableSharedFlow<Unit>()
+    private val _sharedRole = MutableSharedFlow<String>()
 
     val sharedProfile =_sharedProfile.asSharedFlow()
     val sharedEditPicture =_sharedEditPicture.asSharedFlow()
@@ -35,13 +38,25 @@ class ProfileViewModel @Inject constructor(private val authenticationRepository:
     val showResetPopup =_showResetPopup.asSharedFlow()
     val sharedDisconnect =_sharedDisconnect.asSharedFlow()
     val sharedDisconnectPopup = _sharedDisconnectPopup.asSharedFlow()
+    val sharedTeam = _sharedTeam.asSharedFlow()
+    val sharedNewName = _sharedNewName.asSharedFlow()
+    val sharedRole = _sharedRole.asSharedFlow()
+    val sharedEditName = _sharedEditName.asSharedFlow()
+    val sharedEditEmail = _sharedEditEmail.asSharedFlow()
 
-    fun bind(onPictureClick: Flow<Unit>, onPictureEdited: Flow<String>, onChangePasswordClick: Flow<Unit>, onLogout: Flow<Unit>, onPopup: Flow<Boolean>) {
+    fun bind(onPictureClick: Flow<Unit>, onPictureEdited: Flow<String>, onChangePasswordClick: Flow<Unit>, onLogout: Flow<Unit>, onPopup: Flow<Boolean>, onChangeNameClick: Flow<Unit>, onChangeEmailClick: Flow<Unit>) {
         var url: String? = null
 
         storageRepository.getPicture(authenticationRepository.user?.uid)
             .mapNotNull { authenticationRepository.user }
-            .bind(_sharedProfile, viewModelScope)
+            .onEach { _sharedProfile.emit(it) }
+            .flatMapLatest { firebaseRepository.getUser(it.uid) }
+            .mapNotNull { it?.isAdmin }
+            .onEach {
+                _sharedRole.emit(if (it) "Admin" else "Membre")
+                _sharedTeam.emit(preferencesRepository.currentTeam?.name)
+            }
+            .launchIn(viewModelScope)
 
         onPopup.bind(_sharedDisconnectPopup, viewModelScope)
 
@@ -73,6 +88,38 @@ class ProfileViewModel @Inject constructor(private val authenticationRepository:
             }.bind(_sharedDisconnect, viewModelScope)
 
         onPictureClick.bind(_sharedEditPicture, viewModelScope)
+
+        onChangeNameClick.bind(_sharedEditName, viewModelScope)
+        onChangeEmailClick.bind(_sharedEditEmail, viewModelScope)
+    }
+
+    fun bindDialog(isEmail: Boolean, onTextChange: Flow<String>, onValidate: Flow<Unit>, onDismiss: Flow<Unit>) {
+        when (isEmail) {
+            true -> {
+                var email = authenticationRepository.user?.email.toString()
+                onTextChange.onEach { email = it }.launchIn(viewModelScope)
+                onValidate
+                    .flatMapLatest { authenticationRepository.updateEmail(email) }
+                    .onEach { _sharedNewName.emit(email) }
+                    .launchIn(viewModelScope)
+                onDismiss.mapNotNull { email }.bind(_sharedNewName, viewModelScope)
+            }
+            else -> {
+                var name = authenticationRepository.user?.displayName.toString()
+                onTextChange.onEach { name = it }.launchIn(viewModelScope)
+                onValidate
+                    .flatMapLatest { authenticationRepository.updateProfile(name, null) }
+                    .flatMapLatest { firebaseRepository.getUser(authenticationRepository.user?.uid) }
+                    .mapNotNull { it?.copy(name = name) }
+                    .flatMapLatest { firebaseRepository.writeUser(it) }
+                    .onEach { _sharedNewName.emit(name) }
+                    .launchIn(viewModelScope)
+                onDismiss.mapNotNull { name }.bind(_sharedNewName, viewModelScope)
+
+            }
+        }
+
+
     }
 
 }

@@ -10,16 +10,18 @@ import androidx.lifecycle.lifecycleScope
 import fr.harmoniamk.statsmk.databinding.FragmentPopupBinding
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.clicks
+import fr.harmoniamk.statsmk.extension.onTextChanged
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 
 @ExperimentalCoroutinesApi
-class PopupFragment(val message: String, val positiveText: String? = null, val negativeText: String = "Retour") : DialogFragment() {
+class PopupFragment(val message: String, val positiveText: String? = null, val negativeText: String = "Retour", val withEditText: Boolean = false) : DialogFragment() {
 
     lateinit var binding: FragmentPopupBinding
 
     val onPositiveClick = MutableSharedFlow<Unit>()
     val onNegativeClick = MutableSharedFlow<Unit>()
+    val onTextChange = MutableSharedFlow<String>()
 
     // dialog view is created
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View  {
@@ -34,6 +36,10 @@ class PopupFragment(val message: String, val positiveText: String? = null, val n
         binding.popupMessage.text = message
         binding.negativeButton.text = negativeText
         binding.negativeButton.clicks().bind(onNegativeClick, lifecycleScope)
+        withEditText.takeIf { it }?.let {
+            binding.popupEt.isVisible = true
+            binding.popupEt.onTextChanged().bind(onTextChange, lifecycleScope)
+        }
         positiveText?.let {
             binding.positiveButton.isVisible = true
             binding.positiveButton.text = positiveText

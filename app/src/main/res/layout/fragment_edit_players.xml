@@ -40,38 +40,6 @@
     </LinearLayout>
 
 
-    <LinearLayout
-        android:id="@+id/playercode_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:fontFamily="@font/montserrat_regular"
-            android:textColor="?android:colorAccent"
-            tools:targetApi="n_mr1"
-            android:textSize="16sp"
-            android:text="Modifier le code :"
-            android:layout_marginBottom="10dp" />
-
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:background="@drawable/rounded_bg"
-            android:layout_marginBottom="10dp"
-            android:gravity="center"
-            android:id="@+id/playercode_et"
-            android:textColor="@color/black"
-            android:textColorHint="@color/boo"
-            android:backgroundTint="@color/white_alphaed"
-            android:layout_marginHorizontal="40dp" />
-
-    </LinearLayout>
-
     <androidx.appcompat.widget.SwitchCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

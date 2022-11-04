@@ -43,14 +43,10 @@ class ManageTeamsFragment : Fragment(R.layout.fragment_manage_teams) {
             .onEach { findNavController().navigate(ManageTeamsFragmentDirections.addTeam()) }
             .launchIn(lifecycleScope)
         viewModel.sharedAddTeamVisibility
-            .onEach { binding.addTeamBtn.visibility = it }
-            .launchIn(lifecycleScope)
-
-        viewModel.sharedCurrentTeamName
             .onEach {
-                binding.currentTeamLayout.isVisible = true
-                binding.currentTeamTv.text = it
-            }.launchIn(lifecycleScope)
+                binding.addTeamBtn.visibility = it
+            }
+            .launchIn(lifecycleScope)
         viewModel.sharedOnEditClick
             .onEach {
                 dialog = EditTeamFragment(it)

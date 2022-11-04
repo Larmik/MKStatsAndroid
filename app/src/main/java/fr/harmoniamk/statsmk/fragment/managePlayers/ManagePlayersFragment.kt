@@ -65,9 +65,5 @@ class ManagePlayersFragment : Fragment(R.layout.fragment_manage_players) {
                 }
             }
         }
-        viewModel.sharedRedirectToWelcome
-            .filter { findNavController().currentDestination?.id == R.id.managePlayersFragment }
-            .onEach { findNavController().navigate(ManagePlayersFragmentDirections.backToWelcome()) }
-            .launchIn(lifecycleScope)
     }
 }

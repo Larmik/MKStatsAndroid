@@ -4,11 +4,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
+import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.databinding.FragmentEditPlayersBinding
 import fr.harmoniamk.statsmk.extension.bind
@@ -42,32 +44,36 @@ class EditPlayerFragment(val user: User? = null) : BottomSheetDialogFragment(), 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         user?.let { player ->
+            viewModel.bind(player)
             val hasAccount = user.accessCode != "null" && !user.accessCode.isNullOrEmpty()
             binding.playernameEt.setText(player.name)
-            player.accessCode?.let {
-                binding.playercodeEt.setText(it.split('-')[0])
-            }
-            binding.playercodeLayout.isVisible = false
             viewModel.sharedIsAdmin
                 .onEach { binding.adminCheckbox.isVisible = hasAccount && it }
                 .launchIn(lifecycleScope)
+            viewModel.sharedIsMember
+                .onEach {
+                    when (it) {
+                        true -> {
+                            binding.leaveTeamBtn.text = "Retirer ce joueur de l'équipe"
+                            binding.leaveTeamBtn.setTextColor(ContextCompat.getColor(requireContext(), R.color.mario))
+                        }
+                        else ->  {
+                            binding.leaveTeamBtn.text = "Intégrer ce joueur à l'équipe"
+                            binding.leaveTeamBtn.setTextColor(ContextCompat.getColor(requireContext(), R.color.luigi))
+                        }
+                    }
+                }.launchIn(lifecycleScope)
             binding.adminCheckbox.isChecked = player.isAdmin.isTrue
             binding.playernameEt.isEnabled = !hasAccount
             binding.modifyLabel.isVisible = !hasAccount
             binding.deleteBtn.isVisible = !hasAccount
-            binding.leaveTeamBtn.text ="Retirer ce joueur de l'équipe"
-            binding.deleteBtn.text = "Supprimer ce joueur"
+
             binding.nextBtn
                 .clicks()
-                .filterNot {
-                    binding.playernameEt.text.toString().isEmpty()
-                }
-                .filterNot { binding.playercodeEt.text.toString().isEmpty() }
-                .filter { binding.playercodeEt.text.toString().length == 4 }
+                .filterNot { binding.playernameEt.text.toString().isEmpty() }
                 .map {
                     player.apply {
                         this.name = binding.playernameEt.text.toString()
-                        this.accessCode = binding.playercodeEt.text.toString()
                         this.isAdmin = binding.adminCheckbox.isChecked
                     }
                 }.bind(onPlayerEdit, this)

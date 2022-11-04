@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:padding="20dp"
     android:orientation="vertical"
     android:background="@color/harmonia_clear"
@@ -9,34 +10,117 @@
 
     <ImageView
         android:id="@+id/profile_pic"
-        android:layout_width="200dp"
+        android:layout_width="170dp"
         android:scaleType="fitXY"
         android:layout_marginVertical="15dp"
         android:src="@mipmap/hr_logo"
         android:background="@drawable/circle_bg"
-        android:layout_height="200dp"/>
+        android:layout_height="170dp"/>
     <TextView
         android:layout_width="wrap_content"
-        android:textSize="18sp"
+        android:textSize="26sp"
         android:fontFamily="@font/montserrat_bold"
         android:textColor="@color/harmonia_dark"
+        tools:text="Lari"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="15dp"
         android:id="@+id/username"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:textSize="16sp"
-        android:fontFamily="@font/montserrat_bold"
-        android:textColor="@color/harmonia_dark"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="45dp"
-        android:id="@+id/email"/>
 
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:layout_marginVertical="15dp"
         android:background="@color/white"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:text="Equipe actuelle:"
+            android:layout_marginBottom="5dp"
+            android:fontFamily="@font/montserrat_regular"
+            android:textColor="@color/harmonia_dark"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:textSize="16sp"
+            tools:text="Harmonia"
+            android:fontFamily="@font/montserrat_bold"
+            android:textColor="@color/harmonia_dark"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
+            android:id="@+id/team_tv"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:text="Rôle:"
+            android:layout_marginBottom="5dp"
+            android:fontFamily="@font/montserrat_regular"
+            android:textColor="@color/harmonia_dark"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:textSize="16sp"
+            tools:text="Admin"
+            android:fontFamily="@font/montserrat_bold"
+            android:textColor="@color/harmonia_dark"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
+            android:id="@+id/role_tv"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:text="Adresse mail:"
+            android:layout_marginBottom="5dp"
+            android:fontFamily="@font/montserrat_regular"
+            android:textColor="@color/harmonia_dark"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:textSize="16sp"
+            tools:text="lari@harmoniamk.fr"
+            android:fontFamily="@font/montserrat_bold"
+            android:textColor="@color/harmonia_dark"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
+            android:id="@+id/email"/>
+
+    </LinearLayout>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="15dp"
+        android:background="@color/white"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/harmonia_dark"
+        android:fontFamily="@font/montserrat_regular"
+        android:textSize="16sp"
+        android:id="@+id/change_name_btn"
+        android:paddingVertical="10dp"
+        android:text="Changer mon pseudo"/>
+
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/harmonia_dark"
+        android:fontFamily="@font/montserrat_regular"
+        android:textSize="16sp"
+        android:id="@+id/change_email_btn"
+        android:paddingVertical="10dp"
+        android:text="Changer mon email"/>
+
+
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -44,13 +128,9 @@
         android:fontFamily="@font/montserrat_regular"
         android:textSize="16sp"
         android:id="@+id/change_password_btn"
-        android:paddingVertical="15dp"
+        android:paddingVertical="10dp"
         android:text="Changer mon mot de passe"/>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/white"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -58,13 +138,9 @@
         android:fontFamily="@font/montserrat_regular"
         android:textSize="16sp"
         android:id="@+id/change_picture_btn"
-        android:paddingVertical="15dp"
+        android:paddingVertical="10dp"
         android:text="Changer ma photo de profil"/>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/white"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -72,12 +148,8 @@
         android:fontFamily="@font/montserrat_regular"
         android:textSize="16sp"
         android:id="@+id/disconnect_btn"
-        android:paddingVertical="15dp"
+        android:paddingVertical="10dp"
         android:text="Se déconnecter"/>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/white"/>
 
 </LinearLayout>

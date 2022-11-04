@@ -37,32 +37,7 @@
         android:layout_height="1dp"
         android:background="@color/white"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/current_team_layout"
-        android:visibility="gone"
-        tools:visibility="visible"
-        android:orientation="vertical">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="10dp"
-            android:text="Mon équipe actuelle :"
-            android:gravity="center"
-            android:textColor="@color/harmonia_dark"
-            android:fontFamily="@font/montserrat_regular"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:id="@+id/current_team_tv"
-            tools:text="Harmonia"
-            android:gravity="center"
-            android:layout_marginBottom="10dp"
-            android:textColor="@color/harmonia_dark"
-            android:fontFamily="@font/roboto"/>
 
 
         <TextView
@@ -71,7 +46,7 @@
             android:fontFamily="@font/roboto"
             android:textColor="@color/text_color"
             android:paddingVertical="10dp"
-            android:layout_marginBottom="5dp"
+            android:layout_marginVertical="15dp"
             android:gravity="center"
             android:textSize="14sp"
             android:id="@+id/add_team_btn"
@@ -80,30 +55,11 @@
             android:backgroundTint="?android:colorAccent"
             tools:targetApi="n_mr1"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/roboto"
-            android:textColor="@color/text_color"
-            android:paddingVertical="10dp"
-            android:gravity="center"
-            android:id="@+id/quit_team_btn"
-            android:text="Quitter l'équipe"
-            android:background="@drawable/rounded_bg"
-            android:backgroundTint="?android:colorAccent"
-            tools:targetApi="n_mr1"/>
-
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginVertical="10dp"
+            android:layout_marginBottom="10dp"
             android:background="@color/white"/>
-
-
-    </LinearLayout>
-
-
-
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"

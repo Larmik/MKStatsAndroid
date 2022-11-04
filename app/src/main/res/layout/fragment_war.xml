@@ -7,69 +7,22 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:paddingHorizontal="15dp"
         android:gravity="center"
         android:orientation="vertical">
-        <LinearLayout
+
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:visibility="gone"
+            android:paddingVertical="10dp"
+            android:layout_marginBottom="15dp"
+            android:textColor="@color/harmonia_dark"
+            android:id="@+id/no_team_layout"
+            android:fontFamily="@font/montserrat_regular"
+            android:text="Vous n'avez encore aucune équipe. Pour intégrer une équipe, rapprochez-vous du leader de celle-ci."
             android:gravity="center"
-            android:id="@+id/no_team_layout">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:gravity="center">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:paddingVertical="10dp"
-                    android:layout_marginBottom="15dp"
-                    android:textColor="@color/text_color"
-                    android:fontFamily="@font/montserrat_regular"
-                    android:text="Vous n'avez encore aucune équipe. Pour pouvoir participer aux tournois, commencez par rentrer le code de votre équipe."
-                    android:gravity="center"
-                    android:layout_gravity="bottom"/>
-
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="70dp"
-                    android:background="@drawable/rounded_bg"
-                    android:layout_marginVertical="35dp"
-                    android:id="@+id/team_code_et"
-                    android:textColor="@color/black"
-                    android:textColorHint="@color/boo"
-                    android:gravity="center"
-                    android:inputType="numberPassword"
-                    android:backgroundTint="@color/white_alphaed"
-                    android:layout_marginHorizontal="40dp" />
-            </LinearLayout>
-
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingVertical="10dp"
-                android:background="@drawable/rounded_bg"
-                android:backgroundTint="?android:colorAccent"
-                tools:targetApi="n_mr1"
-                android:textColor="@color/text_color"
-                android:id="@+id/next_btn"
-                android:textSize="18sp"
-                android:visibility="invisible"
-                android:textAllCaps="true"
-                android:gravity="center"
-                android:layout_gravity="bottom"/>
-
-
-
-        </LinearLayout>
+            android:layout_gravity="bottom"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -86,7 +39,7 @@
                 android:layout_height="match_parent"
                 android:id="@+id/main_war_layout"
                 android:visibility="gone"
-                tools:visibility="visible"
+                tools:visibility="gone"
                 tools:background="@color/harmonia_clear"
                 android:orientation="vertical">
 

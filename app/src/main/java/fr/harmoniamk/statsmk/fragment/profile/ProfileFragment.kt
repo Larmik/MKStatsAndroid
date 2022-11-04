@@ -48,8 +48,20 @@ class ProfileFragment: Fragment(R.layout.fragment_profile) {
             onPictureEdited = _onPictureSave,
             onPopup = flowOf(binding.disconnectBtn.clicks().map { true }, disconnectPopup.onNegativeClick.map { false }).flattenMerge(),
             onChangePasswordClick = binding.changePasswordBtn.clicks(),
-            onLogout = disconnectPopup.onPositiveClick
+            onLogout = disconnectPopup.onPositiveClick,
+            onChangeNameClick = binding.changeNameBtn.clicks(),
+            onChangeEmailClick = binding.changeEmailBtn.clicks()
         )
+
+        viewModel.sharedTeam
+            .filterNotNull()
+            .onEach { binding.teamTv.text = it }
+            .launchIn(lifecycleScope)
+
+        viewModel.sharedRole
+            .onEach { binding.roleTv.text = it }
+            .launchIn(lifecycleScope)
+
 
         viewModel.sharedProfile
             .onEach {
@@ -92,6 +104,31 @@ class ProfileFragment: Fragment(R.layout.fragment_profile) {
                 }
             }
             .launchIn(lifecycleScope)
+
+        viewModel.sharedEditName
+            .onEach {
+                val changeNamePopup = PopupFragment("Modifier le pseudo", "Enregistrer", "Retour", true)
+                viewModel.bindDialog(false, changeNamePopup.onTextChange, changeNamePopup.onPositiveClick, changeNamePopup.onNegativeClick)
+                changeNamePopup.takeIf { !it.isAdded }?.show(childFragmentManager, null)
+                viewModel.sharedNewName
+                    .onEach {
+                        changeNamePopup.dismiss()
+                        binding.username.text = it
+                    }.launchIn(lifecycleScope)
+            }.launchIn(lifecycleScope)
+
+        viewModel.sharedEditEmail
+            .onEach {
+                val changeEmailPopup = PopupFragment("Modifier l'adresse mail", "Enregistrer", "Retour", true)
+                viewModel.bindDialog(true, changeEmailPopup.onTextChange, changeEmailPopup.onPositiveClick, changeEmailPopup.onNegativeClick)
+                changeEmailPopup.takeIf { !it.isAdded }?.show(childFragmentManager, null)
+                viewModel.sharedNewName
+                    .onEach {
+                        changeEmailPopup.dismiss()
+                        binding.email.text = it
+                    }.launchIn(lifecycleScope)
+            }.launchIn(lifecycleScope)
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

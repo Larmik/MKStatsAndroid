@@ -27,7 +27,8 @@ interface AuthenticationRepositoryInterface {
     fun reauthenticate(email: String, password: String): Flow<AuthUserResponse>
     fun signOut()
     fun resetPassword(email: String): Flow<ResetPasswordResponse>
-    fun updateProfile(username: String, imageUrl: String) : Flow<Unit>
+    fun updateProfile(username: String, imageUrl: String?) : Flow<Unit>
+    fun updateEmail(email: String): Flow<Unit>
     val user: FirebaseUser?
     val isAdmin: Flow<Boolean>
 }
@@ -107,14 +108,25 @@ class AuthenticationRepository @Inject constructor(@ApplicationContext private v
         awaitClose {  }
     }
 
-    override fun updateProfile(username: String, imageUrl: String) = callbackFlow {
+    override fun updateProfile(username: String, imageUrl: String?) = callbackFlow {
         auth.currentUser?.let {
             val profileUpdate = UserProfileChangeRequest.Builder()
                 .setDisplayName(username)
-                .setPhotoUri(Uri.parse(imageUrl))
-                .build()
+            imageUrl?.let {
+                profileUpdate.setPhotoUri(Uri.parse(it))
+            }
+            it.updateProfile(profileUpdate.build()).addOnCompleteListener { task ->
+                if (isActive && task.isSuccessful) offer(Unit)
+            }.addOnFailureListener {
+                if (isActive) offer(Unit)
+            }
+        }
+        awaitClose {  }
+    }
 
-            it.updateProfile(profileUpdate).addOnCompleteListener { task ->
+    override fun updateEmail(email: String) = callbackFlow {
+        auth.currentUser?.let {
+            it.updateEmail(email).addOnCompleteListener { task ->
                 if (isActive && task.isSuccessful) offer(Unit)
             }.addOnFailureListener {
                 if (isActive) offer(Unit)

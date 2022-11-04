@@ -23,7 +23,6 @@ import javax.inject.Inject
 class ManageTeamsViewModel @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val firebaseRepository: FirebaseRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface): ViewModel() {
 
     private val _sharedTeams = MutableSharedFlow<List<ManageTeamsItemViewModel>>()
-    private val _sharedCurrentTeamName = MutableSharedFlow<String>()
     private val _sharedAddTeam = MutableSharedFlow<Unit>()
     private val _sharedAddTeamVisibility = MutableSharedFlow<Int>()
     private val _sharedOnEditClick = MutableSharedFlow<Team>()
@@ -31,7 +30,6 @@ class ManageTeamsViewModel @Inject constructor(private val preferencesRepository
 
     val sharedTeams = _sharedTeams.asSharedFlow()
     val sharedAddTeam = _sharedAddTeam.asSharedFlow()
-    val sharedCurrentTeamName = _sharedCurrentTeamName.asSharedFlow()
     val sharedAddTeamVisibility = _sharedAddTeamVisibility.asSharedFlow()
     val sharedOnEditClick = _sharedOnEditClick.asSharedFlow()
     val sharedShowDialog = _sharedShowDialog.asSharedFlow()
@@ -49,13 +47,7 @@ class ManageTeamsViewModel @Inject constructor(private val preferencesRepository
 
         onAddTeam.bind(_sharedAddTeam, viewModelScope)
 
-        flowOf(preferencesRepository.currentTeam)
-            .onEach { delay(20) }
-            .mapNotNull { it?.name }
-            .bind(_sharedCurrentTeamName, viewModelScope)
-
         authenticationRepository.isAdmin
-            .onEach { delay(20) }
             .mapNotNull {
                 when (it) {
                     true -> View.VISIBLE

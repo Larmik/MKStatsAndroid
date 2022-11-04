@@ -27,7 +27,6 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
     private val _sharedAddPlayerVisibility = MutableSharedFlow<Int>()
     private val _sharedEdit = MutableSharedFlow<User>()
     private val _sharedRedirectToSettings = MutableSharedFlow<Unit>()
-    private val _sharedRedirectToWelcome = MutableSharedFlow<Unit>()
     private val _sharedShowDialog = MutableSharedFlow<Boolean>()
 
     val sharedPlayers = _sharedPlayers.asSharedFlow()
@@ -35,7 +34,6 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
     val sharedAddPlayerVisibility = _sharedAddPlayerVisibility.asSharedFlow()
     val sharedEdit = _sharedEdit.asSharedFlow()
     val sharedRedirectToSettings = _sharedRedirectToSettings.asSharedFlow()
-    val sharedRedirectToWelcome = _sharedRedirectToWelcome.asSharedFlow()
     val sharedShowDialog = _sharedShowDialog.asSharedFlow()
 
     private val players = mutableListOf<ManagePlayersItemViewModel>()
@@ -69,14 +67,6 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
     }
 
     fun bindDialog(onDelete: Flow<User>, onPlayerEdited: Flow<User>, onTeamLeft: Flow<User>) {
-        onDelete
-            .filter { it.mid == authenticationRepository.user?.uid }
-            .onEach {
-                preferencesRepository.currentTeam = null
-            }
-            .flatMapLatest { firebaseRepository.deleteUser(it) }
-            .onEach { _sharedRedirectToWelcome.emit(Unit) }
-            .launchIn(viewModelScope)
 
         onDelete
             .filter { it.mid != authenticationRepository.user?.uid }

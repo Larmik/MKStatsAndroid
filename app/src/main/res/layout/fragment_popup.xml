@@ -20,6 +20,20 @@
         tools:text="Êtes-vous sûr de vouloir vous déconnecter ?"
         android:textSize="16sp"/>
 
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:visibility="gone"
+        android:background="@drawable/rounded_bg"
+        android:textColorHint="@color/boo"
+        android:layout_marginBottom="10dp"
+        android:textColor="@color/black"
+        android:gravity="center"
+        android:id="@+id/popup_et"
+        android:layout_marginHorizontal="40dp" />
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
