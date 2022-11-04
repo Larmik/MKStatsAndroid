@@ -4,9 +4,11 @@ import android.graphics.BitmapFactory
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.RadioGroup
+import androidx.appcompat.widget.SwitchCompat
 import androidx.core.widget.addTextChangedListener
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
@@ -30,7 +32,15 @@ fun RadioGroup.checks(): Flow<Int> = callbackFlow {
    this@checks.setOnCheckedChangeListener { group, checkedId ->
        if (isActive) offer(checkedId)
    }
-    awaitClose { }
+    awaitClose {  this@checks.setOnCheckedChangeListener(null) }
+}
+
+@ExperimentalCoroutinesApi
+fun CheckBox.checks() = callbackFlow {
+    this@checks.setOnCheckedChangeListener { _, isChecked ->
+        if (isActive) offer(isChecked)
+    }
+    awaitClose { this@checks.setOnCheckedChangeListener(null) }
 }
 
 @ExperimentalCoroutinesApi

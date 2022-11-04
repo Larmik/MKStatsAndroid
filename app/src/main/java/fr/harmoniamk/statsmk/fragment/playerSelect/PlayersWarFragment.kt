@@ -11,6 +11,7 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.databinding.FragmentWarPlayersBinding
 import fr.harmoniamk.statsmk.extension.bind
+import fr.harmoniamk.statsmk.extension.checks
 import fr.harmoniamk.statsmk.extension.clicks
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -19,7 +20,7 @@ import kotlinx.coroutines.flow.*
 @FlowPreview
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
-class PlayersWarFragment(val onWarCreated: MutableSharedFlow<Unit>, val onUsersSelected: MutableSharedFlow<List<User>>) : Fragment(R.layout.fragment_war_players) {
+class PlayersWarFragment(val onWarCreated: MutableSharedFlow<Unit>, val onUsersSelected: MutableSharedFlow<List<User>>, val onOfficialCheck: MutableSharedFlow<Boolean>) : Fragment(R.layout.fragment_war_players) {
 
     private val binding: FragmentWarPlayersBinding by viewBinding()
     private val viewModel: PlayersWarViewModel by viewModels()
@@ -27,13 +28,14 @@ class PlayersWarFragment(val onWarCreated: MutableSharedFlow<Unit>, val onUsersS
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val usersAdapter = PlayerListAdapter()
+        viewModel.bind(usersAdapter.sharedUserSelected, binding.official.checks())
         binding.playersRv.adapter = usersAdapter
         binding.startWarBtn.clicks().bind(onWarCreated, lifecycleScope)
-        viewModel.bind(usersAdapter.sharedUserSelected)
         viewModel.sharedPlayers.onEach { usersAdapter.addUsers(it) }.launchIn(lifecycleScope)
         viewModel.sharedUsersSelected.onEach {
-            binding.createWarLayout.visibility = if (it.size == 6) View.VISIBLE else View.GONE
+            binding.startWarBtn.visibility = if (it.size == 6) View.VISIBLE else View.INVISIBLE
         }.bind(onUsersSelected, lifecycleScope)
+        viewModel.sharedOfficial.bind(onOfficialCheck, lifecycleScope)
     }
 
 }

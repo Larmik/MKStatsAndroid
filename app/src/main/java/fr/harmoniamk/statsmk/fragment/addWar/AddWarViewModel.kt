@@ -33,18 +33,21 @@ class AddWarViewModel @Inject constructor(private val firebaseRepository: Fireba
     val sharedTeamSelected = _sharedTeamSelected.asSharedFlow()
     val sharedAlreadyCreated = _sharedAlreadyCreated.asSharedFlow()
 
-    fun bind(onTeamClick: Flow<Team>, onCreateWar: Flow<Unit>, onUserSelected: Flow<List<User>>) {
+    fun bind(onTeamClick: Flow<Team>, onCreateWar: Flow<Unit>, onUserSelected: Flow<List<User>>, onOfficialCheck: Flow<Boolean>) {
 
         val date = SimpleDateFormat("dd/MM/yyyy - HH'h'mm", Locale.FRANCE).format(Date())
         val usersSelected = mutableListOf<User>()
 
         var chosenOpponent: Team? = null
+        var official = false
         var war: NewWar?
 
         onTeamClick.onEach {
             chosenOpponent = it
             _sharedTeamSelected.emit( "${preferencesRepository.currentTeam?.shortName} - ${it.shortName}")
         }.launchIn(viewModelScope)
+
+        onOfficialCheck.onEach { official = it }.launchIn(viewModelScope)
 
         val createWar = onCreateWar
             .flatMapLatest { firebaseRepository.getNewWars() }
@@ -60,7 +63,8 @@ class AddWarViewModel @Inject constructor(private val firebaseRepository: Fireba
                     teamHost = preferencesRepository.currentTeam?.mid,
                     playerHostId = authenticationRepository.user?.uid,
                     teamOpponent = it,
-                    createdDate = date
+                    createdDate = date,
+                    isOfficial = official
                 )
                 war
             }

@@ -32,7 +32,12 @@ class AddWarFragment : Fragment(R.layout.fragment_add_war) {
         binding.pager.currentItem = 0
         binding.pager.isUserInputEnabled = false
 
-        viewModel.bind(adapter.onTeamSelected, adapter.onWarCreated, adapter.onUsersSelected)
+        viewModel.bind(
+            onTeamClick = adapter.onTeamSelected,
+            onCreateWar = adapter.onWarCreated,
+            onUserSelected = adapter.onUsersSelected,
+            onOfficialCheck = adapter.onOfficialCheck
+        )
 
         viewModel.sharedTeamSelected.onEach {
             binding.pager.currentItem = 1
