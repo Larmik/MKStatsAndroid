@@ -24,12 +24,17 @@ class AddPlayersViewModel @Inject constructor(private val firebaseRepository: Fi
     val sharedToast = _sharedToast.asSharedFlow()
     val sharedUserAdded = _sharedUserAdded.asSharedFlow()
 
-    fun bind(onName: Flow<String>, onPlayerAdded: Flow<Unit>) {
+    fun bind(onName: Flow<String>, onPlayerAdded: Flow<Unit>, onTeamChecked: Flow<Boolean>) {
         var name: String? = null
+        var teamChecked = false
         onName.onEach { name = it }.launchIn(viewModelScope)
         val playerAdded = onPlayerAdded
             .flatMapLatest { firebaseRepository.getUsers() }
             .shareIn(viewModelScope, SharingStarted.Lazily)
+
+        onTeamChecked
+            .onEach { teamChecked = it }
+            .launchIn(viewModelScope)
 
         playerAdded
             .filterNot { it.map { player -> player.name?.toLowerCase(Locale.getDefault()) }.contains(name?.toLowerCase(Locale.getDefault())) }
@@ -38,7 +43,7 @@ class AddPlayersViewModel @Inject constructor(private val firebaseRepository: Fi
                 User(
                     mid = System.currentTimeMillis().toString(),
                     name = it,
-                    team = preferencesRepository.currentTeam?.mid,
+                    team = if (teamChecked) preferencesRepository.currentTeam?.mid else "-1",
                     picture = "-1"
                 )
             }

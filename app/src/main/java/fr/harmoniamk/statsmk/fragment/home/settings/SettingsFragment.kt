@@ -46,12 +46,12 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             .filter { findNavController().currentDestination?.id == R.id.homeFragment }
             .onEach { findNavController().navigate(HomeFragmentDirections.managePlayers()) }
             .launchIn(lifecycleScope)
-        viewModel.sharedThemeClick
+   /*     viewModel.sharedThemeClick
             .filter { findNavController().currentDestination?.id == R.id.homeFragment }
             .onEach {
                 themePopup.dismiss()
                 findNavController().navigate(HomeFragmentDirections.manageTheme())
-            }.launchIn(lifecycleScope)
+            }.launchIn(lifecycleScope)*/
         viewModel.sharedThemePopup
             .onEach {
                 when (it) {

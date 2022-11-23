@@ -9,7 +9,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import dagger.Binds
@@ -100,7 +99,7 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
                     currentWar = it["currentWar"].toString(),
                     accessCode = it["accessCode"].toString().replace("-$deviceId", ""),
                     team = it["team"].toString(),
-                    isAdmin = it["admin"].toString().toBoolean(),
+                    role = it["role"].toString().toIntOrNull(),
                     picture = it["picture"].toString()
                 ) }
             if (isActive) offer(users)
@@ -193,7 +192,7 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
                             name = map["name"].toString(),
                             team = map["team"].toString(),
                             currentWar = map["currentWar"].toString(),
-                            isAdmin = map["admin"].toString().toBoolean(),
+                            role = map["role"].toString().toIntOrNull(),
                             picture = map["picture"].toString()
                         )
                     )
@@ -255,7 +254,7 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
                         name = it["name"].toString(),
                         team = it["team"].toString(),
                         currentWar = it["currentWar"].toString(),
-                        isAdmin = it["admin"].toString().toBoolean(),
+                        role = it["role"].toString().toInt(),
                         picture = it["picture"].toString()
                     )  }
                 if (isActive) offer(users)

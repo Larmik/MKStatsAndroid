@@ -12,6 +12,7 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
+import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.model.firebase.AuthUserResponse
 import fr.harmoniamk.statsmk.model.firebase.ResetPasswordResponse
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -140,11 +141,8 @@ class AuthenticationRepository @Inject constructor(@ApplicationContext private v
 
     override val isAdmin: Flow<Boolean>
         get() = flowOf(auth.currentUser?.uid)
-            .flatMapLatest {
-                FirebaseRepository(context).getUser(it)
-            }
-            .mapNotNull {
-                it?.isAdmin
-            }
+            .flatMapLatest { FirebaseRepository(context).getUser(it) }
+            .mapNotNull { it?.role }
+            .mapNotNull { it >= UserRole.ADMIN.ordinal }
 
 }

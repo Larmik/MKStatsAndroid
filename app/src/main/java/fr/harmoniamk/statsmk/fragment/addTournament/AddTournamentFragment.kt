@@ -35,10 +35,10 @@ class AddTournamentFragment : Fragment(R.layout.fragment_add_tournament) {
             onDifficultyAdded = binding.difficultyRg.checks(),
             onButtonClick = binding.startBtn.clicks()
         )
-        viewModel.sharedClose
+        /*viewModel.sharedClose
             .filter { findNavController().currentDestination?.id == R.id.addTournamentFragment }
             .onEach { findNavController().popBackStack() }
-            .launchIn(lifecycleScope)
+            .launchIn(lifecycleScope)*/
     }
 
 }

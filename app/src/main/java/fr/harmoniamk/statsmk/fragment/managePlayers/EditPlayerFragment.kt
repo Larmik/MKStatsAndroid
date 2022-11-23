@@ -63,7 +63,7 @@ class EditPlayerFragment(val user: User? = null) : BottomSheetDialogFragment() {
                         }
                     }
                 }.launchIn(lifecycleScope)
-            binding.adminCheckbox.isChecked = player.isAdmin.isTrue
+            //binding.adminCheckbox.isChecked = player.isAdmin.isTrue
             binding.playernameEt.isEnabled = !hasAccount
             binding.modifyLabel.isVisible = !hasAccount
             binding.deleteBtn.isVisible = !hasAccount
@@ -74,7 +74,7 @@ class EditPlayerFragment(val user: User? = null) : BottomSheetDialogFragment() {
                 .map {
                     player.apply {
                         this.name = binding.playernameEt.text.toString()
-                        this.isAdmin = binding.adminCheckbox.isChecked
+                        //this.isAdmin = binding.adminCheckbox.isChecked
                     }
                 }.bind(onPlayerEdit, lifecycleScope)
             binding.deleteBtn

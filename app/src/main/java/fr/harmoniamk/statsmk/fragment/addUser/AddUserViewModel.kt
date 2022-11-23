@@ -3,9 +3,8 @@ package fr.harmoniamk.statsmk.fragment.addUser
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.harmoniamk.statsmk.R
+import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.extension.bind
-import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.model.firebase.AuthUserResponse
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
@@ -54,7 +53,7 @@ class AddUserViewModel @Inject constructor(private val firebaseRepository: Fireb
                     mid = it.uid,
                     name = name,
                     accessCode = null,
-                    isAdmin = false,
+                    role = UserRole.MEMBER.ordinal,
                     team = preferencesRepository.currentTeam?.mid ?: "-1",
                     currentWar = preferencesRepository.currentWar?.mid ?: "-1",
                     picture = it.photoUrl.toString()

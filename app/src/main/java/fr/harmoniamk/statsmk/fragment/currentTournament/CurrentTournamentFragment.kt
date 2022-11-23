@@ -52,10 +52,10 @@ class CurrentTournamentFragment : Fragment(R.layout.fragment_current_tournament)
                 onCancel = binding.stopBtn.clicks(),
             )
 
-            viewModel.sharedAddTrack
+            /*viewModel.sharedAddTrack
                 .filter { findNavController().currentDestination?.id == R.id.currentTournamentFragment }
                 .onEach { findNavController().navigate(CurrentTournamentFragmentDirections.addTrack(tm.mid)) }
-                .launchIn(lifecycleScope)
+                .launchIn(lifecycleScope)*/
 
             viewModel.sharedTracks
                 .filter { lifecycle.currentState == Lifecycle.State.RESUMED && lifecycleScope.isActive }
@@ -72,7 +72,7 @@ class CurrentTournamentFragment : Fragment(R.layout.fragment_current_tournament)
                 .filter { lifecycle.currentState == Lifecycle.State.RESUMED && lifecycleScope.isActive }
                 .onEach { binding.scoreTv.text = it.toString() }
                 .launchIn(lifecycleScope)
-            viewModel.sharedCancel
+           /* viewModel.sharedCancel
                 .onEach {
                     val deleteFragment = DeleteTournamentDialogFragment(tm)
                     viewModel.bindDialog(deleteFragment.sharedTmDeleted, deleteFragment.sharedClose)
@@ -85,7 +85,7 @@ class CurrentTournamentFragment : Fragment(R.layout.fragment_current_tournament)
             viewModel.sharedQuit
                 .filter { findNavController().currentDestination?.id == R.id.currentTournamentFragment }
                 .onEach { findNavController().popBackStack() }
-                .launchIn(lifecycleScope)
+                .launchIn(lifecycleScope)*/
 
         }
 

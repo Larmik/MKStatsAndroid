@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
+import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.model.firebase.PictureResponse
 import fr.harmoniamk.statsmk.model.firebase.ResetPasswordResponse
@@ -51,7 +52,8 @@ class ProfileViewModel @Inject constructor(private val authenticationRepository:
             .mapNotNull { authenticationRepository.user }
             .onEach { _sharedProfile.emit(it) }
             .flatMapLatest { firebaseRepository.getUser(it.uid) }
-            .mapNotNull { it?.isAdmin }
+            .mapNotNull { it?.role  }
+            .mapNotNull { it >= UserRole.ADMIN.ordinal }
             .onEach {
                 _sharedRole.emit(if (it) "Admin" else "Membre")
                 _sharedTeam.emit(preferencesRepository.currentTeam?.name)

@@ -11,6 +11,7 @@
         tools:layout="@layout/fragment_home"
         android:label="HomeFragment">
 
+        <!--
         <action
             android:id="@+id/add_fragment"
             app:destination="@id/addTournamentFragment"
@@ -19,15 +20,7 @@
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right"/>
 
-        <action
-            android:id="@+id/create_war"
-            app:destination="@id/addWarFragment"
-            app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right"/>
-
-        <action
+               <action
             android:id="@+id/goto_current"
             app:destination="@id/currentTournamentFragment"
             app:enterAnim="@anim/enter_from_right"
@@ -41,6 +34,26 @@
                 app:nullable="false"/>
 
         </action>
+
+          <action
+            android:id="@+id/manageTheme"
+            app:destination="@id/themeFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right"/>
+
+
+            -->
+
+        <action
+            android:id="@+id/create_war"
+            app:destination="@id/addWarFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right"/>
+
 
         <action
             android:id="@+id/go_to_war_details"
@@ -73,13 +86,7 @@
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right"/>
 
-        <action
-            android:id="@+id/manageTheme"
-            app:destination="@id/themeFragment"
-            app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right"/>
+
 
         <action
             android:id="@+id/go_to_current_war"

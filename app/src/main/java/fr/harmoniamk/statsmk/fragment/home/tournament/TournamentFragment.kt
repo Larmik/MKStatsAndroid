@@ -43,10 +43,10 @@ class TournamentFragment : Fragment(R.layout.fragment_tournaments) {
                 .onEach { bindCurrent(it) }
                 .launchIn(lifecycleScope)
         }
-        viewModel.sharedAdd
+        /*viewModel.sharedAdd
             .filter { findNavController().currentDestination?.id == R.id.homeFragment }
             .onEach { findNavController().navigate(HomeFragmentDirections.addFragment()) }
-            .launchIn(lifecycleScope)
+            .launchIn(lifecycleScope)*/
         viewModel.sharedLastTournaments
             .onEach {
                 binding.lastTmLayout.isVisible = it.isNotEmpty()
@@ -57,10 +57,10 @@ class TournamentFragment : Fragment(R.layout.fragment_tournaments) {
                 binding.bestTmLayout.isVisible = it.size >= 3
                 adapter.addTournaments(it)
             }.launchIn(lifecycleScope)
-        viewModel.sharedGoToTM
+      /*  viewModel.sharedGoToTM
             .filter { findNavController().currentDestination?.id == R.id.homeFragment }
             .onEach { findNavController().navigate(HomeFragmentDirections.gotoCurrent(it)) }
-            .launchIn(lifecycleScope)
+            .launchIn(lifecycleScope)*/
     }
 
     private fun bindCurrent(current: MKTournament?) {
@@ -72,10 +72,10 @@ class TournamentFragment : Fragment(R.layout.fragment_tournaments) {
             binding.currentTmInfos.text = it.infos
             binding.currentTmScore.text = it.displayedScore
             binding.timeTv.text = it.updatedDate
-            binding.currentTmCard.clicks()
+          /*  binding.currentTmCard.clicks()
                 .filter { findNavController().currentDestination?.id == R.id.homeFragment }
                 .onEach { findNavController().navigate(HomeFragmentDirections.gotoCurrent(current)) }
-                .launchIn(lifecycleScope)
+                .launchIn(lifecycleScope)*/
             viewModel.sharedRemainingTracks
                 .onEach { tracks -> binding.currentTmRemaining.text = it.displayedRemaining(tracks) }
                 .launchIn(lifecycleScope)
