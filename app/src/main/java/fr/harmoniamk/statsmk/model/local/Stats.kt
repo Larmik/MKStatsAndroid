@@ -19,9 +19,9 @@ class Stats(
      val bestMap: TrackStats? = averageForMaps.filter { it.totalPlayed >= 2 }.maxByOrNull { it.score ?: 0 }
      val worstMap: TrackStats? = averageForMaps.filter { it.totalPlayed >= 2 }.minByOrNull { it.score ?: 0 }
      val mostPlayedMap: TrackStats? = averageForMaps.maxByOrNull { it.totalPlayed }
-     val averagePoints: Int = warScores.map { it.score }.sum() / warScores.count()
+     val averagePoints: Int = warScores.map { it.score }.sum() / (warScores.takeIf { it.isNotEmpty() }?.size ?: 1)
      val averagePointsLabel: String = averagePoints.warScoreToDiff()
-     val averageMapPoints: Int = (maps.map { it.score }.sum() / maps.size)
+     val averageMapPoints: Int = (maps.map { it.score }.sum() / (maps.takeIf { it.isNotEmpty() }?.size ?: 1))
      val averageMapPointsLabel = averageMapPoints.trackScoreToDiff()
      val averagePlayerMapPoints: Int = averageMapPoints.pointsToPosition()
  }
@@ -50,7 +50,6 @@ class WarStats(list : List<MKWar>) {
     val warsWon = list.filterNot { war -> war.displayedDiff.contains('-') }.count()
     val warsTied = list.filter { war -> war.displayedDiff == "0" }.count()
     val warsLoss = list.filter { war -> war.displayedDiff.contains('-') }.count()
-    val winRate = "${((warsWon*100) / warsPlayed)} %"
     val highestVictory = list.maxByOrNull { war -> war.scoreHost }.takeIf { it?.displayedDiff?.contains("+").isTrue }
     val loudestDefeat = list.minByOrNull { war -> war.scoreHost }.takeIf { it?.displayedDiff?.contains("-").isTrue }
 }

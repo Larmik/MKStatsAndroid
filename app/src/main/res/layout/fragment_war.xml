@@ -12,17 +12,38 @@
         android:gravity="center"
         android:orientation="vertical">
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingVertical="10dp"
-            android:layout_marginBottom="15dp"
-            android:textColor="@color/harmonia_dark"
+            android:layout_height="wrap_content"
             android:id="@+id/no_team_layout"
-            android:fontFamily="@font/montserrat_regular"
-            android:text="Vous n'avez encore aucune équipe. Pour intégrer une équipe, rapprochez-vous du leader de celle-ci."
-            android:gravity="center"
-            android:layout_gravity="bottom"/>
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingVertical="10dp"
+                android:layout_marginBottom="15dp"
+                android:textColor="@color/harmonia_dark"
+                android:fontFamily="@font/montserrat_regular"
+                android:text="Vous n'avez encore aucune équipe. Pour intégrer une équipe, rapprochez-vous du leader de celle-ci. \n \n Vous pouvez aussi créer votre propre équipe."
+                android:gravity="center"
+                android:layout_gravity="bottom"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="10dp"
+                android:background="@drawable/rounded_bg"
+                android:backgroundTint="@color/harmonia_dark"
+                android:text="Créer une équipe"
+                android:textColor="@color/white"
+                android:fontFamily="@font/roboto"
+                android:gravity="center"
+                android:id="@+id/create_team_btn" />
+
+        </LinearLayout>
+
+
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -175,7 +196,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:layout_marginBottom="5dp"
+                            android:layout_marginBottom="10dp"
                             android:text="Votre équipe ne joue actuellement aucune war."
                             android:layout_gravity="center"
                             android:fontFamily="@font/montserrat_regular"

@@ -83,6 +83,8 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
             .onEach {
                 binding.nextTrackBtn.isVisible = it
                 binding.deleteWarBtn.isVisible = it
+                binding.subBtn.isVisible = it
+                binding.penaltyBtn.isVisible = it
             }.launchIn(lifecycleScope)
 
         viewModel.sharedQuit

@@ -29,7 +29,9 @@ class PieChart : FrameLayout {
 
         binding?.tieProgressbar?.max = total
         binding?.tieProgressbar?.progress = tie
+        total.takeIf { it != 0 }?.let {
+            binding?.winrateText?.text = "${(win*100)/it} %"
+        }
 
-        binding?.winrateText?.text = "${(win*100)/total} %"
     }
 }

@@ -7,6 +7,7 @@ import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.firebase.NewWarPositions
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
+import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -18,7 +19,7 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class SettingsViewModel @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface) : ViewModel() {
+class SettingsViewModel @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface) : ViewModel() {
 
     private val _sharedThemePopup = MutableSharedFlow<Boolean>()
     private val _sharedManageTeam = MutableSharedFlow<Unit>()
@@ -35,14 +36,14 @@ class SettingsViewModel @Inject constructor(private val preferencesRepository: P
 
     fun bind(onManageTeam: Flow<Unit>, onTheme: Flow<Unit>, onManagePlayers: Flow<Unit>, onMigrate: Flow<Unit>, onPopupTheme: Flow<Boolean>, onProfileClick: Flow<Unit>) {
         onPopupTheme.bind(_sharedThemePopup, viewModelScope)
-        val teamClick = onManageTeam.shareIn(viewModelScope, SharingStarted.Eagerly, 1)
-        val playersClick = onManagePlayers.shareIn(viewModelScope, SharingStarted.Eagerly, 1)
-        teamClick.filter { preferencesRepository.currentTeam != null }.bind(_sharedManageTeam, viewModelScope)
-        playersClick.filter { preferencesRepository.currentTeam != null }.bind(_sharedManagePlayers, viewModelScope)
+        val teamClick = onManageTeam.flatMapLatest { authenticationRepository.isAdmin }.shareIn(viewModelScope, SharingStarted.Eagerly, 1)
+        val playersClick = onManagePlayers.flatMapLatest { authenticationRepository.isAdmin }.shareIn(viewModelScope, SharingStarted.Eagerly, 1)
+        teamClick.filter { it && preferencesRepository.currentTeam != null }.map{}.bind(_sharedManageTeam, viewModelScope)
+        playersClick.filter { it && preferencesRepository.currentTeam != null }.map{}.bind(_sharedManagePlayers, viewModelScope)
         flowOf(teamClick, playersClick)
             .flattenMerge()
-            .filter { preferencesRepository.currentTeam == null }
-            .map { "Vous devez intégrer une équipe pour avoir accès à cette fonctionnalité." }
+            .filter { preferencesRepository.currentTeam == null || !it }
+            .map { "Vous devez être leader ou admin d'une équipe pour avoir accès à cette fonctionnalité." }
             .bind(_sharedToast, viewModelScope)
         onTheme.bind(_sharedThemeClick, viewModelScope)
         onProfileClick.bind(_sharedGoToProfile, viewModelScope)

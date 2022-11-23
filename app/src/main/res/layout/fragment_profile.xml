@@ -38,39 +38,49 @@
         android:gravity="start"
         android:orientation="vertical">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:text="Equipe actuelle:"
-            android:layout_marginBottom="5dp"
-            android:fontFamily="@font/montserrat_regular"
-            android:textColor="@color/harmonia_dark"
-            android:layout_height="wrap_content"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:textSize="16sp"
-            tools:text="Harmonia"
-            android:fontFamily="@font/montserrat_bold"
-            android:textColor="@color/harmonia_dark"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:id="@+id/team_tv"/>
+            android:id="@+id/role_team_layout"
+            android:visibility="gone"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:text="Equipe actuelle:"
+                android:layout_marginBottom="5dp"
+                android:fontFamily="@font/montserrat_regular"
+                android:textColor="@color/harmonia_dark"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:textSize="16sp"
+                tools:text="Harmonia"
+                android:fontFamily="@font/montserrat_bold"
+                android:textColor="@color/harmonia_dark"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
+                android:id="@+id/team_tv"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:text="Rôle:"
-            android:layout_marginBottom="5dp"
-            android:fontFamily="@font/montserrat_regular"
-            android:textColor="@color/harmonia_dark"
-            android:layout_height="wrap_content"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:textSize="16sp"
-            tools:text="Admin"
-            android:fontFamily="@font/montserrat_bold"
-            android:textColor="@color/harmonia_dark"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:id="@+id/role_tv"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:text="Rôle:"
+                android:layout_marginBottom="5dp"
+                android:fontFamily="@font/montserrat_regular"
+                android:textColor="@color/harmonia_dark"
+                android:layout_height="wrap_content"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:textSize="16sp"
+                tools:text="Admin"
+                android:fontFamily="@font/montserrat_bold"
+                android:textColor="@color/harmonia_dark"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
+                android:id="@+id/role_tv"/>
+
+
+        </LinearLayout>
+
 
         <TextView
             android:layout_width="wrap_content"
