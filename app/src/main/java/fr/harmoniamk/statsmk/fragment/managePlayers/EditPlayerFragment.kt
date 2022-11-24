@@ -39,8 +39,10 @@ class EditPlayerFragment(val user: User? = null) : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         user?.let { player ->
-            viewModel.bind(player)
+            var role = player.role
+            viewModel.bind(player,  binding.editRoleBtn.clicks())
             binding.playernameEt.setText(player.name)
+            viewModel.sharedRoleSelected.onEach { role = it }.launchIn(lifecycleScope)
             viewModel.sharedPlayerIsMember
                 .onEach {
                     when (it) {
@@ -59,17 +61,28 @@ class EditPlayerFragment(val user: User? = null) : BottomSheetDialogFragment() {
                 .onEach {
                     binding.playernameEt.isEnabled = !it
                     binding.modifyLabel.isVisible = !it
+                    binding.roleLayout.isVisible = it
                 }.launchIn(lifecycleScope)
 
             viewModel.sharedDeleteVisibility
-                .onEach {
-                    binding.deleteBtn.isVisible = it
-                }.launchIn(lifecycleScope)
+                .onEach { binding.deleteBtn.isVisible = it }
+                .launchIn(lifecycleScope)
+
+            viewModel.sharedEditRoleVisibility
+                .onEach { binding.editRoleBtn.visibility = it }
+                .launchIn(lifecycleScope)
+
+            viewModel.sharedUserRoleLabel
+                .onEach { binding.roleTv.text = it }
+                .launchIn(lifecycleScope)
 
             binding.nextBtn
                 .clicks()
                 .filterNot { binding.playernameEt.text.toString().isEmpty() }
-                .map { player.apply { this.name = binding.playernameEt.text.toString() } }
+                .map { player.apply {
+                    this.name = binding.playernameEt.text.toString()
+                    this.role = role
+                } }
                 .bind(onPlayerEdit, lifecycleScope)
 
             binding.deleteBtn
@@ -81,7 +94,20 @@ class EditPlayerFragment(val user: User? = null) : BottomSheetDialogFragment() {
                 .clicks()
                 .map { player.apply { this.team = "-1" } }
                 .bind(onTeamLeave, lifecycleScope)
+
+            viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+                val dialog = EditRoleFragment(role)
+                viewModel.bindDialog(onRoleSelected = dialog.onRoleChange)
+                viewModel.sharedShowDialog.collect {
+                    when (it) {
+                        true -> dialog.show(childFragmentManager, null)
+                        else -> dialog.dismiss()
+                    }
+                }
+            }
         }
+
+
     }
 
 

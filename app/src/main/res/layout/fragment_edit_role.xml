@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:gravity="center"
+    android:background="@color/white"
+    android:padding="20dp"
+    android:layout_height="wrap_content">
+
+    <RadioGroup
+        android:id="@+id/role_rg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RadioButton
+            android:id="@+id/member"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:buttonTint="@color/harmonia_dark"
+            android:fontFamily="@font/roboto"
+            android:gravity="center"
+            android:text="Membre"
+            android:textColor="@color/harmonia_dark" />
+        <RadioButton
+            android:id="@+id/admin"
+            android:layout_marginEnd="8dp"
+            android:textColor="@color/harmonia_dark"
+            android:fontFamily="@font/roboto"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:buttonTint="@color/harmonia_dark"
+            android:layout_height="wrap_content"
+            android:text="Admin"/>
+        <RadioButton
+            android:id="@+id/leader"
+            android:buttonTint="@color/harmonia_dark"
+            android:gravity="center"
+            android:layout_marginEnd="8dp"
+            android:textColor="@color/harmonia_dark"
+            android:fontFamily="@font/roboto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Leader"/>
+
+    </RadioGroup>
+
+</LinearLayout>

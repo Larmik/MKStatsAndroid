@@ -1,5 +1,6 @@
 package fr.harmoniamk.statsmk.fragment.managePlayers
 
+import android.view.View
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,21 +23,55 @@ class EditPlayerViewModel @Inject constructor(private val authenticationReposito
     private val _sharedPlayerIsMember = MutableSharedFlow<Boolean>()
     private val _sharedPlayerHasAccount = MutableSharedFlow<Boolean>()
     private val _sharedDeleteVisibility = MutableSharedFlow<Boolean>()
+    private val _sharedShowDialog = MutableSharedFlow<Boolean>()
+    private val _sharedEditRoleVisibility = MutableSharedFlow<Int>()
+    private val _sharedRoleSelected = MutableSharedFlow<Int>()
+    private val _sharedUserRoleLabel = MutableSharedFlow<String?>()
+
     val sharedPlayerIsMember = _sharedPlayerIsMember.asSharedFlow()
     val sharedPlayerHasAccount = _sharedPlayerHasAccount.asSharedFlow()
     val sharedDeleteVisibility = _sharedDeleteVisibility.asSharedFlow()
+    val sharedEditRoleVisibility = _sharedEditRoleVisibility.asSharedFlow()
+    val sharedRoleSelected = _sharedRoleSelected.asSharedFlow()
+    val sharedShowDialog = _sharedShowDialog.asSharedFlow()
+    val sharedUserRoleLabel = _sharedUserRoleLabel.asSharedFlow()
 
-    fun bind(player: User) {
+    fun bind(player: User, onEditClick: Flow<Unit>) {
+        onEditClick.onEach { _sharedShowDialog.emit(true) }.launchIn(viewModelScope)
 
         authenticationRepository.userRole
-            .onEach { _sharedPlayerHasAccount.emit(player.accessCode != "null" && !player.accessCode.isNullOrEmpty()) }
-            .map { it == UserRole.GOD.ordinal }
-            .bind(_sharedDeleteVisibility, viewModelScope)
+            .onEach {
+                _sharedPlayerHasAccount.emit(player.accessCode != "null" && !player.accessCode.isNullOrEmpty())
+                _sharedDeleteVisibility.emit(it == UserRole.GOD.ordinal)
+                _sharedEditRoleVisibility.emit(when (it >= UserRole.LEADER.ordinal) {
+                    true -> View.VISIBLE
+                    else -> View.INVISIBLE
+                })
+                _sharedUserRoleLabel.emit(when (player.role) {
+                    UserRole.MEMBER.ordinal -> "Membre"
+                    UserRole.LEADER.ordinal -> "Leader"
+                    UserRole.ADMIN.ordinal -> "Admin"
+                    else -> null
+                })
+            }.launchIn(viewModelScope)
 
         flowOf(player.mid)
             .flatMapLatest { firebaseRepository.getUser(it) }
             .mapNotNull { it?.team == preferencesRepository.currentTeam?.mid }
             .bind(_sharedPlayerIsMember, viewModelScope)
+    }
+
+    fun bindDialog(onRoleSelected: Flow<Int>) {
+        onRoleSelected.onEach {
+            _sharedShowDialog.emit(false)
+            _sharedRoleSelected.emit(it)
+            _sharedUserRoleLabel.emit(when (it) {
+                UserRole.MEMBER.ordinal -> "Membre"
+                UserRole.LEADER.ordinal -> "Leader"
+                UserRole.ADMIN.ordinal -> "Admin"
+                else -> null
+            })
+        }.launchIn(viewModelScope)
     }
 
 }

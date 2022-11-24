@@ -39,15 +39,51 @@
 
     </LinearLayout>
 
-
-    <androidx.appcompat.widget.SwitchCompat
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:orientation="horizontal"
         android:gravity="center"
-        android:layout_marginBottom="10dp"
-        android:id="@+id/admin_checkbox"
-        android:textColor="@color/harmonia_dark"
-        android:text="Ce joueur est un admin"/>
+        android:id="@+id/role_layout">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:layout_marginStart="25dp"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:fontFamily="@font/montserrat_regular"
+            android:textColor="@color/harmonia_dark"
+            android:text="Rôle:"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            tools:text="Admin"
+            android:fontFamily="@font/montserrat_bold"
+            android:textColor="@color/black"
+            android:id="@+id/role_tv"/>
+        </LinearLayout>
+
+
+            <ImageView
+                android:id="@+id/edit_role_btn"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:layout_gravity="end"
+                android:src="@drawable/edit"/>
+
+
+
+
+    </LinearLayout>
+
 
     <TextView
         android:layout_width="match_parent"
