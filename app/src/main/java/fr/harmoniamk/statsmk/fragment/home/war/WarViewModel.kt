@@ -3,6 +3,7 @@ package fr.harmoniamk.statsmk.fragment.home.war
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.extension.*
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.local.MKTeam
@@ -42,7 +43,8 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
 
         var war: MKWar? = null
 
-        authenticationRepository.isAdmin
+        authenticationRepository.userRole
+            .mapNotNull { it >= UserRole.ADMIN.ordinal }
             .bind(_sharedButtonVisible, viewModelScope)
 
         val warsFlow = flowOf(firebaseRepository.getNewWars(), firebaseRepository.listenToNewWars())

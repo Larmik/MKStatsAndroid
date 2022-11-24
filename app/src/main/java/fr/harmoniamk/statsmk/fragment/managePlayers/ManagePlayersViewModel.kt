@@ -4,6 +4,7 @@ import android.view.View
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.isTrue
@@ -44,7 +45,8 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
             .onEach { allPlayers.addAll(it) }
             .bind(_sharedPlayers, viewModelScope)
 
-        authenticationRepository.isAdmin
+        authenticationRepository.userRole
+            .mapNotNull { it >= UserRole.ADMIN.ordinal }
             .mapNotNull {
                 when (it) {
                     true -> View.VISIBLE

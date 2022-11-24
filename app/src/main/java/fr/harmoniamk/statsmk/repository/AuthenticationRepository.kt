@@ -31,7 +31,7 @@ interface AuthenticationRepositoryInterface {
     fun updateProfile(username: String, imageUrl: String?) : Flow<Unit>
     fun updateEmail(email: String): Flow<Unit>
     val user: FirebaseUser?
-    val isAdmin: Flow<Boolean>
+    val userRole: Flow<Int>
 }
 
 @FlowPreview
@@ -139,10 +139,8 @@ class AuthenticationRepository @Inject constructor(@ApplicationContext private v
     override val user: FirebaseUser?
         get() = auth.currentUser
 
-    override val isAdmin: Flow<Boolean>
+    override val userRole: Flow<Int>
         get() = flowOf(auth.currentUser?.uid)
             .flatMapLatest { FirebaseRepository(context).getUser(it) }
             .mapNotNull { it?.role }
-            .mapNotNull { it >= UserRole.ADMIN.ordinal }
-
 }

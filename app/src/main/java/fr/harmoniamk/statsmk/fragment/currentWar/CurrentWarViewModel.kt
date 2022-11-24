@@ -3,6 +3,7 @@ package fr.harmoniamk.statsmk.fragment.currentWar
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.extension.*
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.firebase.Penalty
@@ -60,7 +61,7 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
 
 
             warFlow.onEach { war ->
-                val isAdmin = authenticationRepository.isAdmin.firstOrNull()
+                val isAdmin = (authenticationRepository.userRole.firstOrNull() ?: 0) >= UserRole.ADMIN.ordinal
                 preferencesRepository.currentWar = war.war
                 _sharedCurrentWar.emit(war)
                 _sharedButtonVisible.emit(isAdmin.isTrue && !war.isOver)

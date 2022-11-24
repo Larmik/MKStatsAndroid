@@ -4,6 +4,7 @@ import android.view.View
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.isTrue
@@ -47,7 +48,8 @@ class ManageTeamsViewModel @Inject constructor(private val preferencesRepository
 
         onAddTeam.bind(_sharedAddTeam, viewModelScope)
 
-        authenticationRepository.isAdmin
+        authenticationRepository.userRole
+            .mapNotNull { it >= UserRole.ADMIN.ordinal }
             .mapNotNull {
                 when (it) {
                     true -> View.VISIBLE

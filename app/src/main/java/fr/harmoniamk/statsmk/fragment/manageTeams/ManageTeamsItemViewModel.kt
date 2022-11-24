@@ -1,6 +1,7 @@
 package fr.harmoniamk.statsmk.fragment.manageTeams
 
 import android.view.View
+import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
@@ -15,7 +16,8 @@ class ManageTeamsItemViewModel(val team: Team, private val authenticationReposit
 
     val buttonVisibility
         get() = flow {
-            when (authenticationRepository.isAdmin.firstOrNull()) {
+            val isAdmin =(authenticationRepository.userRole.firstOrNull() ?: 0) >= UserRole.ADMIN.ordinal
+            when (isAdmin) {
                 true -> emit(View.VISIBLE)
                 else -> emit(View.INVISIBLE)
         }

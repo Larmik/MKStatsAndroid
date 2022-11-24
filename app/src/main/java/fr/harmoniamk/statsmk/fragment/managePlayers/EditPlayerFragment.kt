@@ -15,14 +15,9 @@ import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.databinding.FragmentEditPlayersBinding
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.clicks
-import fr.harmoniamk.statsmk.extension.isTrue
-import fr.harmoniamk.statsmk.repository.PreferencesRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
-import kotlin.coroutines.CoroutineContext
 
 @FlowPreview
 @ExperimentalCoroutinesApi
@@ -45,12 +40,8 @@ class EditPlayerFragment(val user: User? = null) : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         user?.let { player ->
             viewModel.bind(player)
-            val hasAccount = user.accessCode != "null" && !user.accessCode.isNullOrEmpty()
             binding.playernameEt.setText(player.name)
-            viewModel.sharedIsAdmin
-                .onEach { binding.adminCheckbox.isVisible = hasAccount && it }
-                .launchIn(lifecycleScope)
-            viewModel.sharedIsMember
+            viewModel.sharedPlayerIsMember
                 .onEach {
                     when (it) {
                         true -> {
@@ -63,24 +54,29 @@ class EditPlayerFragment(val user: User? = null) : BottomSheetDialogFragment() {
                         }
                     }
                 }.launchIn(lifecycleScope)
-            //binding.adminCheckbox.isChecked = player.isAdmin.isTrue
-            binding.playernameEt.isEnabled = !hasAccount
-            binding.modifyLabel.isVisible = !hasAccount
-            binding.deleteBtn.isVisible = !hasAccount
+
+            viewModel.sharedPlayerHasAccount
+                .onEach {
+                    binding.playernameEt.isEnabled = !it
+                    binding.modifyLabel.isVisible = !it
+                }.launchIn(lifecycleScope)
+
+            viewModel.sharedDeleteVisibility
+                .onEach {
+                    binding.deleteBtn.isVisible = it
+                }.launchIn(lifecycleScope)
 
             binding.nextBtn
                 .clicks()
                 .filterNot { binding.playernameEt.text.toString().isEmpty() }
-                .map {
-                    player.apply {
-                        this.name = binding.playernameEt.text.toString()
-                        //this.isAdmin = binding.adminCheckbox.isChecked
-                    }
-                }.bind(onPlayerEdit, lifecycleScope)
+                .map { player.apply { this.name = binding.playernameEt.text.toString() } }
+                .bind(onPlayerEdit, lifecycleScope)
+
             binding.deleteBtn
                 .clicks()
                 .map { player }
                 .bind(onPlayerDelete, lifecycleScope)
+
             binding.leaveTeamBtn
                 .clicks()
                 .map { player.apply { this.team = "-1" } }

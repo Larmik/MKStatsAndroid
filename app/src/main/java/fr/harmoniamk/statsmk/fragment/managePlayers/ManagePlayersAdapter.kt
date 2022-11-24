@@ -33,8 +33,8 @@ class ManagePlayersAdapter(private val items: MutableList<ManagePlayersItemViewM
             binding.name.text = player.name
             binding.checkmark.visibility = player.checkmarkVisibility
             player.buttonsVisibility
-                .onEach { binding.editBtn.visibility = it }
-                .launchIn(this@ManagePlayersAdapter)
+                ?.onEach { binding.editBtn.visibility = it }
+                ?.launchIn(this@ManagePlayersAdapter)
         }
     }
 

@@ -3,6 +3,7 @@ package fr.harmoniamk.statsmk.fragment.trackDetails
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.extension.withName
@@ -61,7 +62,7 @@ class TrackDetailsViewModel @Inject constructor(private val firebaseRepository: 
         positionsFlow
             .flatMapLatest { it.withPlayerName(firebaseRepository) }
             .onEach {
-                val isAdmin = authenticationRepository.isAdmin.firstOrNull()
+                val isAdmin = (authenticationRepository.userRole.firstOrNull() ?: 0) >= UserRole.ADMIN.ordinal
                 _sharedPositions.emit(it)
                 _sharedButtonsVisible.emit(isAdmin.isTrue && !MKWar(war).isOver
                         || authenticationRepository.user?.uid == "ZMqKjfrGfVbL2ca75zPJdWdhaKE2")
