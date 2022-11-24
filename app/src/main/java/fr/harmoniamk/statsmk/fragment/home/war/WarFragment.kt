@@ -16,6 +16,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import fr.harmoniamk.statsmk.extension.onTextChanged
 import fr.harmoniamk.statsmk.fragment.home.HomeFragmentDirections
+import fr.harmoniamk.statsmk.fragment.manageTeams.AddTeamFragment
 import kotlinx.coroutines.flow.*
 
 @FlowPreview
@@ -35,7 +36,8 @@ class WarFragment : Fragment(R.layout.fragment_war) {
             viewModel.bind(
                 onCreateWar = binding.createWarBtn.clicks(),
                 onCurrentWarClick = binding.currentWarCard.clicks(),
-                onWarClick = lastAdapter.sharedItemClick
+                onWarClick = lastAdapter.sharedItemClick,
+                onCreateTeam = binding.createTeamBtn.clicks()
             )
 
             viewModel.sharedHasTeam
@@ -96,6 +98,17 @@ class WarFragment : Fragment(R.layout.fragment_war) {
                     binding.createWarBtn.isVisible = it
                     binding.warHostTv.isVisible = it
                 }.launchIn(lifecycleScope)
+        }
+
+        lifecycleScope.launchWhenStarted {
+            val dialog = AddTeamFragment(teamWithLeader = true)
+            viewModel.bindAddTeamDialog(onTeamAdded = dialog.onTeamAdded)
+            viewModel.sharedCreateTeamDialog.collect {
+                when (it) {
+                    true -> dialog.show(childFragmentManager, null)
+                    else -> dialog.dismiss()
+                }
+            }
         }
 
     }

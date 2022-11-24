@@ -52,7 +52,6 @@ class AddUserViewModel @Inject constructor(private val firebaseRepository: Fireb
                 val user = User(
                     mid = it.uid,
                     name = name,
-                    accessCode = null,
                     role = UserRole.MEMBER.ordinal,
                     team = preferencesRepository.currentTeam?.mid ?: "-1",
                     currentWar = preferencesRepository.currentWar?.mid ?: "-1",

@@ -17,9 +17,9 @@
             android:textColor="@color/harmonia_dark"
             android:fontFamily="@font/montserrat_regular"
             android:textSize="16sp"
-            android:id="@+id/profile_btn"
+            android:id="@+id/manage_players_btn"
             android:paddingVertical="15dp"
-            android:text="Profil"/>
+            android:text="Mon équipe"/>
 
         <View
             android:layout_width="match_parent"
@@ -47,9 +47,9 @@
             android:textColor="@color/harmonia_dark"
             android:fontFamily="@font/montserrat_regular"
             android:textSize="16sp"
-            android:id="@+id/manage_players_btn"
+            android:id="@+id/profile_btn"
             android:paddingVertical="15dp"
-            android:text="Gérer les joueurs"/>
+            android:text="Profil"/>
 
         <!--
         <View

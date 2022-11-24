@@ -65,7 +65,7 @@ class ManagePlayersAdapter(private val items: MutableList<ManagePlayersItemViewM
     fun addPlayers(players: List<ManagePlayersItemViewModel>) {
         notifyItemRangeRemoved(0, itemCount)
         items.clear()
-        items.addAll(players)
+        items.addAll(players.filterNot { it.isCategory }.filterNot { it.isAlly })
         notifyItemRangeInserted(0, itemCount)
     }
 

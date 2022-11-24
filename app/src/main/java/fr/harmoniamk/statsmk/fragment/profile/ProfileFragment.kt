@@ -63,6 +63,7 @@ class ProfileFragment: Fragment(R.layout.fragment_profile) {
             .launchIn(lifecycleScope)
 
         viewModel.sharedRole
+            .filterNotNull()
             .onEach { binding.roleTv.text = it }
             .launchIn(lifecycleScope)
 

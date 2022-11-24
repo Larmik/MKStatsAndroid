@@ -26,6 +26,7 @@
             android:visibility="gone"
             android:paddingHorizontal="5dp"
             android:textSize="20sp"
+            android:textColor="@color/harmonia_dark"
             android:gravity="center"
             android:fontFamily="@font/orbitron_semibold"/>
 

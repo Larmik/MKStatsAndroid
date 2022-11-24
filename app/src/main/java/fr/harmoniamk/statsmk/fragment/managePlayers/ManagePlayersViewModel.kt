@@ -8,6 +8,7 @@ import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.isTrue
+import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
@@ -28,6 +29,8 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
     private val _sharedEdit = MutableSharedFlow<User>()
     private val _sharedRedirectToSettings = MutableSharedFlow<Unit>()
     private val _sharedShowDialog = MutableSharedFlow<Boolean>()
+    private val _sharedTeamName = MutableSharedFlow<String?>()
+    private val _sharedTeamEdit = MutableSharedFlow<Team>()
 
     val sharedPlayers = _sharedPlayers.asSharedFlow()
     val sharedAddPlayer = _sharedAddPlayer.asSharedFlow()
@@ -35,31 +38,26 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
     val sharedEdit = _sharedEdit.asSharedFlow()
     val sharedRedirectToSettings = _sharedRedirectToSettings.asSharedFlow()
     val sharedShowDialog = _sharedShowDialog.asSharedFlow()
+    val sharedTeamName = _sharedTeamName.asSharedFlow()
+    val sharedTeamEdit = _sharedTeamEdit.asSharedFlow()
 
     private val players = mutableListOf<ManagePlayersItemViewModel>()
     private val allPlayers = mutableListOf<ManagePlayersItemViewModel>()
 
-    fun bind(onAdd: Flow<Unit>, onEdit: Flow<User>, onSearch: Flow<String>) {
-        firebaseRepository.getUsers()
-            .map { createPlayersList(list = it) }
-            .onEach { allPlayers.addAll(it) }
-            .bind(_sharedPlayers, viewModelScope)
+    fun bind(onAdd: Flow<Unit>, onEdit: Flow<User>, onSearch: Flow<String>, onEditTeam: Flow<Unit>) {
+        refresh()
 
-        authenticationRepository.userRole
-            .mapNotNull { it >= UserRole.ADMIN.ordinal }
-            .mapNotNull {
-                when (it) {
-                    true -> View.VISIBLE
-                    else -> View.GONE
-                }
-            }.bind(_sharedAddPlayerVisibility, viewModelScope)
+        onEditTeam
+            .mapNotNull { preferencesRepository.currentTeam }
+            .bind(_sharedTeamEdit, viewModelScope)
 
         onAdd.bind(_sharedAddPlayer, viewModelScope)
 
-        onEdit.onEach {
-            _sharedEdit.emit(it)
-            _sharedShowDialog.emit(true)
-        }.launchIn(viewModelScope)
+        onEdit
+            .onEach {
+                _sharedEdit.emit(it)
+                _sharedShowDialog.emit(true)
+            }.launchIn(viewModelScope)
 
         onSearch
             .map { searched ->
@@ -117,6 +115,14 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
             .launchIn(viewModelScope)
     }
 
+    fun bindEditTeamDialog(onTeamEdited: Flow<Team>) {
+        onTeamEdited
+            .onEach { preferencesRepository.currentTeam = it }
+            .flatMapLatest { firebaseRepository.writeTeam(it) }
+            .onEach { refresh() }
+            .launchIn(viewModelScope)
+    }
+
     private fun createPlayersList(list: List<User>? = null, modelList: List<ManagePlayersItemViewModel>? = null): List<ManagePlayersItemViewModel> {
         players.clear()
         players.add(ManagePlayersItemViewModel(isCategory = true))
@@ -131,5 +137,24 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
             players.addAll(modelList.filter { it.isAlly }.sortedBy { it.name })
         }
         return players
+    }
+
+    private fun refresh() {
+        firebaseRepository.getUsers()
+            .map { createPlayersList(list = it) }
+            .onEach {
+                allPlayers.addAll(it)
+                _sharedTeamName.emit(preferencesRepository.currentTeam?.name)
+            }.bind(_sharedPlayers, viewModelScope)
+
+        authenticationRepository.userRole
+            .mapNotNull { it >= UserRole.ADMIN.ordinal }
+            .mapNotNull {
+                when (it) {
+                    true -> View.VISIBLE
+                    else -> View.GONE
+                }
+            }.bind(_sharedAddPlayerVisibility, viewModelScope)
+
     }
 }

@@ -31,7 +31,7 @@ class ProfileViewModel @Inject constructor(private val authenticationRepository:
     private val _sharedNewName = MutableSharedFlow<String>()
     private val _sharedEditName = MutableSharedFlow<Unit>()
     private val _sharedEditEmail = MutableSharedFlow<Unit>()
-    private val _sharedRole = MutableSharedFlow<String>()
+    private val _sharedRole = MutableSharedFlow<String?>()
 
     val sharedProfile =_sharedProfile.asSharedFlow()
     val sharedEditPicture =_sharedEditPicture.asSharedFlow()
@@ -53,9 +53,13 @@ class ProfileViewModel @Inject constructor(private val authenticationRepository:
             .onEach { _sharedProfile.emit(it) }
             .flatMapLatest { firebaseRepository.getUser(it.uid) }
             .mapNotNull { it?.role  }
-            .mapNotNull { it >= UserRole.ADMIN.ordinal }
             .onEach {
-                _sharedRole.emit(if (it) "Admin" else "Membre")
+                _sharedRole.emit(when (it){
+                    UserRole.MEMBER.ordinal -> "Membre"
+                    UserRole.ADMIN.ordinal -> "Admin"
+                    UserRole.LEADER.ordinal -> "Leader"
+                    else -> null
+                } )
                 _sharedTeam.emit(preferencesRepository.currentTeam?.name)
             }
             .launchIn(viewModelScope)

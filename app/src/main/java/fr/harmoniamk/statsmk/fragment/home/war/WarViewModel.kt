@@ -24,6 +24,7 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
     private val _sharedHasTeam = MutableSharedFlow<Boolean>()
     private val _sharedTeamName = MutableSharedFlow<String>()
     private val _sharedCreateWar = MutableSharedFlow<Unit>()
+    private val _sharedCreateTeamDialog = MutableSharedFlow<Boolean>()
     private val _sharedCurrentWar = MutableSharedFlow<MKWar?>()
     private val _sharedCurrentWarClick = MutableSharedFlow<MKWar>()
     private val _sharedLastWars = MutableSharedFlow<List<MKWar>>()
@@ -33,16 +34,33 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
     val sharedHasTeam = _sharedHasTeam.asSharedFlow()
     val sharedTeamName = _sharedTeamName.asSharedFlow()
     val sharedCreateWar = _sharedCreateWar.asSharedFlow()
+    val sharedCreateTeamDialog = _sharedCreateTeamDialog.asSharedFlow()
     val sharedCurrentWar = _sharedCurrentWar.asSharedFlow()
     val sharedCurrentWarClick = _sharedCurrentWarClick.asSharedFlow()
     val sharedLastWars = _sharedLastWars.asSharedFlow()
     val sharedGoToWar = _sharedGoToWar.asSharedFlow()
     val sharedButtonVisible = _sharedButtonVisible.asSharedFlow()
 
-    fun bind(onCreateWar: Flow<Unit>, onCurrentWarClick: Flow<Unit>, onWarClick: Flow<MKWar>) {
+    private var war: MKWar? = null
 
-        var war: MKWar? = null
 
+    fun bind(onCreateWar: Flow<Unit>, onCurrentWarClick: Flow<Unit>, onWarClick: Flow<MKWar>, onCreateTeam: Flow<Unit>) {
+        refresh()
+        onCreateTeam.onEach { _sharedCreateTeamDialog.emit(true) }.launchIn(viewModelScope)
+        onWarClick.bind(_sharedGoToWar, viewModelScope)
+        onCreateWar.bind(_sharedCreateWar, viewModelScope)
+        onCurrentWarClick.mapNotNull { war }.bind(_sharedCurrentWarClick, viewModelScope)
+    }
+
+    fun bindAddTeamDialog(onTeamAdded: Flow<Unit>) {
+        onTeamAdded
+            .onEach {
+                _sharedCreateTeamDialog.emit(false)
+                refresh()
+            }.launchIn(viewModelScope)
+    }
+
+    private fun refresh() {
         authenticationRepository.userRole
             .mapNotNull { it >= UserRole.ADMIN.ordinal }
             .bind(_sharedButtonVisible, viewModelScope)
@@ -78,13 +96,6 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
         firebaseRepository.getUsers()
             .map{ it.singleOrNull{ user -> user.mid == authenticationRepository.user?.uid}?.team != "-1" }
             .bind(_sharedHasTeam, viewModelScope)
-
-        onCurrentWarClick
-            .mapNotNull { war }
-            .bind(_sharedCurrentWarClick, viewModelScope)
-
-        onWarClick.bind(_sharedGoToWar, viewModelScope)
-        onCreateWar.bind(_sharedCreateWar, viewModelScope)
     }
 
 }

@@ -35,7 +35,7 @@ class ManagePlayersItemViewModel(val player: User? = null, val isCategory: Boole
                 else View.INVISIBLE
 
     val hasAccount: Boolean
-        get() = player?.accessCode != "null" && !player?.accessCode.isNullOrEmpty()
+        get() = player?.mid?.toLongOrNull() == null
 
     val isAlly = player?.team != preferencesRepository?.currentTeam?.mid
 

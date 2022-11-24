@@ -12,6 +12,7 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentManagePlayersBinding
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.extension.onTextChanged
+import fr.harmoniamk.statsmk.fragment.manageTeams.EditTeamFragment
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
@@ -32,11 +33,19 @@ class ManagePlayersFragment : Fragment(R.layout.fragment_manage_players) {
         viewModel.bind(
             onAdd = binding.addPlayerBtn.clicks(),
             onEdit = adapter.sharedEdit,
-            onSearch = binding.searchEt.onTextChanged()
+            onSearch = binding.searchEt.onTextChanged(),
+            onEditTeam = binding.editTeamBtn.clicks()
         )
+        viewModel.sharedTeamName
+            .filterNotNull()
+            .onEach { binding.teamName.text = it }
+            .launchIn(lifecycleScope)
+
+
         viewModel.sharedPlayers.onEach {
             adapter.addPlayers(it)
         }.launchIn(lifecycleScope)
+
         viewModel.sharedAddPlayer
             .onEach {
                 val addPlayerFragment = AddPlayersFragment()
@@ -58,6 +67,15 @@ class ManagePlayersFragment : Fragment(R.layout.fragment_manage_players) {
                     onPlayerEdited = dialog.onPlayerEdit
                 )
             }.launchIn(lifecycleScope)
+        viewModel.sharedTeamEdit
+            .onEach {
+                val teamDialog = EditTeamFragment(it)
+                viewModel.bindEditTeamDialog(teamDialog.onTeamEdit)
+                teamDialog.takeIf { !it.isAdded }?.show(childFragmentManager, null)
+                teamDialog.onTeamEdit
+                    .onEach { teamDialog.dismiss() }
+                    .launchIn(lifecycleScope)
+            }.launchIn(lifecycleScope)
         viewModel.sharedRedirectToSettings
             .filter { findNavController().currentDestination?.id == R.id.managePlayersFragment }
             .onEach { findNavController().popBackStack() }
@@ -70,5 +88,8 @@ class ManagePlayersFragment : Fragment(R.layout.fragment_manage_players) {
                 }
             }
         }
+
+
+
     }
 }
