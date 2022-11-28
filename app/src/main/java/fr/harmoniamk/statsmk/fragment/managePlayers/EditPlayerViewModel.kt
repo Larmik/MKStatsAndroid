@@ -28,6 +28,7 @@ class EditPlayerViewModel @Inject constructor(private val authenticationReposito
     private val _sharedRoleSelected = MutableSharedFlow<Int>()
     private val _sharedUserRoleLabel = MutableSharedFlow<String?>()
     private val _sharedButtonEnabled = MutableSharedFlow<Boolean>()
+    private val _sharedIdVisible = MutableSharedFlow<String>()
     val sharedButtonEnabled = _sharedButtonEnabled.asSharedFlow()
     val sharedPlayerIsMember = _sharedPlayerIsMember.asSharedFlow()
     val sharedPlayerHasAccount = _sharedPlayerHasAccount.asSharedFlow()
@@ -36,6 +37,7 @@ class EditPlayerViewModel @Inject constructor(private val authenticationReposito
     val sharedRoleSelected = _sharedRoleSelected.asSharedFlow()
     val sharedShowDialog = _sharedShowDialog.asSharedFlow()
     val sharedUserRoleLabel = _sharedUserRoleLabel.asSharedFlow()
+    val sharedIdVisible = _sharedIdVisible.asSharedFlow()
 
     fun bind(player: User, onEditClick: Flow<Unit>, onNameEdited: Flow<String>) {
         onEditClick.onEach { _sharedShowDialog.emit(true) }.launchIn(viewModelScope)
@@ -53,8 +55,11 @@ class EditPlayerViewModel @Inject constructor(private val authenticationReposito
                     UserRole.MEMBER.ordinal -> "Membre"
                     UserRole.LEADER.ordinal -> "Leader"
                     UserRole.ADMIN.ordinal -> "Admin"
+                    UserRole.GOD.ordinal -> "Dieu"
                     else -> null
                 })
+                if (it == UserRole.GOD.ordinal)
+                    _sharedIdVisible.emit(player.mid.orEmpty())
             }.launchIn(viewModelScope)
 
         flowOf(player.mid)

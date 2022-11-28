@@ -34,7 +34,7 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
 
     val sharedPlayers = _sharedPlayers.asSharedFlow()
     val sharedAddPlayer = _sharedAddPlayer.asSharedFlow()
-    val sharedAddPlayerVisibility = _sharedAddPlayerVisibility.asSharedFlow()
+    val sharedEditTeamVisibility = _sharedAddPlayerVisibility.asSharedFlow()
     val sharedEdit = _sharedEdit.asSharedFlow()
     val sharedRedirectToSettings = _sharedRedirectToSettings.asSharedFlow()
     val sharedShowDialog = _sharedShowDialog.asSharedFlow()

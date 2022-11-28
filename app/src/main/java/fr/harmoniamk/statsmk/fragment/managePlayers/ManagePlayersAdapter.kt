@@ -17,7 +17,7 @@ import kotlin.coroutines.CoroutineContext
 
 @FlowPreview
 @ExperimentalCoroutinesApi
-class ManagePlayersAdapter(private val items: MutableList<ManagePlayersItemViewModel> = mutableListOf()) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), CoroutineScope {
+class ManagePlayersAdapter(private val items: MutableList<ManagePlayersItemViewModel> = mutableListOf(), private val showAlly: Boolean = false) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), CoroutineScope {
     private val ITEM_CATEGORY = -155
 
     val sharedEdit = MutableSharedFlow<User>()
@@ -65,7 +65,7 @@ class ManagePlayersAdapter(private val items: MutableList<ManagePlayersItemViewM
     fun addPlayers(players: List<ManagePlayersItemViewModel>) {
         notifyItemRangeRemoved(0, itemCount)
         items.clear()
-        items.addAll(players.filterNot { it.isCategory }.filterNot { it.isAlly })
+        items.addAll(players.filterNot { it.isCategory }.filter { (it.isAlly && showAlly) || !it.isAlly  })
         notifyItemRangeInserted(0, itemCount)
     }
 

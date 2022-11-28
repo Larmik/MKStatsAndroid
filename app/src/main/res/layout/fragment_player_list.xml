@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:background="?android:colorPrimary"
+    android:padding="15dp"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:layout_marginBottom="20dp"
+        android:gravity="center"
+        android:text="Joueurs"
+        android:fontFamily="@font/montserrat_bold"
+        android:textColor="@color/harmonia_dark" />
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="10dp"
+        android:background="@color/white"/>
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/roboto"
+        android:textColor="@color/text_color"
+        android:paddingVertical="10dp"
+        android:textSize="14sp"
+        android:layout_marginBottom="10dp"
+        android:gravity="center"
+        android:id="@+id/add_player_btn"
+        android:text="Nouveau joueur"
+        android:background="@drawable/button_background"
+        tools:targetApi="n_mr1"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/white"/>
+    <EditText
+        android:layout_width="match_parent"
+        android:background="@drawable/rounded_bg"
+        android:hint="Rechercher un joueur..."
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/white_alphaed"
+        android:textColor="@color/black"
+        android:textColorHint="@color/boo"
+        android:padding="15dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="5dp"
+        android:id="@+id/search_et"/>
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:id="@+id/players_rv"
+        android:layout_weight="1"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:orientation="vertical"/>
+
+
+</LinearLayout>

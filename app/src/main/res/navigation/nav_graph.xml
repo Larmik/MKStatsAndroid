@@ -131,6 +131,13 @@
             app:exitAnim="@anim/exit_to_left"
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right"/>
+        <action
+            android:id="@+id/to_player_list"
+            app:destination="@id/playerListFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right"/>
 
     </fragment>
 <!--
@@ -285,6 +292,13 @@
         tools:layout="@layout/fragment_manage_players"
         android:label="ManagePlayersFragment">
 
+        <action
+            android:id="@+id/to_player_list"
+            app:destination="@id/playerListFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right"/>
 
         <action
             android:id="@+id/back_to_welcome"
@@ -361,6 +375,12 @@
         android:name="fr.harmoniamk.statsmk.fragment.trackDetails.TrackDetailsFragment"
         tools:layout="@layout/fragment_track_details"
         android:label="TrackDetailsFragment" />
+
+    <fragment
+        android:id="@+id/playerListFragment"
+        android:name="fr.harmoniamk.statsmk.fragment.playerList.PlayerListFragment"
+        tools:layout="@layout/fragment_player_list"
+        android:label="PlayerListFragment" />
 
     <fragment
         android:id="@+id/profileFragment"

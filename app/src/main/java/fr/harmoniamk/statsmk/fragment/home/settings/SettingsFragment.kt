@@ -35,7 +35,8 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             onManagePlayers = binding.managePlayersBtn.clicks(),
             onMigrate = binding.migrateBtn.clicks(),
             onPopupTheme =  themePopup.onNegativeClick.map { false },
-            onProfileClick = binding.profileBtn.clicks()
+            onProfileClick = binding.profileBtn.clicks(),
+            onPlayersClick = binding.playersBtn.clicks()
         )
 
         viewModel.sharedManageTeam
@@ -65,6 +66,10 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
         viewModel.sharedGoToProfile
             .filter { findNavController().currentDestination?.id == R.id.homeFragment }
             .onEach { findNavController().navigate(HomeFragmentDirections.toProfile()) }
+            .launchIn(lifecycleScope)
+        viewModel.sharedGoToPlayers
+            .filter { findNavController().currentDestination?.id == R.id.homeFragment }
+            .onEach { findNavController().navigate(HomeFragmentDirections.toPlayerList()) }
             .launchIn(lifecycleScope)
     }
 }

@@ -44,6 +44,11 @@ class EditPlayerFragment(val user: User? = null) : BottomSheetDialogFragment() {
             viewModel.bind(player,  binding.editRoleBtn.clicks(), binding.playernameEt.onTextChanged())
             binding.playernameEt.setText(player.name)
             viewModel.sharedRoleSelected.onEach { role = it }.launchIn(lifecycleScope)
+            viewModel.sharedIdVisible.onEach {
+                binding.roleLayout.isVisible = true
+                binding.uidLayout.isVisible = true
+                binding.idTv.text = it
+            }.launchIn(lifecycleScope)
             viewModel.sharedPlayerIsMember
                 .onEach {
                     when (it) {

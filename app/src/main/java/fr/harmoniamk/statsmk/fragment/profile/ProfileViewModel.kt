@@ -58,6 +58,7 @@ class ProfileViewModel @Inject constructor(private val authenticationRepository:
                     UserRole.MEMBER.ordinal -> "Membre"
                     UserRole.ADMIN.ordinal -> "Admin"
                     UserRole.LEADER.ordinal -> "Leader"
+                    UserRole.GOD.ordinal -> "Dieu"
                     else -> null
                 } )
                 _sharedTeam.emit(preferencesRepository.currentTeam?.name)

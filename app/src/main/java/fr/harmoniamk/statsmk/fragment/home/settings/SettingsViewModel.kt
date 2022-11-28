@@ -28,14 +28,16 @@ class SettingsViewModel @Inject constructor(private val preferencesRepository: P
     private val _sharedThemeClick = MutableSharedFlow<Unit>()
     private val _sharedToast = MutableSharedFlow<String>()
     private val _sharedGoToProfile = MutableSharedFlow<Unit>()
+    private val _sharedGoToPlayers = MutableSharedFlow<Unit>()
     val sharedThemePopup = _sharedThemePopup.asSharedFlow()
     val sharedManageTeam = _sharedManageTeam.asSharedFlow()
     val sharedManagePlayers = _sharedManagePlayers.asSharedFlow()
     val sharedThemeClick = _sharedThemeClick.asSharedFlow()
     val sharedToast = _sharedToast.asSharedFlow()
     val sharedGoToProfile = _sharedGoToProfile.asSharedFlow()
+    val sharedGoToPlayers = _sharedGoToPlayers.asSharedFlow()
 
-    fun bind(onManageTeam: Flow<Unit>, onTheme: Flow<Unit>, onManagePlayers: Flow<Unit>, onMigrate: Flow<Unit>, onPopupTheme: Flow<Boolean>, onProfileClick: Flow<Unit>) {
+    fun bind(onManageTeam: Flow<Unit>, onTheme: Flow<Unit>, onManagePlayers: Flow<Unit>, onMigrate: Flow<Unit>, onPopupTheme: Flow<Boolean>, onProfileClick: Flow<Unit>, onPlayersClick: Flow<Unit>) {
         onPopupTheme.bind(_sharedThemePopup, viewModelScope)
         val teamClick = onManageTeam.flatMapLatest { authenticationRepository.userRole }.shareIn(viewModelScope, SharingStarted.Eagerly, 1)
         val playersClick = onManagePlayers.flatMapLatest { authenticationRepository.userRole }.shareIn(viewModelScope, SharingStarted.Eagerly, 1)
@@ -49,5 +51,6 @@ class SettingsViewModel @Inject constructor(private val preferencesRepository: P
         onTheme.bind(_sharedThemeClick, viewModelScope)
         onProfileClick.bind(_sharedGoToProfile, viewModelScope)
         onMigrate.onEach {}.launchIn(viewModelScope)
+        onPlayersClick.bind(_sharedGoToPlayers, viewModelScope)
     }
 }

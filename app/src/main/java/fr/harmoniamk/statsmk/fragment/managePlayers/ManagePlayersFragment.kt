@@ -41,23 +41,19 @@ class ManagePlayersFragment : Fragment(R.layout.fragment_manage_players) {
             .onEach { binding.teamName.text = it }
             .launchIn(lifecycleScope)
 
-
         viewModel.sharedPlayers.onEach {
             adapter.addPlayers(it)
         }.launchIn(lifecycleScope)
 
         viewModel.sharedAddPlayer
-            .onEach {
-                val addPlayerFragment = AddPlayersFragment()
-                viewModel.bindAddDialog(addPlayerFragment.onUserAdded)
-                addPlayerFragment.takeIf { !it.isAdded }?.show(childFragmentManager, null)
-                addPlayerFragment.onUserAdded
-                    .onEach { addPlayerFragment.dismiss() }
-                    .launchIn(lifecycleScope)
-            }.launchIn(lifecycleScope)
-        viewModel.sharedAddPlayerVisibility
+            .filter { findNavController().currentDestination?.id == R.id.managePlayersFragment }
+            .onEach { findNavController().navigate(ManagePlayersFragmentDirections.toPlayerList()) }
+            .launchIn(lifecycleScope)
+
+        viewModel.sharedEditTeamVisibility
             .onEach { binding.editTeamBtn.visibility = it }
             .launchIn(lifecycleScope)
+
         viewModel.sharedEdit
             .onEach {
                 dialog = EditPlayerFragment(it)
@@ -67,6 +63,7 @@ class ManagePlayersFragment : Fragment(R.layout.fragment_manage_players) {
                     onPlayerEdited = dialog.onPlayerEdit
                 )
             }.launchIn(lifecycleScope)
+
         viewModel.sharedTeamEdit
             .onEach {
                 val teamDialog = EditTeamFragment(it)
@@ -76,10 +73,12 @@ class ManagePlayersFragment : Fragment(R.layout.fragment_manage_players) {
                     .onEach { teamDialog.dismiss() }
                     .launchIn(lifecycleScope)
             }.launchIn(lifecycleScope)
+
         viewModel.sharedRedirectToSettings
             .filter { findNavController().currentDestination?.id == R.id.managePlayersFragment }
             .onEach { findNavController().popBackStack() }
             .launchIn(lifecycleScope)
+
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.sharedShowDialog.collect {
                 when (it) {
@@ -88,8 +87,5 @@ class ManagePlayersFragment : Fragment(R.layout.fragment_manage_players) {
                 }
             }
         }
-
-
-
     }
 }

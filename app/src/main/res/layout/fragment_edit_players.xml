@@ -49,6 +49,33 @@
 
         <LinearLayout
             android:layout_width="0dp"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:visibility="gone"
+            android:id="@+id/uid_layout"
+
+            android:layout_marginStart="25dp"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:fontFamily="@font/montserrat_regular"
+            android:textColor="@color/harmonia_dark"
+            android:text="ID:"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/montserrat_regular"
+            android:textColor="@color/black"
+            android:id="@+id/id_tv"/>
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_weight="1"
             android:gravity="center"
             android:layout_marginStart="25dp"
