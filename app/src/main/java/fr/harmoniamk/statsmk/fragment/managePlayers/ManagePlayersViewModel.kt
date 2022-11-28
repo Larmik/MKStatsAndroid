@@ -148,7 +148,7 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
             }.bind(_sharedPlayers, viewModelScope)
 
         authenticationRepository.userRole
-            .mapNotNull { it >= UserRole.ADMIN.ordinal }
+            .mapNotNull { it >= UserRole.LEADER.ordinal }
             .mapNotNull {
                 when (it) {
                     true -> View.VISIBLE

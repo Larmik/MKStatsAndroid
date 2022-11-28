@@ -20,14 +20,18 @@ class AddPlayersViewModel @Inject constructor(private val firebaseRepository: Fi
 
     private val _sharedUserAdded = MutableSharedFlow<Unit>()
     private val _sharedToast = MutableSharedFlow<String>()
-
+    private val _sharedButtonEnabled = MutableSharedFlow<Boolean>()
+    val sharedButtonEnabled = _sharedButtonEnabled.asSharedFlow()
     val sharedToast = _sharedToast.asSharedFlow()
     val sharedUserAdded = _sharedUserAdded.asSharedFlow()
 
     fun bind(onName: Flow<String>, onPlayerAdded: Flow<Unit>, onTeamChecked: Flow<Boolean>) {
         var name: String? = null
         var teamChecked = false
-        onName.onEach { name = it }.launchIn(viewModelScope)
+        onName.onEach {
+            name = it
+            _sharedButtonEnabled.emit(!name.isNullOrEmpty())
+        }.launchIn(viewModelScope)
         val playerAdded = onPlayerAdded
             .flatMapLatest { firebaseRepository.getUsers() }
             .shareIn(viewModelScope, SharingStarted.Lazily)

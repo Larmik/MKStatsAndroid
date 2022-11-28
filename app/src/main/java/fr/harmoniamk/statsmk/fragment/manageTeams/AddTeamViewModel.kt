@@ -20,7 +20,8 @@ import javax.inject.Inject
 class AddTeamViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface) : ViewModel() {
     private val _sharedTeamAdded = MutableSharedFlow<Unit>()
     private val _sharedToast = MutableSharedFlow<String>()
-
+    private val _sharedButtonEnabled = MutableSharedFlow<Boolean>()
+    val sharedButtonEnabled = _sharedButtonEnabled.asSharedFlow()
     val sharedTeamAdded = _sharedTeamAdded.asSharedFlow()
     val sharedToast = _sharedToast.asSharedFlow()
 
@@ -29,8 +30,14 @@ class AddTeamViewModel @Inject constructor(private val firebaseRepository: Fireb
         var shortName: String? = null
         val id = System.currentTimeMillis().toString()
 
-        onTeamName.onEach { name = it }.launchIn(viewModelScope)
-        onShortname.onEach { shortName = it }.launchIn(viewModelScope)
+        onTeamName.onEach {
+            name = it
+            _sharedButtonEnabled.emit(!name.isNullOrEmpty() && !shortName.isNullOrEmpty())
+        }.launchIn(viewModelScope)
+        onShortname.onEach {
+            shortName = it
+            _sharedButtonEnabled.emit(!name.isNullOrEmpty() && !shortName.isNullOrEmpty())
+        }.launchIn(viewModelScope)
 
         val addClick =  onAddClick
             .filter { name != null && shortName != null }

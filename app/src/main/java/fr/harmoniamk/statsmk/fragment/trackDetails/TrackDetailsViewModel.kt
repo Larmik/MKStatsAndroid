@@ -62,10 +62,12 @@ class TrackDetailsViewModel @Inject constructor(private val firebaseRepository: 
         positionsFlow
             .flatMapLatest { it.withPlayerName(firebaseRepository) }
             .onEach {
-                val isAdmin = (authenticationRepository.userRole.firstOrNull() ?: 0) >= UserRole.ADMIN.ordinal
+                val role = authenticationRepository.userRole.firstOrNull() ?: 0
+                val isAdmin = role >= UserRole.ADMIN.ordinal
+                val isGod = role == UserRole.GOD.ordinal
                 _sharedPositions.emit(it)
                 _sharedButtonsVisible.emit(isAdmin.isTrue && !MKWar(war).isOver
-                        || authenticationRepository.user?.uid == "ZMqKjfrGfVbL2ca75zPJdWdhaKE2")
+                        || isGod)
             }.launchIn(viewModelScope)
 
         onEditTrack.bind(_sharedEditTrackClick, viewModelScope)

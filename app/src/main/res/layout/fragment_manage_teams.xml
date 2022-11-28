@@ -42,8 +42,7 @@
             android:textSize="14sp"
             android:id="@+id/add_team_btn"
             android:text="Ajouter une équipe"
-            android:background="@drawable/rounded_bg"
-            android:backgroundTint="?android:colorAccent"
+            android:background="@drawable/button_background"
             tools:targetApi="n_mr1"/>
 
         <View

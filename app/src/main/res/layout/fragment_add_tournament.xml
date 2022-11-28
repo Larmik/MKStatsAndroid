@@ -171,7 +171,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Démarrer le tournoi"
-        android:backgroundTint="?android:colorAccent"
+        android:background="@drawable/button_background"
         tools:targetApi="n_mr1"
         android:gravity="center"
         android:textColor="@color/white"
@@ -179,8 +179,6 @@
         android:id="@+id/start_btn"
         android:layout_marginHorizontal="10dp"
         android:paddingVertical="10dp"
-
-        android:background="@drawable/rounded_bg"
         android:textAllCaps="true"/>
 
 

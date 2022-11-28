@@ -79,8 +79,7 @@
                     android:gravity="center"
                     android:layout_margin="10dp"
                     android:fontFamily="@font/montserrat_bold"
-                    android:background="@drawable/rounded_bg"
-                    android:backgroundTint="?android:colorAccent"
+                    android:background="@drawable/button_background"
                     tools:targetApi="n_mr1"
                     android:text="Valider"/>
 

@@ -32,9 +32,8 @@ class PlayersWarFragment(val onWarCreated: MutableSharedFlow<Unit>, val onUsersS
         binding.playersRv.adapter = usersAdapter
         binding.startWarBtn.clicks().bind(onWarCreated, lifecycleScope)
         viewModel.sharedPlayers.onEach { usersAdapter.addUsers(it) }.launchIn(lifecycleScope)
-        viewModel.sharedUsersSelected.onEach {
-            binding.startWarBtn.visibility = if (it.size == 6) View.VISIBLE else View.INVISIBLE
-        }.bind(onUsersSelected, lifecycleScope)
+        viewModel.sharedUsersSelected.bind(onUsersSelected, lifecycleScope)
+        viewModel.sharedButtonEnabled.onEach { binding.startWarBtn.isEnabled = it }.launchIn(lifecycleScope)
         viewModel.sharedOfficial.bind(onOfficialCheck, lifecycleScope)
     }
 

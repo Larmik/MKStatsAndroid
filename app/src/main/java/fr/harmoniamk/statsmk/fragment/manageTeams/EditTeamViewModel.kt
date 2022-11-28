@@ -18,12 +18,26 @@ import javax.inject.Inject
 class EditTeamViewModel @Inject constructor(private val authenticationRepository: AuthenticationRepositoryInterface): ViewModel() {
 
     private val _sharedDeleteVisible = MutableSharedFlow<Boolean>()
+    private val _sharedButtonEnabled = MutableSharedFlow<Boolean>()
+    val sharedButtonEnabled = _sharedButtonEnabled.asSharedFlow()
     val sharedDeleteVisible = _sharedDeleteVisible.asSharedFlow()
 
-    init {
+    fun bind(onName: Flow<String>, onShortname: Flow<String>) {
+        var name: String? = null
+        var shortName: String? = null
+        onName.onEach {
+            name = it
+            _sharedButtonEnabled.emit(!name.isNullOrEmpty() && !shortName.isNullOrEmpty())
+        }.launchIn(viewModelScope)
+        onShortname.onEach {
+            shortName = it
+            _sharedButtonEnabled.emit(!name.isNullOrEmpty() && !shortName.isNullOrEmpty())
+        }.launchIn(viewModelScope)
         authenticationRepository.userRole
             .map { it == UserRole.GOD.ordinal }
             .bind(_sharedDeleteVisible, viewModelScope)
     }
+
+
 
 }

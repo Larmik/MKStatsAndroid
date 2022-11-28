@@ -22,11 +22,13 @@ class ConnectUserViewModel @Inject constructor(private val firebaseRepository: F
     private val _sharedGoToSignup = MutableSharedFlow<Unit>()
     private val _sharedToast = MutableSharedFlow<String>()
     private val _sharedGoToReset = MutableSharedFlow<Unit>()
+    private val _sharedButtonEnabled = MutableSharedFlow<Boolean>()
 
     val sharedNext = _sharedNext.asSharedFlow()
     val sharedToast = _sharedToast.asSharedFlow()
     val sharedGoToSignup = _sharedGoToSignup.asSharedFlow()
     val sharedGoToReset = _sharedGoToReset.asSharedFlow()
+    val sharedButtonEnabled = _sharedButtonEnabled.asSharedFlow()
 
     fun bind(onEmail: Flow<String>, onPassword: Flow<String>, onConnect: Flow<Unit>, onSignupClick: Flow<Unit>, onResetPassword: Flow<Unit>) {
         var password: String? = null
@@ -34,8 +36,13 @@ class ConnectUserViewModel @Inject constructor(private val firebaseRepository: F
 
         onPassword.onEach {
             password = it
+            _sharedButtonEnabled.emit(!password.isNullOrEmpty() && !email.isNullOrEmpty())
         }.launchIn(viewModelScope)
-        onEmail.onEach { email = it }.launchIn(viewModelScope)
+
+        onEmail.onEach {
+            email = it
+            _sharedButtonEnabled.emit(!password.isNullOrEmpty() && !email.isNullOrEmpty())
+        }.launchIn(viewModelScope)
 
         val connectUser = onConnect
             .mapNotNull { password }

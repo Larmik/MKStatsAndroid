@@ -27,18 +27,12 @@
         android:fontFamily="@font/montserrat_regular"
         android:textColor="@color/harmonia_dark" />
 
-
-
-
-
-
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
+        android:layout_marginBottom="10dp"
         android:background="@color/white"/>
-
-
-
+    
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -47,11 +41,10 @@
         android:paddingVertical="10dp"
         android:textSize="14sp"
         android:gravity="center"
-        android:layout_marginVertical="10dp"
+        android:layout_marginBottom="10dp"
         android:id="@+id/edit_team_btn"
         android:text="Modifier l'équipe"
-        android:background="@drawable/rounded_bg"
-        android:backgroundTint="?android:colorAccent"
+        android:background="@drawable/button_background"
         tools:targetApi="n_mr1"/>
 
     <TextView
@@ -65,8 +58,7 @@
         android:gravity="center"
         android:id="@+id/add_player_btn"
         android:text="Ajouter un joueur"
-        android:background="@drawable/rounded_bg"
-        android:backgroundTint="?android:colorAccent"
+        android:background="@drawable/button_background"
         tools:targetApi="n_mr1"/>
 
     <View

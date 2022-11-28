@@ -54,6 +54,11 @@ class AddUserFragment : Fragment(R.layout.fragment_add_user) {
         requireActivity().backPressedDispatcher(viewLifecycleOwner)
             .onEach { requireActivity().finish() }
             .launchIn(lifecycleScope)
+
+        viewModel.sharedButtonEnabled
+            .onEach { binding.nextBtn.isEnabled = it }
+            .launchIn(lifecycleScope)
+
     }
 
 }

@@ -23,6 +23,8 @@ class AddUserViewModel @Inject constructor(private val firebaseRepository: Fireb
     private val _sharedNext = MutableSharedFlow<Unit>()
     private val _sharedToast = MutableSharedFlow<String>()
     private val _sharedGoToConnect = MutableSharedFlow<Unit>()
+    private val _sharedButtonEnabled = MutableSharedFlow<Boolean>()
+    val sharedButtonEnabled = _sharedButtonEnabled.asSharedFlow()
     val sharedNext = _sharedNext.asSharedFlow()
     val sharedToast = _sharedToast.asSharedFlow()
     val sharedGoToConnect = _sharedGoToConnect.asSharedFlow()
@@ -33,9 +35,18 @@ class AddUserViewModel @Inject constructor(private val firebaseRepository: Fireb
         var code: String? = null
         var email: String? = null
 
-        onName.onEach { name = it }.launchIn(viewModelScope)
-        onPassword.onEach { code = it }.launchIn(viewModelScope)
-        onEmail.onEach { email = it }.launchIn(viewModelScope)
+        onName.onEach {
+            name = it
+            _sharedButtonEnabled.emit(!name.isNullOrEmpty() && !email.isNullOrEmpty() && !code.isNullOrEmpty())
+        }.launchIn(viewModelScope)
+        onPassword.onEach {
+            code = it
+            _sharedButtonEnabled.emit(!name.isNullOrEmpty() && !email.isNullOrEmpty() && !code.isNullOrEmpty())
+        }.launchIn(viewModelScope)
+        onEmail.onEach {
+            email = it
+            _sharedButtonEnabled.emit(!name.isNullOrEmpty() && !email.isNullOrEmpty() && !code.isNullOrEmpty())
+        }.launchIn(viewModelScope)
 
         val createUser =
             onNext

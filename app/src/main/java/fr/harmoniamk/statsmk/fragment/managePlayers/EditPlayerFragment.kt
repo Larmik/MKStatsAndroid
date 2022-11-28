@@ -15,6 +15,7 @@ import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.databinding.FragmentEditPlayersBinding
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.clicks
+import fr.harmoniamk.statsmk.extension.onTextChanged
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
@@ -40,7 +41,7 @@ class EditPlayerFragment(val user: User? = null) : BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         user?.let { player ->
             var role = player.role
-            viewModel.bind(player,  binding.editRoleBtn.clicks())
+            viewModel.bind(player,  binding.editRoleBtn.clicks(), binding.playernameEt.onTextChanged())
             binding.playernameEt.setText(player.name)
             viewModel.sharedRoleSelected.onEach { role = it }.launchIn(lifecycleScope)
             viewModel.sharedPlayerIsMember
@@ -94,6 +95,11 @@ class EditPlayerFragment(val user: User? = null) : BottomSheetDialogFragment() {
                 .clicks()
                 .map { player.apply { this.team = "-1" } }
                 .bind(onTeamLeave, lifecycleScope)
+
+
+            viewModel.sharedButtonEnabled
+                .onEach { binding.nextBtn.isEnabled = it }
+                .launchIn(lifecycleScope)
 
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {
                 val dialog = EditRoleFragment(role)

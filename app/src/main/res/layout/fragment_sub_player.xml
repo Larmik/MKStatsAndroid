@@ -62,8 +62,7 @@
             android:layout_height="wrap_content"
             android:paddingVertical="10dp"
             android:textAlignment="center"
-            android:backgroundTint="@color/harmonia_dark"
-            android:background="@drawable/rounded_bg"
+            android:background="@drawable/button_background"
             android:textColor="@color/white"
             android:fontFamily="@font/roboto"
             android:text="Remplacer le joueur"/>

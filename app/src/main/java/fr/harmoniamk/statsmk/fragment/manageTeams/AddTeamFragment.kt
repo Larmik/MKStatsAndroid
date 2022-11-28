@@ -52,6 +52,9 @@ class AddTeamFragment(val teamWithLeader: Boolean = false) : BottomSheetDialogFr
         viewModel.sharedToast
             .onEach { Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show() }
             .launchIn(lifecycleScope)
+        viewModel.sharedButtonEnabled
+            .onEach { binding.nextBtn.isEnabled = it }
+            .launchIn(lifecycleScope)
     }
 
 }

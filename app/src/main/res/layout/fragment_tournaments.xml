@@ -152,12 +152,11 @@
                     android:text="Jouer un tournoi"
                     android:gravity="center"
                     android:layout_marginTop="10dp"
-                    android:background="@drawable/rounded_bg"
                     android:fontFamily="@font/roboto"
                     android:textAllCaps="true"
                     android:layout_marginBottom="10dp"
                     android:textColor="@color/text_color"
-                    android:backgroundTint="?android:colorAccent"
+                    android:background="@drawable/button_background"
                     tools:targetApi="n_mr1"
                     android:paddingVertical="10dp"/>
 

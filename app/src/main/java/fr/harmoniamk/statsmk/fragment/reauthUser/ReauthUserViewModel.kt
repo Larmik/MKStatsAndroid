@@ -22,7 +22,8 @@ class ReauthUserViewModel @Inject constructor(private val firebaseRepository: Fi
     private val _sharedNext = MutableSharedFlow<Unit>()
     private val _sharedToast = MutableSharedFlow<String>()
     private val _sharedGoToReset = MutableSharedFlow<Unit>()
-
+    private val _sharedButtonEnabled = MutableSharedFlow<Boolean>()
+    val sharedButtonEnabled = _sharedButtonEnabled.asSharedFlow()
     val sharedNext = _sharedNext.asSharedFlow()
     val sharedToast = _sharedToast.asSharedFlow()
     val sharedGoToReset = _sharedGoToReset.asSharedFlow()
@@ -30,7 +31,10 @@ class ReauthUserViewModel @Inject constructor(private val firebaseRepository: Fi
     fun bind(onPassword: Flow<String>, onConnect: Flow<Unit>, onResetPassword: Flow<Unit>) {
         var password: String? = null
 
-        onPassword.onEach { password = it }.launchIn(viewModelScope)
+        onPassword.onEach {
+            password = it
+            _sharedButtonEnabled.emit(!password.isNullOrEmpty())
+        }.launchIn(viewModelScope)
 
         val connectUser = onConnect
             .mapNotNull { password }
@@ -53,6 +57,7 @@ class ReauthUserViewModel @Inject constructor(private val firebaseRepository: Fi
             .mapNotNull { (it as? AuthUserResponse.Error)?.message }
             .bind(_sharedToast, viewModelScope)
         onResetPassword.bind(_sharedGoToReset, viewModelScope)
+
 
     }
 }

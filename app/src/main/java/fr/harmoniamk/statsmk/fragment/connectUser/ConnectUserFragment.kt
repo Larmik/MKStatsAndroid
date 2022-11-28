@@ -52,6 +52,10 @@ class ConnectUserFragment: Fragment(R.layout.fragment_connect_user) {
             .onEach { findNavController().navigate(ConnectUserFragmentDirections.goToSignup()) }
             .launchIn(lifecycleScope)
 
+        viewModel.sharedButtonEnabled
+            .onEach { binding.connectBtn.isEnabled = it }
+            .launchIn(lifecycleScope)
+
         requireActivity().backPressedDispatcher(viewLifecycleOwner)
             .onEach { requireActivity().finish() }
             .launchIn(lifecycleScope)

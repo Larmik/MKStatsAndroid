@@ -52,15 +52,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingVertical="10dp"
-            android:background="@drawable/rounded_bg"
-            android:backgroundTint="?android:colorAccent"
+            android:background="@drawable/button_background"
             tools:targetApi="n_mr1"
+            android:enabled="false"
             android:textColor="@color/text_color"
             android:layout_marginBottom="10dp"
+            android:fontFamily="@font/roboto"
             android:id="@+id/next_btn"
-            android:textSize="18sp"
             android:text="Suivant"
-            android:textAllCaps="true"
             android:gravity="center"
             android:layout_gravity="bottom"/>
 

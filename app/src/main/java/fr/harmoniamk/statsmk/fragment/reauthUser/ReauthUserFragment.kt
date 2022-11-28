@@ -48,6 +48,11 @@ class ReauthUserFragment: Fragment(R.layout.fragment_reauth_user) {
             .map { ResetPasswordFragment() }
             .onEach { it.show(childFragmentManager, null) }
             .launchIn(lifecycleScope)
+
+        viewModel.sharedButtonEnabled
+            .onEach { binding.connectBtn.isEnabled = it }
+            .launchIn(lifecycleScope)
+
     }
 
 }

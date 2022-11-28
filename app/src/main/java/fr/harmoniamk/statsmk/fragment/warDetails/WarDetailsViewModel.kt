@@ -3,6 +3,7 @@ package fr.harmoniamk.statsmk.fragment.warDetails
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.extension.*
 import fr.harmoniamk.statsmk.fragment.currentWar.CurrentPlayerModel
 import fr.harmoniamk.statsmk.model.firebase.Penalty
@@ -46,10 +47,14 @@ class WarDetailsViewModel @Inject constructor(private val firebaseRepository: Fi
 
     fun bind(warId: String?, onTrackClick: Flow<Int>, onDeleteWar: Flow<Unit>) {
         warId?.let { id ->
+
+            firebaseRepository.getUser(authenticationRepository.user?.uid)
+                .mapNotNull { it?.role == UserRole.GOD.ordinal}
+                .bind(_sharedDeleteWarVisible, viewModelScope)
+
             firebaseRepository.getNewWar(id)
                 .onEach {
                     _sharedPlayerHost.emit("Créée par ${firebaseRepository.getUser(it?.playerHostId ?: "").firstOrNull()?.name ?: ""}")
-                    _sharedDeleteWarVisible.emit(authenticationRepository.user?.uid == "ZMqKjfrGfVbL2ca75zPJdWdhaKE2")
                     _sharedWarName.emit(listOf(MKWar(it)).withName(firebaseRepository).firstOrNull()?.singleOrNull()?.name)
                     it?.penalties?.let { penalty ->
                         _sharedPenalties.emit(penalty.withTeamName(firebaseRepository).firstOrNull())

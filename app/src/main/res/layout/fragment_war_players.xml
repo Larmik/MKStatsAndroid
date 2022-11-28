@@ -44,20 +44,19 @@
 
 
     <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/roboto"
-            android:visibility="invisible"
-            android:textColor="@color/text_color"
-            android:layout_marginVertical="15dp"
-            android:paddingVertical="10dp"
-            android:gravity="center"
-            android:id="@+id/start_war_btn"
-            android:text="Démarrer la war"
-            android:textSize="14sp"
-            android:background="@drawable/rounded_bg"
-            android:backgroundTint="?android:colorAccent"
-            tools:targetApi="n_mr1"/>
+        android:id="@+id/start_war_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:enabled="false"
+        android:layout_marginVertical="15dp"
+        android:background="@drawable/button_background"
+        android:fontFamily="@font/roboto"
+        android:gravity="center"
+        android:paddingVertical="10dp"
+        android:text="Démarrer la war"
+        android:textColor="@color/text_color"
+        android:textSize="14sp"
+        tools:targetApi="n_mr1" />
 
 
 </LinearLayout>

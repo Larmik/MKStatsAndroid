@@ -56,7 +56,7 @@ class ManagePlayersFragment : Fragment(R.layout.fragment_manage_players) {
                     .launchIn(lifecycleScope)
             }.launchIn(lifecycleScope)
         viewModel.sharedAddPlayerVisibility
-            .onEach { binding.addPlayerBtn.visibility = it }
+            .onEach { binding.editTeamBtn.visibility = it }
             .launchIn(lifecycleScope)
         viewModel.sharedEdit
             .onEach {

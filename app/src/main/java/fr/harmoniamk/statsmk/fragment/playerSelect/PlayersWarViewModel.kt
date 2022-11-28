@@ -22,7 +22,8 @@ class PlayersWarViewModel@Inject constructor(private val firebaseRepository: Fir
     private val _sharedPlayers = MutableSharedFlow<List<UserSelector>>()
     private val _sharedUsersSelected = MutableSharedFlow<List<User>>()
     private val _sharedOfficial = MutableSharedFlow<Boolean>()
-
+    private val _sharedButtonEnabled = MutableSharedFlow<Boolean>()
+    val sharedButtonEnabled = _sharedButtonEnabled.asSharedFlow()
     val sharedPlayers = _sharedPlayers.asSharedFlow()
     val sharedUsersSelected = _sharedUsersSelected.asSharedFlow()
     val sharedOfficial = _sharedOfficial.asSharedFlow()
@@ -51,6 +52,7 @@ class PlayersWarViewModel@Inject constructor(private val firebaseRepository: Fir
                     it.user?.let { user -> usersSelected.add(user) }
                 else usersSelected.remove(it.user)
                 _sharedUsersSelected.emit(usersSelected)
+                _sharedButtonEnabled.emit(usersSelected.size == 6)
             }.launchIn(viewModelScope)
 
         onOfficialChecked.bind(_sharedOfficial, viewModelScope)

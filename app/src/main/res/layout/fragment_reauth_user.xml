@@ -32,6 +32,7 @@
             android:layout_marginHorizontal="10dp"
             android:layout_marginVertical="20dp"
             app:hintTextColor="@color/harmonia_dark"
+            android:textColorHint="@color/harmonia_dark"
             android:backgroundTint="@color/white_alphaed"
             android:background="@drawable/rounded_bg"
             android:layout_height="70dp">
@@ -39,6 +40,9 @@
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="@color/white"
+                android:textColor="@color/harmonia_dark"
+                android:inputType="textPassword"
                 android:textCursorDrawable="@null"
                 android:id="@+id/password_et"
                 android:hint="Entrez votre mot de passe:" />
@@ -54,8 +58,8 @@
         android:textColor="@color/white"
         android:id="@+id/connect_btn"
         android:textSize="14sp"
-        android:background="@drawable/rounded_bg"
-        android:backgroundTint="@color/harmonia_dark"
+        android:enabled="false"
+        android:background="@drawable/button_background"
         android:fontFamily="@font/montserrat_bold"
         android:text="Se connecter"
         android:gravity="center"
