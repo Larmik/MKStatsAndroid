@@ -85,13 +85,29 @@ class IndivStatsFragment : Fragment(R.layout.fragment_indiv_stats) {
         }.launchIn(lifecycleScope)
         viewModel.sharedMostDefeatedTeam
             .onEach {
-                binding.mostDefeatedTeam.text = it?.first
-                binding.mostDefeatedTeamTotal.text = "${it?.second} victoires"
+                when (it?.first) {
+                    "null" -> {
+                        binding.mostDefeatedTeam.text = "Aucune"
+                        binding.mostDefeatedTeamTotal.visibility = View.INVISIBLE
+                    }
+                    else -> {
+                        binding.mostDefeatedTeam.text = it?.first
+                        binding.mostDefeatedTeamTotal.text = "${it?.second} victoires"
+                    }
+                }
             }.launchIn(lifecycleScope)
         viewModel.sharedLessDefeatedTeam
             .onEach {
-                binding.lessDefeatedTeam.text = it?.first
-                binding.lessDefeatedTeamTotal.text = "${it?.second} défaites"
+                when (it?.first) {
+                    "null" -> {
+                        binding.lessDefeatedTeam.text = "Aucune"
+                        binding.lessDefeatedTeamTotal.visibility = View.INVISIBLE
+                    }
+                    else -> {
+                        binding.lessDefeatedTeam.text = it?.first
+                        binding.lessDefeatedTeamTotal.text = "${it?.second} défaites"
+                    }
+                }
             }.launchIn(lifecycleScope)
         viewModel.sharedTrackClick
             .filter { findNavController().currentDestination?.id == R.id.indivStatsFragment }
