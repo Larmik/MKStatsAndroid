@@ -41,9 +41,10 @@ class SettingsViewModel @Inject constructor(private val preferencesRepository: P
         onPopupTheme.bind(_sharedThemePopup, viewModelScope)
         val teamClick = onManageTeam.flatMapLatest { authenticationRepository.userRole }.shareIn(viewModelScope, SharingStarted.Eagerly, 1)
         val playersClick = onManagePlayers.flatMapLatest { authenticationRepository.userRole }.shareIn(viewModelScope, SharingStarted.Eagerly, 1)
+        val playerListClick = onPlayersClick.flatMapLatest { authenticationRepository.userRole }.shareIn(viewModelScope, SharingStarted.Eagerly, 1)
         teamClick.filter { it >= UserRole.ADMIN.ordinal && preferencesRepository.currentTeam != null }.map{}.bind(_sharedManageTeam, viewModelScope)
         playersClick.filter { it >= UserRole.ADMIN.ordinal && preferencesRepository.currentTeam != null }.map{}.bind(_sharedManagePlayers, viewModelScope)
-        flowOf(teamClick, playersClick)
+        flowOf(teamClick, playersClick, playerListClick)
             .flattenMerge()
             .filter { preferencesRepository.currentTeam == null || it < UserRole.ADMIN.ordinal }
             .map { "Vous devez être leader ou admin d'une équipe pour avoir accès à cette fonctionnalité." }
@@ -51,6 +52,6 @@ class SettingsViewModel @Inject constructor(private val preferencesRepository: P
         onTheme.bind(_sharedThemeClick, viewModelScope)
         onProfileClick.bind(_sharedGoToProfile, viewModelScope)
         onMigrate.onEach {}.launchIn(viewModelScope)
-        onPlayersClick.bind(_sharedGoToPlayers, viewModelScope)
+        playerListClick.filter { it >= UserRole.ADMIN.ordinal && preferencesRepository.currentTeam != null }.map{}.bind(_sharedGoToPlayers, viewModelScope)
     }
 }
