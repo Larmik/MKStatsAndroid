@@ -8,6 +8,7 @@ import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.isTrue
+import fr.harmoniamk.statsmk.fragment.manageTeams.ManageTeamsItemViewModel
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -23,13 +24,15 @@ class WarTeamViewModel @Inject constructor(private val firebaseRepository: Fireb
 
     private val _sharedTeams = MutableSharedFlow<List<Team>>()
     private val _sharedTeamSelected = MutableSharedFlow<Team>()
+    private val _sharedAddTeam = MutableSharedFlow<Unit>()
 
     val sharedTeams = _sharedTeams.asSharedFlow()
     val sharedTeamSelected = _sharedTeamSelected.asSharedFlow()
+    val sharedAddTeam = _sharedAddTeam.asSharedFlow()
 
     private val teams = mutableListOf<Team>()
 
-    fun bind(onTeamClick: Flow<Team>, onSearch: Flow<String>) {
+    fun bind(onTeamClick: Flow<Team>, onSearch: Flow<String>, onAddTeam: Flow<Unit>) {
         onTeamClick.bind(_sharedTeamSelected, viewModelScope)
         firebaseRepository.getTeams()
             .map {
@@ -46,6 +49,14 @@ class WarTeamViewModel @Inject constructor(private val firebaseRepository: Fireb
                 }.sortedBy { it.name }
             }
             .bind(_sharedTeams, viewModelScope)
-
+        onAddTeam.bind(_sharedAddTeam, viewModelScope)
     }
+
+    fun bindAddDialog(onTeamAdded: Flow<Unit>) {
+        onTeamAdded
+            .flatMapLatest {  firebaseRepository.getTeams() }
+            .map { list -> list.sortedBy { it.name } }
+            .bind(_sharedTeams, viewModelScope)
+    }
+
 }

@@ -11,7 +11,9 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.databinding.FragmentWarTeamBinding
 import fr.harmoniamk.statsmk.extension.bind
+import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.extension.onTextChanged
+import fr.harmoniamk.statsmk.fragment.manageTeams.AddTeamFragment
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -30,8 +32,17 @@ class WarTeamFragment(val onSelectedTeam: MutableSharedFlow<Team>) : Fragment(R.
         super.onViewCreated(view, savedInstanceState)
         val adapter = TeamListAdapter()
         binding.teamRv.adapter = adapter
-        viewModel.bind(adapter.onTeamClick, binding.searchEt.onTextChanged())
+        viewModel.bind(adapter.onTeamClick, binding.searchEt.onTextChanged(), binding.addTeamBtn.clicks())
         viewModel.sharedTeams.onEach { adapter.addTeams(it) }.launchIn(lifecycleScope)
         viewModel.sharedTeamSelected.bind(onSelectedTeam, lifecycleScope)
+        viewModel.sharedAddTeam
+            .onEach {
+                val addTeamFragment = AddTeamFragment()
+                viewModel.bindAddDialog(addTeamFragment.onTeamAdded)
+                addTeamFragment.takeIf { !it.isAdded }?.show(childFragmentManager, null)
+                addTeamFragment.onTeamAdded
+                    .onEach { addTeamFragment.dismiss() }
+                    .launchIn(lifecycleScope)
+            }.launchIn(lifecycleScope)
     }
 }
