@@ -6,7 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.isTrue
-import fr.harmoniamk.statsmk.fragment.managePlayers.ManagePlayersItemViewModel
+import fr.harmoniamk.statsmk.fragment.settings.managePlayers.ManagePlayersItemViewModel
 import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface

@@ -10,7 +10,6 @@ import fr.harmoniamk.statsmk.databinding.PlayerCategoryItemBinding
 import fr.harmoniamk.statsmk.databinding.PlayerItemBinding
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.extension.isTrue
-import fr.harmoniamk.statsmk.fragment.managePlayers.ManagePlayersAdapter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

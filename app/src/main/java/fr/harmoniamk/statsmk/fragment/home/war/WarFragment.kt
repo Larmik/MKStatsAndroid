@@ -14,9 +14,8 @@ import fr.harmoniamk.statsmk.databinding.FragmentWarBinding
 import fr.harmoniamk.statsmk.extension.clicks
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import fr.harmoniamk.statsmk.extension.onTextChanged
 import fr.harmoniamk.statsmk.fragment.home.HomeFragmentDirections
-import fr.harmoniamk.statsmk.fragment.manageTeams.AddTeamFragment
+import fr.harmoniamk.statsmk.fragment.settings.manageTeams.AddTeamFragment
 import kotlinx.coroutines.flow.*
 
 @FlowPreview

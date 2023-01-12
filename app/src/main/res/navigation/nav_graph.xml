@@ -109,14 +109,26 @@
             app:enterAnim="@anim/enter_from_right"
             app:exitAnim="@anim/exit_to_left"
             app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right"/>
+            app:popExitAnim="@anim/exit_to_right">
+
+            <argument
+                android:name="wars"
+                app:argType="fr.harmoniamk.statsmk.model.local.MKWar[]"/>
+
+        </action>
         <action
             android:id="@+id/to_team_stats"
             app:destination="@id/teamStatsFragment"
             app:enterAnim="@anim/enter_from_right"
             app:exitAnim="@anim/exit_to_left"
             app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right"/>
+            app:popExitAnim="@anim/exit_to_right">
+
+            <argument
+                android:name="wars"
+                app:argType="fr.harmoniamk.statsmk.model.local.MKWar[]"/>
+
+        </action>
         <action
             android:id="@+id/to_map_ranking"
             app:destination="@id/mapRankingFragment"
@@ -288,7 +300,7 @@
 
     <fragment
         android:id="@+id/managePlayersFragment"
-        android:name="fr.harmoniamk.statsmk.fragment.managePlayers.ManagePlayersFragment"
+        android:name="fr.harmoniamk.statsmk.fragment.settings.managePlayers.ManagePlayersFragment"
         tools:layout="@layout/fragment_manage_players"
         android:label="ManagePlayersFragment">
 
@@ -313,7 +325,7 @@
 
     <fragment
         android:id="@+id/manageTeamsFragment"
-        android:name="fr.harmoniamk.statsmk.fragment.manageTeams.ManageTeamsFragment"
+        android:name="fr.harmoniamk.statsmk.fragment.settings.manageTeams.ManageTeamsFragment"
         tools:layout="@layout/fragment_manage_teams"
         android:label="ManageTeamsFragment"/>
 
@@ -384,7 +396,7 @@
 
     <fragment
         android:id="@+id/profileFragment"
-        android:name="fr.harmoniamk.statsmk.fragment.profile.ProfileFragment"
+        android:name="fr.harmoniamk.statsmk.fragment.settings.profile.ProfileFragment"
         tools:layout="@layout/fragment_profile"
         android:label="ProfileFragment">
 
@@ -518,7 +530,7 @@
 
     <fragment
         android:id="@+id/indivStatsFragment"
-        android:name="fr.harmoniamk.statsmk.fragment.indivStats.IndivStatsFragment"
+        android:name="fr.harmoniamk.statsmk.fragment.stats.indivStats.IndivStatsFragment"
         tools:layout="@layout/fragment_indiv_stats"
         android:label="IndivStatsFragment">
 
@@ -533,6 +545,11 @@
                 android:name="trackId"
                 app:argType="integer"
                 app:nullable="false"/>
+
+            <argument
+                android:name="isIndiv"
+                app:argType="boolean"
+                android:defaultValue="true"/>
 
         </action>
 
@@ -555,7 +572,7 @@
 
     <fragment
         android:id="@+id/teamStatsFragment"
-        android:name="fr.harmoniamk.statsmk.fragment.teamStats.TeamStatsFragment"
+        android:name="fr.harmoniamk.statsmk.fragment.stats.teamStats.TeamStatsFragment"
         tools:layout="@layout/fragment_indiv_stats"
         android:label="TeamStatsFragment">
 
@@ -571,6 +588,12 @@
                 android:name="trackId"
                 app:argType="integer"
                 app:nullable="false"/>
+
+
+            <argument
+                android:name="isIndiv"
+                app:argType="boolean"
+                android:defaultValue="false"/>
 
         </action>
 
@@ -592,7 +615,7 @@
 
     <fragment
         android:id="@+id/mapStatsFragment"
-        android:name="fr.harmoniamk.statsmk.fragment.mapStats.MapStatsFragment"
+        android:name="fr.harmoniamk.statsmk.fragment.stats.mapStats.MapStatsFragment"
         tools:layout="@layout/fragment_map_stats"
         android:label="MapStatsFragment">
 
@@ -619,7 +642,7 @@
     </fragment>
     <fragment
         android:id="@+id/mapRankingFragment"
-        android:name="fr.harmoniamk.statsmk.fragment.mapRanking.MapRankingFragment"
+        android:name="fr.harmoniamk.statsmk.fragment.stats.mapRanking.MapRankingFragment"
         tools:layout="@layout/fragment_map_ranking"
         android:label="MapRankingFragment">
 
@@ -636,7 +659,7 @@
                 app:nullable="false"/>
 
             <argument
-                android:name="indiv"
+                android:name="isIndiv"
                 app:argType="boolean"
                 app:nullable="false"/>
 

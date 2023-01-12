@@ -4,12 +4,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.databinding.FragmentSubPlayerBinding
 import fr.harmoniamk.statsmk.extension.clicks
+import fr.harmoniamk.statsmk.extension.onTextChanged
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -39,19 +41,29 @@ class SubPlayerFragment : BottomSheetDialogFragment() {
         val currentAdapter = SubPlayerAdapter()
         val otherAdapter = SubPlayerAdapter()
         binding.currentPlayersRv.adapter = currentAdapter
-        binding.otherPlayersRv.adapter = otherAdapter
         viewModel.bind(
             onSubClick = binding.subPlayersBtn.clicks(),
             onCancel = binding.cancelBtn.clicks(),
             onOldPlayerSelect = currentAdapter.sharedUserSelected.mapNotNull { it.user },
-            onNewPlayerSelect = otherAdapter.sharedUserSelected.mapNotNull { it.user }
+            onNewPlayerSelect = otherAdapter.sharedUserSelected.mapNotNull { it.user },
+            onSearch = binding.searchSubEt.onTextChanged()
         )
         viewModel.sharedCurrentPlayers
             .onEach { currentAdapter.addUsers(it) }
             .launchIn(lifecycleScope)
         viewModel.sharedOtherPlayers
-            .onEach { otherAdapter.addUsers(it) }
+            .onEach {
+                otherAdapter.addUsers(it)
+            }
             .launchIn(lifecycleScope)
+
+        viewModel.sharedPlayerSelected
+            .onEach {
+                binding.searchSubEt.isVisible = true
+                binding.subLabel.text = "Sélectionnez le joueur entrant"
+                binding.subPlayersBtn.text = "Remplacer le joueur"
+                binding.currentPlayersRv.adapter = otherAdapter
+            }.launchIn(lifecycleScope)
         viewModel.sharedDismissDialog
             .onEach {
                 dialog?.dismiss()

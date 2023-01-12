@@ -11,9 +11,9 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentPlayerListBinding
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.extension.onTextChanged
-import fr.harmoniamk.statsmk.fragment.managePlayers.AddPlayersFragment
-import fr.harmoniamk.statsmk.fragment.managePlayers.EditPlayerFragment
-import fr.harmoniamk.statsmk.fragment.managePlayers.ManagePlayersAdapter
+import fr.harmoniamk.statsmk.fragment.settings.managePlayers.AddPlayersFragment
+import fr.harmoniamk.statsmk.fragment.settings.managePlayers.EditPlayerFragment
+import fr.harmoniamk.statsmk.fragment.settings.managePlayers.ManagePlayersAdapter
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.collect

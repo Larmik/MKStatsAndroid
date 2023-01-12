@@ -52,12 +52,11 @@ class ConnectUserViewModel @Inject constructor(private val firebaseRepository: F
         connectUser
             .mapNotNull { (it as? AuthUserResponse.Success)?.user?.uid }
             .flatMapLatest { firebaseRepository.getUser(it) }
-            .filterNotNull()
             .onEach {
                 preferencesRepository.authEmail = email
                 preferencesRepository.authPassword = password
             }
-            .mapNotNull { it.team }
+            .map { it?.team }
             .flatMapLatest { firebaseRepository.getTeam(it) }
             .onEach {
                 preferencesRepository.currentTeam = it

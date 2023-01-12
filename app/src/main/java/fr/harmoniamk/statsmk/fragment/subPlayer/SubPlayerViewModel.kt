@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.extension.bind
+import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.fragment.playerSelect.UserSelector
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
@@ -11,6 +12,7 @@ import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
+import java.util.*
 import javax.inject.Inject
 
 @FlowPreview
@@ -21,20 +23,31 @@ class SubPlayerViewModel @Inject constructor(private val firebaseRepository: Fir
     private val _sharedCurrentPlayers = MutableSharedFlow<List<UserSelector>>()
     private val _sharedOtherPlayers = MutableSharedFlow<List<UserSelector>>()
     private val _sharedDismissDialog = MutableSharedFlow<Unit>()
+    private val _sharedPlayerSelected = MutableSharedFlow<Unit>()
+    private val _sharedState = MutableSharedFlow<Int>()
 
     val sharedCurrentPlayers = _sharedCurrentPlayers.asSharedFlow()
     val sharedOtherPlayers = _sharedOtherPlayers.asSharedFlow()
     val sharedDismissDialog = _sharedDismissDialog.asSharedFlow()
+    val sharedPlayerSelected = _sharedPlayerSelected.asSharedFlow()
+    val sharedState = _sharedState.asSharedFlow()
 
-    fun bind(onSubClick: Flow<Unit>, onCancel: Flow<Unit>, onOldPlayerSelect: Flow<User>, onNewPlayerSelect: Flow<User>) {
+    val playersList = mutableListOf<UserSelector>()
+
+    fun bind(onSubClick: Flow<Unit>, onCancel: Flow<Unit>, onOldPlayerSelect: Flow<User>, onNewPlayerSelect: Flow<User>, onSearch: Flow<String>) {
         var oldPlayer: User? = null
         var newPlayer: User? = null
         firebaseRepository.getUsers()
             .onEach {
+                playersList.clear()
+                playersList.addAll(it.filter { user -> user.currentWar == "-1" }.map { UserSelector(user = it, isSelected = false) })
                 _sharedCurrentPlayers.emit(it.filter { user -> user.currentWar == preferencesRepository.currentWar?.mid }.map { UserSelector(user = it, isSelected = false) } )
-                _sharedOtherPlayers.emit(it.filter { user -> user.currentWar == "-1" }.map { UserSelector(user = it, isSelected = false) } )
+                _sharedOtherPlayers.emit(playersList)
             }.launchIn(viewModelScope)
-        onOldPlayerSelect.onEach { oldPlayer = it }.launchIn(viewModelScope)
+        onOldPlayerSelect.onEach {
+            oldPlayer = it
+            _sharedPlayerSelected.emit(Unit)
+        }.launchIn(viewModelScope)
         onNewPlayerSelect.onEach { newPlayer = it }.launchIn(viewModelScope)
 
         onSubClick
@@ -44,6 +57,14 @@ class SubPlayerViewModel @Inject constructor(private val firebaseRepository: Fir
             .flatMapLatest { firebaseRepository.writeUser(it) }
             .bind(_sharedDismissDialog, viewModelScope)
         onCancel.bind(_sharedDismissDialog, viewModelScope)
+        onSearch
+            .filterNot { it.isEmpty() }
+            .map { searched -> playersList.filter { it.user?.name?.toLowerCase(Locale.ROOT)?.contains(searched.toLowerCase(Locale.ROOT)).isTrue }}
+            .bind(_sharedOtherPlayers, viewModelScope)
+        onSearch
+            .filter { it.isEmpty() }
+            .map { playersList }
+            .bind(_sharedOtherPlayers, viewModelScope)
     }
 
 }

@@ -32,11 +32,11 @@ class StatsFragment : Fragment(R.layout.fragment_stats) {
         viewModel.bind(binding.indivStats.clicks(), binding.teamStats.clicks(), binding.mapStats.clicks())
         viewModel.sharedIndiv
             .filter { findNavController().currentDestination?.id == R.id.homeFragment }
-            .onEach { findNavController().navigate(HomeFragmentDirections.toIndivStats()) }
+            .onEach { findNavController().navigate(HomeFragmentDirections.toIndivStats(it.toTypedArray())) }
             .launchIn(lifecycleScope)
         viewModel.sharedTeam
             .filter { findNavController().currentDestination?.id == R.id.homeFragment }
-            .onEach { findNavController().navigate(HomeFragmentDirections.toTeamStats()) }
+            .onEach { findNavController().navigate(HomeFragmentDirections.toTeamStats(it.toTypedArray())) }
             .launchIn(lifecycleScope)
         viewModel.sharedMap
             .filter { findNavController().currentDestination?.id == R.id.homeFragment }

@@ -13,7 +13,7 @@ import fr.harmoniamk.statsmk.databinding.FragmentWarTeamBinding
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.extension.onTextChanged
-import fr.harmoniamk.statsmk.fragment.manageTeams.AddTeamFragment
+import fr.harmoniamk.statsmk.fragment.settings.manageTeams.AddTeamFragment
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow

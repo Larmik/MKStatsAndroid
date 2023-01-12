@@ -9,6 +9,9 @@ import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
 
 data class MKWarTrack(val track: NewWarTrack?) {
 
+    val index
+        get() = track?.trackIndex
+
     val teamScore: Int
         get() = track?.warPositions?.map { it.position.positionToPoints() }.sum()
 
