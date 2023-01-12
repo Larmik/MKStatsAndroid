@@ -1,6 +1,5 @@
 package fr.harmoniamk.statsmk.extension
 
-import fr.harmoniamk.statsmk.fragment.currentWar.CurrentPlayerModel
 import fr.harmoniamk.statsmk.model.firebase.NewWarPositions
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
 import fr.harmoniamk.statsmk.model.firebase.Penalty

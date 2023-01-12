@@ -29,7 +29,7 @@ data class MKTournament(
     val isOver = trackPlayed == trackCount
 
     @Ignore
-    val infos = "${trackCount} courses - $parsedCC"
+    val infos = "$trackCount courses - $parsedCC"
 
     @Ignore
     val ratio: Int? = trackCount?.let {

@@ -8,7 +8,6 @@ import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.RadioGroup
-import androidx.appcompat.widget.SwitchCompat
 import androidx.core.widget.addTextChangedListener
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose

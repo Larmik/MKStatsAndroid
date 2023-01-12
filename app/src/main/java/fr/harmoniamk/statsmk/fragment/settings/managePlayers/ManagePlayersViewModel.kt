@@ -106,15 +106,6 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
 
     }
 
-    fun bindAddDialog(onPlayedAdded: Flow<Unit>) {
-        onPlayedAdded
-            .flatMapLatest {  firebaseRepository.getUsers() }
-            .map { createPlayersList(list = it) }
-            .filter { authenticationRepository.user != null }
-            .onEach { _sharedPlayers.emit(it) }
-            .launchIn(viewModelScope)
-    }
-
     fun bindEditTeamDialog(onTeamEdited: Flow<Team>) {
         onTeamEdited
             .onEach { preferencesRepository.currentTeam = it }

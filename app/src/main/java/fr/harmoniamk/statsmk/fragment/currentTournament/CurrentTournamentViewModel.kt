@@ -27,10 +27,6 @@ class CurrentTournamentViewModel @Inject constructor(
     private val _sharedScore = MutableSharedFlow<Int>()
     private val _sharedTracks = MutableSharedFlow<List<MKTournamentTrack>>()
 
-    val sharedAddTrack = _sharedAddTrack.asSharedFlow()
-    val sharedCancel = _sharedCancel.asSharedFlow()
-    val sharedQuit = _sharedQuit.asSharedFlow()
-    val sharedBack = _sharedBack.asSharedFlow()
     val sharedTracks = _sharedTracks.asSharedFlow()
     val sharedScore = _sharedScore.asSharedFlow()
 
@@ -48,8 +44,4 @@ class CurrentTournamentViewModel @Inject constructor(
         onCancel.bind(_sharedCancel, viewModelScope)
     }
 
-    fun bindDialog(onQuit: Flow<Unit>, onBack: Flow<Unit>) {
-        onQuit.bind(_sharedQuit, viewModelScope)
-        onBack.bind(_sharedBack, viewModelScope)
-    }
 }

@@ -2,8 +2,6 @@ package fr.harmoniamk.statsmk.model.local
 
 import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.extension.*
-import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
-import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 
@@ -21,7 +19,7 @@ class Stats(
      val mostPlayedMap: TrackStats? = averageForMaps.maxByOrNull { it.totalPlayed }
      val averagePoints: Int = warScores.map { it.score }.sum() / (warScores.takeIf { it.isNotEmpty() }?.size ?: 1)
      val averagePointsLabel: String = averagePoints.warScoreToDiff()
-     val averageMapPoints: Int = (maps.map { it.score }.sum() / (maps.takeIf { it.isNotEmpty() }?.size ?: 1))
+     private val averageMapPoints: Int = (maps.map { it.score }.sum() / (maps.takeIf { it.isNotEmpty() }?.size ?: 1))
      val averageMapPointsLabel = averageMapPoints.trackScoreToDiff()
      val averagePlayerMapPoints: Int = averageMapPoints.pointsToPosition()
  }
@@ -63,7 +61,7 @@ class MapDetails(
 @ExperimentalCoroutinesApi
 class MapStats(
     val list: List<MapDetails>,
-    val isIndiv: Boolean,
+    private val isIndiv: Boolean,
     userId: String? = null
 ) {
     private val playerScoreList = list
@@ -84,7 +82,6 @@ class MapStats(
         .filter { pair -> pair.warTrack.displayedDiff.contains('-') }
         .filter { !isIndiv || (isIndiv && it.war.war?.warTracks?.any { MKWarTrack(it).hasPlayer(userId) }.isTrue) }
         .count()
-    val winRate = "${(trackWon*100) / trackPlayed} %"
     val teamScore = list.map { pair -> pair.warTrack }.map { it.teamScore }.sum() / list.size
     val playerScore = playerScoreList.takeIf { it.isNotEmpty() }?.let {  (playerScoreList.sum() / playerScoreList.size).pointsToPosition() } ?: 0
     val highestVictory = list.filter { !isIndiv || (isIndiv && it.war.war?.warTracks?.any { MKWarTrack(it).hasPlayer(userId) }.isTrue) }.getVictory()

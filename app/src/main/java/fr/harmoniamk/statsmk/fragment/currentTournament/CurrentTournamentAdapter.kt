@@ -22,7 +22,6 @@ class CurrentTournamentAdapter(val items: MutableList<MKTournamentTrack> = mutab
     RecyclerView.Adapter<CurrentTournamentAdapter.CurrentTrackViewHolder>(), CoroutineScope {
 
     private val _sharedTrackToEdit = MutableSharedFlow<MKTournamentTrack>()
-    val sharedTrackToEdit = _sharedTrackToEdit.asSharedFlow()
 
     class CurrentTrackViewHolder(val binding: TrackItemBinding) :
         RecyclerView.ViewHolder(binding.root) {

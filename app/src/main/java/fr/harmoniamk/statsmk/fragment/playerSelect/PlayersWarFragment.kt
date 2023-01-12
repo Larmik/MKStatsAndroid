@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.*
 @FlowPreview
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
-class PlayersWarFragment(val onWarCreated: MutableSharedFlow<Unit>, val onUsersSelected: MutableSharedFlow<List<User>>, val onOfficialCheck: MutableSharedFlow<Boolean>) : Fragment(R.layout.fragment_war_players) {
+class PlayersWarFragment(private val onWarCreated: MutableSharedFlow<Unit>, private val onUsersSelected: MutableSharedFlow<List<User>>, private val onOfficialCheck: MutableSharedFlow<Boolean>) : Fragment(R.layout.fragment_war_players) {
 
     private val binding: FragmentWarPlayersBinding by viewBinding()
     private val viewModel: PlayersWarViewModel by viewModels()

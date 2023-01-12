@@ -20,7 +20,7 @@ data class MKWarTrack(val track: NewWarTrack?) {
 
     fun hasPlayer(playerId: String?) = track?.warPositions?.any { pos -> pos.playerId == playerId }.isTrue
 
-    val opponentScore: Int
+    private val opponentScore: Int
         get() {
             teamScore.takeIf { it != 0 }?.let {
                 return TOTAL_TRACK_SCORE - it

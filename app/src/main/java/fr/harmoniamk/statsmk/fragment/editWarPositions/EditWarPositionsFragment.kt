@@ -10,7 +10,6 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.databinding.FragmentEditWarPositionsBinding
-import fr.harmoniamk.statsmk.extension.backPressedDispatcher
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.model.firebase.NewWar

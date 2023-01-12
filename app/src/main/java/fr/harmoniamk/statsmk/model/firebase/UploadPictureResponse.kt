@@ -1,6 +1,6 @@
 package fr.harmoniamk.statsmk.model.firebase
 
-sealed class UploadPictureResponse() {
+sealed class UploadPictureResponse {
     class Success : UploadPictureResponse()
     class Error: UploadPictureResponse()
 }

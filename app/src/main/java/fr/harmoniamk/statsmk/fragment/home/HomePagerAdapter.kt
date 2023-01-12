@@ -11,7 +11,7 @@ import kotlinx.coroutines.FlowPreview
 
 @FlowPreview
 @ExperimentalCoroutinesApi
-class HomePagerAdapter(val fa: FragmentActivity) : FragmentStateAdapter(fa) {
+class HomePagerAdapter(private val fa: FragmentActivity) : FragmentStateAdapter(fa) {
 
     fun getTabTitle(position: Int): String = fa.getString(when (position) {
         //0 -> R.string.tournament

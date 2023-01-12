@@ -6,11 +6,9 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.extension.*
-import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.local.*
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
-import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
@@ -19,7 +17,10 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class IndivStatsViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface) : ViewModel() {
+class IndivStatsViewModel @Inject constructor(
+    private val firebaseRepository: FirebaseRepositoryInterface,
+    private val authenticationRepository: AuthenticationRepositoryInterface
+) : ViewModel() {
 
     private val _sharedMostPlayedTeam = MutableSharedFlow<TeamStats?>()
     private val _sharedMostDefeatedTeam = MutableSharedFlow<Pair<String?, Int?>?>()

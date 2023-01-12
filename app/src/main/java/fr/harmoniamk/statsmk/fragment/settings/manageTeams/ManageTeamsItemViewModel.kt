@@ -5,7 +5,6 @@ import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
-import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.firstOrNull

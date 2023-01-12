@@ -1,6 +1,5 @@
 package fr.harmoniamk.statsmk.fragment.warTrackResult
 
-import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat

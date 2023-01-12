@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.onEach
 @ExperimentalCoroutinesApi
 @FlowPreview
 @AndroidEntryPoint
-class AddPlayersFragment() : BottomSheetDialogFragment() {
+class AddPlayersFragment : BottomSheetDialogFragment() {
 
     lateinit var binding: FragmentAddPlayersBinding
     private val viewModel: AddPlayersViewModel by viewModels()

@@ -15,7 +15,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 
 @ExperimentalCoroutinesApi
-class PopupFragment(val message: String, val positiveText: String? = null, val negativeText: String = "Retour", val editTextHint: String? = null) : DialogFragment() {
+class PopupFragment(val message: String, val positiveText: String? = null, private val negativeText: String = "Retour", val editTextHint: String? = null) : DialogFragment() {
 
     lateinit var binding: FragmentPopupBinding
 

@@ -30,9 +30,7 @@ class TournamentViewModel @Inject constructor(
     val sharedLastTournaments = _sharedLastTournaments.asSharedFlow()
     val sharedBestTournaments = _sharedBestTournaments.asSharedFlow()
     val currentTournament = _currentTournament.asSharedFlow()
-    val sharedAdd = _sharedAdd.asSharedFlow()
     val sharedRemainingTracks = _sharedRemainingTracks.asSharedFlow()
-    val sharedGoToTM = _sharedGoToTM.asSharedFlow()
 
     fun bind(addTournamentClick: Flow<Unit>, onClickMKTournament: Flow<MKTournament>) {
 

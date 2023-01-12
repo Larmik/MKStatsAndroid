@@ -4,9 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.enums.UserRole
-import fr.harmoniamk.statsmk.extension.*
-import fr.harmoniamk.statsmk.model.firebase.NewWar
-import fr.harmoniamk.statsmk.model.local.MKTeam
+import fr.harmoniamk.statsmk.extension.bind
+import fr.harmoniamk.statsmk.extension.getCurrent
+import fr.harmoniamk.statsmk.extension.getLasts
+import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface

@@ -12,7 +12,6 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
-import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.model.firebase.AuthUserResponse
 import fr.harmoniamk.statsmk.model.firebase.ResetPasswordResponse
 import kotlinx.coroutines.ExperimentalCoroutinesApi

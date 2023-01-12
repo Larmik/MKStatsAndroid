@@ -38,7 +38,7 @@ class ProfileFragment: Fragment(R.layout.fragment_profile) {
     private val viewModel: ProfileViewModel by viewModels()
     private val _onPictureSave = MutableSharedFlow<String>()
     private val disconnectPopup by lazy { PopupFragment("Êtes-vous sûr de vouloir vous déconnecter ?", "Se déconnecter") }
-    var isPicking = false
+    private var isPicking = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

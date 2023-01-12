@@ -37,7 +37,7 @@ class MapRankingViewModel @Inject constructor(private val preferencesRepository:
     val sharedGoToStats = _sharedGoToStats.asSharedFlow()
     val sharedSortTypeSelected = _sharedSortTypeSelected.asStateFlow()
     val sharedIndivStatsEnabled = _sharedIndivStatsEnabled.asStateFlow()
-    val temp = mutableListOf<NewWarTrack>()
+    private val temp = mutableListOf<NewWarTrack>()
     val final = mutableListOf<TrackStats>()
 
     fun bind(onTrackClick: Flow<Int>, onSortClick: Flow<TrackSortType>, onSearch: Flow<String>, onIndivStatsSelected: Flow<Boolean>) {

@@ -38,7 +38,7 @@ interface PlayedTrackDataSourceModule {
 class PlayedTrackDataSource @Inject constructor(@ApplicationContext private val context: Context) :
     PlayedTrackDataSourceInterface {
 
-    val dao = MKDatabase.getInstance(context).playedTrackDao()
+    private val dao = MKDatabase.getInstance(context).playedTrackDao()
 
     override fun getAll(): Flow<List<MKTournamentTrack>> = dao.getAll()
     override fun getById(id: Int): Flow<MKTournamentTrack> = dao.getById(id)

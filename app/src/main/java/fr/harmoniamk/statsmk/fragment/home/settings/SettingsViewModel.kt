@@ -5,15 +5,10 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.extension.bind
-import fr.harmoniamk.statsmk.model.firebase.NewWar
-import fr.harmoniamk.statsmk.model.firebase.NewWarPositions
-import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
-import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
@@ -32,7 +27,6 @@ class SettingsViewModel @Inject constructor(private val preferencesRepository: P
     val sharedThemePopup = _sharedThemePopup.asSharedFlow()
     val sharedManageTeam = _sharedManageTeam.asSharedFlow()
     val sharedManagePlayers = _sharedManagePlayers.asSharedFlow()
-    val sharedThemeClick = _sharedThemeClick.asSharedFlow()
     val sharedToast = _sharedToast.asSharedFlow()
     val sharedGoToProfile = _sharedGoToProfile.asSharedFlow()
     val sharedGoToPlayers = _sharedGoToPlayers.asSharedFlow()

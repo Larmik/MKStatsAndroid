@@ -9,7 +9,6 @@ import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.getCurrent
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.local.MKWar
-import fr.harmoniamk.statsmk.repository.AuthenticationRepository
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface

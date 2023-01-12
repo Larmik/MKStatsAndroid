@@ -20,7 +20,6 @@ class AddTournamentViewModel @Inject constructor(private val tournamentRepositor
     ViewModel() {
 
     private val _sharedClose = MutableSharedFlow<Unit>()
-    val sharedClose = _sharedClose.asSharedFlow()
 
     fun bind(
         onNameAdded: Flow<String>,

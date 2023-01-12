@@ -34,13 +34,5 @@ data class MKTournamentTrack(
     }
 
     @Ignore
-    val isTimeTrial: Boolean =
-        tmId == null &&
-                position == null &&
-                lap1time != null &&
-                lap2time != null &&
-                lap3time != null
-
-    @Ignore
     val displayedPos = "$position."
 }

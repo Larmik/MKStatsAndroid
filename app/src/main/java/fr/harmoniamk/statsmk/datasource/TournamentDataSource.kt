@@ -42,7 +42,7 @@ interface TournamentDataSourceModule {
 class TournamentDataSource @Inject constructor(@ApplicationContext private val context: Context) :
     TournamentDataSourceInterface {
 
-    val dao = MKDatabase.getInstance(context).tournamentDao()
+    private val dao = MKDatabase.getInstance(context).tournamentDao()
 
     override fun getAll(): Flow<List<MKTournament>> = dao.getAll()
     override fun insert(MKTournament: MKTournament): Flow<Unit> = flowOf(dao.insert(MKTournament))

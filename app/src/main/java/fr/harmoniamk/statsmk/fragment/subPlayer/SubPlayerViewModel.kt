@@ -30,9 +30,8 @@ class SubPlayerViewModel @Inject constructor(private val firebaseRepository: Fir
     val sharedOtherPlayers = _sharedOtherPlayers.asSharedFlow()
     val sharedDismissDialog = _sharedDismissDialog.asSharedFlow()
     val sharedPlayerSelected = _sharedPlayerSelected.asSharedFlow()
-    val sharedState = _sharedState.asSharedFlow()
 
-    val playersList = mutableListOf<UserSelector>()
+    private val playersList = mutableListOf<UserSelector>()
 
     fun bind(onSubClick: Flow<Unit>, onCancel: Flow<Unit>, onOldPlayerSelect: Flow<User>, onNewPlayerSelect: Flow<User>, onSearch: Flow<String>) {
         var oldPlayer: User? = null

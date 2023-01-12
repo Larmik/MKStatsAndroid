@@ -1,14 +1,11 @@
 package fr.harmoniamk.statsmk.fragment.subPlayer
 
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import fr.harmoniamk.statsmk.R
-import fr.harmoniamk.statsmk.databinding.PlayerItemBinding
 import fr.harmoniamk.statsmk.databinding.SubPlayerItemBinding
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.fragment.playerSelect.UserSelector
@@ -29,7 +26,7 @@ class SubPlayerAdapter(val list: MutableList<UserSelector> = mutableListOf()) : 
     private val _sharedUserSelected = MutableSharedFlow<UserSelector>()
     val sharedUserSelected = _sharedUserSelected.asSharedFlow()
 
-    var oldPlayerHolder : PlayerViewHolder? = null
+    private var oldPlayerHolder : PlayerViewHolder? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         PlayerViewHolder(

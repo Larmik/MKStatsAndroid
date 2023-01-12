@@ -23,7 +23,7 @@ import kotlinx.coroutines.flow.onEach
 @FlowPreview
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
-class WarTeamFragment(val onSelectedTeam: MutableSharedFlow<Team>) : Fragment(R.layout.fragment_war_team) {
+class WarTeamFragment(private val onSelectedTeam: MutableSharedFlow<Team>) : Fragment(R.layout.fragment_war_team) {
 
     private val binding: FragmentWarTeamBinding by viewBinding()
     private val viewModel: WarTeamViewModel by viewModels()

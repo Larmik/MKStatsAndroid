@@ -3,15 +3,11 @@ package fr.harmoniamk.statsmk.fragment.home.war
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import fr.harmoniamk.statsmk.R
-import fr.harmoniamk.statsmk.databinding.BestTournamentItemBinding
 import fr.harmoniamk.statsmk.databinding.BestWarItemBinding
-import fr.harmoniamk.statsmk.databinding.LastTournamentItemBinding
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.extension.isTrue
-import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.local.MKWar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

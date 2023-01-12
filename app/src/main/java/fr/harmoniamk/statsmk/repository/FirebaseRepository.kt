@@ -196,7 +196,7 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
                         )
                     )
                 }.addOnCompleteListener {
-                    Log.d("MKDebug", "getUser: ${it.result.toString()}")
+                    Log.d("MKDebug", "getUser: ${it.result}")
                 }
         }
         awaitClose { }

@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.*
 @FlowPreview
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
-class EditRoleFragment(val currentRole: Int?) : BottomSheetDialogFragment() {
+class EditRoleFragment(private val currentRole: Int?) : BottomSheetDialogFragment() {
 
     lateinit var binding: FragmentEditRoleBinding
     private val viewModel: EditRoleViewModel by viewModels()

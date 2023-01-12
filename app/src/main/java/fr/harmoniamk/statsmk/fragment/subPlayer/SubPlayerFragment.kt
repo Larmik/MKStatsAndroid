@@ -30,7 +30,7 @@ class SubPlayerFragment : BottomSheetDialogFragment() {
 
     val sharedDismiss = MutableSharedFlow<Unit>()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentSubPlayerBinding.inflate(inflater, container, false)
         dialog?.setCancelable(false)
         return binding.root

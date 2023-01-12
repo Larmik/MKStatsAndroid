@@ -6,7 +6,6 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
 import fr.harmoniamk.statsmk.databinding.PenaltyItemBinding
 import fr.harmoniamk.statsmk.model.firebase.Penalty
-import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlin.coroutines.CoroutineContext

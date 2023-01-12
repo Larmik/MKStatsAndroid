@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
-import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.viewbinding.ViewBinding
 import fr.harmoniamk.statsmk.R

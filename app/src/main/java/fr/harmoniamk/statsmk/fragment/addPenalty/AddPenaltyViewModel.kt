@@ -26,7 +26,7 @@ class AddPenaltyViewModel @Inject constructor(private val firebaseRepository: Fi
     val sharedTeam1Selected = _sharedTeam1Selected.asSharedFlow()
     val sharedDismiss = _sharedDismiss.asSharedFlow()
 
-    var amount: Int? = null
+    private var amount: Int? = null
 
     fun bind(war: NewWar, onTeamSelected: Flow<String>, onAmountAdded: Flow<String?>, onPenaltyClick: Flow<Unit>) {
         var teamSelected: String? = war.teamHost

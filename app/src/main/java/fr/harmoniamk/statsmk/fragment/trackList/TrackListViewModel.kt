@@ -8,7 +8,6 @@ import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
-import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -19,7 +18,7 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class TrackListViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface) : ViewModel() {
+class TrackListViewModel @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface) : ViewModel() {
 
     private val _sharedSearchedItems = MutableSharedFlow<List<Maps>>()
     private val _sharedGoToWarPos = MutableSharedFlow<NewWarTrack>()

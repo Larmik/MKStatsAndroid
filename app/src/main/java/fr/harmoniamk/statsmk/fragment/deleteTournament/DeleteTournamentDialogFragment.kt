@@ -33,9 +33,6 @@ class DeleteTournamentDialogFragment(val tm: MKTournament) : AppCompatDialogFrag
     private val _sharedClose = MutableSharedFlow<Unit>()
     private val _sharedTmDeleted = MutableSharedFlow<Unit>()
 
-    val sharedTmDeleted = _sharedTmDeleted.asSharedFlow()
-    val sharedClose = _sharedClose.asSharedFlow()
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

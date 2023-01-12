@@ -15,7 +15,6 @@ import fr.harmoniamk.statsmk.model.local.MKWarPosition
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
-import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
@@ -24,7 +23,10 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class TrackDetailsViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface): ViewModel() {
+class TrackDetailsViewModel @Inject constructor(
+    private val firebaseRepository: FirebaseRepositoryInterface,
+    private val authenticationRepository: AuthenticationRepositoryInterface
+): ViewModel() {
 
     private val _sharedPositions = MutableSharedFlow<List<MKWarPosition>>()
     private val _sharedEditTrackClick = MutableSharedFlow<Unit>()
@@ -40,9 +42,9 @@ class TrackDetailsViewModel @Inject constructor(private val firebaseRepository: 
     val sharedTrackRefreshed = _sharedTrackRefreshed.asSharedFlow()
     val sharedWarName = _sharedWarName.asSharedFlow()
 
-    var warId: String = ""
+    private var warId: String = ""
     var index = 0
-    var warTrackId: String = ""
+    private var warTrackId: String = ""
 
     fun bind(war: NewWar, warTrack: NewWarTrack?, index: Int, onEditTrack: Flow<Unit>, onEditPositions: Flow<Unit>) {
 

@@ -12,7 +12,6 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentTrackListBinding
 import fr.harmoniamk.statsmk.extension.backPressedDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import fr.harmoniamk.statsmk.extension.onTextChanged
 import kotlinx.coroutines.FlowPreview
@@ -23,7 +22,7 @@ import kotlinx.coroutines.flow.onEach
 @FlowPreview
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
-class TrackListFragment(val onTrack: MutableSharedFlow<Int>? = null) :
+class TrackListFragment :
     Fragment(R.layout.fragment_track_list) {
 
     private val binding: FragmentTrackListBinding by viewBinding()

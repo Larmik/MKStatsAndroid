@@ -7,14 +7,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
-import fr.harmoniamk.statsmk.model.local.MKTournament
 import fr.harmoniamk.statsmk.databinding.FragmentCurrentTournamentBinding
 import fr.harmoniamk.statsmk.extension.clicks
-import fr.harmoniamk.statsmk.fragment.deleteTournament.DeleteTournamentDialogFragment
+import fr.harmoniamk.statsmk.model.local.MKTournament
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.filter
