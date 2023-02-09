@@ -47,7 +47,7 @@ class AllWarsViewModel @Inject constructor(private val firebaseRepository: Fireb
                 wars.addAll(it)
                 when {
                     filters.contains(WarFilterType.WEEK) -> wars.removeAll(it.filterNot { it.isThisWeek })
-                    filters.contains(WarFilterType.MONTH) -> wars.removeAll(it.filterNot { it.isThisMonth })
+                    filters.contains(WarFilterType.OFFICIAL) -> wars.removeAll(it.filterNot { it.war?.isOfficial.isTrue })
                     filters.contains(WarFilterType.PLAY) -> wars.removeAll(it.filterNot { it.hasPlayer(authenticationRepository.user?.uid) })
                 }
                 _sharedWars.emit(when (_sharedSortTypeSelected.value) {
@@ -72,7 +72,7 @@ class AllWarsViewModel @Inject constructor(private val firebaseRepository: Fireb
                         filteredWars.addAll(wars)
                         when {
                             filters.contains(WarFilterType.WEEK) -> filteredWars.removeAll(wars.filterNot { it.isThisWeek })
-                            filters.contains(WarFilterType.MONTH) -> filteredWars.removeAll(wars.filterNot { it.isThisMonth })
+                            filters.contains(WarFilterType.OFFICIAL) -> filteredWars.removeAll(wars.filterNot { it.war?.isOfficial.isTrue })
                             filters.contains(WarFilterType.PLAY) -> filteredWars.removeAll(wars.filterNot { it.hasPlayer(authenticationRepository.user?.uid) })
                         }
                         when (_sharedSortTypeSelected.value) {
@@ -86,7 +86,7 @@ class AllWarsViewModel @Inject constructor(private val firebaseRepository: Fireb
                         filteredTeams.forEach { team -> filteredWars.addAll(wars.filter { it.war?.teamOpponent?.equals(team.mid).isTrue }) }
                         when {
                             filters.contains(WarFilterType.WEEK) -> filteredWars.removeAll(filteredWars.filterNot { it.isThisWeek })
-                            filters.contains(WarFilterType.MONTH) -> filteredWars.removeAll(filteredWars.filterNot { it.isThisMonth })
+                            filters.contains(WarFilterType.OFFICIAL) -> filteredWars.removeAll(filteredWars.filterNot { it.war?.isOfficial.isTrue })
                             filters.contains(WarFilterType.PLAY) -> filteredWars.removeAll(filteredWars.filterNot { it.hasPlayer(authenticationRepository.user?.uid) })
                         }
                         when (_sharedSortTypeSelected.value) {
@@ -108,7 +108,7 @@ class AllWarsViewModel @Inject constructor(private val firebaseRepository: Fireb
                 }.toMutableList()
                 when {
                     filters.contains(WarFilterType.WEEK) -> sortedWars.removeAll(wars.filterNot { it.isThisWeek })
-                    filters.contains(WarFilterType.MONTH) -> sortedWars.removeAll(wars.filterNot { it.isThisMonth })
+                    filters.contains(WarFilterType.OFFICIAL) -> sortedWars.removeAll(wars.filterNot { it.war?.isOfficial.isTrue })
                     filters.contains(WarFilterType.PLAY) -> sortedWars.removeAll(wars.filterNot { it.hasPlayer(authenticationRepository.user?.uid) })
                 }
                 _sharedWars.emit(sortedWars.filter { it.isOver })
@@ -124,10 +124,10 @@ class AllWarsViewModel @Inject constructor(private val firebaseRepository: Fireb
                 }
                 when {
                     filters.contains(WarFilterType.WEEK) -> filteredWars.addAll(wars.filter { it.isThisWeek })
-                    filters.contains(WarFilterType.MONTH) -> filteredWars.addAll(wars.filter { it.isThisMonth })
+                    filters.contains(WarFilterType.OFFICIAL) -> filteredWars.addAll(wars.filter { it.war?.isOfficial.isTrue })
                     filters.contains(WarFilterType.PLAY) -> filteredWars.addAll(wars.filter { it.hasPlayer(authenticationRepository.user?.uid) })
                     !filters.contains(WarFilterType.WEEK) -> filteredWars.addAll(wars.filterNot { it.isThisWeek })
-                    !filters.contains(WarFilterType.MONTH) -> filteredWars.addAll(wars.filterNot { it.isThisMonth })
+                    !filters.contains(WarFilterType.OFFICIAL) -> filteredWars.addAll(wars.filterNot { it.war?.isOfficial.isTrue })
                     !filters.contains(WarFilterType.PLAY) -> filteredWars.addAll(wars.filterNot { it.hasPlayer(authenticationRepository.user?.uid) })
                 }
                 when (_sharedSortTypeSelected.value) {

@@ -74,6 +74,7 @@ class EditPlayerViewModel @Inject constructor(private val authenticationReposito
                 UserRole.ADMIN.ordinal -> "Admin"
                 else -> null
             })
+            _sharedButtonEnabled.emit(true)
         }.launchIn(viewModelScope)
     }
 

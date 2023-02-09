@@ -150,7 +150,7 @@
                     android:textAlignment="center" />
 
                 <TextView
-                    android:id="@+id/victory_filter_button"
+                    android:id="@+id/official_filter_button"
                     android:layout_width="match_parent"
                     android:layout_marginVertical="10dp"
                     android:layout_height="wrap_content"
@@ -159,7 +159,7 @@
                     android:textColor="@color/harmonia_dark"
                     android:layout_margin="5dp"
                     android:paddingVertical="5dp"
-                    android:text="30 jours"
+                    android:text="Officielles"
                     android:fontFamily="@font/montserrat_regular"
                     android:textAlignment="center" />
 

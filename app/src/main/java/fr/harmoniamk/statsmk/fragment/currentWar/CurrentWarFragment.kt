@@ -32,8 +32,10 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
     private val binding : FragmentCurrentWarBinding by viewBinding()
     private val viewModel: CurrentWarViewModel by viewModels()
     private var war: MKWar? = null
-    private val popup by lazy { PopupFragment("Êtes-vous sûr de vouloir supprimer le match ?", "Supprimer")}
+    private var popup = PopupFragment("Êtes-vous sûr de vouloir supprimer le match ?", "Supprimer")
     private var subFragment = SubPlayerFragment()
+
+    private var popupShowing = false
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -50,8 +52,7 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
             onBack = requireActivity().backPressedDispatcher(viewLifecycleOwner),
             onNextTrack = binding.nextTrackBtn.clicks(),
             onTrackClick = adapter.sharedClick,
-            onDelete = popup.onPositiveClick,
-            onPopup = flowOf(popup.onNegativeClick.map { false }, binding.deleteWarBtn.clicks().map { true }).flattenMerge(),
+            onPopup = binding.deleteWarBtn.clicks(),
             onPenalty = binding.penaltyBtn.clicks(),
             onSub = binding.subBtn.clicks(),
             onSubDismiss = subFragment.sharedDismiss
@@ -133,9 +134,19 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
 
         viewModel.sharedPopupShowing
             .onEach {
-                when (it) {
-                    true -> popup.takeIf { !it.isAdded }?.show(childFragmentManager, null)
-                    else -> popup.dismiss()
+               when (it) {
+                    true -> {
+                        if (!popup.isAdded && !popupShowing) {
+                            popup = PopupFragment("Êtes-vous sûr de vouloir supprimer le match ?", "Supprimer")
+                            viewModel.bindPopup(onDelete = popup.onPositiveClick, onDismiss = popup.onNegativeClick)
+                            popup.show(childFragmentManager, null)
+                            popupShowing = true
+                        }
+                    }
+                    else -> {
+                        popup.dismiss()
+                        popupShowing = false
+                    }
                 }
             }
             .launchIn(lifecycleScope)

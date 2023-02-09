@@ -7,5 +7,5 @@ enum class WarSortType {
     DATE, TEAM, SCORE
 }
 enum class WarFilterType {
-    WEEK, MONTH, PLAY
+    WEEK, OFFICIAL, PLAY
 }

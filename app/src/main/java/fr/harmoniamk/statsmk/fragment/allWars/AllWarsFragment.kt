@@ -43,7 +43,7 @@ class AllWarsFragment : Fragment(R.layout.fragment_all_wars) {
             ).flattenMerge(),
             onFilterClick = flowOf(
                 binding.periodFilterButton.clicks().map { WarFilterType.WEEK },
-                binding.victoryFilterButton.clicks().map { WarFilterType.MONTH },
+                binding.officialFilterButton.clicks().map { WarFilterType.OFFICIAL },
                 binding.playFilterButton.clicks().map { WarFilterType.PLAY }
             ).flattenMerge()
         )
@@ -57,7 +57,7 @@ class AllWarsFragment : Fragment(R.layout.fragment_all_wars) {
         viewModel.sharedFilterList
             .onEach {
                 updateFilterButton(binding.playFilterButton, WarFilterType.PLAY, it)
-                updateFilterButton(binding.victoryFilterButton, WarFilterType.MONTH, it)
+                updateFilterButton(binding.officialFilterButton, WarFilterType.OFFICIAL, it)
                 updateFilterButton(binding.periodFilterButton, WarFilterType.WEEK, it)
             }.launchIn(lifecycleScope)
         viewModel.sharedWarClick
