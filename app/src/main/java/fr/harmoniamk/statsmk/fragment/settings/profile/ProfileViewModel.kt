@@ -32,6 +32,9 @@ class ProfileViewModel @Inject constructor(private val authenticationRepository:
     private val _sharedEditName = MutableSharedFlow<Unit>()
     private val _sharedEditEmail = MutableSharedFlow<Unit>()
     private val _sharedRole = MutableSharedFlow<String?>()
+    private val _sharedLeavePopup = MutableSharedFlow<Pair<String, String?>>()
+    private val _sharedCancelLeavePopup = MutableSharedFlow<Unit>()
+    private val _sharedTeamLeft = MutableSharedFlow<Unit>()
 
     val sharedProfile =_sharedProfile.asSharedFlow()
     val sharedEditPicture =_sharedEditPicture.asSharedFlow()
@@ -44,8 +47,11 @@ class ProfileViewModel @Inject constructor(private val authenticationRepository:
     val sharedRole = _sharedRole.asSharedFlow()
     val sharedEditName = _sharedEditName.asSharedFlow()
     val sharedEditEmail = _sharedEditEmail.asSharedFlow()
+    val sharedLeavePopup = _sharedLeavePopup.asSharedFlow()
+    val sharedCancelLeavePopup = _sharedCancelLeavePopup.asSharedFlow()
+    val sharedTeamLeft = _sharedTeamLeft.asSharedFlow()
 
-    fun bind(onPictureClick: Flow<Unit>, onPictureEdited: Flow<String>, onChangePasswordClick: Flow<Unit>, onLogout: Flow<Unit>, onPopup: Flow<Boolean>, onChangeNameClick: Flow<Unit>, onChangeEmailClick: Flow<Unit>) {
+    fun bind(onPictureClick: Flow<Unit>, onPictureEdited: Flow<String>, onChangePasswordClick: Flow<Unit>, onLogout: Flow<Unit>, onPopup: Flow<Boolean>, onChangeNameClick: Flow<Unit>, onChangeEmailClick: Flow<Unit>, onLeaveTeam: Flow<Unit>) {
         var url: String? = null
 
         storageRepository.getPicture(authenticationRepository.user?.uid)
@@ -98,6 +104,17 @@ class ProfileViewModel @Inject constructor(private val authenticationRepository:
 
         onChangeNameClick.bind(_sharedEditName, viewModelScope)
         onChangeEmailClick.bind(_sharedEditEmail, viewModelScope)
+
+        onLeaveTeam
+            .flatMapLatest { firebaseRepository.getUsers() }
+            .map { it.filter { user -> user.team == preferencesRepository.currentTeam?.mid && (user.role ?: 0) >= UserRole.LEADER.ordinal }.size > 1 }
+            .onEach {
+                val role = authenticationRepository.userRole.firstOrNull() ?: 0
+                when ((it && role >= UserRole.LEADER.ordinal) || role < UserRole.LEADER.ordinal) {
+                    true -> _sharedLeavePopup.emit(Pair("Êtres-vous sûr de voiloir quitter l'équipe ?", "Confirmer"))
+                    else -> _sharedLeavePopup.emit(Pair("Vous ne pouvez pas quitter une équipe dont vous êtes le seul leader. \n \n Vous devez d'abord nommer un autre leader avant de renouveler l'opération.", null))
+                }
+            }.launchIn(viewModelScope)
     }
 
     fun bindDialog(isEmail: Boolean, onTextChange: Flow<String>, onValidate: Flow<Unit>, onDismiss: Flow<Unit>) {
@@ -130,6 +147,15 @@ class ProfileViewModel @Inject constructor(private val authenticationRepository:
         }
 
 
+    }
+
+    fun bindLeavePopup(onCancel: Flow<Unit>, onLeave: Flow<Unit>) {
+        onCancel.bind(_sharedCancelLeavePopup, viewModelScope)
+        onLeave
+            .flatMapLatest { firebaseRepository.getUser(authenticationRepository.user?.uid) }
+            .mapNotNull { it.apply { this?.team = "-1" } }
+            .flatMapLatest { firebaseRepository.writeUser(it) }
+            .bind(_sharedTeamLeft, viewModelScope)
     }
 
 }

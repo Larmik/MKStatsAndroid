@@ -51,7 +51,8 @@ class ProfileFragment: Fragment(R.layout.fragment_profile) {
             onChangePasswordClick = binding.changePasswordBtn.clicks(),
             onLogout = disconnectPopup.onPositiveClick,
             onChangeNameClick = binding.changeNameBtn.clicks(),
-            onChangeEmailClick = binding.changeEmailBtn.clicks()
+            onChangeEmailClick = binding.changeEmailBtn.clicks(),
+            onLeaveTeam = binding.leaveTeamBtn.clicks()
         )
 
         viewModel.sharedTeam
@@ -59,6 +60,7 @@ class ProfileFragment: Fragment(R.layout.fragment_profile) {
             .onEach {
                 binding.roleTeamLayout.isVisible = true
                 binding.teamTv.text = it
+                binding.leaveTeamBtn.isVisible = true
             }
             .launchIn(lifecycleScope)
 
@@ -140,6 +142,19 @@ class ProfileFragment: Fragment(R.layout.fragment_profile) {
                         changeEmailPopup.dismiss()
                         binding.email.text = it
                     }.launchIn(lifecycleScope)
+            }.launchIn(lifecycleScope)
+
+        viewModel.sharedLeavePopup
+            .onEach {
+                val popupFragment = PopupFragment(message = it.first, positiveText = it.second)
+                viewModel.bindLeavePopup(onCancel = popupFragment.onNegativeClick, onLeave = popupFragment.onPositiveClick)
+                popupFragment.takeIf { !it.isAdded }?.show(childFragmentManager, null)
+                viewModel.sharedCancelLeavePopup
+                    .onEach { popupFragment.dismiss() }
+                    .launchIn(lifecycleScope)
+                viewModel.sharedTeamLeft
+                    .onEach { findNavController().navigate(ProfileFragmentDirections.backToHome()) }
+                    .launchIn(lifecycleScope)
             }.launchIn(lifecycleScope)
 
     }

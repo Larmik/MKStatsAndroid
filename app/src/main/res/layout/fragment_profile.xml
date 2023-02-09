@@ -162,6 +162,17 @@
         android:textColor="@color/harmonia_dark"
         android:fontFamily="@font/montserrat_regular"
         android:textSize="16sp"
+        android:id="@+id/leave_team_btn"
+        android:visibility="gone"
+        android:paddingVertical="10dp"
+        android:text="Quitter mon équipe"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/harmonia_dark"
+        android:fontFamily="@font/montserrat_regular"
+        android:textSize="16sp"
         android:id="@+id/disconnect_btn"
         android:paddingVertical="10dp"
         android:text="Se déconnecter"/>
