@@ -5,8 +5,10 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.TrackItemBinding
 import fr.harmoniamk.statsmk.extension.clicks
+import fr.harmoniamk.statsmk.extension.positionColor
 import fr.harmoniamk.statsmk.model.local.MapDetails
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -34,6 +36,14 @@ class MapStatsAdapter(val items: MutableList<MapDetails> = mutableListOf()) :
                 binding.trackDiff.text = track.warTrack.displayedDiff
                 binding.shortname.text = track.war.war?.createdDate
                 binding.name.text = track.war.name
+                track.position?.let {
+                    binding.root.background.mutate().setTint(ContextCompat.getColor(binding.root.context, R.color.white_alphaed))
+                    binding.trackScore.isVisible = false
+                    binding.trackDiff.isVisible = false
+                    binding.mapPos.isVisible = true
+                    binding.mapPos.text = it.toString()
+                    binding.mapPos.setTextColor(ContextCompat.getColor(binding.root.context, it.positionColor()))
+                }
             }
         }
     }

@@ -51,7 +51,8 @@ class MapStatsViewModel @Inject constructor(private val preferencesRepository: P
                  it.withName(firebaseRepository).firstOrNull()?.let { list ->
                      list.forEach { mkWar ->
                          mkWar.warTracks?.filter { track -> track.index == trackIndex }?.forEach { track ->
-                             finalList.add(MapDetails(mkWar, MKWarTrack(track.track)))
+                             val position = track.track?.warPositions?.singleOrNull { it.playerId == authenticationRepository.user?.uid }?.position?.takeIf { isIndiv.isTrue }
+                             finalList.add(MapDetails(mkWar, MKWarTrack(track.track), position))
                          }
                      }
                  }

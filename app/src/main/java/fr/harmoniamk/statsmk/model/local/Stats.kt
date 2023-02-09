@@ -54,7 +54,8 @@ class WarStats(list : List<MKWar>) {
 
 class MapDetails(
     val war: MKWar,
-    val warTrack: MKWarTrack
+    val warTrack: MKWarTrack,
+    val position: Int?
 )
 
 @FlowPreview

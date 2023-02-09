@@ -109,6 +109,17 @@ android:background="@drawable/rounded_bg"
                     android:textSize="11sp"
                     tools:targetApi="o"
                     tools:text="+34" />
+
+                <TextView
+                    android:id="@+id/map_pos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="6"
+                    android:textSize="34sp"
+                    android:visibility="gone"
+                    android:layout_marginHorizontal="15dp"
+                    android:fontFamily="@font/mk_position"/>
+
             </LinearLayout>
 
             <LinearLayout
