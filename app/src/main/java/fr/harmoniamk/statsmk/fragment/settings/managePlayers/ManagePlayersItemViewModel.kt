@@ -16,8 +16,9 @@ class ManagePlayersItemViewModel(val player: User? = null, val isCategory: Boole
     val buttonsVisibility
         get() = authenticationRepository?.userRole?.map {
             val isVisible =  authenticationRepository.user?.uid == player?.mid
-                    || (!hasAccount && it == UserRole.ADMIN.ordinal)
-                    ||  it >= UserRole.LEADER.ordinal
+                    || (!hasAccount && it >= UserRole.ADMIN.ordinal)
+                    ||  (it >= UserRole.LEADER.ordinal && player?.team == preferencesRepository?.currentTeam?.mid)
+                    || (!hasAccount && player?.team == "-1")
             when (isVisible) {
                 true -> View.VISIBLE
                 else -> View.INVISIBLE

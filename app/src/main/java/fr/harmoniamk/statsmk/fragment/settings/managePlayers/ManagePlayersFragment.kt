@@ -28,7 +28,6 @@ class ManagePlayersFragment : Fragment(R.layout.fragment_manage_players) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val adapter = ManagePlayersAdapter()
-        var dialog = EditPlayerFragment()
         binding.playersRv.adapter = adapter
         viewModel.bind(
             onAdd = binding.addPlayerBtn.clicks(),
@@ -54,25 +53,6 @@ class ManagePlayersFragment : Fragment(R.layout.fragment_manage_players) {
             .onEach { binding.editTeamBtn.visibility = it }
             .launchIn(lifecycleScope)
 
-        viewModel.sharedEdit
-            .onEach {
-                dialog = EditPlayerFragment(it)
-                viewModel.bindEditDialog(
-                    onDelete = dialog.onPlayerDelete,
-                    onTeamLeft = dialog.onTeamLeave,
-                    onPlayerEdited = dialog.onPlayerEdit
-                )
-            }.launchIn(lifecycleScope)
-
-        viewModel.sharedTeamEdit
-            .onEach {
-                val teamDialog = EditTeamFragment(it)
-                viewModel.bindEditTeamDialog(teamDialog.onTeamEdit)
-                teamDialog.takeIf { !it.isAdded }?.show(childFragmentManager, null)
-                teamDialog.onTeamEdit
-                    .onEach { teamDialog.dismiss() }
-                    .launchIn(lifecycleScope)
-            }.launchIn(lifecycleScope)
 
         viewModel.sharedRedirectToSettings
             .filter { findNavController().currentDestination?.id == R.id.managePlayersFragment }
@@ -80,12 +60,33 @@ class ManagePlayersFragment : Fragment(R.layout.fragment_manage_players) {
             .launchIn(lifecycleScope)
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            viewModel.sharedShowDialog.collect {
-                when (it) {
-                    true -> dialog.show(childFragmentManager, null)
-                    else -> dialog.dismiss()
-                }
+            viewModel.sharedTeamEdit.collect {
+                val teamDialog = EditTeamFragment(it)
+                viewModel.bindEditTeamDialog(teamDialog.onTeamEdit)
+                teamDialog.takeIf { !it.isAdded }?.show(childFragmentManager, null)
+                teamDialog.onTeamEdit
+                    .onEach { teamDialog.dismiss() }
+                    .launchIn(lifecycleScope)
             }
+
         }
+
+
+        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
+            viewModel.sharedEdit.collect {
+                val dialog = EditPlayerFragment(it)
+                viewModel.bindEditDialog(
+                    onDelete = dialog.onPlayerDelete,
+                    onTeamLeft = dialog.onTeamLeave,
+                    onPlayerEdited = dialog.onPlayerEdit
+                )
+                dialog.takeIf { !it.isAdded }?.show(childFragmentManager, null)
+                viewModel.sharedPlayers
+                    .onEach { dialog.dismiss() }
+                    .launchIn(lifecycleScope)
+            }
+
+        }
+
     }
 }

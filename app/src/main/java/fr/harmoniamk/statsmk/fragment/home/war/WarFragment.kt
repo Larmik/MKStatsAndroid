@@ -78,7 +78,9 @@ class WarFragment : Fragment(R.layout.fragment_war) {
 
             viewModel.sharedLastWars
                 .onEach {
-                    binding.lastWarLayout.isVisible = it.isNotEmpty()
+                    binding.lastWarRv.isVisible = it.isNotEmpty()
+                    binding.emptyWars.isVisible = it.isEmpty()
+                    binding.allWarsBtn.isVisible = it.isNotEmpty()
                     lastAdapter.addWars(it)
                 }.launchIn(lifecycleScope)
 

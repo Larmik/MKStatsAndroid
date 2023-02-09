@@ -25,14 +25,17 @@ class EditPlayerViewModel @Inject constructor(private val authenticationReposito
     private val _sharedDeleteVisibility = MutableSharedFlow<Boolean>()
     private val _sharedShowDialog = MutableSharedFlow<Boolean>()
     private val _sharedEditRoleVisibility = MutableSharedFlow<Int>()
+    private val _sharedLeaveTeamVisibility = MutableSharedFlow<Boolean>()
     private val _sharedRoleSelected = MutableSharedFlow<Int>()
     private val _sharedUserRoleLabel = MutableSharedFlow<String?>()
     private val _sharedButtonEnabled = MutableSharedFlow<Boolean>()
+
     val sharedButtonEnabled = _sharedButtonEnabled.asSharedFlow()
     val sharedPlayerIsMember = _sharedPlayerIsMember.asSharedFlow()
     val sharedPlayerHasAccount = _sharedPlayerHasAccount.asSharedFlow()
     val sharedDeleteVisibility = _sharedDeleteVisibility.asSharedFlow()
     val sharedEditRoleVisibility = _sharedEditRoleVisibility.asSharedFlow()
+    val sharedLeaveTeamVisibility = _sharedLeaveTeamVisibility.asSharedFlow()
     val sharedRoleSelected = _sharedRoleSelected.asSharedFlow()
     val sharedShowDialog = _sharedShowDialog.asSharedFlow()
     val sharedUserRoleLabel = _sharedUserRoleLabel.asSharedFlow()
@@ -42,10 +45,14 @@ class EditPlayerViewModel @Inject constructor(private val authenticationReposito
         onNameEdited.map { it.isNotEmpty() }.bind(_sharedButtonEnabled, viewModelScope)
 
         authenticationRepository.userRole
-            .onEach {
+            .onEach { userRole ->
                 _sharedPlayerHasAccount.emit(player.mid?.toLongOrNull() == null)
-                _sharedDeleteVisibility.emit(it == UserRole.GOD.ordinal)
-                _sharedEditRoleVisibility.emit(when (it >= UserRole.LEADER.ordinal) {
+                _sharedDeleteVisibility.emit(userRole == UserRole.GOD.ordinal)
+                player.role?.let {
+                    _sharedLeaveTeamVisibility.emit(player.mid != authenticationRepository.user?.uid && it < UserRole.LEADER.ordinal)
+                }
+
+                _sharedEditRoleVisibility.emit(when (userRole >= UserRole.LEADER.ordinal) {
                     true -> View.VISIBLE
                     else -> View.INVISIBLE
                 })
@@ -53,7 +60,7 @@ class EditPlayerViewModel @Inject constructor(private val authenticationReposito
                     UserRole.MEMBER.ordinal -> "Membre"
                     UserRole.LEADER.ordinal -> "Leader"
                     UserRole.ADMIN.ordinal -> "Admin"
-                    UserRole.GOD.ordinal -> "Dieu"
+                    UserRole.GOD.ordinal -> "Leader"
                     else -> null
                 })
             }.launchIn(viewModelScope)

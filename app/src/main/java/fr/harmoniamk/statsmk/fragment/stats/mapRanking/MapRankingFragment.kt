@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -43,7 +44,11 @@ class MapRankingFragment : Fragment(R.layout.fragment_map_ranking) {
             onIndivStatsSelected = flowOf(binding.indivBtn.clicks().map { true }, binding.teamBtn.clicks().map { false }).flattenMerge()
         )
         viewModel.sharedMaps
-            .onEach { mostPlayedAdapter.addTracks(it) }
+            .onEach {
+                binding.emptyMaps.isVisible = it.isEmpty()
+                binding.mostPlayedRv.isVisible = it.isNotEmpty()
+                mostPlayedAdapter.addTracks(it)
+            }
             .launchIn(lifecycleScope)
         viewModel.sharedSortTypeSelected
             .onEach {

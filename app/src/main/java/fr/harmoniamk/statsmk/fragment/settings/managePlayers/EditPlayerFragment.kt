@@ -58,6 +58,10 @@ class EditPlayerFragment(val user: User? = null) : BottomSheetDialogFragment() {
                     }
                 }.launchIn(lifecycleScope)
 
+            viewModel.sharedLeaveTeamVisibility
+                .onEach { binding.leaveTeamBtn.isVisible = it }
+                .launchIn(lifecycleScope)
+
             viewModel.sharedPlayerHasAccount
                 .onEach {
                     binding.playernameEt.isEnabled = !it

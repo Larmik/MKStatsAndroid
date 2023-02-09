@@ -41,7 +41,7 @@
             android:textColorHint="@color/boo"
             android:id="@+id/shortname_et"
             android:gravity="center"
-            android:hint="Acronyme"
+            android:hint="Tag"
             android:backgroundTint="@color/white_alphaed"
             android:layout_marginHorizontal="40dp" />
 

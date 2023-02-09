@@ -167,15 +167,33 @@
             android:layout_marginBottom="10dp"
             android:background="@color/white"/>
 
-        <androidx.recyclerview.widget.RecyclerView
+        <RelativeLayout
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingVertical="10dp"
+                android:gravity="center"
+                android:fontFamily="@font/montserrat_regular"
+                android:id="@+id/empty_maps"
+                android:text="Jouez d'abord des circuits afin de les voir apparaître ici."/>
+
+
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/most_played_rv"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="match_parent"
                 android:layout_marginBottom="15dp"
                 android:paddingHorizontal="10dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 android:orientation="vertical" />
+
+        </RelativeLayout>
+
+
 
         </LinearLayout>
 

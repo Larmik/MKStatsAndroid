@@ -37,9 +37,10 @@ class LastWarAdapter(val items: MutableList<MKWar> = mutableListOf()) :
             binding.diffMapTv.text = war.displayedAverage
             binding.totalDiffTv.text = war.displayedDiff
             binding.chip.setImageResource(
-                when (war.displayedDiff.contains("+")) {
-                    true -> R.drawable.checked
-                    else -> R.drawable.close
+                when (war.displayedDiff.first()) {
+                     '+' -> R.drawable.checked
+                     '0' -> R.drawable.circle_grey
+                     else -> R.drawable.close
                 }
             )
             war.takeIf { it.war?.isOfficial.isTrue }?.let {

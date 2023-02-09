@@ -11,6 +11,7 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentPlayerListBinding
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.extension.onTextChanged
+import fr.harmoniamk.statsmk.fragment.popup.PopupFragment
 import fr.harmoniamk.statsmk.fragment.settings.managePlayers.AddPlayersFragment
 import fr.harmoniamk.statsmk.fragment.settings.managePlayers.EditPlayerFragment
 import fr.harmoniamk.statsmk.fragment.settings.managePlayers.ManagePlayersAdapter
@@ -31,7 +32,6 @@ class PlayerListFragment : Fragment(R.layout.fragment_player_list) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val adapter = ManagePlayersAdapter(showAlly = true)
-        var dialog = EditPlayerFragment()
         binding.playersRv.adapter = adapter
         viewModel.bind(
             onAdd = binding.addPlayerBtn.clicks(),
@@ -53,25 +53,21 @@ class PlayerListFragment : Fragment(R.layout.fragment_player_list) {
                     .launchIn(lifecycleScope)
             }.launchIn(lifecycleScope)
 
-        viewModel.sharedEdit
-            .onEach {
-                dialog = EditPlayerFragment(it)
-                viewModel.bindEditDialog(
-                    onDelete = dialog.onPlayerDelete,
-                    onTeamIntegrate = dialog.onTeamLeave,
-                    onPlayerEdited = dialog.onPlayerEdit
+        viewModel.sharedEditName
+            .onEach { user ->
+                val changeNamePopup = PopupFragment(
+                    message = "Modifier le pseudo",
+                    positiveText = "Enregistrer",
+                    editTextHint = user.name
                 )
+                viewModel.bindDialog(user, changeNamePopup.onTextChange, changeNamePopup.onPositiveClick, changeNamePopup.onNegativeClick)
+                changeNamePopup.takeIf { !it.isAdded }?.show(childFragmentManager, null)
+                viewModel.sharedNewName
+                    .onEach { name ->
+                        changeNamePopup.dismiss()
+                        viewModel.takeIf { name != user.name }?.refresh()
+                    }.launchIn(lifecycleScope)
             }.launchIn(lifecycleScope)
-
-        viewLifecycleOwner.lifecycleScope.launchWhenStarted {
-            viewModel.sharedShowDialog.collect {
-                when (it) {
-                    true -> dialog.show(childFragmentManager, null)
-                    else -> dialog.dismiss()
-                }
-            }
-        }
-
 
     }
 

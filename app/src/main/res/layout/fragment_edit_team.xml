@@ -53,7 +53,7 @@
             android:textColor="?android:colorAccent"
             tools:targetApi="n_mr1"
             android:textSize="16sp"
-            android:text="Modifier l'abréviation :"
+            android:text="Modifier le tag :"
             android:layout_marginBottom="10dp"/>
 
         <EditText

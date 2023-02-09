@@ -28,7 +28,6 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
     private val _sharedAddPlayerVisibility = MutableSharedFlow<Int>()
     private val _sharedEdit = MutableSharedFlow<User>()
     private val _sharedRedirectToSettings = MutableSharedFlow<Unit>()
-    private val _sharedShowDialog = MutableSharedFlow<Boolean>()
     private val _sharedTeamName = MutableSharedFlow<String?>()
     private val _sharedTeamEdit = MutableSharedFlow<Team>()
 
@@ -37,7 +36,6 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
     val sharedEditTeamVisibility = _sharedAddPlayerVisibility.asSharedFlow()
     val sharedEdit = _sharedEdit.asSharedFlow()
     val sharedRedirectToSettings = _sharedRedirectToSettings.asSharedFlow()
-    val sharedShowDialog = _sharedShowDialog.asSharedFlow()
     val sharedTeamName = _sharedTeamName.asSharedFlow()
     val sharedTeamEdit = _sharedTeamEdit.asSharedFlow()
 
@@ -46,19 +44,11 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
 
     fun bind(onAdd: Flow<Unit>, onEdit: Flow<User>, onSearch: Flow<String>, onEditTeam: Flow<Unit>) {
         refresh()
-
+        onAdd.bind(_sharedAddPlayer, viewModelScope)
+        onEdit.bind(_sharedEdit, viewModelScope)
         onEditTeam
             .mapNotNull { preferencesRepository.currentTeam }
             .bind(_sharedTeamEdit, viewModelScope)
-
-        onAdd.bind(_sharedAddPlayer, viewModelScope)
-
-        onEdit
-            .onEach {
-                _sharedEdit.emit(it)
-                _sharedShowDialog.emit(true)
-            }.launchIn(viewModelScope)
-
         onSearch
             .map { searched ->
                 createPlayersList(modelList = allPlayers.filter { it.name?.toLowerCase(Locale.ROOT)?.contains(searched.toLowerCase(Locale.ROOT)).isTrue })}
@@ -73,19 +63,13 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
             .flatMapLatest {  firebaseRepository.getUsers() }
             .map { createPlayersList(list = it) }
             .filter { authenticationRepository.user != null }
-            .onEach {
-                _sharedShowDialog.emit(false)
-                _sharedPlayers.emit(it)
-            }.launchIn(viewModelScope)
+            .bind(_sharedPlayers, viewModelScope)
 
         onPlayerEdited
             .flatMapLatest { firebaseRepository.writeUser(it) }
             .flatMapLatest {  firebaseRepository.getUsers() }
             .map { createPlayersList(list = it) }
-            .onEach {
-                _sharedShowDialog.emit(false)
-                _sharedPlayers.emit(it)
-            }.launchIn(viewModelScope)
+            .bind(_sharedPlayers, viewModelScope)
 
         onTeamLeft
             .filter { it.mid == authenticationRepository.user?.uid }
@@ -99,10 +83,7 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
             .flatMapLatest { firebaseRepository.writeUser(it) }
             .flatMapLatest {  firebaseRepository.getUsers() }
             .map { createPlayersList(list = it) }
-            .onEach {
-                _sharedShowDialog.emit(false)
-                _sharedPlayers.emit(it)
-            }.launchIn(viewModelScope)
+            .bind(_sharedPlayers, viewModelScope)
 
     }
 

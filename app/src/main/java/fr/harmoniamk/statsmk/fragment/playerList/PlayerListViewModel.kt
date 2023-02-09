@@ -25,12 +25,17 @@ class PlayerListViewModel @Inject constructor(private val firebaseRepository: Fi
     private val _sharedPlayerList = MutableSharedFlow<List<ManagePlayersItemViewModel>>()
     private val _sharedAddPlayer = MutableSharedFlow<Unit>()
     private val _sharedEdit = MutableSharedFlow<User>()
+    private val _sharedEditName = MutableSharedFlow<User>()
     private val _sharedShowDialog = MutableSharedFlow<Boolean>()
+    private val _sharedNewName = MutableSharedFlow<String?>()
+
 
     val sharedPlayerList = _sharedPlayerList.asSharedFlow()
     val sharedAddPlayer = _sharedAddPlayer.asSharedFlow()
     val sharedEdit = _sharedEdit.asSharedFlow()
+    val sharedEditName = _sharedEditName.asSharedFlow()
     val sharedShowDialog = _sharedShowDialog.asSharedFlow()
+    val sharedNewName = _sharedNewName.asSharedFlow()
 
 
     private val players = mutableListOf<ManagePlayersItemViewModel>()
@@ -40,15 +45,21 @@ class PlayerListViewModel @Inject constructor(private val firebaseRepository: Fi
         refresh()
         onAdd.bind(_sharedAddPlayer, viewModelScope)
         onEdit.onEach {
-            _sharedEdit.emit(it)
-            _sharedShowDialog.emit(true)
+            when (it.team == "-1") {
+                true -> _sharedEditName.emit(it)
+                else -> {
+                    _sharedEdit.emit(it)
+                    _sharedShowDialog.emit(true)
+                }
+
+            }
         }.launchIn(viewModelScope)
         onSearch.map { searched ->
             createPlayersList(modelList = allPlayers.filter { it.name?.toLowerCase(Locale.ROOT)?.contains(searched.toLowerCase(Locale.ROOT)).isTrue })}
         .bind(_sharedPlayerList, viewModelScope)
     }
 
-    private fun refresh() {
+    fun refresh() {
         allPlayers.clear()
         firebaseRepository.getUsers()
             .map {
@@ -109,6 +120,22 @@ class PlayerListViewModel @Inject constructor(private val firebaseRepository: Fi
             players.addAll(modelList.filter { it.isAlly }.sortedBy { it.name })
         }
         return players
+    }
+
+    fun bindDialog(user: User, onTextChange: Flow<String>, onValidate: Flow<Unit>, onDismiss: Flow<Unit>) {
+            var name = user.name
+            onTextChange.onEach { name = it }.launchIn(viewModelScope)
+            onValidate
+                .flatMapLatest { firebaseRepository.getUser(user.mid) }
+                .mapNotNull { it?.copy(name = name) }
+                .flatMapLatest { firebaseRepository.writeUser(it) }
+                .onEach { _sharedNewName.emit(name) }
+                .launchIn(viewModelScope)
+            onDismiss.mapNotNull { name }.bind(_sharedNewName, viewModelScope)
+
+
+
+
     }
 
 }

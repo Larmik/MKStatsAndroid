@@ -49,7 +49,7 @@
             android:textSize="16sp"
             android:id="@+id/players_btn"
             android:paddingVertical="15dp"
-            android:text="Joueurs"/>
+            android:text="Joueurs libres"/>
 
         <View
             android:layout_width="match_parent"
