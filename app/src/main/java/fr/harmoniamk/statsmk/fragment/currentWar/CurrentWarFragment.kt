@@ -33,7 +33,7 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
     private val viewModel: CurrentWarViewModel by viewModels()
     private var war: MKWar? = null
     private val popup by lazy { PopupFragment("Êtes-vous sûr de vouloir supprimer le match ?", "Supprimer")}
-    private val subFragment by lazy { SubPlayerFragment() }
+    private var subFragment = SubPlayerFragment()
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -149,6 +149,7 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
 
         viewModel.sharedSubPlayer
             .onEach {
+                subFragment = SubPlayerFragment()
                 if (!subFragment.isAdded)
                     subFragment.show(childFragmentManager, null)
             }.launchIn(lifecycleScope)
