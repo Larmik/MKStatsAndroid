@@ -79,7 +79,7 @@ class ManageTeamsViewModel @Inject constructor(private val preferencesRepository
             .map { list -> list.map { ManageTeamsItemViewModel(it, authenticationRepository) } }
             .onEach {
                 _sharedShowDialog.emit(false)
-                _sharedTeams.emit(it)
+                _sharedTeams.emit(it.filterNot { vm -> vm.team.mid == preferencesRepository.currentTeam?.mid })
             }.launchIn(viewModelScope)
 
         onTeamEdit
@@ -92,14 +92,14 @@ class ManageTeamsViewModel @Inject constructor(private val preferencesRepository
             .map { list -> list.sortedBy { it.name }.map { ManageTeamsItemViewModel(it, authenticationRepository) } }
             .onEach {
                 _sharedShowDialog.emit(false)
-                _sharedTeams.emit(it)
+                _sharedTeams.emit(it.filterNot { vm -> vm.team.mid == preferencesRepository.currentTeam?.mid })
             }.launchIn(viewModelScope)
     }
 
     fun bindAddDialog(onTeamAdded: Flow<Unit>) {
         onTeamAdded
             .flatMapLatest {  firebaseRepository.getTeams() }
-            .map { list -> list.sortedBy { it.name }.map { ManageTeamsItemViewModel(it, authenticationRepository) } }
+            .map { list -> list.sortedBy { it.name }.map { ManageTeamsItemViewModel(it, authenticationRepository) }.filterNot { vm -> vm.team.mid == preferencesRepository.currentTeam?.mid } }
             .bind(_sharedTeams, viewModelScope)
     }
 

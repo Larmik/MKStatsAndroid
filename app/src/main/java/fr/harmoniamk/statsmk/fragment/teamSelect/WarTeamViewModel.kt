@@ -43,7 +43,7 @@ class WarTeamViewModel @Inject constructor(private val firebaseRepository: Fireb
                 teams.filter {
                     it.shortName?.toLowerCase(Locale.ROOT)
                         ?.contains(searched.toLowerCase(Locale.ROOT)).isTrue || it.name?.toLowerCase(Locale.ROOT)?.contains(searched.toLowerCase(Locale.ROOT)) ?: true
-                }.sortedBy { it.name }
+                }.sortedBy { it.name }.filterNot { vm -> vm.mid == preferencesRepository.currentTeam?.mid }
             }
             .bind(_sharedTeams, viewModelScope)
         onAddTeam.bind(_sharedAddTeam, viewModelScope)
@@ -52,7 +52,7 @@ class WarTeamViewModel @Inject constructor(private val firebaseRepository: Fireb
     fun bindAddDialog(onTeamAdded: Flow<Unit>) {
         onTeamAdded
             .flatMapLatest {  firebaseRepository.getTeams() }
-            .map { list -> list.sortedBy { it.name } }
+            .map { list -> list.sortedBy { it.name }.filterNot { vm -> vm.mid == preferencesRepository.currentTeam?.mid } }
             .bind(_sharedTeams, viewModelScope)
     }
 

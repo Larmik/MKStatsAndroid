@@ -34,7 +34,7 @@ class LastWarAdapter(val items: MutableList<MKWar> = mutableListOf()) :
             binding.nameTv.text = war.name
             binding.totalScoreTv.text = war.displayedScore
             binding.timeTv.text = war.war?.createdDate
-            binding.diffMapTv.text = war.displayedAverage
+            binding.mapsWonTv.text = war.mapsWon
             binding.totalDiffTv.text = war.displayedDiff
             binding.chip.setImageResource(
                 when (war.displayedDiff.first()) {
@@ -43,6 +43,7 @@ class LastWarAdapter(val items: MutableList<MKWar> = mutableListOf()) :
                      else -> R.drawable.close
                 }
             )
+            binding.mkuIv.visibility = View.INVISIBLE
             war.takeIf { it.war?.isOfficial.isTrue }?.let {
                 binding.mkuIv.visibility = View.VISIBLE
             }

@@ -28,7 +28,7 @@ class AllWarsAdapter(private val items: MutableList<MKWar> = mutableListOf()) : 
             binding.timeTv.text = war.war?.createdDate
             binding.totalScoreTv.text = war.displayedScore
             binding.totalDiffTv.text = war.displayedDiff
-            binding.diffMapTv.text = war.displayedAverage
+            binding.mapsWonTv.text = war.mapsWon
             binding.chip.setImageResource(
                 when (war.displayedDiff.first()) {
                     '+' -> R.drawable.checked

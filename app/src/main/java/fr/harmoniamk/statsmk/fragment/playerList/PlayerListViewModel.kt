@@ -6,6 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.isTrue
+import fr.harmoniamk.statsmk.fragment.playerSelect.UserSelector
 import fr.harmoniamk.statsmk.fragment.settings.managePlayers.ManagePlayersItemViewModel
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
@@ -23,25 +24,32 @@ import javax.inject.Inject
 class PlayerListViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface) : ViewModel() {
 
     private val _sharedPlayerList = MutableSharedFlow<List<ManagePlayersItemViewModel>>()
+    private val _sharedAddPlayerList = MutableSharedFlow<List<UserSelector>>()
     private val _sharedAddPlayer = MutableSharedFlow<Unit>()
     private val _sharedEdit = MutableSharedFlow<User>()
     private val _sharedEditName = MutableSharedFlow<User>()
     private val _sharedShowDialog = MutableSharedFlow<Boolean>()
     private val _sharedNewName = MutableSharedFlow<String?>()
+    private val _sharedPlayerAdded = MutableSharedFlow<Unit>()
+    private val _sharedAddToTeamButtonVisible = MutableSharedFlow<Boolean>()
 
 
     val sharedPlayerList = _sharedPlayerList.asSharedFlow()
+    val sharedAddPlayerList = _sharedAddPlayerList.asSharedFlow()
     val sharedAddPlayer = _sharedAddPlayer.asSharedFlow()
     val sharedEdit = _sharedEdit.asSharedFlow()
     val sharedEditName = _sharedEditName.asSharedFlow()
     val sharedShowDialog = _sharedShowDialog.asSharedFlow()
     val sharedNewName = _sharedNewName.asSharedFlow()
+    val sharedPlayerAdded = _sharedPlayerAdded.asSharedFlow()
+    val sharedAddToTeamButtonVisible = _sharedAddToTeamButtonVisible.asSharedFlow()
 
 
     private val players = mutableListOf<ManagePlayersItemViewModel>()
     private val allPlayers = mutableListOf<ManagePlayersItemViewModel>()
+    private val playersToAdd = mutableListOf<UserSelector>()
 
-    fun bind(onAdd: Flow<Unit>, onEdit: Flow<User>, onSearch: Flow<String>) {
+    fun bind(onAdd: Flow<Unit>, onEdit: Flow<User>, onSearch: Flow<String>, onPlayerSelected: Flow<UserSelector>, onAddToTeam: Flow<Unit>) {
         refresh()
         onAdd.bind(_sharedAddPlayer, viewModelScope)
         onEdit.onEach {
@@ -56,7 +64,27 @@ class PlayerListViewModel @Inject constructor(private val firebaseRepository: Fi
         }.launchIn(viewModelScope)
         onSearch.map { searched ->
             createPlayersList(modelList = allPlayers.filter { it.name?.toLowerCase(Locale.ROOT)?.contains(searched.toLowerCase(Locale.ROOT)).isTrue })}
-        .bind(_sharedPlayerList, viewModelScope)
+            .onEach { _sharedAddPlayerList.emit(it.map { UserSelector(it.player) }) }
+            .bind(_sharedPlayerList, viewModelScope)
+
+        onPlayerSelected
+            .onEach {
+                when (it.isSelected) {
+                    true -> playersToAdd.add(it)
+                    else -> playersToAdd.remove(it)
+                }
+                _sharedAddToTeamButtonVisible.emit(playersToAdd.isNotEmpty())
+            }.launchIn(viewModelScope)
+
+        onAddToTeam
+            .onEach {
+                playersToAdd
+                    .mapNotNull { it.user?.apply { this.team = preferencesRepository.currentTeam?.mid } }
+                    .forEach {
+                        firebaseRepository.writeUser(it).first()
+                    }
+                _sharedPlayerAdded.emit(Unit)
+            }.launchIn(viewModelScope)
     }
 
     fun refresh() {
@@ -72,6 +100,7 @@ class PlayerListViewModel @Inject constructor(private val firebaseRepository: Fi
 
             }
             .onEach { allPlayers.addAll(it) }
+            .onEach { _sharedAddPlayerList.emit(it.map { UserSelector(it.player) }) }
             .bind(_sharedPlayerList, viewModelScope)
     }
 

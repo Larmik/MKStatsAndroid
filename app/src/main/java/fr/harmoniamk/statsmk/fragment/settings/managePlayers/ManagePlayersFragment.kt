@@ -46,7 +46,7 @@ class ManagePlayersFragment : Fragment(R.layout.fragment_manage_players) {
 
         viewModel.sharedAddPlayer
             .filter { findNavController().currentDestination?.id == R.id.managePlayersFragment }
-            .onEach { findNavController().navigate(ManagePlayersFragmentDirections.toPlayerList()) }
+            .onEach { findNavController().navigate(ManagePlayersFragmentDirections.toPlayerList(addToTeamBehavior = true)) }
             .launchIn(lifecycleScope)
 
         viewModel.sharedEditTeamVisibility

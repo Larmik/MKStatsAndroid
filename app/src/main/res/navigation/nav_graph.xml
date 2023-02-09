@@ -149,7 +149,14 @@
             app:enterAnim="@anim/enter_from_right"
             app:exitAnim="@anim/exit_to_left"
             app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right"/>
+            app:popExitAnim="@anim/exit_to_right">
+
+            <argument
+                android:name="addToTeamBehavior"
+                app:argType="boolean"
+                app:nullable="false"/>
+
+        </action>
 
     </fragment>
 <!--
@@ -310,7 +317,14 @@
             app:enterAnim="@anim/enter_from_right"
             app:exitAnim="@anim/exit_to_left"
             app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right"/>
+            app:popExitAnim="@anim/exit_to_right">
+
+            <argument
+                android:name="addToTeamBehavior"
+                app:argType="boolean"
+                app:nullable="false"/>
+
+        </action>
 
         <action
             android:id="@+id/back_to_welcome"

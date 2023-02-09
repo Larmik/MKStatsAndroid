@@ -100,7 +100,7 @@
                 android:layout_width="wrap_content"
                 android:fontFamily="@font/montserrat_regular"
                 android:layout_height="wrap_content"
-                android:text="Diff/map:"
+                android:text="Maps:"
                 android:textSize="13sp"
                 android:textColor="@color/harmonia_dark"
                 android:id="@+id/current_tm_average"/>
@@ -145,7 +145,7 @@
                 android:textSize="13sp"
                 android:fontFamily="@font/orbitron_semibold"
                 tools:text="133"
-                android:id="@+id/diff_map_tv"
+                android:id="@+id/maps_won_tv"
                 tools:targetApi="o" />
 
         </LinearLayout>

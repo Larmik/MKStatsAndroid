@@ -21,7 +21,7 @@ data class MKWar(val war: NewWar?) : Serializable, Parcelable {
     val isOver = trackPlayed >= TOTAL_TRACKS
     val displayedScore = "$scoreHostWithPenalties - $scoreOpponentWithPenalties"
     val scoreLabel = "Score: $displayedScore"
-    val displayedAverage = (scoreHost / TOTAL_TRACKS).trackScoreToDiff()
+    val mapsWon = "${war?.warTracks?.map { MKWarTrack(it) }?.filter { it.displayedDiff.contains("+") }?.size} / 12"
     val displayedState = if (isOver) "War terminée" else "War en cours (${trackPlayed}/$TOTAL_TRACKS)"
     val displayedDiff: String
         get() {

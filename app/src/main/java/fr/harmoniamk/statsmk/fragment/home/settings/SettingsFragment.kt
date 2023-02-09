@@ -69,7 +69,7 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             .launchIn(lifecycleScope)
         viewModel.sharedGoToPlayers
             .filter { findNavController().currentDestination?.id == R.id.homeFragment }
-            .onEach { findNavController().navigate(HomeFragmentDirections.toPlayerList()) }
+            .onEach { findNavController().navigate(HomeFragmentDirections.toPlayerList(addToTeamBehavior = false)) }
             .launchIn(lifecycleScope)
     }
 }
