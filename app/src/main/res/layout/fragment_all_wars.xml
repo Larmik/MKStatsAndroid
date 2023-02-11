@@ -188,12 +188,29 @@
             android:layout_marginBottom="10dp"
             android:background="@color/white"/>
 
-
-        <androidx.recyclerview.widget.RecyclerView
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/war_rv"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/empty_war_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Aucune war n'a été trouvée."
+                android:fontFamily="@font/montserrat_regular"
+                android:textColor="@color/black"
+                android:gravity="center"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/war_rv"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
+        </RelativeLayout>
+
+
+
 
     </LinearLayout>
 

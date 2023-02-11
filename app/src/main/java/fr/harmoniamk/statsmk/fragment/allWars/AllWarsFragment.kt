@@ -47,7 +47,11 @@ class AllWarsFragment : Fragment(R.layout.fragment_all_wars) {
                 binding.playFilterButton.clicks().map { WarFilterType.PLAY }
             ).flattenMerge()
         )
-        viewModel.sharedWars.onEach { adapter.addWars(it) }.launchIn(lifecycleScope)
+        viewModel.sharedWars.onEach {
+            binding.warRv.isVisible = it.isNotEmpty()
+            binding.emptyWarTv.isVisible = it.isEmpty()
+            adapter.addWars(it)
+        }.launchIn(lifecycleScope)
         viewModel.sharedSortTypeSelected
             .onEach {
                 updateSortButton(binding.dateSortButton, it, WarSortType.DATE)
