@@ -56,6 +56,22 @@
             android:layout_height="1dp"
             android:background="@color/white"/>
 
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/harmonia_dark"
+            android:fontFamily="@font/montserrat_regular"
+            android:textSize="16sp"
+            android:id="@+id/periodic_stats"
+            android:paddingVertical="15dp"
+            android:text="Statistiques périodiques"/>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/white"/>
+
     </LinearLayout>
 
     <TextView

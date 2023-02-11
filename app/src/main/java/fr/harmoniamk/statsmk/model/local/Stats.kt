@@ -22,6 +22,7 @@ class Stats(
      private val averageMapPoints: Int = (maps.map { it.score }.sum() / (maps.takeIf { it.isNotEmpty() }?.size ?: 1))
      val averageMapPointsLabel = averageMapPoints.trackScoreToDiff()
      val averagePlayerMapPoints: Int = averageMapPoints.pointsToPosition()
+    var mapsWon = "${maps.filter { (it.score ?: 0) < 41 }.size} / ${maps.size}"
  }
 
 class WarScore(

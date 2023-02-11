@@ -21,18 +21,21 @@ class StatsViewModel @Inject constructor(private val preferencesRepository: Pref
     private val _sharedToast = MutableSharedFlow<String>()
     private val _sharedIndiv = MutableSharedFlow<List<MKWar>>()
     private val _sharedTeam = MutableSharedFlow<List<MKWar>>()
+    private val _sharedPeriodic = MutableSharedFlow<List<MKWar>>()
     private val _sharedMap = MutableSharedFlow<Unit>()
 
     val sharedToast = _sharedToast.asSharedFlow()
     val sharedIndiv = _sharedIndiv.asSharedFlow()
     val sharedTeam = _sharedTeam.asSharedFlow()
+    val sharedPeriodic = _sharedPeriodic.asSharedFlow()
     val sharedMap = _sharedMap.asSharedFlow()
 
-    fun bind(onIndiv: Flow<Unit>, onTeam: Flow<Unit>, onMap: Flow<Unit>) {
+    fun bind(onIndiv: Flow<Unit>, onTeam: Flow<Unit>, onMap: Flow<Unit>, onPeriodic: Flow<Unit>) {
 
         val indivClick = onIndiv.shareIn(viewModelScope, SharingStarted.Lazily)
         val mapClick = onMap.shareIn(viewModelScope, SharingStarted.Lazily)
         val teamClick = onTeam.shareIn(viewModelScope, SharingStarted.Lazily)
+        val periodicClick = onPeriodic.shareIn(viewModelScope, SharingStarted.Lazily)
 
         indivClick
             .flatMapLatest { firebaseRepository.getNewWars() }
@@ -57,11 +60,25 @@ class StatsViewModel @Inject constructor(private val preferencesRepository: Pref
                 }
             }.launchIn(viewModelScope)
 
-
+        periodicClick
+            .filter { preferencesRepository.currentTeam != null }
+            .flatMapLatest { firebaseRepository.getNewWars() }
+            .map { it.filter { newWar -> newWar.teamHost == preferencesRepository.currentTeam?.mid || newWar.teamOpponent == preferencesRepository.currentTeam?.mid }.map { MKWar(it) } }
+            .onEach {
+                when (it.isEmpty()) {
+                    true -> _sharedToast.emit("Votre équipe doit avoir fait au moins une war pour avoir accès à cette fonctionnalité.")
+                    else -> _sharedPeriodic.emit(it)
+                }
+            }.launchIn(viewModelScope)
 
         mapClick.bind(_sharedMap, viewModelScope)
 
         teamClick
+            .filter { preferencesRepository.currentTeam == null }
+            .map { "Vous devez intégrer une équipe pour avoir accès à cette fonctionnalité" }
+            .bind(_sharedToast, viewModelScope)
+
+        periodicClick
             .filter { preferencesRepository.currentTeam == null }
             .map { "Vous devez intégrer une équipe pour avoir accès à cette fonctionnalité" }
             .bind(_sharedToast, viewModelScope)

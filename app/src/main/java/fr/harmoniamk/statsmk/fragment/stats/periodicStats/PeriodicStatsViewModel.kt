@@ -1,4 +1,4 @@
-package fr.harmoniamk.statsmk.fragment.stats.teamStats
+package fr.harmoniamk.statsmk.fragment.stats.periodicStats
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,12 +19,13 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class TeamStatsViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface) : ViewModel() {
+class PeriodicStatsViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface) : ViewModel() {
 
     private val _sharedMostDefeatedTeam = MutableSharedFlow<Pair<String?, Int?>?>()
     private val _sharedLessDefeatedTeam = MutableSharedFlow<Pair<String?, Int?>?>()
     private val _sharedTrackClick = MutableSharedFlow<Int>()
     private val _sharedWarClick = MutableSharedFlow<MKWar>()
+    private val _sharedWeekStatsEnabled = MutableStateFlow(true)
     private val _sharedStats = MutableSharedFlow<Stats>()
 
     val sharedMostDefeatedTeam = _sharedMostDefeatedTeam.asSharedFlow()
@@ -32,6 +33,7 @@ class TeamStatsViewModel @Inject constructor(private val firebaseRepository: Fir
     val sharedTrackClick = _sharedTrackClick.asSharedFlow()
     val sharedWarClick = _sharedWarClick.asSharedFlow()
     val sharedStats = _sharedStats.asSharedFlow()
+    val sharedWeekStatsEnabled = _sharedWeekStatsEnabled.asStateFlow()
 
     private var bestMap: TrackStats? = null
     private var worstMap: TrackStats? = null
@@ -45,14 +47,41 @@ class TeamStatsViewModel @Inject constructor(private val firebaseRepository: Fir
         onWorstClick: Flow<Unit>,
         onMostPlayedClick: Flow<Unit>,
         onVictoryClick: Flow<Unit>,
-        onDefeatClick: Flow<Unit>) {
+        onDefeatClick: Flow<Unit>,
+        onWeekStatsSelected: Flow<Boolean>
+    ) {
 
+        refresh(list, hebdo = true)
+        flowOf(
+            onBestClick.mapNotNull { bestMap },
+            onWorstClick.mapNotNull { worstMap },
+            onMostPlayedClick.mapNotNull { mostPlayedMap },
+        ).flattenMerge()
+            .map { Maps.values().indexOf(it.map) }
+            .bind(_sharedTrackClick, viewModelScope)
+
+        flowOf(onVictoryClick.mapNotNull { highestVicory }, onDefeatClick.mapNotNull { loudestDefeat })
+            .flattenMerge()
+            .bind(_sharedWarClick, viewModelScope)
+
+        onWeekStatsSelected.onEach { weekEnabled ->
+            _sharedWeekStatsEnabled.emit(weekEnabled)
+            refresh(list, weekEnabled)
+        }.launchIn(viewModelScope)
+    }
+
+    fun refresh(warList: List<MKWar>?, hebdo: Boolean) {
         flowOf(preferencesRepository.currentTeam?.mid)
             .filterNotNull()
-            .mapNotNull { list }
+            .mapNotNull { warList }
             .filter { it.mapNotNull { war -> war.war?.teamHost}.contains(preferencesRepository.currentTeam?.mid)
-                        || it.map {war -> war.war?.teamOpponent}.contains(preferencesRepository.currentTeam?.mid) }
-            .mapNotNull { wars -> wars.filter { it.isOver } }
+                    || it.map {war -> war.war?.teamOpponent}.contains(preferencesRepository.currentTeam?.mid) }
+            .mapNotNull { wars -> wars.filter { it.isOver }.filter {
+                when (hebdo) {
+                    true -> it.isThisWeek
+                    else -> it.isThisMonth
+                }
+            } }
             .flatMapLatest { it.withName(firebaseRepository) }
             .onEach { list ->
                 val maps = mutableListOf<TrackStats>()
@@ -117,19 +146,8 @@ class TeamStatsViewModel @Inject constructor(private val firebaseRepository: Fir
                 _sharedMostDefeatedTeam.emit(mostDefeatedTeamData)
                 _sharedLessDefeatedTeam.emit(lessDefeatedTeamData)
                 _sharedStats.emit(newStats)
-            }.launchIn(viewModelScope)
-
-        flowOf(
-            onBestClick.mapNotNull { bestMap },
-            onWorstClick.mapNotNull { worstMap },
-            onMostPlayedClick.mapNotNull { mostPlayedMap },
-        ).flattenMerge()
-            .map { Maps.values().indexOf(it.map) }
-            .bind(_sharedTrackClick, viewModelScope)
-
-        flowOf(onVictoryClick.mapNotNull { highestVicory }, onDefeatClick.mapNotNull { loudestDefeat })
-            .flattenMerge()
-            .bind(_sharedWarClick, viewModelScope)
+            }
+            .launchIn(viewModelScope)
     }
 
     private fun warsWithOpponentName(list: List<MKWar>): Pair<String?, List<MKWar>>? = list

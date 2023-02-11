@@ -130,6 +130,19 @@
 
         </action>
         <action
+            android:id="@+id/to_periodic_stats"
+            app:destination="@id/periodicStatsFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right">
+
+            <argument
+                android:name="wars"
+                app:argType="fr.harmoniamk.statsmk.model.local.MKWar[]"/>
+
+        </action>
+        <action
             android:id="@+id/to_map_ranking"
             app:destination="@id/mapRankingFragment"
             app:enterAnim="@anim/enter_from_right"
@@ -591,6 +604,47 @@
 
         </action>
 
+    </fragment>
+
+    <fragment
+        android:id="@+id/periodicStatsFragment"
+        android:name="fr.harmoniamk.statsmk.fragment.stats.periodicStats.PeriodicStatsFragment"
+        tools:layout="@layout/fragment_periodic_stats"
+        android:label="PeriodicStatsFragment">
+        <action android:id="@+id/to_map_stats"
+            app:destination="@id/mapStatsFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right">
+
+            <argument
+                android:name="trackId"
+                app:argType="integer"
+                app:nullable="false"/>
+
+
+            <argument
+                android:name="isIndiv"
+                app:argType="boolean"
+                android:defaultValue="false"/>
+
+        </action>
+
+        <action
+            android:id="@+id/go_to_war_details"
+            app:destination="@id/warDetailsFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right">
+
+            <argument
+                android:name="war"
+                app:argType="fr.harmoniamk.statsmk.model.local.MKWar"
+                app:nullable="false"/>
+
+        </action>
     </fragment>
 
     <fragment
