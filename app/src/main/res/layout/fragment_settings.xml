@@ -66,6 +66,22 @@
             android:paddingVertical="15dp"
             android:text="Profil"/>
 
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/white"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/harmonia_dark"
+            android:fontFamily="@font/montserrat_regular"
+            android:textSize="16sp"
+            android:id="@+id/simulate_btn"
+            android:paddingVertical="15dp"
+            android:text="Simuler 100 Wars"/>
+
         <!--
         <View
             android:layout_width="match_parent"
@@ -84,26 +100,11 @@
             -->
 
         <View
+            android:id="@+id/simu_line"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="@color/white"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:visibility="gone"
-            android:layout_height="wrap_content"
-            android:textColor="@color/text_color"
-            android:fontFamily="@font/montserrat_regular"
-            android:textSize="16sp"
-            android:id="@+id/migrate_btn"
-            android:paddingVertical="15dp"
-            android:text="Migrer"/>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:visibility="gone"
-            android:background="@color/white"/>
 
     </LinearLayout>
 

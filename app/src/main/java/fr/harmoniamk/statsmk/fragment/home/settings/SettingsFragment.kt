@@ -1,14 +1,17 @@
 package fr.harmoniamk.statsmk.fragment.home.settings
 
+import android.app.ProgressDialog
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
+import fr.harmoniamk.statsmk.BuildConfig
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentSettingsBinding
 import fr.harmoniamk.statsmk.extension.clicks
@@ -33,11 +36,14 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             onManageTeam = binding.manageTeamBtn.clicks(),
             onTheme = themePopup.onPositiveClick,
             onManagePlayers = binding.managePlayersBtn.clicks(),
-            onMigrate = binding.migrateBtn.clicks(),
             onPopupTheme =  themePopup.onNegativeClick.map { false },
             onProfileClick = binding.profileBtn.clicks(),
-            onPlayersClick = binding.playersBtn.clicks()
+            onPlayersClick = binding.playersBtn.clicks(),
+            onSimulate = binding.simulateBtn.clicks()
         )
+
+        binding.simulateBtn.isVisible = BuildConfig.DEBUG
+        binding.simuLine.isVisible = BuildConfig.DEBUG
 
         viewModel.sharedManageTeam
             .filter { findNavController().currentDestination?.id == R.id.homeFragment }
@@ -71,5 +77,18 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             .filter { findNavController().currentDestination?.id == R.id.homeFragment }
             .onEach { findNavController().navigate(HomeFragmentDirections.toPlayerList(addToTeamBehavior = false)) }
             .launchIn(lifecycleScope)
+        var dialog = ProgressDialog(requireContext())
+
+        viewModel.sharedProgress
+            .onEach {
+                when (it) {
+                    true -> {
+                        dialog = ProgressDialog(requireContext())
+                        dialog.setMessage("Création des wars en cours ...")
+                        dialog.show()
+                    }
+                    else -> dialog.dismiss()
+                }
+            }.launchIn(lifecycleScope)
     }
 }

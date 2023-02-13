@@ -46,7 +46,7 @@ class TeamStats(val teamName: String?, totalPlayed: Int?) {
 
 class WarStats(list : List<MKWar>) {
     val warsPlayed = list.count()
-    val warsWon = list.filterNot { war -> war.displayedDiff.contains('-') }.count()
+    val warsWon = list.filter{ war -> war.displayedDiff.contains('+') }.count()
     val warsTied = list.filter { war -> war.displayedDiff == "0" }.count()
     val warsLoss = list.filter { war -> war.displayedDiff.contains('-') }.count()
     val highestVictory = list.maxByOrNull { war -> war.scoreHost }.takeIf { it?.displayedDiff?.contains("+").isTrue }
