@@ -23,7 +23,9 @@ enum class Cups(
     TURNIP(R.string.turnip, R.drawable.turnip),
     PROPELLER(R.string.propeller, R.drawable.propeller),
     ROCK(R.string.rock, R.drawable.rock),
-    MOON(R.string.moon, R.drawable.moon)
+    MOON(R.string.moon, R.drawable.moon),
+    BOOMERANG(R.string.boomerang, R.drawable.boomerang),
+    FRUIT(R.string.fruit, R.drawable.fruit)
 }
 
 enum class Maps(val label: Int, val picture: Int, val cup: Cups)  {
@@ -98,5 +100,14 @@ enum class Maps(val label: Int, val picture: Int, val cup: Cups)  {
     bBB(R.string.bbb, R.drawable.bbb, Cups.MOON),
     bPG(R.string.bpg, R.drawable.bpg, Cups.MOON),
     bMM(R.string.bmm, R.drawable.bmm, Cups.MOON),
-    bRR(R.string.brr, R.drawable.brr, Cups.MOON)
+    bRR(R.string.brr, R.drawable.brr, Cups.MOON),
+    bAD(R.string.bad, R.drawable.bad, Cups.BOOMERANG),
+    bRP(R.string.brp, R.drawable.brp, Cups.BOOMERANG),
+    bDKS(R.string.bdksc, R.drawable.bdksc, Cups.BOOMERANG),
+    bYI(R.string.byi, R.drawable.byi, Cups.BOOMERANG),
+    bBR(R.string.bbr, R.drawable.bbr, Cups.FRUIT),
+    bMC(R.string.bmc, R.drawable.bmc, Cups.FRUIT),
+    bWS(R.string.bws, R.drawable.bws, Cups.FRUIT),
+    bSiS(R.string.bsis, R.drawable.bsis, Cups.FRUIT)
+
 }

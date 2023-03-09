@@ -74,6 +74,14 @@
     <string name="bpg">Jardin Peach</string>
     <string name="bmm">Mont festif</string>
     <string name="brr">Route Arc-en-ciel 3DS</string>
+    <string name="bad">Virée à Amsterdam</string>
+    <string name="brp">Riverside Park</string>
+    <string name="bdksc">Pic DK</string>
+    <string name="byi">Île de Yoshi</string>
+    <string name="bbr">Bousculade à Bangkok</string>
+    <string name="bmc">Circuit Mario DS</string>
+    <string name="bws">Stade Waluigi</string>
+    <string name="bsis">Poursuite à Singapour</string>
     <string name="mushroom">Coupe Champignon</string>
     <string name="flower">Coupe Fleur</string>
     <string name="star">Coupe Etoile</string>
@@ -92,6 +100,8 @@
     <string name="propeller">Coupe Hélico</string>
     <string name="rock">Coupe Pierre</string>
     <string name="moon">Coupe Lune</string>
+    <string name="boomerang">Coupe Boomerang</string>
+    <string name="fruit">Coupe Fruit</string>
     <string name="tracks">Circuits</string>
     <string name="welcome_message"><![CDATA[ Bienvenue sur Mario Kart Stats !<br/> <br/> Cette application est l\'ébauche d\'un outil visant à réunir des statistiques sur vos tournois et time-trials. <br/> <br/> Ici, vous pourrez retrouver vos meilleurs temps ainsi que vos performances, avec la visualisation de votre progression sur le moyen ou long terme. <br/> A terme, l\'application devrait également inclure des fonctionnalités telles qu\'une partie \"Conseils et infos utiles\" sur les circuits et techniques à connaître, ainsi qu\'une partie "Connectivité" qui permettra de pouvoir partager ses infos et commenter celles de ses amis. <br/> <br/> Attention toutefois, l\'app est un prototype en cours de dev, il se peut que de nombreux bugs ou crashs soient présents. Soyez indulgents et n\'hésitez pas à me faire des retours. <br/><br/> Je voous invite donc à créer votre premier tournoi ou time-trial en vous rendant dans les sections correspondantes. <br/> <br/> Excellent jeu à tous !]]></string>
     <string name="team_war">War en équipe</string>
