@@ -109,5 +109,4 @@ enum class Maps(val label: Int, val picture: Int, val cup: Cups)  {
     bMC(R.string.bmc, R.drawable.bmc, Cups.FRUIT),
     bWS(R.string.bws, R.drawable.bws, Cups.FRUIT),
     bSiS(R.string.bsis, R.drawable.bsis, Cups.FRUIT)
-
 }
