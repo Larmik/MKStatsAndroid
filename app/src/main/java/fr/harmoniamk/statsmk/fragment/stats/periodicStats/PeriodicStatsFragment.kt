@@ -29,6 +29,7 @@ class PeriodicStatsFragment : Fragment(R.layout.fragment_periodic_stats) {
     private val viewModel: PeriodicStatsViewModel by viewModels()
 
     private var list: List<MKWar>? = null
+    private var isWeek = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -95,15 +96,16 @@ class PeriodicStatsFragment : Fragment(R.layout.fragment_periodic_stats) {
         }.launchIn(lifecycleScope)
 
         viewModel.sharedTrackClick
-            .filter { findNavController().currentDestination?.id == R.id.teamStatsFragment }
-            .onEach { findNavController().navigate(TeamStatsFragmentDirections.toMapStats(it)) }
+            .filter { findNavController().currentDestination?.id == R.id.periodicStatsFragment }
+            .onEach { findNavController().navigate(PeriodicStatsFragmentDirections.toMapStats(it, isWeek = isWeek, isMonth = !isWeek)) }
             .launchIn(lifecycleScope)
         viewModel.sharedWarClick
-            .filter { findNavController().currentDestination?.id == R.id.teamStatsFragment }
-            .onEach { findNavController().navigate(TeamStatsFragmentDirections.goToWarDetails(it)) }
+            .filter { findNavController().currentDestination?.id == R.id.periodicStatsFragment }
+            .onEach { findNavController().navigate(PeriodicStatsFragmentDirections.goToWarDetails(it)) }
             .launchIn(lifecycleScope)
         viewModel.sharedWeekStatsEnabled
             .onEach {
+                isWeek = it
                 binding.title.text = when (it) {
                     true -> "Statistiques hebdomadaires"
                     else -> "Statistiques mensuelles"

@@ -653,6 +653,7 @@
         android:name="fr.harmoniamk.statsmk.fragment.stats.periodicStats.PeriodicStatsFragment"
         tools:layout="@layout/fragment_periodic_stats"
         android:label="PeriodicStatsFragment">
+
         <action android:id="@+id/to_map_stats"
             app:destination="@id/mapStatsFragment"
             app:enterAnim="@anim/enter_from_right"
@@ -668,6 +669,16 @@
 
             <argument
                 android:name="isIndiv"
+                app:argType="boolean"
+                android:defaultValue="false"/>
+
+            <argument
+                android:name="isWeek"
+                app:argType="boolean"
+                android:defaultValue="false"/>
+
+            <argument
+                android:name="isMonth"
                 app:argType="boolean"
                 android:defaultValue="false"/>
 

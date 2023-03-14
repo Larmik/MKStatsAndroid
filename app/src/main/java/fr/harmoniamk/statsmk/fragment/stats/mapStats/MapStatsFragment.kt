@@ -31,11 +31,15 @@ class MapStatsFragment : Fragment(R.layout.fragment_map_stats) {
     private val viewModel : MapStatsViewModel by viewModels()
     private var trackIndex: Int? = null
     private var isIndiv: Boolean? = null
+    private var isWeek: Boolean? = null
+    private var isMonth: Boolean? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         trackIndex = arguments?.getInt("trackId")
         isIndiv = arguments?.getBoolean("isIndiv")
+        isWeek = arguments?.getBoolean("isWeek")
+        isMonth = arguments?.getBoolean("isMonth")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -49,7 +53,9 @@ class MapStatsFragment : Fragment(R.layout.fragment_map_stats) {
                 onMapClick = adapter.onMapClick,
                 onVictoryClick = binding.highestVictory.clicks(),
                 onDefeatClick = binding.loudestDefeat.clicks(),
-                isIndiv = isIndiv
+                isIndiv = isIndiv,
+                isWeek = isWeek,
+                isMonth = isMonth
             )
             viewModel.sharedStats.onEach { stats ->
                 binding.progress.isVisible = false

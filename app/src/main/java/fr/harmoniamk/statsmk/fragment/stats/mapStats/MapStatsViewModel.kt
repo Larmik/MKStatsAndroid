@@ -28,11 +28,14 @@ class MapStatsViewModel @Inject constructor(private val preferencesRepository: P
     val sharedStats = _sharedStats.asSharedFlow()
 
 
+
     fun bind(trackIndex: Int,
              onMapClick: Flow<MapDetails>,
              onVictoryClick: Flow<Unit>,
              onDefeatClick: Flow<Unit>,
-             isIndiv: Boolean?
+             isIndiv: Boolean?,
+             isWeek: Boolean?,
+             isMonth: Boolean?
     ) {
         val mapDetailsList = mutableListOf<MapDetails>()
         val onlyIndiv = isIndiv.isTrue || preferencesRepository.currentTeam?.mid == null
@@ -43,9 +46,13 @@ class MapStatsViewModel @Inject constructor(private val preferencesRepository: P
                          || it.map {war -> war.teamOpponent}.contains(preferencesRepository.currentTeam?.mid))
                          || onlyIndiv
              }
-             .mapNotNull { list -> list.map { MKWar(it) }.filter {
-                 it.isOver && (!onlyIndiv || (onlyIndiv && it.hasPlayer(authenticationRepository.user?.uid)))
-             } }
+             .mapNotNull { list -> list
+                 .map { MKWar(it) }
+                 .filter { it.isOver }
+                 .filter {  !onlyIndiv || (onlyIndiv && it.hasPlayer(authenticationRepository.user?.uid)) }
+                 .filter {  !isWeek.isTrue || (isWeek.isTrue && it.isThisWeek) }
+                 .filter {  !isMonth.isTrue || (isMonth.isTrue && it.isThisMonth) }
+              }
              .map {
                 val finalList = mutableListOf<MapDetails>()
                  it.withName(firebaseRepository).firstOrNull()?.let { list ->

@@ -34,6 +34,8 @@ class IndivStatsViewModel @Inject constructor(
     private var mostPlayedMap: TrackStats? = null
     private var highestVicory: MKWar? = null
     private var loudestDefeat: MKWar? = null
+    private var highestScore: MKWar? = null
+    private var lowestScore: MKWar? = null
 
     fun bind(
         list: List<MKWar>?,
@@ -41,7 +43,10 @@ class IndivStatsViewModel @Inject constructor(
         onWorstClick: Flow<Unit>,
         onMostPlayedClick: Flow<Unit>,
         onVictoryClick: Flow<Unit>,
-        onDefeatClick: Flow<Unit>) {
+        onDefeatClick: Flow<Unit>,
+        onHighestScore: Flow<Unit>,
+        onLowestScore: Flow<Unit>,
+        ) {
 
              flowOf(list)
                 .filterNotNull()
@@ -53,6 +58,8 @@ class IndivStatsViewModel @Inject constructor(
                     mostPlayedMap = stats.averageForMaps.maxByOrNull { it.totalPlayed }
                     highestVicory = stats.warStats.highestVictory
                     loudestDefeat = stats.warStats.loudestDefeat
+                     highestScore = stats.highestScore?.war
+                     lowestScore = stats.lowestScore?.war
                     _sharedStats.emit(stats)
                 }.launchIn(viewModelScope)
 
@@ -64,7 +71,7 @@ class IndivStatsViewModel @Inject constructor(
             .map { Maps.values().indexOf(it.map) }
             .bind(_sharedTrackClick, viewModelScope)
 
-        flowOf(onVictoryClick.mapNotNull { highestVicory }, onDefeatClick.mapNotNull { loudestDefeat })
+        flowOf(onVictoryClick.mapNotNull { highestVicory }, onDefeatClick.mapNotNull { loudestDefeat }, onHighestScore.mapNotNull { highestScore }, onLowestScore.mapNotNull { lowestScore })
             .flattenMerge()
             .bind(_sharedWarClick, viewModelScope)
     }

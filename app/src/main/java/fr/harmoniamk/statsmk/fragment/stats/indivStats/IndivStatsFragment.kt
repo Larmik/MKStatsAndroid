@@ -44,7 +44,9 @@ class IndivStatsFragment : Fragment(R.layout.fragment_indiv_stats) {
             onWorstClick = binding.worstTrackview.clicks(),
             onMostPlayedClick = binding.mostPlayedTrackview.clicks(),
             onVictoryClick = binding.highestVictory.clicks(),
-            onDefeatClick = binding.highestDefeat.clicks()
+            onDefeatClick = binding.highestDefeat.clicks(),
+            onHighestScore = binding.highestScoreLayout.clicks(),
+            onLowestScore = binding.lowestScoreLayout.clicks()
         )
 
         binding.highestDefeat.clipToOutline = true
