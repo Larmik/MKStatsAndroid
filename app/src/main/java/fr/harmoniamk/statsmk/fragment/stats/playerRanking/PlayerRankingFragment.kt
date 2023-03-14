@@ -53,11 +53,9 @@ class PlayerRankingFragment : Fragment(R.layout.fragment_player_ranking) {
             onSearch = binding.searchEt.onTextChanged(),
         )
         viewModel.sharedUserList
-            .onEach {
-                binding.progress.isVisible = false
-                binding.mostPlayedRv.isVisible = true
-                adapter.addUsers(it)
-            }.launchIn(lifecycleScope)
+            .onEach { adapter.addUsers(it) }
+            .launchIn(lifecycleScope)
+
         viewModel.sharedGoToStats
             .filter { findNavController().currentDestination?.id == R.id.playerRankingFragment }
             .onEach { findNavController().navigate(PlayerRankingFragmentDirections.toPlayerStats(it)) }
@@ -69,6 +67,11 @@ class PlayerRankingFragment : Fragment(R.layout.fragment_player_ranking) {
                 updateSortButton(binding.totalWinSortButton, it, PlayerSortType.TOTAL_WIN)
                 updateSortButton(binding.winrateSortButton, it, PlayerSortType.WINRATE)
             }.launchIn(lifecycleScope)
+
+        viewModel.sharedLoading.onEach {
+            binding.progress.isVisible = it
+            binding.mostPlayedRv.isVisible = !it
+        }.launchIn(lifecycleScope)
     }
 
     private fun updateSortButton(

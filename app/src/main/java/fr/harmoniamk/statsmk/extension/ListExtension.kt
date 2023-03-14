@@ -6,7 +6,6 @@ import fr.harmoniamk.statsmk.fragment.stats.playerRanking.PlayerRankingItemViewM
 import fr.harmoniamk.statsmk.model.firebase.*
 import fr.harmoniamk.statsmk.model.local.*
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
-import fr.harmoniamk.statsmk.repository.StorageRepositoryInterface
 import kotlinx.coroutines.flow.*
 
 fun List<MKWar>.getLasts(teamId: String?) = this.filter { war -> war.isOver && war.war?.teamHost == teamId }.sortedByDescending{ it.war?.createdDate?.formatToDate() }.safeSubList(0, 5)
@@ -24,12 +23,11 @@ fun List<MKWar?>.withName(firebaseRepository: FirebaseRepositoryInterface) = flo
 }
 
 
-fun List<User>.withFullStats(firebaseRepository: FirebaseRepositoryInterface, storageRepository: StorageRepositoryInterface) = flow {
+fun List<User>.withFullStats(firebaseRepository: FirebaseRepositoryInterface) = flow {
     val temp = mutableListOf<PlayerRankingItemViewModel>()
     this@withFullStats.forEach { user ->
         val stats = firebaseRepository.getNewWars().first().map { MKWar(it) }.withFullStats(firebaseRepository, user.mid).first()
-        val picture = storageRepository.getPicture(user.mid).map { (it as? PictureResponse.Success)?.url ?: "https://firebasestorage.googleapis.com/v0/b/stats-mk-debug.appspot.com/o/hr_logo.png?alt=media&token=6f4452bf-7028-4203-8d77-0c3eb0d8cd48" }.first()
-        temp.add(PlayerRankingItemViewModel(user, stats, picture))
+        temp.add(PlayerRankingItemViewModel(user, stats))
     }
     emit(temp)
 }

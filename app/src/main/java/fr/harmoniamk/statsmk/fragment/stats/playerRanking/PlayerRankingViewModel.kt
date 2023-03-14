@@ -18,27 +18,38 @@ import javax.inject.Inject
 @ExperimentalCoroutinesApi
 @HiltViewModel
 class PlayerRankingViewModel @Inject constructor(
-    private val firebaseRepository: FirebaseRepositoryInterface,
-    private val storageRepository: StorageRepositoryInterface
+    private val firebaseRepository: FirebaseRepositoryInterface
 ) : ViewModel()  {
 
     private val _sharedUserList = MutableSharedFlow<List<PlayerRankingItemViewModel>>()
     private val _sharedGoToStats = MutableSharedFlow<PlayerRankingItemViewModel>()
+    private val _sharedLoading = MutableSharedFlow<Boolean>()
     private val _sharedSortTypeSelected = MutableStateFlow(PlayerSortType.NAME)
 
     val sharedGoToStats = _sharedGoToStats.asSharedFlow()
     val sharedUserList = _sharedUserList.asSharedFlow()
     val sharedSortTypeSelected = _sharedSortTypeSelected.asSharedFlow()
+    val sharedLoading = _sharedLoading.asSharedFlow()
+    private val itemsVM = mutableListOf<PlayerRankingItemViewModel>()
+
 
     fun bind(list: List<User>, onPlayerClick: Flow<PlayerRankingItemViewModel>, onSortClick: Flow<PlayerSortType>, onSearch: Flow<String>) {
-        val itemsVM = mutableListOf<PlayerRankingItemViewModel>()
+        flowOf(true).bind(_sharedLoading, viewModelScope)
         flowOf(list)
             .map { it.sortedBy { it.name } }
-            .flatMapLatest { it.withFullStats(firebaseRepository, storageRepository) }
+            .flatMapLatest { it.withFullStats(firebaseRepository) }
             .onEach {
                 itemsVM.clear()
                 itemsVM.addAll(it)
-            }.bind(_sharedUserList, viewModelScope)
+                when (_sharedSortTypeSelected.value) {
+                    PlayerSortType.NAME -> itemsVM.sortBy { it.user.name }
+                    PlayerSortType.WINRATE -> itemsVM.sortByDescending { (it.stats.warStats.warsWon*100)/it.stats.warStats.warsPlayed}
+                    PlayerSortType.TOTAL_WIN -> itemsVM.sortByDescending { it.stats.warStats.warsWon }
+                    PlayerSortType.AVERAGE -> itemsVM.sortByDescending { it.stats.averagePoints }
+                }
+                _sharedLoading.emit(false)
+                _sharedUserList.emit(itemsVM)
+            }.launchIn(viewModelScope)
 
         onPlayerClick.bind(_sharedGoToStats, viewModelScope)
 

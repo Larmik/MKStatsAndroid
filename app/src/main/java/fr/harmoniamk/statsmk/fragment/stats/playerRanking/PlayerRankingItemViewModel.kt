@@ -6,7 +6,7 @@ import fr.harmoniamk.statsmk.model.local.Stats
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class PlayerRankingItemViewModel(val user: User, val stats: Stats, val picture: String?) : Parcelable {
+data class PlayerRankingItemViewModel(val user: User, val stats: Stats) : Parcelable {
 
     val playerName: String?
         get() = user.name
@@ -16,4 +16,6 @@ data class PlayerRankingItemViewModel(val user: User, val stats: Stats, val pict
         get() = "${(stats.warStats.warsWon*100)/stats.warStats.warsPlayed} %"
     val averageLabel: String
         get() = stats.averagePoints.toString()
+    val picture: String?
+        get() = user.picture
 }

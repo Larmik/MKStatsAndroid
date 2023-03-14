@@ -10,5 +10,5 @@ data class User(
     var team: String? = null,
     var currentWar: String? = null,
     var role: Int? = null,
-    var picture: String
+    var picture: String? = null
 ): Parcelable

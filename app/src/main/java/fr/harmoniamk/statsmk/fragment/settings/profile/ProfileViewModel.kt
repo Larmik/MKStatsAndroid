@@ -79,7 +79,10 @@ class ProfileViewModel @Inject constructor(private val authenticationRepository:
             .mapNotNull { authenticationRepository.user?.uid }
             .flatMapLatest { storageRepository.getPicture(it) }
             .mapNotNull { url = (it as? PictureResponse.Success)?.url; url }
-            .flatMapLatest { authenticationRepository.updateProfile(authenticationRepository.user?.displayName.toString(), it) }
+            .flatMapLatest { firebaseRepository.getUser(authenticationRepository.user?.uid) }
+            .filterNotNull()
+            .flatMapLatest { firebaseRepository.writeUser(it.apply { this.picture = url }) }
+            .flatMapLatest { authenticationRepository.updateProfile(authenticationRepository.user?.displayName.toString(), url) }
             .onEach { _sharedPictureLoaded.emit(url) }
             .launchIn(viewModelScope)
 
