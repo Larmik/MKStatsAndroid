@@ -4,10 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.enums.Maps
-import fr.harmoniamk.statsmk.extension.bind
-import fr.harmoniamk.statsmk.extension.positionToPoints
-import fr.harmoniamk.statsmk.extension.sum
-import fr.harmoniamk.statsmk.extension.withName
+import fr.harmoniamk.statsmk.extension.*
 import fr.harmoniamk.statsmk.model.local.*
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
@@ -21,14 +18,10 @@ import javax.inject.Inject
 @HiltViewModel
 class TeamStatsViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface) : ViewModel() {
 
-    private val _sharedMostDefeatedTeam = MutableSharedFlow<Pair<String?, Int?>?>()
-    private val _sharedLessDefeatedTeam = MutableSharedFlow<Pair<String?, Int?>?>()
     private val _sharedTrackClick = MutableSharedFlow<Int>()
     private val _sharedWarClick = MutableSharedFlow<MKWar>()
     private val _sharedStats = MutableSharedFlow<Stats>()
 
-    val sharedMostDefeatedTeam = _sharedMostDefeatedTeam.asSharedFlow()
-    val sharedLessDefeatedTeam = _sharedLessDefeatedTeam.asSharedFlow()
     val sharedTrackClick = _sharedTrackClick.asSharedFlow()
     val sharedWarClick = _sharedWarClick.asSharedFlow()
     val sharedStats = _sharedStats.asSharedFlow()
@@ -54,69 +47,14 @@ class TeamStatsViewModel @Inject constructor(private val firebaseRepository: Fir
                         || it.map {war -> war.war?.teamOpponent}.contains(preferencesRepository.currentTeam?.mid) }
             .mapNotNull { wars -> wars.filter { it.isOver } }
             .flatMapLatest { it.withName(firebaseRepository) }
-            .onEach { list ->
-                val maps = mutableListOf<TrackStats>()
-                val warScores = mutableListOf<WarScore>()
-                val averageForMaps = mutableListOf<TrackStats>()
-                //Hardcoded ID is Japs random teams
-                val mostPlayedTeamId = warsWithOpponentName(list.filterNot { it.war?.teamOpponent == "1652270659565" })
-                val mostDefeatedTeamId = warsWithOpponentName(list.filterNot { it.war?.teamOpponent == "1652270659565" }.filterNot { it.displayedDiff.contains('-') })
-                val lessDefeatedTeamId = warsWithOpponentName(list.filterNot { it.war?.teamOpponent == "1652270659565" }.filter { it.displayedDiff.contains('-') })
-
-                val mostPlayedTeamData = firebaseRepository.getTeam(mostPlayedTeamId?.first ?: "")
-                    .mapNotNull { TeamStats(it?.name, mostPlayedTeamId?.second?.size) }
-                    .firstOrNull()
-                val mostDefeatedTeamData = firebaseRepository.getTeam(mostDefeatedTeamId?.first ?: "")
-                    .mapNotNull { Pair(it?.name, mostDefeatedTeamId?.second?.size) }
-                    .firstOrNull()
-                val lessDefeatedTeamData = firebaseRepository.getTeam(lessDefeatedTeamId?.first ?: "")
-                    .mapNotNull { Pair(it?.name, lessDefeatedTeamId?.second?.size) }
-                    .firstOrNull()
-
-                list.map { Pair(it, it.war?.warTracks?.map { MKWarTrack(it) }) }
-                    .forEach {
-                        var currentPoints = 0
-                        it.second?.forEach { track ->
-                            var scoreForTrack = 0
-                            track.track?.warPositions?.map { it.position.positionToPoints() }?.forEach {
-                                scoreForTrack += it
-                            }
-                            currentPoints += scoreForTrack
-                            maps.add(TrackStats(trackIndex = track.track?.trackIndex, score = scoreForTrack))
-                        }
-                        warScores.add(WarScore(it.first, currentPoints))
-                        currentPoints = 0
-                    }
-
-                maps.groupBy { it.trackIndex }
-                    .filter { it.value.isNotEmpty() }
-                    .forEach { entry ->
-                        averageForMaps.add(
-                            TrackStats(
-                                map = Maps.values()[entry.key ?: -1],
-                                score = (entry.value.map { it.score }.sum() / entry.value.map { it.score }.count()),
-                                totalPlayed = entry.value.size
-                            )
-                        )
-                    }
-
-                bestMap = averageForMaps.filter { it.totalPlayed >= 2 }.maxByOrNull { it.score ?: 0}
-                worstMap = averageForMaps.filter { it.totalPlayed >= 2 }.minByOrNull { it.score ?: 0}
-                mostPlayedMap = averageForMaps.maxByOrNull { it.totalPlayed }
-                highestVicory = list.maxByOrNull { war -> war.scoreHost }
-                loudestDefeat = list.minByOrNull { war -> war.scoreHost }
-
-                val newStats = Stats(
-                    warStats = WarStats(list),
-                    warScores = warScores,
-                    maps = maps,
-                    averageForMaps = averageForMaps,
-                    mostPlayedTeam = mostPlayedTeamData
-                )
-
-                _sharedMostDefeatedTeam.emit(mostDefeatedTeamData)
-                _sharedLessDefeatedTeam.emit(lessDefeatedTeamData)
-                _sharedStats.emit(newStats)
+            .flatMapLatest { it.withFullStats(firebaseRepository) }
+            .onEach { stats ->
+                bestMap = stats.averageForMaps.filter { it.totalPlayed >= 2 }.maxByOrNull { it.score ?: 0}
+                worstMap = stats.averageForMaps.filter { it.totalPlayed >= 2 }.minByOrNull { it.score ?: 0}
+                mostPlayedMap = stats.averageForMaps.maxByOrNull { it.totalPlayed }
+                highestVicory = stats.warStats.highestVictory
+                loudestDefeat = stats.warStats.loudestDefeat
+                _sharedStats.emit(stats)
             }.launchIn(viewModelScope)
 
         flowOf(
@@ -131,9 +69,4 @@ class TeamStatsViewModel @Inject constructor(private val firebaseRepository: Fir
             .flattenMerge()
             .bind(_sharedWarClick, viewModelScope)
     }
-
-    private fun warsWithOpponentName(list: List<MKWar>): Pair<String?, List<MKWar>>? = list
-        .groupBy { it.war?.teamOpponent }
-        .toList()
-        .maxByOrNull { it.second.size }
 }

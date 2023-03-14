@@ -66,6 +66,10 @@ class TeamStatsFragment : Fragment(R.layout.fragment_team_stats) {
             binding.highestDefeat.bind(it.warStats.loudestDefeat)
             binding.mostPlayedTeam.text = it.mostPlayedTeam?.teamName
             binding.mostPlayedTeamTotal.text = it.mostPlayedTeam?.totalPlayedLabel
+            binding.mostDefeatedTeam.text = it.mostDefeatedTeam?.teamName
+            binding.mostDefeatedTeamTotal.text = "${it.mostDefeatedTeam?.totalPlayed} victoires"
+            binding.lessDefeatedTeam.text = it.lessDefeatedTeam?.teamName
+            binding.lessDefeatedTeamTotal.text = "${it.lessDefeatedTeam?.totalPlayed} défaites"
 
             val averageWarColor = when  {
                 it.averagePointsLabel.contains("-") -> R.color.lose
@@ -89,16 +93,6 @@ class TeamStatsFragment : Fragment(R.layout.fragment_team_stats) {
             )
         }.launchIn(lifecycleScope)
 
-        viewModel.sharedMostDefeatedTeam
-            .onEach {
-                binding.mostDefeatedTeam.text = it?.first
-                binding.mostDefeatedTeamTotal.text = "${it?.second} victoires"
-            }.launchIn(lifecycleScope)
-        viewModel.sharedLessDefeatedTeam
-            .onEach {
-                binding.lessDefeatedTeam.text = it?.first
-                binding.lessDefeatedTeamTotal.text = "${it?.second} défaites"
-            }.launchIn(lifecycleScope)
         viewModel.sharedTrackClick
             .filter { findNavController().currentDestination?.id == R.id.teamStatsFragment }
             .onEach { findNavController().navigate(TeamStatsFragmentDirections.toMapStats(it)) }

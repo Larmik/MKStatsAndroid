@@ -9,3 +9,6 @@ enum class WarSortType {
 enum class WarFilterType {
     WEEK, OFFICIAL, PLAY
 }
+enum class PlayerSortType{
+    NAME, WINRATE, AVERAGE, TOTAL_WIN
+}

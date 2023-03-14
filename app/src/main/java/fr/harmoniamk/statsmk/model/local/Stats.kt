@@ -1,17 +1,22 @@
 package fr.harmoniamk.statsmk.model.local
 
+import android.os.Parcelable
 import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.extension.*
+import kotlinx.android.parcel.Parcelize
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 
-class Stats(
+@Parcelize
+data class Stats(
     val warStats: WarStats,
     val mostPlayedTeam: TeamStats?,
+    val mostDefeatedTeam: TeamStats?,
+    val lessDefeatedTeam: TeamStats?,
     val warScores: List<WarScore>,
     val maps: List<TrackStats>,
     val averageForMaps: List<TrackStats>,
-) {
+): Parcelable {
      val highestScore: WarScore? = warScores.maxByOrNull { it.score }
      val lowestScore: WarScore? = warScores.minByOrNull { it.score }
      val bestMap: TrackStats? = averageForMaps.filter { it.totalPlayed >= 2 }.maxByOrNull { it.score ?: 0 }
@@ -25,26 +30,30 @@ class Stats(
     var mapsWon = "${maps.filter { (it.score ?: 0) < 41 }.size} / ${maps.size}"
  }
 
+@Parcelize
 class WarScore(
     val war: MKWar,
     val score: Int
-) {
+): Parcelable {
     val opponentLabel = "vs ${war.name?.split('-')?.lastOrNull()?.trim()}"
 }
 
+@Parcelize
 data class TrackStats(
     val map: Maps? = null,
     val trackIndex: Int? = null,
     val score: Int? = null,
     val totalPlayed: Int = 0,
     val winRate: Int? = null
-)
+): Parcelable
 
-class TeamStats(val teamName: String?, totalPlayed: Int?) {
+@Parcelize
+class TeamStats(val teamName: String?, val totalPlayed: Int?): Parcelable {
     val totalPlayedLabel = "$totalPlayed matchs joués"
 }
 
-class WarStats(list : List<MKWar>) {
+@Parcelize
+class WarStats(val list : List<MKWar>): Parcelable {
     val warsPlayed = list.count()
     val warsWon = list.filter{ war -> war.displayedDiff.contains('+') }.count()
     val warsTied = list.filter { war -> war.displayedDiff == "0" }.count()
@@ -53,11 +62,12 @@ class WarStats(list : List<MKWar>) {
     val loudestDefeat = list.minByOrNull { war -> war.scoreHost }.takeIf { it?.displayedDiff?.contains("-").isTrue }
 }
 
+@Parcelize
 class MapDetails(
     val war: MKWar,
     val warTrack: MKWarTrack,
     val position: Int?
-)
+): Parcelable
 
 @FlowPreview
 @ExperimentalCoroutinesApi

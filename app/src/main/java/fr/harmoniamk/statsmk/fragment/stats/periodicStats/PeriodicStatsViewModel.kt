@@ -21,15 +21,11 @@ import javax.inject.Inject
 @HiltViewModel
 class PeriodicStatsViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface) : ViewModel() {
 
-    private val _sharedMostDefeatedTeam = MutableSharedFlow<Pair<String?, Int?>?>()
-    private val _sharedLessDefeatedTeam = MutableSharedFlow<Pair<String?, Int?>?>()
     private val _sharedTrackClick = MutableSharedFlow<Int>()
     private val _sharedWarClick = MutableSharedFlow<MKWar>()
     private val _sharedWeekStatsEnabled = MutableStateFlow(true)
     private val _sharedStats = MutableSharedFlow<Stats>()
 
-    val sharedMostDefeatedTeam = _sharedMostDefeatedTeam.asSharedFlow()
-    val sharedLessDefeatedTeam = _sharedLessDefeatedTeam.asSharedFlow()
     val sharedTrackClick = _sharedTrackClick.asSharedFlow()
     val sharedWarClick = _sharedWarClick.asSharedFlow()
     val sharedStats = _sharedStats.asSharedFlow()
@@ -96,10 +92,10 @@ class PeriodicStatsViewModel @Inject constructor(private val firebaseRepository:
                     .mapNotNull { TeamStats(it?.name, mostPlayedTeamId?.second?.size) }
                     .firstOrNull()
                 val mostDefeatedTeamData = firebaseRepository.getTeam(mostDefeatedTeamId?.first ?: "")
-                    .mapNotNull { Pair(it?.name, mostDefeatedTeamId?.second?.size) }
+                    .mapNotNull { TeamStats(it?.name, mostDefeatedTeamId?.second?.size) }
                     .firstOrNull()
                 val lessDefeatedTeamData = firebaseRepository.getTeam(lessDefeatedTeamId?.first ?: "")
-                    .mapNotNull { Pair(it?.name, lessDefeatedTeamId?.second?.size) }
+                    .mapNotNull { TeamStats(it?.name, lessDefeatedTeamId?.second?.size) }
                     .firstOrNull()
 
                 list.map { Pair(it, it.war?.warTracks?.map { MKWarTrack(it) }) }
@@ -140,11 +136,10 @@ class PeriodicStatsViewModel @Inject constructor(private val firebaseRepository:
                     warScores = warScores,
                     maps = maps,
                     averageForMaps = averageForMaps,
-                    mostPlayedTeam = mostPlayedTeamData
+                    mostPlayedTeam = mostPlayedTeamData,
+                    mostDefeatedTeam = mostDefeatedTeamData,
+                    lessDefeatedTeam = lessDefeatedTeamData
                 )
-
-                _sharedMostDefeatedTeam.emit(mostDefeatedTeamData)
-                _sharedLessDefeatedTeam.emit(lessDefeatedTeamData)
                 _sharedStats.emit(newStats)
             }
             .launchIn(viewModelScope)

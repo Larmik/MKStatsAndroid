@@ -88,18 +88,12 @@ class PeriodicStatsFragment : Fragment(R.layout.fragment_periodic_stats) {
                     requireContext().getColor(averageMapColor)
                 else ContextCompat.getColor(requireContext(), averageMapColor)
             )
+            binding.mostDefeatedTeam.text = it.mostDefeatedTeam?.teamName
+            binding.mostDefeatedTeamTotal.text = "${it.mostDefeatedTeam?.totalPlayed} victoires"
+            binding.lessDefeatedTeam.text = it.lessDefeatedTeam?.teamName
+            binding.lessDefeatedTeamTotal.text = "${it.lessDefeatedTeam?.totalPlayed} défaites"
         }.launchIn(lifecycleScope)
 
-        viewModel.sharedMostDefeatedTeam
-            .onEach {
-                binding.mostDefeatedTeam.text = it?.first
-                binding.mostDefeatedTeamTotal.text = "${it?.second} victoires"
-            }.launchIn(lifecycleScope)
-        viewModel.sharedLessDefeatedTeam
-            .onEach {
-                binding.lessDefeatedTeam.text = it?.first
-                binding.lessDefeatedTeamTotal.text = "${it?.second} défaites"
-            }.launchIn(lifecycleScope)
         viewModel.sharedTrackClick
             .filter { findNavController().currentDestination?.id == R.id.teamStatsFragment }
             .onEach { findNavController().navigate(TeamStatsFragmentDirections.toMapStats(it)) }

@@ -1,13 +1,16 @@
 package fr.harmoniamk.statsmk.model.local
 
+import android.os.Parcelable
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.model.firebase.TOTAL_TRACK_SCORE
 import fr.harmoniamk.statsmk.extension.positionToPoints
 import fr.harmoniamk.statsmk.extension.sum
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
+import kotlinx.android.parcel.Parcelize
 
-data class MKWarTrack(val track: NewWarTrack?) {
+@Parcelize
+data class MKWarTrack(val track: NewWarTrack?): Parcelable {
 
     val index
         get() = track?.trackIndex

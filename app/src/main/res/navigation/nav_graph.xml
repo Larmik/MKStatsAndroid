@@ -143,6 +143,19 @@
 
         </action>
         <action
+            android:id="@+id/to_player_ranking"
+            app:destination="@id/playerRankingFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right">
+
+            <argument
+                android:name="players"
+                app:argType="fr.harmoniamk.statsmk.model.firebase.User[]"/>
+
+        </action>
+        <action
             android:id="@+id/to_map_ranking"
             app:destination="@id/mapRankingFragment"
             app:enterAnim="@anim/enter_from_right"
@@ -253,6 +266,13 @@
         android:name="fr.harmoniamk.statsmk.fragment.addWar.AddWarFragment"
         tools:layout="@layout/fragment_add_war"
         android:label="AddWarFragment"/>
+
+
+    <fragment
+        android:id="@+id/playerStatsFragment"
+        android:name="fr.harmoniamk.statsmk.fragment.stats.playerStats.PlayerStatsFragment"
+        tools:layout="@layout/fragment_player_stats"
+        android:label="PlayerStatsFragment"/>
 
     <fragment
         android:id="@+id/warTrackResultFragment"
@@ -420,6 +440,28 @@
         android:name="fr.harmoniamk.statsmk.fragment.playerList.PlayerListFragment"
         tools:layout="@layout/fragment_player_list"
         android:label="PlayerListFragment" />
+
+    <fragment
+        android:id="@+id/playerRankingFragment"
+        android:name="fr.harmoniamk.statsmk.fragment.stats.playerRanking.PlayerRankingFragment"
+        tools:layout="@layout/fragment_player_ranking"
+        android:label="PlayerRankingFragment">
+
+        <action
+            android:id="@+id/to_player_stats"
+            app:destination="@id/playerStatsFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right">
+
+            <argument
+                android:name="stats"
+                app:argType="fr.harmoniamk.statsmk.fragment.stats.playerRanking.PlayerRankingItemViewModel"/>
+
+        </action>
+
+    </fragment>
 
     <fragment
         android:id="@+id/profileFragment"

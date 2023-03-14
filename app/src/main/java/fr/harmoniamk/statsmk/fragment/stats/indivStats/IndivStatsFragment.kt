@@ -15,7 +15,6 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentIndivStatsBinding
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.extension.positionColor
-import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.local.MKWar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -89,35 +88,29 @@ class IndivStatsFragment : Fragment(R.layout.fragment_indiv_stats) {
                 binding.noDefeat.isVisible = false
                 binding.highestDefeat.isVisible = true
                 binding.highestDefeat.bind(it)
-
+            }
+            when (it.mostDefeatedTeam?.teamName) {
+                "null" -> {
+                    binding.mostDefeatedTeam.text = "Aucune"
+                    binding.mostDefeatedTeamTotal.visibility = View.INVISIBLE
+                }
+                else -> {
+                    binding.mostDefeatedTeam.text = it.mostDefeatedTeam?.teamName
+                    binding.mostDefeatedTeamTotal.text = "${it.mostDefeatedTeam?.totalPlayed} victoires"
+                }
+            }
+            when (it.lessDefeatedTeam?.teamName) {
+                "null" -> {
+                    binding.lessDefeatedTeam.text = "Aucune"
+                    binding.lessDefeatedTeamTotal.visibility = View.INVISIBLE
+                }
+                else -> {
+                    binding.lessDefeatedTeam.text = it.lessDefeatedTeam?.teamName
+                    binding.lessDefeatedTeamTotal.text = "${it.lessDefeatedTeam?.totalPlayed} défaites"
+                }
             }
         }.launchIn(lifecycleScope)
-        viewModel.sharedMostDefeatedTeam
-            .onEach {
-                when (it?.first) {
-                    "null" -> {
-                        binding.mostDefeatedTeam.text = "Aucune"
-                        binding.mostDefeatedTeamTotal.visibility = View.INVISIBLE
-                    }
-                    else -> {
-                        binding.mostDefeatedTeam.text = it?.first
-                        binding.mostDefeatedTeamTotal.text = "${it?.second} victoires"
-                    }
-                }
-            }.launchIn(lifecycleScope)
-        viewModel.sharedLessDefeatedTeam
-            .onEach {
-                when (it?.first) {
-                    "null" -> {
-                        binding.lessDefeatedTeam.text = "Aucune"
-                        binding.lessDefeatedTeamTotal.visibility = View.INVISIBLE
-                    }
-                    else -> {
-                        binding.lessDefeatedTeam.text = it?.first
-                        binding.lessDefeatedTeamTotal.text = "${it?.second} défaites"
-                    }
-                }
-            }.launchIn(lifecycleScope)
+
         viewModel.sharedTrackClick
             .filter { findNavController().currentDestination?.id == R.id.indivStatsFragment }
             .onEach { findNavController().navigate(IndivStatsFragmentDirections.toMapStats(it)) }

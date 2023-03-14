@@ -27,6 +27,8 @@ interface StorageRepositoryInterface {
 @Module
 @InstallIn(ApplicationComponent::class)
 interface StorageRepositoryModule {
+    @Binds
+    fun bindRepository(impl: StorageRepository): StorageRepositoryInterface
 }
 
 @FlowPreview
