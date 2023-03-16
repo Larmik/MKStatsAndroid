@@ -38,10 +38,14 @@ class WarTrackResultFragment : Fragment(R.layout.fragment_result_war_track) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val adapter = WarTrackResultAdapter()
+        val shockAdapter = ShockAdapter()
         binding.resultRv.adapter = adapter
+        binding.shockRv.adapter = shockAdapter
         viewModel.bind(
             onBack = requireActivity().backPressedDispatcher(viewLifecycleOwner),
-            onValid = binding.validateBtn.clicks()
+            onValid = binding.validateBtn.clicks(),
+            onShockAdded = adapter.onShockAdded,
+            onShockRemoved = adapter.onShockRemoved
         )
         val trackView = TrackView(requireContext())
         trackView.bind(track)
@@ -49,6 +53,10 @@ class WarTrackResultFragment : Fragment(R.layout.fragment_result_war_track) {
 
         viewModel.sharedWarPos
             .onEach { adapter.addResults(it) }
+            .launchIn(lifecycleScope)
+
+        viewModel.sharedShocks
+            .onEach { shockAdapter.addItems(it) }
             .launchIn(lifecycleScope)
 
         viewModel.sharedScore

@@ -216,7 +216,8 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
                 .map {map -> NewWarTrack(
                     mid = map["mid"].toString(),
                     trackIndex = map["trackIndex"].toString().toInt(),
-                    warPositions = GsonBuilder().serializeNulls().create().fromJson(map["warPositions"].toString(), object: TypeToken<List<NewWarPositions>>(){}.type ))
+                    warPositions = GsonBuilder().serializeNulls().create().fromJson(map["warPositions"].toString(), object: TypeToken<List<NewWarPositions>>(){}.type ),
+                    shocks = GsonBuilder().serializeNulls().create().fromJson(map["shocks"].toString(), object: TypeToken<List<Shock>>(){}.type ))
                 }
             tracks.singleOrNull { it.mid == trackId }?.warPositions?.let {
                 if (isActive) offer(it)

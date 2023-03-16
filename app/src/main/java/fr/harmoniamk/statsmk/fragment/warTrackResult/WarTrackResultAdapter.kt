@@ -7,10 +7,22 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.PlayerItemBinding
+import fr.harmoniamk.statsmk.extension.bind
+import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.extension.positionColor
 import fr.harmoniamk.statsmk.model.local.MKWarPosition
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.mapNotNull
+import kotlin.coroutines.CoroutineContext
 
-class WarTrackResultAdapter(val items: MutableList<MKWarPosition> = mutableListOf()) : RecyclerView.Adapter<WarTrackResultAdapter.PlayerViewHolder>() {
+@ExperimentalCoroutinesApi
+class WarTrackResultAdapter(val items: MutableList<MKWarPosition> = mutableListOf()) : RecyclerView.Adapter<WarTrackResultAdapter.PlayerViewHolder>(), CoroutineScope {
+
+    val onShockAdded = MutableSharedFlow<String>()
+    val onShockRemoved = MutableSharedFlow<String>()
 
     class PlayerViewHolder(val binding: PlayerItemBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -27,11 +39,17 @@ class WarTrackResultAdapter(val items: MutableList<MKWarPosition> = mutableListO
                 R.color.black
             )
         )
-        holder.binding.separator.isVisible = true
         holder.binding.playerPos.isVisible = true
+        holder.binding.shockLayout.isVisible = true
         holder.binding.name.text = items[position].player?.name
         holder.binding.playerPos.text = items[position].position.position.toString()
         holder.binding.playerPos.setTextColor(ContextCompat.getColor(context, items[position].position.position.positionColor()))
+        holder.binding.addShock.clicks()
+            .mapNotNull { items[position].player?.mid }
+            .bind(onShockAdded, this)
+        holder.binding.removeShock.clicks()
+            .mapNotNull { items[position].player?.mid }
+            .bind(onShockRemoved, this)
     }
 
     override fun getItemCount() = items.size
@@ -42,4 +60,7 @@ class WarTrackResultAdapter(val items: MutableList<MKWarPosition> = mutableListO
         items.addAll(results.sortedBy { it.position.position })
         notifyItemRangeInserted(0, itemCount)
     }
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main
 }

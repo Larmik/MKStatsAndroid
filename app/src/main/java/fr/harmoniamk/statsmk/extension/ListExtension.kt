@@ -169,6 +169,13 @@ fun List<Map<*,*>>?.parseTracks() : List<NewWarTrack>? =
                         playerId = it["playerId"].toString(),
                         position = it["position"].toString().toInt()
                     )
+                },
+            shocks = (track["shocks"]?.toMapList())
+                ?.map {
+                    Shock(
+                        playerId = it["playerId"].toString(),
+                        count = it["count"].toString().toInt()
+                    )
                 }
         )
 

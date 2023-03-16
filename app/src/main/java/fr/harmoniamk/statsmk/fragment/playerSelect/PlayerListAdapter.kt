@@ -48,7 +48,6 @@ class PlayerListAdapter(val items: MutableList<UserSelector> = mutableListOf()) 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = items[position]
         (holder as? PlayerViewHolder)?.let {
-            holder.binding.separator.isVisible = false
             holder.binding.playerPos.isVisible = false
             holder.binding.root.background.mutate().setTint(ContextCompat.getColor(holder.binding.root.context, if (item.isSelected.isTrue) R.color.harmonia_dark else R.color.transparent_white))
             holder.binding.name.setTextColor(ContextCompat.getColor(holder.binding.root.context, if (item.isSelected.isTrue) R.color.white else R.color.harmonia_dark))
