@@ -9,6 +9,7 @@ import fr.harmoniamk.statsmk.fragment.currentWar.CurrentPlayerModel
 import fr.harmoniamk.statsmk.model.firebase.Penalty
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.MKWar
+import fr.harmoniamk.statsmk.model.local.MKWarPosition
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
@@ -62,13 +63,17 @@ class WarDetailsViewModel @Inject constructor(private val firebaseRepository: Fi
                 .mapNotNull { it?.warTracks?.map { MKWarTrack(it) } }
                 .onEach {
                     val positions = mutableListOf<Pair<User?, Int>>()
+                    val players = firebaseRepository.getUsers().firstOrNull()
                     _sharedTracks.emit(it)
                     _sharedBestTrack.emit(it.sortedByDescending { track -> track.teamScore }.first())
                     _sharedWorstTrack.emit(it.sortedBy { track -> track.teamScore }.first())
                     it.forEach {
-                        it.track?.warPositions?.let {
-                            val trackPositions = it.withPlayerName(firebaseRepository).firstOrNull()
-                            trackPositions?.groupBy { it.player }?.entries?.forEach { entry ->
+                        val trackPositions = mutableListOf<MKWarPosition>()
+                        it.track?.warPositions?.let { warPositions ->
+                            warPositions.forEach { position ->
+                                trackPositions.add(MKWarPosition(position, players?.singleOrNull { it.mid ==  position.playerId }))
+                            }
+                            trackPositions.groupBy { it.player }.entries.forEach { entry ->
                                 positions.add(Pair(entry.key, entry.value.map { pos -> pos.position.position.positionToPoints() }.sum()))
                             }
                         }

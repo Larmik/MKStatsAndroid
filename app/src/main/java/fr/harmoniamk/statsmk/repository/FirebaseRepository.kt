@@ -90,6 +90,7 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
     }
 
     override fun getUsers(): Flow<List<User>> = callbackFlow {
+        Log.d("FirebaseRepository", "getUsers")
         database.child("users").get().addOnSuccessListener { snapshot ->
             val users: List<User> = snapshot.children
                 .map { it.value as Map<*, *> }
@@ -107,6 +108,7 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
     }
 
     override fun getTeams(): Flow<List<Team>> = callbackFlow {
+        Log.d("FirebaseRepository", "getTeams")
         database.child("teams").get().addOnSuccessListener { snapshot ->
             val teams: List<Team> = snapshot.children
                 .map { it.value as Map<*, *> }
@@ -122,6 +124,7 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
     }
 
     override fun getNewWars(): Flow<List<NewWar>> = callbackFlow {
+        Log.d("FirebaseRepository", "getNewWars")
         database.child("newWars").get().addOnSuccessListener { snapshot ->
             val wars: List<NewWar> = snapshot.children
                 .map { it.value as Map<*, *> }
@@ -142,6 +145,7 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
     }
 
     override fun getTeam(id: String?): Flow<Team?> = callbackFlow {
+        Log.d("FirebaseRepository", "getTeam")
         id?.let {
             database.child("teams").child(it).get().addOnSuccessListener { snapshot ->
                 val map = (snapshot.value as? Map<*, *>)
@@ -160,6 +164,7 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
     }
 
     override fun getNewWar(id: String): Flow<NewWar?> = callbackFlow {
+        Log.d("FirebaseRepository", "getNewWar")
         database.child("newWars").child(id).get().addOnSuccessListener { snapshot ->
             val map = (snapshot.value as? Map<*,*>)
             if (isActive) offer(
@@ -180,6 +185,7 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
     }
 
     override fun getUser(id: String?): Flow<User?> = callbackFlow {
+        Log.d("FirebaseRepository", "getUser")
         id?.let {
             database.child("users").child(id).get()
                 .addOnSuccessListener { snapshot ->
@@ -203,6 +209,7 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
     }
 
     override fun getPositions(warId: String, trackId: String): Flow<List<NewWarPositions>> = callbackFlow {
+        Log.d("FirebaseRepository", "getPositions")
         database.child("newWars").child(warId).child("warTracks").get().addOnSuccessListener { snapshot ->
             val tracks: List<NewWarTrack> = snapshot.children
                 .map { it.value as Map<*, *> }
@@ -220,6 +227,7 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
     }
 
     override fun listenToNewWars(): Flow<List<NewWar>> = callbackFlow {
+        Log.d("FirebaseRepository", "listenNewWars")
         val postListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val wars: List<NewWar> = dataSnapshot.child("newWars").children.map { it.value as Map<*, *> }.map {
@@ -245,6 +253,7 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
     }
 
     override fun listenToUsers(): Flow<List<User>> = callbackFlow {
+        Log.d("FirebaseRepository", "listenUsers")
         val postListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val users: List<User> = dataSnapshot.child("users").children.map { it.value as Map<*, *> }.map {

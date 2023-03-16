@@ -9,6 +9,7 @@ import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.firebase.Penalty
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.MKWar
+import fr.harmoniamk.statsmk.model.local.MKWarPosition
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
@@ -79,11 +80,15 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
             .mapNotNull { it.war?.warTracks?.map { MKWarTrack(it) } }
             .map {
                 val positions = mutableListOf<Pair<User?, Int>>()
+                val players = firebaseRepository.getUsers().firstOrNull()
                 _sharedTracks.emit(it)
                 it.forEach {
-                    it.track?.warPositions?.let {
-                        val trackPositions = it.withPlayerName(firebaseRepository).firstOrNull()
-                        trackPositions?.groupBy { it.player }?.entries?.forEach { entry ->
+                    it.track?.warPositions?.let { warPositions ->
+                        val trackPositions = mutableListOf<MKWarPosition>()
+                        warPositions.forEach { position ->
+                            trackPositions.add(MKWarPosition(position, players?.singleOrNull { it.mid ==  position.playerId }))
+                        }
+                        trackPositions.groupBy { it.player }.entries.forEach { entry ->
                             positions.add(Pair(entry.key, entry.value.map { pos -> pos.position.position.positionToPoints() }.sum()))
                         }
 

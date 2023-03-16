@@ -117,10 +117,10 @@ class TrackView : LinearLayout {
                             true -> R.font.mk_position
                             else -> R.font.orbitron_semibold
                         })
-                        binding.averageTrackScore.text = track.score.toString()
+                        binding.averageTrackScore.text = track.teamScore.toString()
 
                         if (shouldDisplayPosition) {
-                            val position = track.score.pointsToPosition()
+                            val position = track.teamScore.pointsToPosition()
                             binding.averageTrackScoreLabel.text = "Position moyenne"
                             binding.averageTrackScore.text = position.toString()
                             binding.averageTrackScore.setTextSize(TypedValue.COMPLEX_UNIT_SP, 22f)

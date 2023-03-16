@@ -2,6 +2,7 @@ package fr.harmoniamk.statsmk.extension
 
 import android.util.Log
 import fr.harmoniamk.statsmk.enums.Maps
+import fr.harmoniamk.statsmk.fragment.stats.opponentRanking.OpponentRankingItemViewModel
 import fr.harmoniamk.statsmk.fragment.stats.playerRanking.PlayerRankingItemViewModel
 import fr.harmoniamk.statsmk.model.firebase.*
 import fr.harmoniamk.statsmk.model.local.*
@@ -25,22 +26,36 @@ fun List<MKWar?>.withName(firebaseRepository: FirebaseRepositoryInterface) = flo
 
 fun List<User>.withFullStats(firebaseRepository: FirebaseRepositoryInterface) = flow {
     val temp = mutableListOf<PlayerRankingItemViewModel>()
+    val wars = firebaseRepository.getNewWars().first().map { MKWar(it) }
     this@withFullStats.forEach { user ->
-        val stats = firebaseRepository.getNewWars().first().map { MKWar(it) }.withFullStats(firebaseRepository, user.mid).first()
+        val stats = wars.withFullStats(firebaseRepository, userId = user.mid).first()
         temp.add(PlayerRankingItemViewModel(user, stats))
     }
     emit(temp)
 }
 
-fun List<MKWar>.withFullStats(firebaseRepository: FirebaseRepositoryInterface, userId: String? = null) = flow {
+
+fun List<Team>.withFullTeamStats(firebaseRepository: FirebaseRepositoryInterface, userId: String? = null) = flow {
+    val temp = mutableListOf<OpponentRankingItemViewModel>()
+    val wars = firebaseRepository.getNewWars().first().map { MKWar(it) }
+    this@withFullTeamStats.forEach { team ->
+        val stats = wars.withFullStats(firebaseRepository, teamId = team.mid, userId = userId).first()
+        temp.add(OpponentRankingItemViewModel(team, stats, userId))
+    }
+    emit(temp.filterNot { vm -> vm.stats.warStats.warsPlayed < 2 })
+}
+
+fun List<MKWar>.withFullStats(firebaseRepository: FirebaseRepositoryInterface, userId: String? = null, teamId: String? = null) = flow {
 
     val maps = mutableListOf<TrackStats>()
     val warScores = mutableListOf<WarScore>()
     val averageForMaps = mutableListOf<TrackStats>()
-    val wars = when (userId) {
-        null -> this@withFullStats
-        else -> this@withFullStats.filter { it.hasPlayer(userId) }
-    }.withName(firebaseRepository).first()
+    val wars = when  {
+        userId != null && teamId != null -> this@withFullStats.filter { it.hasPlayer(userId) && it.hasTeam(teamId) }
+        userId != null -> this@withFullStats.filter { it.hasPlayer(userId) }
+        teamId != null -> this@withFullStats.filter { it.hasTeam(teamId) }
+        else -> this@withFullStats.withName(firebaseRepository).first()
+    }
 
     val mostPlayedTeamId = wars
         .filterNot { it.war?.teamOpponent == "1652270659565" }
@@ -69,17 +84,19 @@ fun List<MKWar>.withFullStats(firebaseRepository: FirebaseRepositoryInterface, u
         .forEach {
             var currentPoints = 0
             it.second?.forEach { track ->
-                var scoreForTrack = 0
-                when (userId) {
-                    null -> track.track?.warPositions?.map { it.position.positionToPoints() }?.forEach {
-                        scoreForTrack += it
-                    }
-                    else -> scoreForTrack = track.track?.warPositions
-                        ?.singleOrNull { pos -> pos.playerId == userId }
-                        ?.position.positionToPoints()
+                val playerScoreForTrack = track.track?.warPositions
+                    ?.singleOrNull { pos -> pos.playerId == userId }
+                    ?.position.positionToPoints()
+                var teamScoreForTrack = 0
+                track.track?.warPositions?.map { it.position.positionToPoints() }?.forEach {
+                    teamScoreForTrack += it
                 }
-                currentPoints += scoreForTrack
-                maps.add(TrackStats(trackIndex = track.track?.trackIndex, score = scoreForTrack))
+                currentPoints += when (userId) {
+                    null -> teamScoreForTrack
+                    else -> playerScoreForTrack
+                }
+
+                maps.add(TrackStats(trackIndex = track.track?.trackIndex, teamScore = teamScoreForTrack, playerScore = playerScoreForTrack))
             }
             warScores.add(WarScore(it.first, currentPoints))
             currentPoints = 0
@@ -89,10 +106,10 @@ fun List<MKWar>.withFullStats(firebaseRepository: FirebaseRepositoryInterface, u
         .forEach { entry ->
             val stats = TrackStats(
                 map = Maps.values()[entry.key ?: -1],
-                score = (entry.value.map { it.score }.sum() / entry.value.map { it.score }.count()),
+                teamScore = (entry.value.map { it.teamScore }.sum() / entry.value.map { it.teamScore }.count()),
                 totalPlayed = entry.value.size
             )
-            Log.d("MKDebug", "averageFor map ${stats.map?.name}, score ${stats.score}")
+            Log.d("MKDebug", "averageFor map ${stats.map?.name}, score ${stats.teamScore}")
             averageForMaps.add(stats)
         }
 
@@ -162,16 +179,6 @@ fun List<Map<*,*>>?.parsePenalties() : List<Penalty>? =
             teamId = item["teamId"].toString(),
             amount = item["amount"].toString().toInt()
         )
-}
-
-
-fun List<NewWarPositions>.withPlayerName(firebaseRepository: FirebaseRepositoryInterface) = flow {
-    val temp = mutableListOf<MKWarPosition>()
-    this@withPlayerName.forEach {
-        val user = firebaseRepository.getUser(it.playerId).firstOrNull()
-        temp.add(MKWarPosition(position = it, player = user))
-    }
-    emit(temp)
 }
 
 fun List<MapDetails>.getVictory() = this.maxByOrNull { it.warTrack.teamScore }?.takeIf { it.warTrack.displayedDiff.contains('+') }

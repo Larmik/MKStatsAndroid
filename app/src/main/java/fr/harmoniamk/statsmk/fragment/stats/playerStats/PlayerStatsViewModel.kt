@@ -43,8 +43,8 @@ class PlayerStatsViewModel @Inject constructor() : ViewModel() {
         flowOf(userStats)
             .onEach { itemVM ->
                 delay(500)
-                bestMap = itemVM.stats.averageForMaps.filter { it.totalPlayed >= 2 }.maxByOrNull { it.score ?: 0 }
-                worstMap = itemVM.stats.averageForMaps.filter { it.totalPlayed >= 2 }.minByOrNull { it.score ?: 0 }
+                bestMap = itemVM.stats.averageForMaps.filter { it.totalPlayed >= 2 }.maxByOrNull { it.teamScore ?: 0 }
+                worstMap = itemVM.stats.averageForMaps.filter { it.totalPlayed >= 2 }.minByOrNull { it.teamScore ?: 0 }
                 mostPlayedMap = itemVM.stats.averageForMaps.maxByOrNull { it.totalPlayed }
                 highestVicory = itemVM.stats.warStats.highestVictory
                 loudestDefeat = itemVM.stats.warStats.loudestDefeat

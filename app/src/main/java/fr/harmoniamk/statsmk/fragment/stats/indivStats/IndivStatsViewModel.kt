@@ -53,8 +53,8 @@ class IndivStatsViewModel @Inject constructor(
                  .flatMapLatest { it.withName(firebaseRepository) }
                  .flatMapLatest { it.withFullStats(firebaseRepository, authenticationRepository.user?.uid) }
                  .onEach { stats ->
-                    bestMap = stats.averageForMaps.filter { it.totalPlayed >= 2 }.maxByOrNull { it.score ?: 0 }
-                    worstMap = stats.averageForMaps.filter { it.totalPlayed >= 2 }.minByOrNull { it.score ?: 0 }
+                    bestMap = stats.averageForMaps.filter { it.totalPlayed >= 2 }.maxByOrNull { it.teamScore ?: 0 }
+                    worstMap = stats.averageForMaps.filter { it.totalPlayed >= 2 }.minByOrNull { it.teamScore ?: 0 }
                     mostPlayedMap = stats.averageForMaps.maxByOrNull { it.totalPlayed }
                     highestVicory = stats.warStats.highestVictory
                     loudestDefeat = stats.warStats.loudestDefeat

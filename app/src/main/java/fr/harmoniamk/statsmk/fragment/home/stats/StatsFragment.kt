@@ -29,7 +29,7 @@ class StatsFragment : Fragment(R.layout.fragment_stats) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.bind(binding.indivStats.clicks(), binding.teamStats.clicks(), binding.mapStats.clicks(), binding.periodicStats.clicks(), binding.playerStats.clicks())
+        viewModel.bind(binding.indivStats.clicks(), binding.teamStats.clicks(), binding.mapStats.clicks(), binding.periodicStats.clicks(), binding.playerStats.clicks(), binding.opponentsStats.clicks())
         viewModel.sharedIndiv
             .filter { findNavController().currentDestination?.id == R.id.homeFragment }
             .onEach { findNavController().navigate(HomeFragmentDirections.toIndivStats(it.toTypedArray())) }
@@ -52,6 +52,10 @@ class StatsFragment : Fragment(R.layout.fragment_stats) {
         viewModel.sharedPlayers
             .filter { findNavController().currentDestination?.id == R.id.homeFragment }
             .onEach { findNavController().navigate(HomeFragmentDirections.toPlayerRanking(it.toTypedArray())) }
+            .launchIn(lifecycleScope)
+        viewModel.sharedOpponents
+            .filter { findNavController().currentDestination?.id == R.id.homeFragment }
+            .onEach { findNavController().navigate(HomeFragmentDirections.toOpponentRanking(it.toTypedArray())) }
             .launchIn(lifecycleScope)
     }
 

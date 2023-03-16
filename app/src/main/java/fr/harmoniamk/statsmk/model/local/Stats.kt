@@ -19,15 +19,17 @@ data class Stats(
 ): Parcelable {
      val highestScore: WarScore? = warScores.maxByOrNull { it.score }
      val lowestScore: WarScore? = warScores.minByOrNull { it.score }
-     val bestMap: TrackStats? = averageForMaps.filter { it.totalPlayed >= 2 }.maxByOrNull { it.score ?: 0 }
-     val worstMap: TrackStats? = averageForMaps.filter { it.totalPlayed >= 2 }.minByOrNull { it.score ?: 0 }
+     val bestMap: TrackStats? = averageForMaps.filter { it.totalPlayed >= 2 }.maxByOrNull { it.teamScore ?: 0 }
+     val worstMap: TrackStats? = averageForMaps.filter { it.totalPlayed >= 2 }.minByOrNull { it.teamScore ?: 0 }
      val mostPlayedMap: TrackStats? = averageForMaps.maxByOrNull { it.totalPlayed }
+
      val averagePoints: Int = warScores.map { it.score }.sum() / (warScores.takeIf { it.isNotEmpty() }?.size ?: 1)
      val averagePointsLabel: String = averagePoints.warScoreToDiff()
-     private val averageMapPoints: Int = (maps.map { it.score }.sum() / (maps.takeIf { it.isNotEmpty() }?.size ?: 1))
+     private val averageMapPoints: Int = (maps.map { it.teamScore }.sum() / (maps.takeIf { it.isNotEmpty() }?.size ?: 1))
+     private val averagePlayerPosition: Int = (maps.map { it.playerScore }.sum() / (maps.takeIf { it.isNotEmpty() }?.size ?: 1))
      val averageMapPointsLabel = averageMapPoints.trackScoreToDiff()
-     val averagePlayerMapPoints: Int = averageMapPoints.pointsToPosition()
-    var mapsWon = "${maps.filter { (it.score ?: 0) < 41 }.size} / ${maps.size}"
+     val averagePlayerMapPoints: Int = averagePlayerPosition.pointsToPosition()
+     val mapsWon = "${maps.filter { (it.teamScore ?: 0) < 41 }.size} / ${maps.size}"
  }
 
 @Parcelize
@@ -42,7 +44,8 @@ class WarScore(
 data class TrackStats(
     val map: Maps? = null,
     val trackIndex: Int? = null,
-    val score: Int? = null,
+    val teamScore: Int? = null,
+    val playerScore: Int? = null,
     val totalPlayed: Int = 0,
     val winRate: Int? = null
 ): Parcelable

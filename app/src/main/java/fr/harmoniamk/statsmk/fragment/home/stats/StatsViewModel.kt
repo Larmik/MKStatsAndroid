@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.extension.bind
+import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
@@ -24,6 +25,7 @@ class StatsViewModel @Inject constructor(private val preferencesRepository: Pref
     private val _sharedTeam = MutableSharedFlow<List<MKWar>>()
     private val _sharedPeriodic = MutableSharedFlow<List<MKWar>>()
     private val _sharedPlayers = MutableSharedFlow<List<User>>()
+    private val _sharedOpponents = MutableSharedFlow<List<Team>>()
     private val _sharedMap = MutableSharedFlow<Unit>()
 
     val sharedToast = _sharedToast.asSharedFlow()
@@ -32,14 +34,16 @@ class StatsViewModel @Inject constructor(private val preferencesRepository: Pref
     val sharedPeriodic = _sharedPeriodic.asSharedFlow()
     val sharedMap = _sharedMap.asSharedFlow()
     val sharedPlayers = _sharedPlayers.asSharedFlow()
+    val sharedOpponents = _sharedOpponents.asSharedFlow()
 
-    fun bind(onIndiv: Flow<Unit>, onTeam: Flow<Unit>, onMap: Flow<Unit>, onPeriodic: Flow<Unit>, onPlayer: Flow<Unit>) {
+    fun bind(onIndiv: Flow<Unit>, onTeam: Flow<Unit>, onMap: Flow<Unit>, onPeriodic: Flow<Unit>, onPlayer: Flow<Unit>, onOpponent: Flow<Unit>) {
 
         val indivClick = onIndiv.shareIn(viewModelScope, SharingStarted.Lazily)
         val mapClick = onMap.shareIn(viewModelScope, SharingStarted.Lazily)
         val teamClick = onTeam.shareIn(viewModelScope, SharingStarted.Lazily)
         val periodicClick = onPeriodic.shareIn(viewModelScope, SharingStarted.Lazily)
         val playerClick = onPlayer.shareIn(viewModelScope, SharingStarted.Lazily)
+        val opponentClick = onOpponent.shareIn(viewModelScope, SharingStarted.Lazily)
 
         indivClick
             .flatMapLatest { firebaseRepository.getNewWars() }
@@ -81,9 +85,14 @@ class StatsViewModel @Inject constructor(private val preferencesRepository: Pref
             .map { it.filter { user -> user.team == preferencesRepository.currentTeam?.mid } }
             .bind(_sharedPlayers, viewModelScope)
 
+        opponentClick
+            .filter { preferencesRepository.currentTeam != null }
+            .flatMapLatest { firebaseRepository.getTeams() }
+            .bind(_sharedOpponents, viewModelScope)
+
         mapClick.bind(_sharedMap, viewModelScope)
 
-        merge(teamClick, periodicClick, playerClick)
+        merge(teamClick, periodicClick, playerClick, opponentClick)
             .filter { preferencesRepository.currentTeam == null }
             .map { "Vous devez intégrer une équipe pour avoir accès à cette fonctionnalité" }
             .bind(_sharedToast, viewModelScope)

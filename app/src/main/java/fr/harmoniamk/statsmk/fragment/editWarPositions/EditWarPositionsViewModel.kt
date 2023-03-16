@@ -4,13 +4,15 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.extension.bind
-import fr.harmoniamk.statsmk.extension.withPlayerName
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.firebase.NewWarPositions
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
+import fr.harmoniamk.statsmk.model.firebase.User
+import fr.harmoniamk.statsmk.model.local.MKWarPosition
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
@@ -27,6 +29,8 @@ class EditWarPositionsViewModel @Inject constructor(private val firebaseReposito
     val sharedDismiss = _sharedDismiss.asSharedFlow()
     val sharedPlayerLabel = _sharedPlayerLabel.asSharedFlow()
     val sharedSelectedPositions = _sharedSelectedPositions.asSharedFlow()
+
+    private val users = mutableListOf<User>()
 
     fun bind(war: NewWar, index: Int,
              onPos1: Flow<Unit>,
@@ -46,12 +50,24 @@ class EditWarPositionsViewModel @Inject constructor(private val firebaseReposito
         val positions = mutableListOf<NewWarPositions>()
         var currentPlayer = warPositions?.get(positions.size)?.playerId
 
-        val playerLabel = warPositions
-            ?.withPlayerName(firebaseRepository)
-            ?.map { it[positions.size].player?.name }
+        firebaseRepository.getUsers()
+            .onEach {
+                users.clear()
+                users.addAll(it)
+            }.launchIn(viewModelScope)
 
 
-        playerLabel?.bind(_sharedPlayerLabel, viewModelScope)
+        val playerLabel = flowOf(warPositions
+            ?.map {
+                 MKWarPosition(it, users.singleOrNull { user -> user.mid == it.playerId })
+            }
+            ?.getOrNull(positions.size)?.player?.name)
+
+
+        playerLabel
+            .onEach {
+                delay(100)
+            }.bind(_sharedPlayerLabel, viewModelScope)
         onPos1.onEach { _sharedPos.emit(1) }.launchIn(viewModelScope)
         onPos2.onEach { _sharedPos.emit(2) }.launchIn(viewModelScope)
         onPos3.onEach { _sharedPos.emit(3) }.launchIn(viewModelScope)

@@ -35,6 +35,9 @@ data class MKWar(val war: NewWar?) : Serializable, Parcelable {
         }
         return false
     }
+    fun hasTeam(teamId: String?): Boolean {
+        return war?.teamHost == teamId || war?.teamOpponent == teamId
+    }
     var name: String? = null
 
     val isThisWeek: Boolean

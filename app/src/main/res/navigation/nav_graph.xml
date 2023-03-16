@@ -156,6 +156,19 @@
 
         </action>
         <action
+            android:id="@+id/to_opponent_ranking"
+            app:destination="@id/opponentRankingFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right">
+
+            <argument
+                android:name="teams"
+                app:argType="fr.harmoniamk.statsmk.model.firebase.Team[]"/>
+
+        </action>
+        <action
             android:id="@+id/to_map_ranking"
             app:destination="@id/mapRankingFragment"
             app:enterAnim="@anim/enter_from_right"
@@ -440,6 +453,38 @@
         android:name="fr.harmoniamk.statsmk.fragment.playerList.PlayerListFragment"
         tools:layout="@layout/fragment_player_list"
         android:label="PlayerListFragment" />
+
+    <fragment
+        android:id="@+id/opponentStatsFragment"
+        android:name="fr.harmoniamk.statsmk.fragment.stats.opponentStats.OpponentStatsFragment"
+        tools:layout="@layout/fragment_opponent_stats"
+        android:label="OpponentStatsFragment" />
+
+    <fragment
+        android:id="@+id/opponentRankingFragment"
+        android:name="fr.harmoniamk.statsmk.fragment.stats.opponentRanking.OpponentRankingFragment"
+        tools:layout="@layout/fragment_opponent_ranking"
+        android:label="OpponentRankingFragment">
+        <action
+            android:id="@+id/to_opponent_stats"
+            app:destination="@id/opponentStatsFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right">
+
+            <argument
+                android:name="stats"
+                app:argType="fr.harmoniamk.statsmk.fragment.stats.opponentRanking.OpponentRankingItemViewModel"/>
+
+            <argument
+                android:name="isIndiv"
+                app:argType="boolean"
+                android:defaultValue="true"/>
+
+        </action>
+
+    </fragment>
 
     <fragment
         android:id="@+id/playerRankingFragment"

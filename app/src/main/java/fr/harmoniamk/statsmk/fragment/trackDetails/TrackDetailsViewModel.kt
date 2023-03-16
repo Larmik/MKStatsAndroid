@@ -7,9 +7,9 @@ import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.extension.withName
-import fr.harmoniamk.statsmk.extension.withPlayerName
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
+import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarPosition
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
@@ -45,6 +45,7 @@ class TrackDetailsViewModel @Inject constructor(
     private var warId: String = ""
     var index = 0
     private var warTrackId: String = ""
+    private val users = mutableListOf<User>()
 
     fun bind(war: NewWar, warTrack: NewWarTrack?, index: Int, onEditTrack: Flow<Unit>, onEditPositions: Flow<Unit>) {
 
@@ -52,6 +53,11 @@ class TrackDetailsViewModel @Inject constructor(
         warTrackId = warTrack?.mid ?: ""
         this.index = index
 
+        firebaseRepository.getUsers()
+            .onEach {
+                users.clear()
+                users.addAll(it)
+            }.launchIn(viewModelScope)
 
         firebaseRepository.getNewWar(warId)
             .onEach {  _sharedWarName.emit(listOf(MKWar(it)).withName(firebaseRepository).firstOrNull()?.singleOrNull()?.name) }
@@ -62,12 +68,16 @@ class TrackDetailsViewModel @Inject constructor(
         }
 
         positionsFlow
-            .flatMapLatest { it.withPlayerName(firebaseRepository) }
             .onEach {
                 val role = authenticationRepository.userRole.firstOrNull() ?: 0
                 val isAdmin = role >= UserRole.ADMIN.ordinal
                 val isGod = role == UserRole.GOD.ordinal
-                _sharedPositions.emit(it)
+                val positions = mutableListOf<MKWarPosition>()
+                it.forEach { pos ->
+                    positions.add(MKWarPosition(pos, users.singleOrNull { it.mid == pos.playerId }))
+
+                }
+                _sharedPositions.emit(positions)
                 _sharedButtonsVisible.emit(isAdmin.isTrue && !MKWar(war).isOver
                         || isGod)
             }.launchIn(viewModelScope)
@@ -81,7 +91,13 @@ class TrackDetailsViewModel @Inject constructor(
             .mapNotNull { MKWarTrack(it?.warTracks?.get(index)) }
             .onEach { _sharedTrackRefreshed.emit(it) }
             .mapNotNull { it.track?.warPositions }
-            .flatMapLatest { it.withPlayerName(firebaseRepository) }
+            .map {
+                val positions = mutableListOf<MKWarPosition>()
+                it.forEach { pos ->
+                    positions.add(MKWarPosition(pos, users.singleOrNull{it.mid == pos.playerId}))
+                }
+                positions
+            }
             .bind(_sharedPositions, viewModelScope)
     }
 
