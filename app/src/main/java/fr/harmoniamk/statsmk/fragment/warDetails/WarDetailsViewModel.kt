@@ -32,6 +32,7 @@ class WarDetailsViewModel @Inject constructor(private val firebaseRepository: Fi
     private val _sharedDeleteWarVisible = MutableSharedFlow<Boolean>()
     private val _sharedPlayerHost = MutableSharedFlow<String>()
     private val _sharedWarName = MutableSharedFlow<String?>()
+    private val _sharedShockCount = MutableSharedFlow<String?>()
     private val _sharedPenalties = MutableSharedFlow<List<Penalty>?>()
 
     val sharedWarPlayers = _sharedWarPlayers.asSharedFlow()
@@ -44,6 +45,7 @@ class WarDetailsViewModel @Inject constructor(private val firebaseRepository: Fi
     val sharedPlayerHost = _sharedPlayerHost.asSharedFlow()
     val sharedWarName = _sharedWarName.asSharedFlow()
     val sharedPenalties = _sharedPenalties.asSharedFlow()
+    val sharedShockCount = _sharedShockCount.asSharedFlow()
 
     fun bind(warId: String?, onTrackClick: Flow<Int>, onDeleteWar: Flow<Unit>) {
         warId?.let { id ->
@@ -87,6 +89,17 @@ class WarDetailsViewModel @Inject constructor(private val firebaseRepository: Fi
                         finalList.add(CurrentPlayerModel(pair.first, pair.second, isOld, isNew))
                     }
                     _sharedWarPlayers.emit(finalList)
+                }
+                .onEach { list ->
+                    var count = 0
+                    list.forEach { track ->
+                        track.track?.shocks?.map { it.count }?.forEach {
+                            count += it
+                        }
+                    }
+                    count.takeIf { it > 0 }?.let {
+                        _sharedShockCount.emit("x$it")
+                    }
                 }
                 .launchIn(viewModelScope)
             onTrackClick.bind(_sharedTrackClick, viewModelScope)

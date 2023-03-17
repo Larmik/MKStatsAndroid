@@ -236,18 +236,28 @@
                         android:gravity="center"
                         android:textColor="@color/harmonia_dark"
                         android:fontFamily="@font/montserrat_bold"
-                        android:textSize="14sp"
+                        android:textSize="12sp"
                         android:text="Moyenne war"/>
 
                     <TextView
                         android:layout_width="0dp"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/harmonia_dark"
                         android:fontFamily="@font/montserrat_bold"
-                        android:textSize="14sp"
                         android:gravity="center"
-                        android:text="Pos. moyenne"/>
+                        android:text="Pos. moyenne"
+                        android:textColor="@color/harmonia_dark"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/montserrat_bold"
+                        android:gravity="center"
+                        android:text="Shocks rapportés"
+                        android:textColor="@color/harmonia_dark"
+                        android:textSize="12sp" />
 
                 </LinearLayout>
 
@@ -277,6 +287,35 @@
                         android:gravity="center"
                         android:id="@+id/map_average"
                         tools:text="106"/>
+
+                    <LinearLayout
+
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/shock"
+                            android:layout_marginEnd="2dp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/black"
+                            android:layout_marginStart="2dp"
+                            android:fontFamily="@font/mk_position"
+                            android:textSize="26sp"
+                            android:gravity="center"
+                            android:id="@+id/shock_count"
+                            android:paddingBottom="5dp"
+                            tools:text="24"/>
+                    </LinearLayout>
+
+
 
                 </LinearLayout>
 

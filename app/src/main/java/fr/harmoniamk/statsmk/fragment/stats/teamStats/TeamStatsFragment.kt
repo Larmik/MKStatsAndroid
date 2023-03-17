@@ -70,7 +70,7 @@ class TeamStatsFragment : Fragment(R.layout.fragment_team_stats) {
             binding.mostDefeatedTeamTotal.text = "${it.mostDefeatedTeam?.totalPlayed} victoires"
             binding.lessDefeatedTeam.text = it.lessDefeatedTeam?.teamName
             binding.lessDefeatedTeamTotal.text = "${it.lessDefeatedTeam?.totalPlayed} défaites"
-
+            binding.shockCount.text = it.shockCount.toString()
             val averageWarColor = when  {
                 it.averagePointsLabel.contains("-") -> R.color.lose
                 it.averagePointsLabel.contains("+") -> R.color.green

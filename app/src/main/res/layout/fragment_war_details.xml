@@ -115,40 +115,75 @@
 
                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:background="@drawable/rounded_bg"
-                    android:layout_marginTop="10dp"
-                    android:paddingHorizontal="10dp"
-                    android:backgroundTint="@color/white_alphaed"
-                    android:layout_marginHorizontal="15dp"
-                    android:orientation="vertical">
-
-
-                    <TextView
-                        android:id="@+id/score_tv"
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:autoSizeTextType="uniform"
-                        android:fontFamily="@font/orbitron_semibold"
-                        android:maxLines="1"
-                        android:textColor="@color/harmonia_dark"
-                        android:textSize="30sp"
-                        tools:targetApi="o"
-                        tools:text="229 - 190" />
+                        android:gravity="center"
+                        android:id="@+id/warscore_layout"
+                        android:layout_centerInParent="true"
+                        android:background="@drawable/rounded_bg"
+                        android:layout_marginTop="10dp"
+                        android:paddingHorizontal="10dp"
+                        android:backgroundTint="@color/white_alphaed"
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/diff_score_tv"
+                        <TextView
+                            android:id="@+id/score_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:autoSizeTextType="uniform"
+                            android:fontFamily="@font/orbitron_semibold"
+                            android:maxLines="1"
+                            android:textColor="@color/harmonia_dark"
+                            android:textSize="30sp"
+                            tools:targetApi="o"
+                            tools:text="229 - 190" />
+
+                        <TextView
+                            android:id="@+id/diff_score_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/orbitron_semibold"
+                            android:textColor="@color/text_color"
+                            android:textSize="20sp"
+                            tools:text="+39" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/orbitron_semibold"
-                        android:textColor="@color/text_color"
-                        android:textSize="20sp"
-                        tools:text="+39" />
+                        android:gravity="center"
+                        android:visibility="gone"
+                        android:layout_centerVertical="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_toEndOf="@id/warscore_layout"
+                        tools:visibility="visible"
+                        android:layout_marginVertical="5dp"
+                        android:id="@+id/shock_layout">
 
-                </LinearLayout>
+                        <ImageView
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:src="@drawable/shock"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/shock_count"
+                            tools:text="x6"
+                            android:textSize="20sp"
+                            android:textColor="@color/black"
+                            android:fontFamily="@font/mk_position"/>
+
+                    </LinearLayout>
+
+                </RelativeLayout>
+
+
 
                 <LinearLayout
                     android:layout_width="match_parent"

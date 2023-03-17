@@ -37,6 +37,7 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
     private val _sharedPenalties = MutableSharedFlow<List<Penalty>?>()
     private val _sharedWarPlayers = MutableSharedFlow<List<CurrentPlayerModel>>()
     private val _sharedSubPlayer = MutableSharedFlow<Unit>()
+    private val _sharedShockCount = MutableSharedFlow<String>()
 
     val sharedButtonVisible = _sharedButtonVisible.asSharedFlow()
     val sharedCurrentWar = _sharedCurrentWar.asSharedFlow()
@@ -50,6 +51,7 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
     val sharedPenalties = _sharedPenalties.asSharedFlow()
     val sharedWarPlayers = _sharedWarPlayers.asSharedFlow()
     val sharedSubPlayer = _sharedSubPlayer.asSharedFlow()
+    val sharedShockCount = _sharedShockCount.asSharedFlow()
 
 
     fun bind(onBack: Flow<Unit>, onNextTrack: Flow<Unit>, onTrackClick: Flow<Int>, onPopup: Flow<Unit>, onPenalty: Flow<Unit>, onSub: Flow<Unit>, onSubDismiss: Flow<Unit>) {
@@ -79,6 +81,7 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
         val trackPlayersFlow = warFlow
             .mapNotNull { it.war?.warTracks?.map { MKWarTrack(it) } }
             .map {
+                var shockCount = 0
                 val positions = mutableListOf<Pair<User?, Int>>()
                 val players = firebaseRepository.getUsers().firstOrNull()
                 _sharedTracks.emit(it)
@@ -93,6 +96,9 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
                         }
 
                     }
+                    it.track?.shocks?.map { it.count }?.forEach {
+                        shockCount += it
+                    }
                 }
                 val temp = positions.groupBy { it.first }.map { Pair(it.key, it.value.map { it.second }.sum()) }.sortedByDescending { it.second }
                 val finalList = mutableListOf<CurrentPlayerModel>()
@@ -105,6 +111,9 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
                     ?.filter { it.currentWar == preferencesRepository.currentWar?.mid && !finalList.map { it.player?.mid }.contains(it.mid)}
                     ?.forEach { finalList.add(CurrentPlayerModel(it, 0, isNew = true)) }
                 _sharedWarPlayers.emit(finalList)
+                shockCount.takeIf { it > 0 }?.let {
+                    _sharedShockCount.emit("x$it")
+                }
             }
             .shareIn(viewModelScope, SharingStarted.Lazily)
 

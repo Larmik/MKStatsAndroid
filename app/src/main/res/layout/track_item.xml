@@ -79,46 +79,61 @@ android:background="@drawable/rounded_bg"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:visibility="gone"
-                android:orientation="vertical">
+                android:visibility="gone">
 
-                <TextView
-                    android:id="@+id/track_score"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:autoSizeMinTextSize="12sp"
-                    android:autoSizeTextType="uniform"
-                    android:fontFamily="@font/orbitron_semibold"
-                    android:gravity="center"
-                    android:maxLines="1"
-                    android:textColor="@color/harmonia_dark"
-                    android:textSize="14sp"
-                    tools:targetApi="o"
-                    tools:text="58 - 24" />
-
-                <TextView
-                    android:id="@+id/track_diff"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:autoSizeMinTextSize="9sp"
-                    android:autoSizeTextType="uniform"
-                    android:fontFamily="@font/orbitron_semibold"
-                    android:gravity="center"
-                    android:maxLines="1"
-                    android:textColor="@color/harmonia_dark"
-                    android:textSize="11sp"
-                    tools:targetApi="o"
-                    tools:text="+34" />
-
-                <TextView
-                    android:id="@+id/map_pos"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="6"
-                    android:textSize="34sp"
+                <ImageView
+                    android:layout_width="15dp"
+                    android:layout_marginEnd="5dp"
                     android:visibility="gone"
-                    android:layout_marginHorizontal="15dp"
-                    android:fontFamily="@font/mk_position"/>
+                    android:layout_height="15dp"
+                    android:src="@drawable/shock"
+                    android:id="@+id/shock_iv"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/track_score"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:autoSizeMinTextSize="12sp"
+                        android:autoSizeTextType="uniform"
+                        android:fontFamily="@font/orbitron_semibold"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:textColor="@color/harmonia_dark"
+                        android:textSize="14sp"
+                        tools:targetApi="o"
+                        tools:text="58 - 24" />
+
+                    <TextView
+                        android:id="@+id/track_diff"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:autoSizeMinTextSize="9sp"
+                        android:autoSizeTextType="uniform"
+                        android:fontFamily="@font/orbitron_semibold"
+                        android:gravity="center"
+                        android:maxLines="1"
+                        android:textColor="@color/harmonia_dark"
+                        android:textSize="11sp"
+                        tools:targetApi="o"
+                        tools:text="+34" />
+
+                    <TextView
+                        android:id="@+id/map_pos"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="6"
+                        android:textSize="34sp"
+                        android:visibility="gone"
+                        android:layout_marginHorizontal="15dp"
+                        android:fontFamily="@font/mk_position"/>
+
+                </LinearLayout>
 
             </LinearLayout>
 

@@ -36,7 +36,30 @@
         android:layout_marginBottom="10dp"
         android:id="@+id/track_view"/>
 
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/result_rv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:orientation="vertical"
+            android:paddingHorizontal="15dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/result_rv"
+            android:layout_marginVertical="10dp"
+            android:orientation="vertical"
+            android:paddingHorizontal="15dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            android:id="@+id/shock_rv"/>
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -70,49 +93,36 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:orientation="vertical">
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:id="@+id/result_rv"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            android:orientation="vertical"/>
+            android:layout_weight="1"
+            android:paddingVertical="10dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/button_background"
+            tools:targetApi="n_mr1"
+            android:fontFamily="@font/montserrat_bold"
+            android:text="Editer le circuit"
+            android:visibility="gone"
+            android:id="@+id/edit_track_btn"
+            android:textColor="@color/text_color"
+            android:gravity="center"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingVertical="10dp"
+            android:background="@drawable/button_background"
+            tools:targetApi="n_mr1"
+            android:fontFamily="@font/montserrat_bold"
+            android:text="Ressaisir les positions"
+            android:visibility="gone"
+            android:id="@+id/reset_positions_btn"
+            android:textColor="@color/text_color"
+            android:gravity="center"/>
+
     </LinearLayout>
-
-
-
-
-
-
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingVertical="10dp"
-        android:layout_marginBottom="10dp"
-        android:background="@drawable/button_background"
-        tools:targetApi="n_mr1"
-        android:fontFamily="@font/montserrat_bold"
-        android:text="Editer le circuit"
-        android:visibility="gone"
-        android:id="@+id/edit_track_btn"
-        android:textColor="@color/text_color"
-        android:gravity="center"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingVertical="10dp"
-        android:background="@drawable/button_background"
-        tools:targetApi="n_mr1"
-        android:fontFamily="@font/montserrat_bold"
-        android:text="Ressaisir les positions"
-        android:visibility="gone"
-        android:id="@+id/reset_positions_btn"
-        android:textColor="@color/text_color"
-        android:gravity="center"/>
-
 
 </LinearLayout>

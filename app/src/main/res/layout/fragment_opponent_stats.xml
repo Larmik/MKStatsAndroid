@@ -233,7 +233,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="64dp"
+                android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 android:paddingVertical="5dp"
                 android:background="@drawable/rounded_bg"
@@ -272,21 +272,13 @@
                         android:text="Moyenne map"
                         tools:targetApi="o" />
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/harmonia_dark"
-                        android:fontFamily="@font/montserrat_bold"
-                        android:textSize="13sp"
-                        android:gravity="center"
-                        android:text="Maps gagnées"/>
 
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
                     android:orientation="horizontal">
 
                     <TextView
@@ -311,6 +303,46 @@
                         android:id="@+id/map_average"
                         tools:text="106"/>
 
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:orientation="horizontal">
+
+
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/harmonia_dark"
+                        android:fontFamily="@font/montserrat_bold"
+                        android:textSize="13sp"
+                        android:gravity="center"
+                        android:text="Maps gagnées"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/harmonia_dark"
+                        android:fontFamily="@font/montserrat_bold"
+                        android:textSize="13sp"
+                        android:gravity="center"
+                        android:text="Shocks rapportés"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -321,6 +353,34 @@
                         android:gravity="center"
                         android:id="@+id/maps_won"
                         tools:text="98 / 144"/>
+
+                    <LinearLayout
+
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@drawable/shock"
+                            android:layout_marginEnd="2dp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/black"
+                            android:layout_marginStart="2dp"
+                            android:fontFamily="@font/mk_position"
+                            android:textSize="26sp"
+                            android:gravity="center"
+                            android:id="@+id/shock_count"
+                            android:paddingBottom="5dp"
+                            tools:text="24"/>
+                    </LinearLayout>
+
 
                 </LinearLayout>
 

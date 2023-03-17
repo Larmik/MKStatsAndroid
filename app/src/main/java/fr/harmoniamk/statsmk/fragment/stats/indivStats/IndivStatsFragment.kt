@@ -80,7 +80,7 @@ class IndivStatsFragment : Fragment(R.layout.fragment_indiv_stats) {
             binding.mostPlayedTrackview.bind(it.mostPlayedMap, shouldDisplayPosition = true)
             binding.mostPlayedTeam.text = it.mostPlayedTeam?.teamName
             binding.mostPlayedTeamTotal.text = it.mostPlayedTeam?.totalPlayedLabel
-
+            binding.shockCount.text = it.shockCount.toString()
             it.warStats.highestVictory?.let {
                 binding.noVictory.isVisible = false
                 binding.highestVictory.isVisible = true

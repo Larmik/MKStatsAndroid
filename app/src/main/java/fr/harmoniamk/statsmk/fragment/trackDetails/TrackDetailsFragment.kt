@@ -15,6 +15,7 @@ import fr.harmoniamk.statsmk.databinding.FragmentTrackDetailsBinding
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.fragment.editWarPositions.EditWarPositionsFragment
 import fr.harmoniamk.statsmk.fragment.editWarTrack.EditWarTrackFragment
+import fr.harmoniamk.statsmk.fragment.warTrackResult.ShockAdapter
 import fr.harmoniamk.statsmk.ui.TrackView
 import fr.harmoniamk.statsmk.fragment.warTrackResult.WarTrackResultAdapter
 import fr.harmoniamk.statsmk.model.firebase.NewWar
@@ -45,8 +46,10 @@ class TrackDetailsFragment : Fragment(R.layout.fragment_track_details) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val adapter = WarTrackResultAdapter()
+        val adapter = WarTrackResultAdapter(isCurrent = false)
+        val shockAdapter = ShockAdapter()
         binding.resultRv.adapter = adapter
+        binding.shockRv.adapter = shockAdapter
         war?.let { war ->
         val item = MKWarTrack(warTrack ?: war.warTracks?.get(index))
         val trackView = TrackView(requireContext())
@@ -81,6 +84,12 @@ class TrackDetailsFragment : Fragment(R.layout.fragment_track_details) {
         viewModel.sharedPositions
             .onEach { adapter.addResults(it) }
             .launchIn(lifecycleScope)
+
+            viewModel.sharedShocks
+                .onEach{
+                    shockAdapter.addItems(it)
+                }
+                .launchIn(lifecycleScope)
 
         viewModel.sharedEditTrackClick
             .onEach {
@@ -127,6 +136,7 @@ class TrackDetailsFragment : Fragment(R.layout.fragment_track_details) {
                 binding.editTrackBtn.isVisible = it
                 binding.resetPositionsBtn.isVisible = it
             }.launchIn(lifecycleScope)
+
         }
     }
 }

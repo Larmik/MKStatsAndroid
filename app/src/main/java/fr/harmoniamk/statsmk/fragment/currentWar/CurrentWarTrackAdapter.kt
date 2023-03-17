@@ -39,6 +39,9 @@ class CurrentWarTrackAdapter(val items: MutableList<MKWarTrack> = mutableListOf(
                 binding.trackDiff.text = track.displayedDiff
                 binding.shortname.text = map.name
                 binding.name.setText(map.label)
+                track.track.shocks?.takeIf { it.isNotEmpty() }?.let {
+                    binding.shockIv.isVisible = true
+                }
             }
         }
     }

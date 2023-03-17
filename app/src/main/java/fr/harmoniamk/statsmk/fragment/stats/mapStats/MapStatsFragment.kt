@@ -67,6 +67,7 @@ class MapStatsFragment : Fragment(R.layout.fragment_map_stats) {
                 binding.tieText.text = stats.trackTie.toString()
                 binding.loseText.text = stats.trackLoss.toString()
                 binding.piechart.bind(stats.trackWon, stats.trackTie, stats.trackLoss)
+                binding.shockCount.text = "${stats.shockCount}"
                 binding.mapTeamAverage.text = stats.teamScore.trackScoreToDiff()
                 val averageDiffColor = when  {
                     stats.teamScore.trackScoreToDiff().contains("-") -> R.color.lose

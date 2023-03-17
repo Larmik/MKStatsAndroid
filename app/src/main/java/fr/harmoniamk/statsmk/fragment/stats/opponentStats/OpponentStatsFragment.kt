@@ -68,6 +68,7 @@ class OpponentStatsFragment : Fragment(R.layout.fragment_opponent_stats) {
             binding.totalAverage.text = it.averageLabel
             binding.mapAverage.text = it.averageMapLabel
             binding.mapsWon.text = it.stats.mapsWon
+            binding.shockCount.text = it.stats.shockCount.toString()
             binding.piechart.bind(
                 it.stats.warStats.warsWon,
                 it.stats.warStats.warsTied,

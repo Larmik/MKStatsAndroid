@@ -21,10 +21,7 @@ import fr.harmoniamk.statsmk.fragment.currentWar.PenaltyAdapter
 import fr.harmoniamk.statsmk.model.local.MKWar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 
 @FlowPreview
 @ExperimentalCoroutinesApi
@@ -125,6 +122,12 @@ class WarDetailsFragment : Fragment(R.layout.fragment_war_details) {
                     penaltiesAdapter.addPenalties(it)
                 }
                 .launchIn(lifecycleScope)
+            viewModel.sharedShockCount
+                .filterNotNull()
+                .onEach {
+                    binding.shockLayout.isVisible = true
+                    binding.shockCount.text = it
+                }.launchIn(lifecycleScope)
         }
     }
 }

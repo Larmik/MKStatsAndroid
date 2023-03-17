@@ -9,6 +9,7 @@ import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
+import fr.harmoniamk.statsmk.model.firebase.Shock
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarPosition
@@ -34,6 +35,7 @@ class TrackDetailsViewModel @Inject constructor(
     private val _sharedButtonsVisible = MutableSharedFlow<Boolean>()
     private val _sharedTrackRefreshed = MutableSharedFlow<MKWarTrack>()
     private val _sharedWarName = MutableSharedFlow<String?>()
+    private val _sharedShocks = MutableSharedFlow<List<Pair<String?, Shock>>>()
 
     val sharedPositions = _sharedPositions.asSharedFlow()
     val sharedEditTrackClick = _sharedEditTrackClick.asSharedFlow()
@@ -41,6 +43,7 @@ class TrackDetailsViewModel @Inject constructor(
     val sharedButtonsVisible = _sharedButtonsVisible.asSharedFlow()
     val sharedTrackRefreshed = _sharedTrackRefreshed.asSharedFlow()
     val sharedWarName = _sharedWarName.asSharedFlow()
+    val sharedShocks = _sharedShocks.asSharedFlow()
 
     private var warId: String = ""
     var index = 0
@@ -60,8 +63,14 @@ class TrackDetailsViewModel @Inject constructor(
             }.launchIn(viewModelScope)
 
         firebaseRepository.getNewWar(warId)
-            .onEach {  _sharedWarName.emit(listOf(MKWar(it)).withName(firebaseRepository).firstOrNull()?.singleOrNull()?.name) }
-            .launchIn(viewModelScope)
+            .onEach {
+                _sharedWarName.emit(listOf(MKWar(it)).withName(firebaseRepository).firstOrNull()?.singleOrNull()?.name)
+                val shocks = mutableListOf<Pair<String?, Shock>>()
+                it?.warTracks?.getOrNull(index)?.shocks?.forEach { shock ->
+                    shocks.add(Pair(users.singleOrNull { it.mid == shock.playerId }?.name, Shock(shock.playerId, shock.count)))
+                }
+                _sharedShocks.emit(shocks)
+            }.launchIn(viewModelScope)
         val positionsFlow = when (warTrackId.isEmpty()) {
             true -> flowOf(war.warTracks?.get(index)?.warPositions).filterNotNull()
             else -> firebaseRepository.getPositions(warId, warTrackId)

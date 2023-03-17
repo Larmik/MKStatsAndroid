@@ -22,7 +22,6 @@ data class Stats(
      val bestMap: TrackStats? = averageForMaps.filter { it.totalPlayed >= 2 }.maxByOrNull { it.teamScore ?: 0 }
      val worstMap: TrackStats? = averageForMaps.filter { it.totalPlayed >= 2 }.minByOrNull { it.teamScore ?: 0 }
      val mostPlayedMap: TrackStats? = averageForMaps.maxByOrNull { it.totalPlayed }
-
      val averagePoints: Int = warScores.map { it.score }.sum() / (warScores.takeIf { it.isNotEmpty() }?.size ?: 1)
      val averagePointsLabel: String = averagePoints.warScoreToDiff()
      private val averageMapPoints: Int = (maps.map { it.teamScore }.sum() / (maps.takeIf { it.isNotEmpty() }?.size ?: 1))
@@ -30,6 +29,7 @@ data class Stats(
      val averageMapPointsLabel = averageMapPoints.trackScoreToDiff()
      val averagePlayerMapPoints: Int = averagePlayerPosition.pointsToPosition()
      val mapsWon = "${maps.filter { (it.teamScore ?: 0) < 41 }.size} / ${maps.size}"
+     val shockCount = maps.map { it.shockCount }.sum()
  }
 
 @Parcelize
@@ -47,7 +47,8 @@ data class TrackStats(
     val teamScore: Int? = null,
     val playerScore: Int? = null,
     val totalPlayed: Int = 0,
-    val winRate: Int? = null
+    val winRate: Int? = null,
+    val shockCount: Int? = null
 ): Parcelable
 
 @Parcelize
@@ -101,5 +102,6 @@ class MapStats(
     val playerScore = playerScoreList.takeIf { it.isNotEmpty() }?.let {  (playerScoreList.sum() / playerScoreList.size).pointsToPosition() } ?: 0
     val highestVictory = list.filter { !isIndiv || (isIndiv && it.war.war?.warTracks?.any { MKWarTrack(it).hasPlayer(userId) }.isTrue) }.getVictory()
     val loudestDefeat = list.filter { !isIndiv || (isIndiv && it.war.hasPlayer(userId)) }.getDefeat()
+    val shockCount = list.map { it.warTrack.track?.shocks?.filter { !isIndiv || (isIndiv && it.playerId == userId) }?.map { it.count }.sum() }.sum()
 
 }

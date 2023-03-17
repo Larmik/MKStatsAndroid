@@ -95,8 +95,11 @@ fun List<MKWar>.withFullStats(firebaseRepository: FirebaseRepositoryInterface, u
                     null -> teamScoreForTrack
                     else -> playerScoreForTrack
                 }
-
-                maps.add(TrackStats(trackIndex = track.track?.trackIndex, teamScore = teamScoreForTrack, playerScore = playerScoreForTrack))
+                var shockCount = 0
+                track.track?.shocks?.filter { userId == null || it.playerId == userId }?.map { it.count }?.forEach {
+                    shockCount += it
+                }
+                maps.add(TrackStats(trackIndex = track.track?.trackIndex, teamScore = teamScoreForTrack, playerScore = playerScoreForTrack, shockCount = shockCount))
             }
             warScores.add(WarScore(it.first, currentPoints))
             currentPoints = 0

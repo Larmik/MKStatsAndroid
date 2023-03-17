@@ -173,6 +173,12 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
                 penaltiesAdapter.addPenalties(it)
             }
             .launchIn(lifecycleScope)
+
+        viewModel.sharedShockCount
+            .onEach {
+                binding.shockLayout.isVisible = true
+                binding.shockCount.text = it
+            }.launchIn(lifecycleScope)
     }
 
 }
