@@ -3,7 +3,6 @@ package fr.harmoniamk.statsmk.fragment.editWarPositions
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.firebase.NewWarPositions
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
@@ -12,7 +11,6 @@ import fr.harmoniamk.statsmk.model.local.MKWarPosition
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
@@ -49,25 +47,18 @@ class EditWarPositionsViewModel @Inject constructor(private val firebaseReposito
         val warPositions = war.warTracks?.get(index)?.warPositions
         val positions = mutableListOf<NewWarPositions>()
         var currentPlayer = warPositions?.get(positions.size)?.playerId
+        var playerLabel: String?
 
         firebaseRepository.getUsers()
             .onEach {
                 users.clear()
                 users.addAll(it)
+                playerLabel = warPositions?.map { MKWarPosition(it, users.singleOrNull { user -> user.mid == it.playerId }) }?.getOrNull(positions.size)?.player?.name
+                _sharedPlayerLabel.emit(playerLabel)
             }.launchIn(viewModelScope)
 
 
-        val playerLabel = flowOf(warPositions
-            ?.map {
-                 MKWarPosition(it, users.singleOrNull { user -> user.mid == it.playerId })
-            }
-            ?.getOrNull(positions.size)?.player?.name)
 
-
-        playerLabel
-            .onEach {
-                delay(100)
-            }.bind(_sharedPlayerLabel, viewModelScope)
         onPos1.onEach { _sharedPos.emit(1) }.launchIn(viewModelScope)
         onPos2.onEach { _sharedPos.emit(2) }.launchIn(viewModelScope)
         onPos3.onEach { _sharedPos.emit(3) }.launchIn(viewModelScope)
@@ -97,7 +88,8 @@ class EditWarPositionsViewModel @Inject constructor(private val firebaseReposito
                 }
                 else {
                     currentPlayer = warPositions?.get(positions.size)?.playerId
-                    _sharedPlayerLabel.emit(playerLabel?.firstOrNull())
+                    playerLabel = warPositions?.map { MKWarPosition(it, users.singleOrNull { user -> user.mid == currentPlayer }) }?.getOrNull(positions.size)?.player?.name
+                    _sharedPlayerLabel.emit(playerLabel)
                 }
             }.launchIn(viewModelScope)
     }

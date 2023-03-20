@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.TrackItemBinding
 import fr.harmoniamk.statsmk.extension.clicks
+import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.extension.positionColor
 import fr.harmoniamk.statsmk.model.local.MapDetails
 import kotlinx.coroutines.CoroutineScope
@@ -19,17 +20,19 @@ import kotlinx.coroutines.flow.onEach
 import kotlin.coroutines.CoroutineContext
 
 @ExperimentalCoroutinesApi
-class MapStatsAdapter(val items: MutableList<MapDetails> = mutableListOf()) :
+class MapStatsAdapter(val items: MutableList<MapDetails> = mutableListOf(), val userId: String? = null) :
     RecyclerView.Adapter<MapStatsAdapter.MapStatsViewHolder>(), CoroutineScope {
 
     val onMapClick = MutableSharedFlow<MapDetails>()
 
-    class MapStatsViewHolder(val binding: TrackItemBinding) :
+    inner class MapStatsViewHolder(val binding: TrackItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(track: MapDetails) {
             binding.teamScoreTv.isVisible = true
+            binding.shockIv.isVisible = false
             binding.root.background.mutate().setTint(ContextCompat.getColor(binding.root.context, track.warTrack.backgroundColor))
+            val isIndiv = track.position != null
             track.warTrack.track?.trackIndex?.let {
                 binding.trackIv.isVisible = false
                 binding.trackScore.text = track.warTrack.displayedResult
@@ -44,6 +47,8 @@ class MapStatsAdapter(val items: MutableList<MapDetails> = mutableListOf()) :
                     binding.mapPos.text = it.toString()
                     binding.mapPos.setTextColor(ContextCompat.getColor(binding.root.context, it.positionColor()))
                 }
+                if (!isIndiv && track.warTrack.track.shocks?.isNotEmpty().isTrue || isIndiv && track.warTrack.track.shocks?.any { it.playerId == this@MapStatsAdapter.userId }.isTrue)
+                    binding.shockIv.isVisible = true
             }
         }
     }

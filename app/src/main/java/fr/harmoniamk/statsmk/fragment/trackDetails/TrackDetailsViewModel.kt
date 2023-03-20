@@ -66,7 +66,7 @@ class TrackDetailsViewModel @Inject constructor(
             .onEach {
                 _sharedWarName.emit(listOf(MKWar(it)).withName(firebaseRepository).firstOrNull()?.singleOrNull()?.name)
                 val shocks = mutableListOf<Pair<String?, Shock>>()
-                it?.warTracks?.getOrNull(index)?.shocks?.forEach { shock ->
+                it?.warTracks?.singleOrNull{it.mid == warTrackId}?.shocks?.forEach { shock ->
                     shocks.add(Pair(users.singleOrNull { it.mid == shock.playerId }?.name, Shock(shock.playerId, shock.count)))
                 }
                 _sharedShocks.emit(shocks)
@@ -80,7 +80,7 @@ class TrackDetailsViewModel @Inject constructor(
             .onEach {
                 val role = authenticationRepository.userRole.firstOrNull() ?: 0
                 val isAdmin = role >= UserRole.ADMIN.ordinal
-                val isGod = role == UserRole.GOD.ordinal
+                val isLeader = role >= UserRole.LEADER.ordinal
                 val positions = mutableListOf<MKWarPosition>()
                 it.forEach { pos ->
                     positions.add(MKWarPosition(pos, users.singleOrNull { it.mid == pos.playerId }))
@@ -88,7 +88,7 @@ class TrackDetailsViewModel @Inject constructor(
                 }
                 _sharedPositions.emit(positions)
                 _sharedButtonsVisible.emit(isAdmin.isTrue && !MKWar(war).isOver
-                        || isGod)
+                        || isLeader)
             }.launchIn(viewModelScope)
 
         onEditTrack.bind(_sharedEditTrackClick, viewModelScope)
@@ -97,7 +97,7 @@ class TrackDetailsViewModel @Inject constructor(
 
     fun refreshTrack() {
         firebaseRepository.getNewWar(warId)
-            .mapNotNull { MKWarTrack(it?.warTracks?.get(index)) }
+            .mapNotNull { MKWarTrack(it?.warTracks?.singleOrNull { it.mid == warTrackId }) }
             .onEach { _sharedTrackRefreshed.emit(it) }
             .mapNotNull { it.track?.warPositions }
             .map {

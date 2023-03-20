@@ -488,7 +488,55 @@
         android:id="@+id/opponentStatsFragment"
         android:name="fr.harmoniamk.statsmk.fragment.stats.opponentStats.OpponentStatsFragment"
         tools:layout="@layout/fragment_opponent_stats"
-        android:label="OpponentStatsFragment" />
+        android:label="OpponentStatsFragment" >
+
+        <action
+            android:id="@+id/to_opponent_war_details"
+            app:destination="@id/opponentStatsDetailsFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right">
+
+            <argument
+                android:name="stats"
+                app:argType="fr.harmoniamk.statsmk.model.local.Stats"
+                app:nullable="true"/>
+            <argument
+                android:name="isIndiv"
+                app:argType="boolean"
+                android:defaultValue="true"/>
+
+
+            <argument
+                android:name="teamName"
+                app:nullable="true"
+                app:argType="string"/>
+
+
+        </action>
+    </fragment>
+    <fragment
+        android:id="@+id/opponentStatsDetailsFragment"
+        android:name="fr.harmoniamk.statsmk.fragment.stats.opponentStatsDetails.OpponentStatsDetailsFragment"
+        tools:layout="@layout/fragment_opponent_stats_details"
+        android:label="OpponentStatsDetailsFragment">
+        <action
+            android:id="@+id/go_to_war_details"
+            app:destination="@id/warDetailsFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right">
+
+            <argument
+                android:name="war"
+                app:argType="fr.harmoniamk.statsmk.model.local.MKWar"
+                app:nullable="false"/>
+
+        </action>
+
+    </fragment>
 
     <fragment
         android:id="@+id/opponentRankingFragment"
@@ -867,6 +915,10 @@
                 android:name="isIndiv"
                 app:argType="boolean"
                 app:nullable="false"/>
+            <argument
+                android:name="userId"
+                app:argType="string"
+                app:nullable="true"/>
 
         </action>
 

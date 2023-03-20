@@ -120,7 +120,7 @@ class TrackView : LinearLayout {
                         binding.averageTrackScore.text = track.teamScore.toString()
 
                         if (shouldDisplayPosition) {
-                            val position = track.teamScore.pointsToPosition()
+                            val position = track.playerScore.pointsToPosition()
                             binding.averageTrackScoreLabel.text = "Position moyenne"
                             binding.averageTrackScore.text = position.toString()
                             binding.averageTrackScore.setTextSize(TypedValue.COMPLEX_UNIT_SP, 22f)
@@ -133,7 +133,12 @@ class TrackView : LinearLayout {
                         binding.totalPlayed.text = "jouée ${track.totalPlayed} fois"
 
                 }
-                else -> binding.bestTrackName.text = "Données corrompues"            }
+                else -> {
+                    binding.bestTrackIv.isVisible = false
+                    binding.bestTrackName.isVisible = false
+                    binding.averageTrackScoreLabel.text = "Aucune donnée."
+                }
+            }
         }
 
     }

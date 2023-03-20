@@ -508,10 +508,28 @@
                         android:paddingTop="5dp"
                         android:text="Plus large victoire"/>
 
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/no_victory"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:fontFamily="@font/montserrat_regular"
+                        android:gravity="center"
+                        android:text="Aucune"
+                        android:textColor="@color/text_color"
+                        android:textSize="16sp" />
+
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="10dp"
+                        android:id="@+id/victory_layout"
+                        android:visibility="invisible"
                         android:background="@drawable/rounded_bg"
                         android:backgroundTint="@color/win_alphaed"
                         android:orientation="vertical">
@@ -539,6 +557,7 @@
                             tools:text="18/07/2021 - 22h"/>
 
                     </LinearLayout>
+                    </RelativeLayout>
 
 
 
@@ -560,12 +579,29 @@
                         android:gravity="center"
                         android:paddingTop="5dp"
                         android:text="Plus lourde défaite"/>
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                    <TextView
+                        android:id="@+id/no_defeat"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_centerInParent="true"
+                        android:fontFamily="@font/montserrat_regular"
+                        android:gravity="center"
+                        android:text="Aucune"
+                        android:textColor="@color/text_color"
+                        android:textSize="16sp" />
+
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:layout_margin="10dp"
+                        android:visibility="invisible"
+                        android:id="@+id/defeat_layout"
                         android:background="@drawable/rounded_bg"
                         android:backgroundTint="@color/lose_alphaed">
 
@@ -598,6 +634,7 @@
 
 
                     </LinearLayout>
+                    </RelativeLayout>
 
 
 
@@ -713,6 +750,23 @@
 
 
             </LinearLayout>
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Voir le détail"
+                android:gravity="center"
+                android:textSize="14sp"
+                android:paddingVertical="10dp"
+                android:layout_marginBottom="10dp"
+                android:id="@+id/show_details_btn"
+                android:fontFamily="@font/montserrat_bold"
+                android:background="@drawable/rounded_bg"
+                android:backgroundTint="@color/harmonia_dark"
+                android:textColor="@color/white"/>
+
+
 
         </LinearLayout>
 

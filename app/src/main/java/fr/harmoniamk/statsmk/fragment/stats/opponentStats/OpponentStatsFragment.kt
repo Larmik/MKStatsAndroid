@@ -10,13 +10,16 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentOpponentStatsBinding
+import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.extension.positionColor
 import fr.harmoniamk.statsmk.fragment.stats.opponentRanking.OpponentRankingItemViewModel
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -38,7 +41,7 @@ class OpponentStatsFragment : Fragment(R.layout.fragment_opponent_stats) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.bind(stats = stats, isIndiv = isIndiv.isTrue)
+        viewModel.bind(stats = stats, isIndiv = isIndiv.isTrue, onDetailsClick = binding.showDetailsBtn.clicks())
         viewModel.sharedLowestScore
             .filterNotNull()
             .onEach {
@@ -51,16 +54,30 @@ class OpponentStatsFragment : Fragment(R.layout.fragment_opponent_stats) {
                 binding.highestScore.text = it.first.toString()
                 binding.highestScoreWarDate.text = it.second
             }.launchIn(lifecycleScope)
+        viewModel.sharedDetailsClick
+            .filter { findNavController().currentDestination?.id == R.id.opponentStatsFragment }
+            .onEach { findNavController().navigate(OpponentStatsFragmentDirections.toOpponentWarDetails(stats?.stats, isIndiv.isTrue, stats?.teamName)) }
+            .launchIn(lifecycleScope)
 
         stats?.let {
             binding.playerName.text = it.teamName
             binding.bestTrackview.bind(it.stats.bestMap)
             binding.worstTrackview.bind(it.stats.worstMap)
             binding.mostPlayedTrackview.bind(it.stats.mostPlayedMap)
-            binding.highestVictory.text = it.stats.warStats.highestVictory?.displayedScore
-            binding.highestVictoryWarDate.text = it.stats.warStats.highestVictory?.war?.createdDate
-            binding.loudestDefeat.text = it.stats.warStats.loudestDefeat?.displayedScore
-            binding.loudestDefeatWarDate.text = it.stats.warStats.loudestDefeat?.war?.createdDate
+            it.stats.warStats.highestVictory?.let {
+                binding.noVictory.isVisible = false
+                binding.victoryLayout.isVisible = true
+                binding.highestVictory.text = it.displayedScore
+                binding.highestVictoryWarDate.text = it.war?.createdDate
+            }
+            it.stats.warStats.loudestDefeat?.let {
+                binding.noDefeat.isVisible = false
+                binding.defeatLayout.isVisible = true
+                binding.loudestDefeat.text = it.displayedScore
+                binding.loudestDefeatWarDate.text = it.war?.createdDate
+            }
+
+
             binding.warPlayed.text = it.stats.warStats.warsPlayed.toString()
             binding.winText.text = it.stats.warStats.warsWon.toString()
             binding.tieText.text = it.stats.warStats.warsTied.toString()

@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:paddingHorizontal="15dp"
+    android:background="?android:colorPrimary"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Détails des wars"
+        android:gravity="center"
+        android:textSize="20sp"
+        android:textColor="@color/harmonia_dark"
+        android:fontFamily="@font/montserrat_bold"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:text="Calamity"
+        android:id="@+id/team_name"
+        android:layout_marginBottom="5dp"
+        android:gravity="center"
+        android:textSize="16sp"
+        android:textColor="@color/harmonia_dark"
+        android:fontFamily="@font/montserrat_regular"/>
+
+
+
+    <ProgressBar
+        android:id="@+id/progress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:progressTint="?android:colorAccent"
+        tools:targetApi="n_mr1"
+        android:layout_below="@id/search_et"
+        android:indeterminate="true"/>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="invisible"
+        android:id="@+id/main_layout">
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginHorizontal="5dp"
+            android:background="@color/white"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:textColor="@color/harmonia_dark"
+                    android:text="Options de tri" />
+
+                <TextView
+                    android:id="@+id/date_sort_button"
+                    android:layout_width="match_parent"
+                    android:layout_marginVertical="10dp"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/transparent_white"
+                    android:textColor="@color/harmonia_dark"
+                    android:background="@drawable/rounded_bg"
+                    android:paddingVertical="5dp"
+                    android:layout_margin="5dp"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:text="Date"
+                    android:textAlignment="center" />
+
+                <TextView
+                    android:id="@+id/score_sort_button"
+                    android:layout_width="match_parent"
+                    android:layout_marginVertical="10dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rounded_bg"
+                    android:backgroundTint="@color/transparent_white"
+                    android:textColor="@color/harmonia_dark"
+                    android:layout_margin="5dp"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:paddingVertical="5dp"
+                    android:text="Score/Diff"
+                    android:textAlignment="center" />
+            </LinearLayout>
+
+
+
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_margin="5dp"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:textColor="@color/harmonia_dark"
+                    android:text="Filtrer" />
+
+                <TextView
+                    android:id="@+id/period_filter_button"
+                    android:layout_width="match_parent"
+                    android:layout_marginVertical="10dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rounded_bg"
+                    android:backgroundTint="@color/transparent_white"
+                    android:textColor="@color/harmonia_dark"
+                    android:paddingVertical="5dp"
+                    android:layout_margin="5dp"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:text="Cette semaine"
+                    android:textAlignment="center" />
+
+                <TextView
+                    android:id="@+id/official_filter_button"
+                    android:layout_width="match_parent"
+                    android:layout_marginVertical="10dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rounded_bg"
+                    android:backgroundTint="@color/transparent_white"
+                    android:textColor="@color/harmonia_dark"
+                    android:layout_margin="5dp"
+                    android:paddingVertical="5dp"
+                    android:text="Officielles"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:textAlignment="center" />
+
+                <TextView
+                    android:id="@+id/play_filter_button"
+                    android:layout_width="match_parent"
+                    android:layout_marginVertical="10dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rounded_bg"
+                    android:backgroundTint="@color/transparent_white"
+                    android:textColor="@color/harmonia_dark"
+                    android:layout_margin="5dp"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:paddingVertical="5dp"
+                    android:text="Participation"
+                    android:textAlignment="center" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginHorizontal="5dp"
+            android:layout_marginBottom="10dp"
+            android:background="@color/white"/>
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/war_rv"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
+
+
+
+
+    </LinearLayout>
+
+
+
+
+</LinearLayout>

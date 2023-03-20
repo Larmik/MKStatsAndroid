@@ -103,7 +103,7 @@ class WarDetailsFragment : Fragment(R.layout.fragment_war_details) {
             }.launchIn(lifecycleScope)
             viewModel.sharedTrackClick
                 .filter { findNavController().currentDestination?.id == R.id.warDetailsFragment }
-                .onEach { findNavController().navigate(WarDetailsFragmentDirections.toTrackDetails(war = war.war, warTrack = null, index = it)) }
+                .onEach { findNavController().navigate(WarDetailsFragmentDirections.toTrackDetails(war = war.war, warTrack = war.warTracks?.getOrNull(it)?.track, index = it)) }
                 .launchIn(lifecycleScope)
             viewModel.sharedWarDeleted
                 .filter { findNavController().currentDestination?.id == R.id.warDetailsFragment }

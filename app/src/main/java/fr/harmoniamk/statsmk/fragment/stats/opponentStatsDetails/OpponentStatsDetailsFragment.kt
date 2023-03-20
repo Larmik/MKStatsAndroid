@@ -1,9 +1,10 @@
-package fr.harmoniamk.statsmk.fragment.stats.mapStatsDetails
+package fr.harmoniamk.statsmk.fragment.stats.opponentStatsDetails
 
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -11,14 +12,14 @@ import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
-import fr.harmoniamk.statsmk.databinding.FragmentMapStatsDetailsBinding
+import fr.harmoniamk.statsmk.databinding.FragmentOpponentStatsDetailsBinding
 import fr.harmoniamk.statsmk.enums.WarFilterType
 import fr.harmoniamk.statsmk.enums.WarSortType
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.extension.isTrue
-import fr.harmoniamk.statsmk.fragment.stats.mapStats.MapStatsAdapter
-import fr.harmoniamk.statsmk.fragment.stats.mapStats.MapStatsFragmentDirections
-import fr.harmoniamk.statsmk.model.local.MapDetails
+import fr.harmoniamk.statsmk.fragment.allWars.AllWarsAdapter
+import fr.harmoniamk.statsmk.fragment.allWars.AllWarsFragmentDirections
+import fr.harmoniamk.statsmk.model.local.Stats
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
@@ -26,42 +27,37 @@ import kotlinx.coroutines.flow.*
 @FlowPreview
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
-class MapStatsDetailsFragment : Fragment(R.layout.fragment_map_stats_details) {
+class OpponentStatsDetailsFragment: Fragment(R.layout.fragment_opponent_stats_details) {
 
-    private val binding: FragmentMapStatsDetailsBinding by viewBinding()
-    private val viewModel: MapStatsDetailsViewModel by viewModels()
-    private var trackIndex: Int? = null
-    private val mapDetails = mutableListOf<MapDetails>()
+    private val binding: FragmentOpponentStatsDetailsBinding by viewBinding()
+    private val viewModel: OpponentStatsDetailsViewModel by viewModels()
+    private var stats: Stats? = null
     private var isIndiv: Boolean? = null
-    private var userId: String? = null
+    private var teamName: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        trackIndex = arguments?.getInt("trackId")
+        stats = arguments?.get("stats") as? Stats
         isIndiv = arguments?.getBoolean("isIndiv")
-        userId = arguments?.getString("userId")
-        (arguments?.get("mapDetails") as? Array<out MapDetails>)?.let {
-            mapDetails.addAll(it)
-        }
+        teamName = arguments?.getString("teamName")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val adapter = AllWarsAdapter()
+        binding.warRv.adapter = adapter
         isIndiv.takeIf { it.isTrue }?.let {
-            binding.scoreSortButton.text = "Position"
-            binding.playFilterButton.visibility = View.INVISIBLE
+            binding.playFilterButton.isVisible = false
         }
-        trackIndex?.let { index ->
-            val adapter = MapStatsAdapter(userId = userId)
-            binding.statTrackview.bind(index)
-            binding.mapDetailsRv.adapter = adapter
-            adapter.addTracks(mapDetails)
+        teamName?.let {
+            binding.teamName.text = it
+        }
+        stats?.let {
+            adapter.addWars(it.warStats.list)
             viewModel.bind(
-                details = mapDetails,
-                isIndiv = isIndiv.isTrue,
+                list = it.warStats.list,
                 onSortClick = flowOf(
                     binding.dateSortButton.clicks().map { WarSortType.DATE },
-                    binding.teamSortButton.clicks().map { WarSortType.TEAM },
                     binding.scoreSortButton.clicks().map { WarSortType.SCORE },
                 ).flattenMerge(),
                 onFilterClick = flowOf(
@@ -69,15 +65,15 @@ class MapStatsDetailsFragment : Fragment(R.layout.fragment_map_stats_details) {
                     binding.officialFilterButton.clicks().map { WarFilterType.OFFICIAL },
                     binding.playFilterButton.clicks().map { WarFilterType.PLAY }
                 ).flattenMerge(),
-                onItemClick = adapter.onMapClick
+                onItemClick = adapter.sharedItemClick
+
             )
-            viewModel.sharedTracks.onEach {
-                adapter.addTracks(it)
+            viewModel.sharedWars.onEach {
+                adapter.addWars(it)
             }.launchIn(lifecycleScope)
             viewModel.sharedSortTypeSelected
                 .onEach {
                     updateSortButton(binding.dateSortButton, it, WarSortType.DATE)
-                    updateSortButton(binding.teamSortButton, it, WarSortType.TEAM)
                     updateSortButton(binding.scoreSortButton, it, WarSortType.SCORE)
                 }.launchIn(lifecycleScope)
             viewModel.sharedFilterList
@@ -86,11 +82,17 @@ class MapStatsDetailsFragment : Fragment(R.layout.fragment_map_stats_details) {
                     updateFilterButton(binding.officialFilterButton, WarFilterType.OFFICIAL, it)
                     updateFilterButton(binding.periodFilterButton, WarFilterType.WEEK, it)
                 }.launchIn(lifecycleScope)
-            viewModel.sharedTrackClick
-                .filter { findNavController().currentDestination?.id == R.id.mapStatsDetailsFragment }
-                .onEach { findNavController().navigate(MapStatsFragmentDirections.toTrackDetails(it.war.war, it.warTrack.track)) }
+            viewModel.sharedWarClick
+                .filter { findNavController().currentDestination?.id == R.id.opponentStatsDetailsFragment }
+                .onEach { findNavController().navigate(OpponentStatsDetailsFragmentDirections.goToWarDetails(it)) }
                 .launchIn(lifecycleScope)
+
+            viewModel.sharedLoaded.onEach {
+                binding.progress.isVisible = false
+                binding.mainLayout.isVisible = true
+            }.launchIn(lifecycleScope)
         }
+
     }
 
     private fun updateSortButton(
@@ -110,6 +112,7 @@ class MapStatsDetailsFragment : Fragment(R.layout.fragment_map_stats_details) {
                 if (initialType == targetType) R.color.white else R.color.harmonia_dark
             )
         )
+
     }
 
     private fun updateFilterButton(
@@ -129,6 +132,7 @@ class MapStatsDetailsFragment : Fragment(R.layout.fragment_map_stats_details) {
                 if (list.contains(initialType)) R.color.white else R.color.harmonia_dark
             )
         )
+
     }
 
 }

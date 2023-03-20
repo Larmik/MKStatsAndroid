@@ -76,8 +76,8 @@ class PlayerStatsFragment : Fragment(R.layout.fragment_player_stats) {
             binding.lowestScore.text = it.stats.lowestScore?.score.toString()
             binding.lowestScoreWarName.text = it.stats.lowestScore?.opponentLabel
             binding.lowestScoreWarDate.text = it.stats.lowestScore?.war?.war?.createdDate
-            binding.bestTrackview.bind(it.stats.bestMap, shouldDisplayPosition = true)
-            binding.worstTrackview.bind(it.stats.worstMap, shouldDisplayPosition = true)
+            binding.bestTrackview.bind(it.stats.bestPlayerMap, shouldDisplayPosition = true)
+            binding.worstTrackview.bind(it.stats.worstPlayerMap, shouldDisplayPosition = true)
             binding.mostPlayedTrackview.bind(it.stats.mostPlayedMap, shouldDisplayPosition = true)
             binding.mostPlayedTeam.text = it.stats.mostPlayedTeam?.teamName
             binding.mostPlayedTeamTotal.text = it.stats.mostPlayedTeam?.totalPlayedLabel

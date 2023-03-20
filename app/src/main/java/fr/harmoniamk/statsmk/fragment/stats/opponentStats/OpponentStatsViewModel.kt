@@ -3,6 +3,7 @@ package fr.harmoniamk.statsmk.fragment.stats.opponentStats
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.positionToPoints
 import fr.harmoniamk.statsmk.extension.sum
 import fr.harmoniamk.statsmk.fragment.stats.opponentRanking.OpponentRankingItemViewModel
@@ -20,10 +21,12 @@ class OpponentStatsViewModel @Inject constructor(private val authenticationRepos
     val sharedHighestScore = _sharedHighestScore.asSharedFlow()
     private val _sharedLowestScore = MutableSharedFlow<Pair<Int, String?>?>()
     val sharedLowestScore = _sharedLowestScore.asSharedFlow()
+    private val _sharedDetailsClick = MutableSharedFlow<Unit>()
+    val sharedDetailsClick = _sharedDetailsClick.asSharedFlow()
 
     private val users = mutableListOf<User>()
 
-    fun bind(stats: OpponentRankingItemViewModel?, isIndiv: Boolean) {
+    fun bind(stats: OpponentRankingItemViewModel?, isIndiv: Boolean, onDetailsClick: Flow<Unit>) {
 
         firebaseRepository.getUsers()
             .filter { isIndiv }
@@ -61,6 +64,7 @@ class OpponentStatsViewModel @Inject constructor(private val authenticationRepos
                 _sharedLowestScore.emit(finalList.sortedBy { it.first }.firstOrNull())
             }
             .launchIn(viewModelScope)
+        onDetailsClick.bind(_sharedDetailsClick, viewModelScope)
 
 
 

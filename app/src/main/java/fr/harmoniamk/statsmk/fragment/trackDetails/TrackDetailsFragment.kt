@@ -133,8 +133,7 @@ class TrackDetailsFragment : Fragment(R.layout.fragment_track_details) {
 
         viewModel.sharedButtonsVisible
             .onEach {
-                binding.editTrackBtn.isVisible = it
-                binding.resetPositionsBtn.isVisible = it
+                binding.editTrackLayout.isVisible = it
             }.launchIn(lifecycleScope)
 
         }

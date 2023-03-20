@@ -26,7 +26,7 @@ fun List<MKWar?>.withName(firebaseRepository: FirebaseRepositoryInterface) = flo
 
 fun List<User>.withFullStats(firebaseRepository: FirebaseRepositoryInterface) = flow {
     val temp = mutableListOf<PlayerRankingItemViewModel>()
-    val wars = firebaseRepository.getNewWars().first().map { MKWar(it) }
+    val wars = firebaseRepository.getNewWars().first().map { MKWar(it) }.withName(firebaseRepository).first()
     this@withFullStats.forEach { user ->
         val stats = wars.withFullStats(firebaseRepository, userId = user.mid).first()
         temp.add(PlayerRankingItemViewModel(user, stats))
@@ -110,6 +110,7 @@ fun List<MKWar>.withFullStats(firebaseRepository: FirebaseRepositoryInterface, u
             val stats = TrackStats(
                 map = Maps.values()[entry.key ?: -1],
                 teamScore = (entry.value.map { it.teamScore }.sum() / entry.value.map { it.teamScore }.count()),
+                playerScore = (entry.value.map { it.playerScore }.sum() / entry.value.map { it.playerScore }.count()),
                 totalPlayed = entry.value.size
             )
             Log.d("MKDebug", "averageFor map ${stats.map?.name}, score ${stats.teamScore}")

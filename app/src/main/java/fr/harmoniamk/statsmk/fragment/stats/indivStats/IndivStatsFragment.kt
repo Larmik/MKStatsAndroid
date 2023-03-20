@@ -75,8 +75,8 @@ class IndivStatsFragment : Fragment(R.layout.fragment_indiv_stats) {
             binding.lowestScore.text = it.lowestScore?.score.toString()
             binding.lowestScoreWarName.text = it.lowestScore?.opponentLabel
             binding.lowestScoreWarDate.text = it.lowestScore?.war?.war?.createdDate
-            binding.bestTrackview.bind(it.bestMap, shouldDisplayPosition = true)
-            binding.worstTrackview.bind(it.worstMap, shouldDisplayPosition = true)
+            binding.bestTrackview.bind(it.bestPlayerMap, shouldDisplayPosition = true)
+            binding.worstTrackview.bind(it.worstPlayerMap, shouldDisplayPosition = true)
             binding.mostPlayedTrackview.bind(it.mostPlayedMap, shouldDisplayPosition = true)
             binding.mostPlayedTeam.text = it.mostPlayedTeam?.teamName
             binding.mostPlayedTeamTotal.text = it.mostPlayedTeam?.totalPlayedLabel
