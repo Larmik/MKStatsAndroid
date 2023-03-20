@@ -64,12 +64,11 @@ class MapStatsAdapter(val items: MutableList<MapDetails> = mutableListOf()) :
     override fun getItemCount() = items.size
 
     fun addTracks(tracks: List<MapDetails>) {
-        if (tracks.size != itemCount) {
-            notifyItemRangeRemoved(0, itemCount)
-            items.clear()
-            items.addAll(tracks)
-            notifyItemRangeInserted(0, itemCount)
-        }
+        notifyItemRangeRemoved(0, itemCount)
+        items.clear()
+        items.addAll(tracks)
+        notifyItemRangeInserted(0, itemCount)
+
     }
 
     override val coroutineContext: CoroutineContext

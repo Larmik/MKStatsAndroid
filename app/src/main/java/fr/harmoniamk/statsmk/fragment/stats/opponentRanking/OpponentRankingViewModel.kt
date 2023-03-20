@@ -86,7 +86,6 @@ class OpponentRankingViewModel @Inject constructor(
             .bind(_sharedTeamList, viewModelScope)
 
         onIndivStatsSelected.onEach { indivEnabled ->
-            _sharedLoading.emit(true)
             _sharedIndivStatsEnabled.emit(indivEnabled)
             itemsVM.clear()
             itemsVM.addAll(list.sortedBy { it.name }.filterNot { it.mid == preferencesRepository.currentTeam?.mid }.withFullTeamStats(firebaseRepository, authenticationRepository.takeIf { indivEnabled }?.user?.uid).first())
@@ -97,7 +96,6 @@ class OpponentRankingViewModel @Inject constructor(
                 PlayerSortType.AVERAGE -> itemsVM.sortByDescending { it.stats.averagePoints }
             }
             _sharedTeamList.emit(itemsVM)
-            _sharedLoading.emit(false)
         }.launchIn(viewModelScope)
 
 

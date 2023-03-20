@@ -7,12 +7,14 @@ import fr.harmoniamk.statsmk.databinding.PlayerRankingItemBinding
 import fr.harmoniamk.statsmk.extension.clicks
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlin.coroutines.CoroutineContext
 
+@ExperimentalCoroutinesApi
 class OpponentRankingAdapter(val items: MutableList<OpponentRankingItemViewModel> = mutableListOf()) : RecyclerView.Adapter<RecyclerView.ViewHolder>(),
     CoroutineScope {
 

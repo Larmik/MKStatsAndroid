@@ -351,7 +351,7 @@
                     android:layout_marginBottom="10dp"
                     android:padding="10dp"
                     android:background="@drawable/rounded_bg"
-                    android:backgroundTint="@color/harmonia_dark"
+                    android:backgroundTint="@color/transparent_white"
                     android:orientation="horizontal">
 
                     <LinearLayout
@@ -363,7 +363,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/text_color"
+                            android:textColor="@color/harmonia_dark"
                             android:gravity="center"
                             android:layout_marginBottom="5dp"
                             android:fontFamily="@font/montserrat_bold"
@@ -394,7 +394,7 @@
                                 android:fontFamily="@font/montserrat_regular"
                                 android:gravity="center"
                                 android:text="Aucune"
-                                android:textColor="@color/text_color"
+                                android:textColor="@color/harmonia_dark"
                                 android:textSize="16sp" />
 
                         </RelativeLayout>
@@ -412,7 +412,7 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:textColor="@color/text_color"
+                            android:textColor="@color/harmonia_dark"
                             android:gravity="center"
                             android:layout_marginBottom="5dp"
                             android:fontFamily="@font/montserrat_bold"
@@ -442,7 +442,7 @@
                                 android:fontFamily="@font/montserrat_regular"
                                 android:gravity="center"
                                 android:text="Aucune"
-                                android:textColor="@color/text_color"
+                                android:textColor="@color/harmonia_dark"
                                 android:textSize="16sp" />
 
                         </RelativeLayout>
@@ -455,20 +455,17 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Détails"
+                    android:text="Voir le détail"
                     android:gravity="center"
                     android:textSize="14sp"
+                    android:paddingVertical="10dp"
+                    android:id="@+id/show_details_btn"
                     android:fontFamily="@font/montserrat_bold"
-                    android:textColor="@color/harmonia_dark"/>
+                    android:background="@drawable/rounded_bg"
+                    android:backgroundTint="@color/harmonia_dark"
+                    android:textColor="@color/white"/>
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:id="@+id/map_details_rv"
-                    android:nestedScrollingEnabled="false"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    android:orientation="vertical"/>
+
 
             </LinearLayout>
 

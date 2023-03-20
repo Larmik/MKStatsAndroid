@@ -23,19 +23,21 @@ class MapStatsViewModel @Inject constructor(private val preferencesRepository: P
 
     private val _sharedMapClick = MutableSharedFlow<MapDetails>()
     private val _sharedStats = MutableSharedFlow<MapStats>()
+    private val _sharedDetailsClick = MutableSharedFlow<Unit>()
 
     val sharedMapClick = _sharedMapClick.asSharedFlow()
     val sharedStats = _sharedStats.asSharedFlow()
+    val sharedDetailsClick = _sharedDetailsClick.asSharedFlow()
 
 
 
     fun bind(trackIndex: Int,
-             onMapClick: Flow<MapDetails>,
              onVictoryClick: Flow<Unit>,
              onDefeatClick: Flow<Unit>,
              isIndiv: Boolean?,
              isWeek: Boolean?,
-             isMonth: Boolean?
+             isMonth: Boolean?,
+             onDetailsClick: Flow<Unit>
     ) {
         val mapDetailsList = mutableListOf<MapDetails>()
         val onlyIndiv = isIndiv.isTrue || preferencesRepository.currentTeam?.mid == null
@@ -72,8 +74,9 @@ class MapStatsViewModel @Inject constructor(private val preferencesRepository: P
                 _sharedStats.emit(MapStats(mapDetailsList, onlyIndiv, authenticationRepository.user?.uid))
             }.launchIn(viewModelScope)
 
+        onDetailsClick.bind(_sharedDetailsClick, viewModelScope)
+
         flowOf(
-            onMapClick,
             onVictoryClick.mapNotNull { mapDetailsList.getVictory() },
             onDefeatClick.mapNotNull { mapDetailsList.getDefeat() }
         )

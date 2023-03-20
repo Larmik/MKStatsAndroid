@@ -14,6 +14,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentMapStatsBinding
 import fr.harmoniamk.statsmk.extension.clicks
+import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.extension.positionColor
 import fr.harmoniamk.statsmk.extension.trackScoreToDiff
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -45,23 +46,20 @@ class MapStatsFragment : Fragment(R.layout.fragment_map_stats) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         trackIndex?.let { index ->
-            val adapter = MapStatsAdapter()
             binding.statTrackview.bind(index)
-            binding.mapDetailsRv.adapter = adapter
             viewModel.bind(
                 trackIndex = index,
-                onMapClick = adapter.onMapClick,
                 onVictoryClick = binding.highestVictory.clicks(),
                 onDefeatClick = binding.loudestDefeat.clicks(),
                 isIndiv = isIndiv,
                 isWeek = isWeek,
-                isMonth = isMonth
+                isMonth = isMonth,
+                onDetailsClick = binding.showDetailsBtn.clicks()
             )
             viewModel.sharedStats.onEach { stats ->
                 binding.progress.isVisible = false
                 binding.emptyLayout.isVisible = stats.list.isEmpty()
                 binding.mainLayout.isVisible = stats.list.isNotEmpty()
-                adapter.addTracks(stats.list)
                 binding.warPlayed.text = stats.trackPlayed.toString()
                 binding.winText.text = stats.trackWon.toString()
                 binding.tieText.text = stats.trackTie.toString()
@@ -98,6 +96,10 @@ class MapStatsFragment : Fragment(R.layout.fragment_map_stats) {
                     binding.loudestDefeat.isVisible = true
                     binding.loudestDefeat.bind(it.war, it.warTrack)
                 }
+                viewModel.sharedDetailsClick
+                    .filter { findNavController().currentDestination?.id == R.id.mapStatsFragment }
+                    .onEach { findNavController().navigate(MapStatsFragmentDirections.toMapStatsDetails(index, stats.list.toTypedArray(), isIndiv.isTrue)) }
+                    .launchIn(lifecycleScope)
             }.launchIn(lifecycleScope)
 
             viewModel.sharedMapClick

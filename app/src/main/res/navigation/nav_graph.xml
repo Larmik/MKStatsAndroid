@@ -453,6 +453,36 @@
         android:name="fr.harmoniamk.statsmk.fragment.playerList.PlayerListFragment"
         tools:layout="@layout/fragment_player_list"
         android:label="PlayerListFragment" />
+    <fragment
+        android:id="@+id/mapStatsDetailsFragment"
+        android:name="fr.harmoniamk.statsmk.fragment.stats.mapStatsDetails.MapStatsDetailsFragment"
+        tools:layout="@layout/fragment_map_stats_details"
+        android:label="MapStatsDetailsFragment" >
+        <action
+            android:id="@+id/to_track_details"
+            app:destination="@id/trackDetailsFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right">
+
+            <argument
+                android:name="war"
+                app:argType="fr.harmoniamk.statsmk.model.firebase.NewWar"
+                app:nullable="true"/>
+
+            <argument
+                android:name="index"
+                app:argType="integer"/>
+
+            <argument
+                android:name="warTrack"
+                app:argType="fr.harmoniamk.statsmk.model.firebase.NewWarTrack"
+                app:nullable="true"/>
+
+        </action>
+
+    </fragment>
 
     <fragment
         android:id="@+id/opponentStatsFragment"
@@ -811,6 +841,32 @@
                 android:name="warTrack"
                 app:argType="fr.harmoniamk.statsmk.model.firebase.NewWarTrack"
                 app:nullable="true"/>
+
+        </action>
+
+        <action
+            android:id="@+id/to_map_stats_details"
+            app:destination="@id/mapStatsDetailsFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right">
+
+            <argument
+                android:name="trackId"
+                app:argType="integer"
+                app:nullable="false"/>
+
+            <argument
+                android:name="mapDetails"
+                app:argType="fr.harmoniamk.statsmk.model.local.MapDetails[]"
+                app:nullable="true"/>
+
+
+            <argument
+                android:name="isIndiv"
+                app:argType="boolean"
+                app:nullable="false"/>
 
         </action>
 
