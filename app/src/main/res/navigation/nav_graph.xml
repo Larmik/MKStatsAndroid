@@ -292,6 +292,24 @@
         android:name="fr.harmoniamk.statsmk.fragment.stats.playerStats.PlayerStatsFragment"
         tools:layout="@layout/fragment_player_stats"
         android:label="PlayerStatsFragment">
+        <action
+            android:id="@+id/to_opponent_stats"
+            app:destination="@id/opponentStatsFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right">
+
+            <argument
+                android:name="stats"
+                app:argType="fr.harmoniamk.statsmk.fragment.stats.opponentRanking.OpponentRankingItemViewModel"/>
+
+            <argument
+                android:name="userId"
+                app:argType="string"
+                app:nullable="true"/>
+
+        </action>
         <action android:id="@+id/to_map_stats"
             app:destination="@id/mapStatsFragment"
             app:enterAnim="@anim/enter_from_right"
@@ -303,6 +321,11 @@
                 android:name="trackId"
                 app:argType="integer"
                 app:nullable="false"/>
+
+            <argument
+                android:name="userId"
+                app:argType="string"
+                app:nullable="true"/>
 
             <argument
                 android:name="isIndiv"
@@ -577,15 +600,25 @@
             app:popExitAnim="@anim/exit_to_right">
 
             <argument
+                android:name="teamId"
+                app:argType="string"
+                app:nullable="true"/>
+
+            <argument
                 android:name="trackId"
                 app:argType="integer"
                 app:nullable="false"/>
 
 
             <argument
+                android:name="userId"
+                app:argType="string"
+                app:nullable="true"/>
+
+            <argument
                 android:name="isIndiv"
                 app:argType="boolean"
-                android:defaultValue="false"/>
+                android:defaultValue="true"/>
 
         </action>
 
@@ -642,6 +675,11 @@
             <argument
                 android:name="stats"
                 app:argType="fr.harmoniamk.statsmk.fragment.stats.opponentRanking.OpponentRankingItemViewModel"/>
+
+            <argument
+                android:name="userId"
+                app:argType="string"
+                app:nullable="true"/>
 
             <argument
                 android:name="isIndiv"
@@ -822,6 +860,24 @@
         android:name="fr.harmoniamk.statsmk.fragment.stats.indivStats.IndivStatsFragment"
         tools:layout="@layout/fragment_indiv_stats"
         android:label="IndivStatsFragment">
+        <action
+            android:id="@+id/to_opponent_stats"
+            app:destination="@id/opponentStatsFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right">
+
+            <argument
+                android:name="stats"
+                app:argType="fr.harmoniamk.statsmk.fragment.stats.opponentRanking.OpponentRankingItemViewModel"/>
+
+            <argument
+                android:name="userId"
+                app:argType="string"
+                app:nullable="true"/>
+
+        </action>
 
         <action android:id="@+id/to_map_stats"
             app:destination="@id/mapStatsFragment"
@@ -834,6 +890,11 @@
                 android:name="trackId"
                 app:argType="integer"
                 app:nullable="false"/>
+
+            <argument
+                android:name="userId"
+                app:argType="string"
+                app:nullable="true"/>
 
             <argument
                 android:name="isIndiv"
@@ -864,6 +925,24 @@
         android:name="fr.harmoniamk.statsmk.fragment.stats.periodicStats.PeriodicStatsFragment"
         tools:layout="@layout/fragment_periodic_stats"
         android:label="PeriodicStatsFragment">
+        <action
+            android:id="@+id/to_opponent_stats"
+            app:destination="@id/opponentStatsFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right">
+
+            <argument
+                android:name="stats"
+                app:argType="fr.harmoniamk.statsmk.fragment.stats.opponentRanking.OpponentRankingItemViewModel"/>
+
+            <argument
+                android:name="userId"
+                app:argType="string"
+                app:nullable="true"/>
+
+        </action>
 
         <action android:id="@+id/to_map_stats"
             app:destination="@id/mapStatsFragment"
@@ -879,10 +958,9 @@
 
 
             <argument
-                android:name="isIndiv"
-                app:argType="boolean"
-                android:defaultValue="false"/>
-
+                android:name="userId"
+                app:argType="string"
+                app:nullable="true"/>
             <argument
                 android:name="isWeek"
                 app:argType="boolean"
@@ -890,6 +968,11 @@
 
             <argument
                 android:name="isMonth"
+                app:argType="boolean"
+                android:defaultValue="false"/>
+
+            <argument
+                android:name="isIndiv"
                 app:argType="boolean"
                 android:defaultValue="false"/>
 
@@ -916,6 +999,24 @@
         android:name="fr.harmoniamk.statsmk.fragment.stats.teamStats.TeamStatsFragment"
         tools:layout="@layout/fragment_indiv_stats"
         android:label="TeamStatsFragment">
+        <action
+            android:id="@+id/to_opponent_stats"
+            app:destination="@id/opponentStatsFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right">
+
+            <argument
+                android:name="stats"
+                app:argType="fr.harmoniamk.statsmk.fragment.stats.opponentRanking.OpponentRankingItemViewModel"/>
+
+            <argument
+                android:name="userId"
+                app:argType="string"
+                app:nullable="true"/>
+
+        </action>
 
 
         <action android:id="@+id/to_map_stats"
@@ -932,9 +1033,13 @@
 
 
             <argument
+                android:name="userId"
+                app:argType="string"
+                app:nullable="true"/>
+            <argument
                 android:name="isIndiv"
                 app:argType="boolean"
-                android:defaultValue="false"/>
+                android:defaultValue="true"/>
 
         </action>
 
@@ -1002,7 +1107,7 @@
             <argument
                 android:name="isIndiv"
                 app:argType="boolean"
-                app:nullable="false"/>
+                android:defaultValue="true"/>
             <argument
                 android:name="userId"
                 app:argType="string"
@@ -1030,9 +1135,9 @@
                 app:nullable="false"/>
 
             <argument
-                android:name="isIndiv"
-                app:argType="boolean"
-                app:nullable="false"/>
+                android:name="userId"
+                app:argType="string"
+                app:nullable="true"/>
 
         </action>
 

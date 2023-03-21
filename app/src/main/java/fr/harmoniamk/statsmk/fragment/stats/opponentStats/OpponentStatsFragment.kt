@@ -36,17 +36,19 @@ class OpponentStatsFragment : Fragment(R.layout.fragment_opponent_stats) {
     private val binding: FragmentOpponentStatsBinding by viewBinding()
     private val viewModel: OpponentStatsViewModel by viewModels()
     private var stats: OpponentRankingItemViewModel? = null
+    private var userId: String? = null
     private var isIndiv: Boolean? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         stats = arguments?.get("stats") as? OpponentRankingItemViewModel
+        userId = arguments?.getString("userId")
         isIndiv = arguments?.getBoolean("isIndiv")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.bind(stats = stats, isIndiv = isIndiv.isTrue,
+        viewModel.bind(stats = stats, userId = userId,
             onDetailsClick = binding.showDetailsBtn.clicks(),
             onBestClick = binding.bestTrackview.clicks(),
             onWorstClick = binding.worstTrackview.clicks(),
@@ -67,14 +69,22 @@ class OpponentStatsFragment : Fragment(R.layout.fragment_opponent_stats) {
             }.launchIn(lifecycleScope)
         viewModel.sharedDetailsClick
             .filter { findNavController().currentDestination?.id == R.id.opponentStatsFragment }
-            .onEach { findNavController().navigate(OpponentStatsFragmentDirections.toOpponentWarDetails(stats?.stats, isIndiv.isTrue, stats?.teamName)) }
+            .onEach { findNavController().navigate(OpponentStatsFragmentDirections.toOpponentWarDetails(stats?.stats, userId != null, stats?.teamName)) }
             .launchIn(lifecycleScope)
 
         stats?.let {
+            val bestMap = when (userId) {
+                null -> it.stats.bestMap
+                else -> it.stats.bestPlayerMap
+            }
+            val worstMap = when (userId) {
+                null -> it.stats.worstMap
+                else -> it.stats.worstPlayerMap
+            }
             binding.playerName.text = it.teamName
-            binding.bestTrackview.bind(it.stats.bestMap)
-            binding.worstTrackview.bind(it.stats.worstMap)
-            binding.mostPlayedTrackview.bind(it.stats.mostPlayedMap)
+            binding.bestTrackview.bind(bestMap, shouldDisplayPosition = userId != null)
+            binding.worstTrackview.bind(worstMap, shouldDisplayPosition = userId != null)
+            binding.mostPlayedTrackview.bind(it.stats.mostPlayedMap, shouldDisplayPosition = userId != null)
             it.stats.warStats.highestVictory?.let {
                 binding.noVictory.isVisible = false
                 binding.victoryLayout.isVisible = true
@@ -103,13 +113,13 @@ class OpponentStatsFragment : Fragment(R.layout.fragment_opponent_stats) {
                 it.stats.warStats.warsLoss
             )
             val averageWarColor = when  {
-                isIndiv.isTrue -> R.color.harmonia_dark
+                userId != null -> R.color.harmonia_dark
                 it.stats.averagePointsLabel.contains("-") -> R.color.lose
                 it.stats.averagePointsLabel.contains("+") -> R.color.green
                 else -> R.color.harmonia_dark
             }
             val averageMapColor = when  {
-                isIndiv.isTrue -> it.averageMapLabel.toIntOrNull().positionColor()
+                userId != null -> it.averageMapLabel.toIntOrNull().positionColor()
                 it.stats.averageMapPointsLabel.contains("-") -> R.color.lose
                 it.stats.averageMapPointsLabel.contains("+") -> R.color.green
                 else -> R.color.harmonia_dark
@@ -126,7 +136,7 @@ class OpponentStatsFragment : Fragment(R.layout.fragment_opponent_stats) {
                 else ContextCompat.getColor(requireContext(), averageMapColor)
             )
 
-            if (isIndiv.isTrue) {
+            if (userId != null) {
                 val typeface = ResourcesCompat.getFont(requireContext(), R.font.mk_position)
                 binding.playerScoresLayout.isVisible = true
                 binding.mapAverage.typeface = typeface
@@ -136,7 +146,7 @@ class OpponentStatsFragment : Fragment(R.layout.fragment_opponent_stats) {
 
             viewModel.sharedTrackClick
                 .filter { findNavController().currentDestination?.id == R.id.opponentStatsFragment }
-                .onEach { findNavController().navigate(OpponentStatsFragmentDirections.toMapStats(it)) }
+                .onEach { findNavController().navigate(OpponentStatsFragmentDirections.toMapStats(trackId = it.second, userId = it.first, teamId = stats?.team?.mid, isIndiv = isIndiv.isTrue)) }
                 .launchIn(lifecycleScope)
             viewModel.sharedWarClick
                 .filter { findNavController().currentDestination?.id == R.id.opponentStatsFragment }

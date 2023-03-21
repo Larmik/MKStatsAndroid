@@ -31,6 +31,8 @@ class MapStatsFragment : Fragment(R.layout.fragment_map_stats) {
     private val binding: FragmentMapStatsBinding by viewBinding()
     private val viewModel : MapStatsViewModel by viewModels()
     private var trackIndex: Int? = null
+    private var userId: String? = null
+    private var teamId: String? = null
     private var isIndiv: Boolean? = null
     private var isWeek: Boolean? = null
     private var isMonth: Boolean? = null
@@ -38,8 +40,10 @@ class MapStatsFragment : Fragment(R.layout.fragment_map_stats) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         trackIndex = arguments?.getInt("trackId")
-        isIndiv = arguments?.getBoolean("isIndiv")
+        userId = arguments?.getString("userId")
+        teamId = arguments?.getString("teamId")
         isWeek = arguments?.getBoolean("isWeek")
+        isIndiv = arguments?.getBoolean("isIndiv")
         isMonth = arguments?.getBoolean("isMonth")
     }
 
@@ -52,6 +56,8 @@ class MapStatsFragment : Fragment(R.layout.fragment_map_stats) {
                 onVictoryClick = binding.highestVictory.clicks(),
                 onDefeatClick = binding.loudestDefeat.clicks(),
                 isIndiv = isIndiv,
+                userId = userId,
+                teamId = teamId,
                 isWeek = isWeek,
                 isMonth = isMonth,
                 onDetailsClick = binding.showDetailsBtn.clicks()
@@ -98,7 +104,7 @@ class MapStatsFragment : Fragment(R.layout.fragment_map_stats) {
                 }
                 viewModel.sharedDetailsClick
                     .filter { findNavController().currentDestination?.id == R.id.mapStatsFragment }
-                    .onEach { findNavController().navigate(MapStatsFragmentDirections.toMapStatsDetails(index, stats.list.toTypedArray(), isIndiv.isTrue, stats.userId)) }
+                    .onEach { findNavController().navigate(MapStatsFragmentDirections.toMapStatsDetails(index, stats.list.toTypedArray(), userId != null, stats.userId)) }
                     .launchIn(lifecycleScope)
             }.launchIn(lifecycleScope)
 

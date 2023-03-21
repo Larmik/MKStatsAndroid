@@ -20,7 +20,7 @@ import javax.inject.Inject
 
 @FlowPreview
 @HiltViewModel
-class OpponentStatsViewModel @Inject constructor(private val authenticationRepository: AuthenticationRepositoryInterface, private val firebaseRepository: FirebaseRepositoryInterface) : ViewModel() {
+class OpponentStatsViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface) : ViewModel() {
 
     private val _sharedHighestScore = MutableSharedFlow<Pair<Int, String?>?>()
     val sharedHighestScore = _sharedHighestScore.asSharedFlow()
@@ -30,7 +30,7 @@ class OpponentStatsViewModel @Inject constructor(private val authenticationRepos
     val sharedDetailsClick = _sharedDetailsClick.asSharedFlow()
 
 
-    private val _sharedTrackClick = MutableSharedFlow<Int>()
+    private val _sharedTrackClick = MutableSharedFlow<Pair<String?, Int>>()
     private val _sharedWarClick = MutableSharedFlow<MKWar>()
 
 
@@ -40,7 +40,7 @@ class OpponentStatsViewModel @Inject constructor(private val authenticationRepos
     private val users = mutableListOf<User>()
     private var item: OpponentRankingItemViewModel? = null
 
-    fun bind(stats: OpponentRankingItemViewModel?, isIndiv: Boolean, onDetailsClick: Flow<Unit>,
+    fun bind(stats: OpponentRankingItemViewModel?, userId: String?, onDetailsClick: Flow<Unit>,
              onBestClick: Flow<Unit>,
              onWorstClick: Flow<Unit>,
              onMostPlayedClick: Flow<Unit>,
@@ -48,7 +48,6 @@ class OpponentStatsViewModel @Inject constructor(private val authenticationRepos
              onDefeatClick: Flow<Unit>) {
 
         firebaseRepository.getUsers()
-            .filter { isIndiv }
             .onEach {
                 users.clear()
                 users.addAll(it)
@@ -73,7 +72,7 @@ class OpponentStatsViewModel @Inject constructor(private val authenticationRepos
                     val temp = positions
                         .groupBy { it.first }
                         .map { Pair(it.key, it.value.map { it.second }.sum()) }
-                        .filter { it.first?.mid == authenticationRepository.user?.uid }
+                        .filter { it.first?.mid == userId }
                         .map { Pair(it.second, war.war?.createdDate) }
 
                     temp.forEach { pair ->
@@ -86,11 +85,12 @@ class OpponentStatsViewModel @Inject constructor(private val authenticationRepos
             .launchIn(viewModelScope)
         onDetailsClick.bind(_sharedDetailsClick, viewModelScope)
         flowOf(
-            onBestClick.mapNotNull { item?.stats?.bestMap },
-            onWorstClick.mapNotNull { item?.stats?.worstMap },
+            onBestClick.mapNotNull { if (userId != null) item?.stats?.bestPlayerMap else item?.stats?.bestMap },
+            onWorstClick.mapNotNull { if (userId != null) item?.stats?.worstPlayerMap else item?.stats?.worstMap },
             onMostPlayedClick.mapNotNull { item?.stats?.mostPlayedMap },
         ).flattenMerge()
             .map { Maps.values().indexOf(it.map) }
+            .map { Pair(userId, it) }
             .bind(_sharedTrackClick, viewModelScope)
 
         flowOf(onVictoryClick.mapNotNull { item?.stats?.warStats?.highestVictory }, onDefeatClick.mapNotNull { item?.stats?.warStats?.loudestDefeat })

@@ -60,7 +60,7 @@ class MapRankingFragment : Fragment(R.layout.fragment_map_ranking) {
         viewModel.sharedGoToStats
             .filter { findNavController().currentDestination?.id == R.id.mapRankingFragment }
             .onEach {
-                findNavController().navigate(MapRankingFragmentDirections.toMapStats(it.first, it.second))
+                findNavController().navigate(MapRankingFragmentDirections.toMapStats(trackId = it.second, userId = it.first))
             }
             .launchIn(lifecycleScope)
         viewModel.sharedIndivStatsEnabled

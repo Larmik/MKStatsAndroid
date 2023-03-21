@@ -46,7 +46,10 @@ class IndivStatsFragment : Fragment(R.layout.fragment_indiv_stats) {
             onVictoryClick = binding.highestVictory.clicks(),
             onDefeatClick = binding.highestDefeat.clicks(),
             onHighestScore = binding.highestScoreLayout.clicks(),
-            onLowestScore = binding.lowestScoreLayout.clicks()
+            onLowestScore = binding.lowestScoreLayout.clicks(),
+            onMostDefeatedTeamClick = binding.mostDefeatedTeamLayout.clicks(),
+            onMostPlayedTeamClick = binding.mostPlayedTeamLayout.clicks(),
+            onLessDefeatedTeamClick = binding.lessDefeatedTeamLayout.clicks()
         )
 
         binding.highestDefeat.clipToOutline = true
@@ -115,11 +118,15 @@ class IndivStatsFragment : Fragment(R.layout.fragment_indiv_stats) {
 
         viewModel.sharedTrackClick
             .filter { findNavController().currentDestination?.id == R.id.indivStatsFragment }
-            .onEach { findNavController().navigate(IndivStatsFragmentDirections.toMapStats(it)) }
+            .onEach { findNavController().navigate(IndivStatsFragmentDirections.toMapStats(userId = it.first, trackId = it.second)) }
             .launchIn(lifecycleScope)
         viewModel.sharedWarClick
             .filter { findNavController().currentDestination?.id == R.id.indivStatsFragment }
             .onEach { findNavController().navigate(IndivStatsFragmentDirections.goToWarDetails(it)) }
+            .launchIn(lifecycleScope)
+        viewModel.sharedTeamClick
+            .filter { findNavController().currentDestination?.id == R.id.indivStatsFragment }
+            .onEach { findNavController().navigate(IndivStatsFragmentDirections.toOpponentStats(stats = it.second, userId = it.first)) }
             .launchIn(lifecycleScope)
     }
 

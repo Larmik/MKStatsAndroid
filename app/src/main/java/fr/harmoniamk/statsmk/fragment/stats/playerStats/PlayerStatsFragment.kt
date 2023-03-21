@@ -49,7 +49,10 @@ class PlayerStatsFragment : Fragment(R.layout.fragment_player_stats) {
                 onDefeatClick = binding.highestDefeat.clicks(),
                 onDetailsClick = binding.showDetailsBtn.clicks(),
                 onHighestScore = binding.highestScoreLayout.clicks(),
-                onLowestScore = binding.lowestScoreLayout.clicks()
+                onLowestScore = binding.lowestScoreLayout.clicks(),
+                onMostDefeatedTeamClick = binding.mostDefeatedTeamLayout.clicks(),
+                onMostPlayedTeamClick = binding.mostPlayedTeamLayout.clicks(),
+                onLessDefeatedTeamClick = binding.lessDefeatedTeamLayout.clicks()
             )
         }
         binding.highestDefeat.clipToOutline = true
@@ -120,7 +123,7 @@ class PlayerStatsFragment : Fragment(R.layout.fragment_player_stats) {
 
         viewModel.sharedTrackClick
             .filter { findNavController().currentDestination?.id == R.id.playerStatsFragment }
-            .onEach { findNavController().navigate(PlayerStatsFragmentDirections.toMapStats(it)) }
+            .onEach { findNavController().navigate(PlayerStatsFragmentDirections.toMapStats(trackId = it.second, userId = it.first, )) }
             .launchIn(lifecycleScope)
         viewModel.sharedWarClick
             .filter { findNavController().currentDestination?.id == R.id.playerStatsFragment }
@@ -129,6 +132,10 @@ class PlayerStatsFragment : Fragment(R.layout.fragment_player_stats) {
         viewModel.sharedGoToDetails
             .filter { findNavController().currentDestination?.id == R.id.playerStatsFragment }
             .onEach { findNavController().navigate(PlayerStatsFragmentDirections.goToWarList(it)) }
+            .launchIn(lifecycleScope)
+        viewModel.sharedTeamClick
+            .filter { findNavController().currentDestination?.id == R.id.playerStatsFragment }
+            .onEach { findNavController().navigate(PlayerStatsFragmentDirections.toOpponentStats(stats = it.second, userId = it.first)) }
             .launchIn(lifecycleScope)
     }
 

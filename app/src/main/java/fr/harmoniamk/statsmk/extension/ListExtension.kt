@@ -35,14 +35,18 @@ fun List<User>.withFullStats(firebaseRepository: FirebaseRepositoryInterface) = 
 }
 
 
-fun List<Team>.withFullTeamStats(firebaseRepository: FirebaseRepositoryInterface, userId: String? = null) = flow {
+fun List<Team>.withFullTeamStats(firebaseRepository: FirebaseRepositoryInterface, userId: String? = null, weekOnly: Boolean = false, monthOnly: Boolean = false) = flow {
     val temp = mutableListOf<OpponentRankingItemViewModel>()
     val wars = firebaseRepository.getNewWars().first().map { MKWar(it) }
     this@withFullTeamStats.forEach { team ->
-        val stats = wars.withFullStats(firebaseRepository, teamId = team.mid, userId = userId).first()
-        temp.add(OpponentRankingItemViewModel(team, stats, userId))
+        val stats = wars
+            .filter { !weekOnly || (weekOnly && it.isThisWeek) }
+            .filter { !monthOnly || (monthOnly && it.isThisMonth) }
+            .withFullStats(firebaseRepository, teamId = team.mid, userId = userId).first()
+        if (stats.warStats.list.isNotEmpty())
+            temp.add(OpponentRankingItemViewModel(team, stats, userId))
     }
-    emit(temp.filterNot { vm -> vm.stats.warStats.warsPlayed < 2 })
+    emit(temp)
 }
 
 fun List<MKWar>.withFullStats(firebaseRepository: FirebaseRepositoryInterface, userId: String? = null, teamId: String? = null) = flow {
@@ -118,13 +122,13 @@ fun List<MKWar>.withFullStats(firebaseRepository: FirebaseRepositoryInterface, u
         }
 
     val mostPlayedTeamData = firebaseRepository.getTeam(mostPlayedTeamId?.first ?: "")
-        .mapNotNull { TeamStats(it?.name, mostPlayedTeamId?.second?.size) }
+        .mapNotNull { TeamStats(it, mostPlayedTeamId?.second?.size) }
         .firstOrNull()
     val mostDefeatedTeamData = firebaseRepository.getTeam(mostDefeatedTeamId?.first ?: "")
-        .mapNotNull { TeamStats(it?.name, mostDefeatedTeamId?.second?.size) }
+        .mapNotNull { TeamStats(it, mostDefeatedTeamId?.second?.size) }
         .firstOrNull()
     val lessDefeatedTeamData = firebaseRepository.getTeam(lessDefeatedTeamId?.first ?: "")
-        .mapNotNull { TeamStats(it?.name, lessDefeatedTeamId?.second?.size) }
+        .mapNotNull { TeamStats(it, lessDefeatedTeamId?.second?.size) }
         .firstOrNull()
 
     val newStats = Stats(

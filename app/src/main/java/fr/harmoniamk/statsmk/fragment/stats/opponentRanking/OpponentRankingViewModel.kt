@@ -34,7 +34,7 @@ class OpponentRankingViewModel @Inject constructor(
 ) : ViewModel()  {
 
     private val _sharedTeamList = MutableSharedFlow<List<OpponentRankingItemViewModel>>()
-    private val _sharedGoToStats = MutableSharedFlow<OpponentRankingItemViewModel>()
+    private val _sharedGoToStats = MutableSharedFlow<Pair<String?, OpponentRankingItemViewModel>>()
     private val _sharedLoading = MutableSharedFlow<Boolean>()
     private val _sharedSortTypeSelected = MutableStateFlow(PlayerSortType.NAME)
     private val _sharedIndivStatsEnabled = MutableStateFlow(true)
@@ -66,7 +66,7 @@ class OpponentRankingViewModel @Inject constructor(
                 _sharedTeamList.emit(itemsVM)
             }.launchIn(viewModelScope)
 
-        onTeamClick.bind(_sharedGoToStats, viewModelScope)
+        onTeamClick.map { Pair(authenticationRepository.takeIf { _sharedIndivStatsEnabled.value }?.user?.uid, it) }.bind(_sharedGoToStats, viewModelScope)
 
         onSortClick
             .onEach {

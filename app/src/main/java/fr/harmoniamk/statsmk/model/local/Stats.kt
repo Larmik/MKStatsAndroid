@@ -3,6 +3,7 @@ package fr.harmoniamk.statsmk.model.local
 import android.os.Parcelable
 import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.extension.*
+import fr.harmoniamk.statsmk.model.firebase.Team
 import kotlinx.android.parcel.Parcelize
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -19,10 +20,10 @@ data class Stats(
 ): Parcelable {
      val highestScore: WarScore? = warScores.maxByOrNull { it.score }
      val lowestScore: WarScore? = warScores.minByOrNull { it.score }
-     val bestMap: TrackStats? = averageForMaps.filter { it.totalPlayed >= 2 }.maxByOrNull { it.teamScore ?: 0 }
-     val worstMap: TrackStats? = averageForMaps.filter { it.totalPlayed >= 2 }.minByOrNull { it.teamScore ?: 0 }
-     val bestPlayerMap: TrackStats? = averageForMaps.filter { it.totalPlayed >= 2 }.maxByOrNull { it.playerScore ?: 0 }
-     val worstPlayerMap: TrackStats? = averageForMaps.filter { it.totalPlayed >= 2 }.minByOrNull { it.playerScore ?: 0 }
+     val bestMap: TrackStats? = averageForMaps.maxByOrNull { it.teamScore ?: 0 }
+     val worstMap: TrackStats? = averageForMaps.minByOrNull { it.teamScore ?: 0 }
+     val bestPlayerMap: TrackStats? = averageForMaps.maxByOrNull { it.playerScore ?: 0 }
+     val worstPlayerMap: TrackStats? = averageForMaps.minByOrNull { it.playerScore ?: 0 }
      val mostPlayedMap: TrackStats? = averageForMaps.filter { it.totalPlayed >= 2 }.maxByOrNull { it.totalPlayed }
      val averagePoints: Int = warScores.map { it.score }.sum() / (warScores.takeIf { it.isNotEmpty() }?.size ?: 1)
      val averagePointsLabel: String = averagePoints.warScoreToDiff()
@@ -30,7 +31,7 @@ data class Stats(
      private val averagePlayerPosition: Int = (maps.map { it.playerScore }.sum() / (maps.takeIf { it.isNotEmpty() }?.size ?: 1))
      val averageMapPointsLabel = averageMapPoints.trackScoreToDiff()
      val averagePlayerMapPoints: Int = averagePlayerPosition.pointsToPosition()
-     val mapsWon = "${maps.filter { (it.teamScore ?: 0) < 41 }.size} / ${maps.size}"
+     val mapsWon = "${maps.filter { (it.teamScore ?: 0) > 41 }.size} / ${maps.size}"
      val shockCount = maps.map { it.shockCount }.sum()
  }
 
@@ -54,7 +55,8 @@ data class TrackStats(
 ): Parcelable
 
 @Parcelize
-class TeamStats(val teamName: String?, val totalPlayed: Int?): Parcelable {
+class TeamStats(val team: Team?, val totalPlayed: Int?): Parcelable {
+    val teamName = team?.name
     val totalPlayedLabel = "$totalPlayed matchs joués"
 }
 

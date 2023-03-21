@@ -14,6 +14,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentPeriodicStatsBinding
 import fr.harmoniamk.statsmk.extension.clicks
+import fr.harmoniamk.statsmk.fragment.stats.indivStats.IndivStatsFragmentDirections
 import fr.harmoniamk.statsmk.fragment.stats.teamStats.TeamStatsFragmentDirections
 import fr.harmoniamk.statsmk.model.local.MKWar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -45,7 +46,10 @@ class PeriodicStatsFragment : Fragment(R.layout.fragment_periodic_stats) {
             onMostPlayedClick = binding.mostPlayedTrackview.clicks(),
             onVictoryClick = binding.highestVictory.clicks(),
             onDefeatClick = binding.highestDefeat.clicks(),
-            onWeekStatsSelected = flowOf(binding.weekBtn.clicks().map { true }, binding.monthBtn.clicks().map { false }).flattenMerge()
+            onWeekStatsSelected = flowOf(binding.weekBtn.clicks().map { true }, binding.monthBtn.clicks().map { false }).flattenMerge(),
+            onMostDefeatedTeamClick = binding.mostDefeatedTeamLayout.clicks(),
+            onMostPlayedTeamClick = binding.mostPlayedTeamLayout.clicks(),
+            onLessDefeatedTeamClick = binding.lessDefeatedTeamLayout.clicks()
         )
         binding.highestDefeat.clipToOutline = true
         binding.highestVictory.clipToOutline = true
@@ -97,7 +101,7 @@ class PeriodicStatsFragment : Fragment(R.layout.fragment_periodic_stats) {
 
         viewModel.sharedTrackClick
             .filter { findNavController().currentDestination?.id == R.id.periodicStatsFragment }
-            .onEach { findNavController().navigate(PeriodicStatsFragmentDirections.toMapStats(it, isWeek = isWeek, isMonth = !isWeek)) }
+            .onEach { findNavController().navigate(PeriodicStatsFragmentDirections.toMapStats(it.second, isWeek = isWeek, isMonth = !isWeek, userId = it.first)) }
             .launchIn(lifecycleScope)
         viewModel.sharedWarClick
             .filter { findNavController().currentDestination?.id == R.id.periodicStatsFragment }
@@ -125,6 +129,11 @@ class PeriodicStatsFragment : Fragment(R.layout.fragment_periodic_stats) {
 
                 )
             }.launchIn(lifecycleScope)
+
+        viewModel.sharedTeamClick
+            .filter { findNavController().currentDestination?.id == R.id.periodicStatsFragment }
+            .onEach { findNavController().navigate(PeriodicStatsFragmentDirections.toOpponentStats(it, null)) }
+            .launchIn(lifecycleScope)
     }
 
 }

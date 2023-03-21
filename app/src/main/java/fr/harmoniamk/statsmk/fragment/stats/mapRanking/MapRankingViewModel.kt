@@ -28,7 +28,7 @@ class MapRankingViewModel @Inject constructor(private val preferencesRepository:
 
 
     private val _sharedMaps = MutableSharedFlow<List<TrackStats>>()
-    private val _sharedGoToStats = MutableSharedFlow<Pair<Int, Boolean>>()
+    private val _sharedGoToStats = MutableSharedFlow<Pair<String?, Int>>()
     private val _sharedSortTypeSelected = MutableStateFlow(TrackSortType.TOTAL_PLAYED)
     private val _sharedIndivStatsEnabled = MutableStateFlow(true)
 
@@ -72,7 +72,7 @@ class MapRankingViewModel @Inject constructor(private val preferencesRepository:
             .bind(_sharedMaps, viewModelScope)
 
         onTrackClick.onEach {
-            _sharedGoToStats.emit(Pair(it, onlyIndiv || _sharedIndivStatsEnabled.value))
+            _sharedGoToStats.emit(Pair(authenticationRepository.takeIf {  onlyIndiv || _sharedIndivStatsEnabled.value }?.user?.uid, it))
         }.launchIn(viewModelScope)
         onIndivStatsSelected.onEach { indivEnabled ->
             _sharedIndivStatsEnabled.emit(indivEnabled)

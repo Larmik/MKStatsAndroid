@@ -15,6 +15,7 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentOpponentRankingBinding
 import fr.harmoniamk.statsmk.enums.PlayerSortType
 import fr.harmoniamk.statsmk.extension.clicks
+import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.extension.onTextChanged
 import fr.harmoniamk.statsmk.model.firebase.Team
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -64,7 +65,7 @@ class OpponentRankingFragment : Fragment(R.layout.fragment_opponent_ranking) {
 
         viewModel.sharedGoToStats
             .filter { findNavController().currentDestination?.id == R.id.opponentRankingFragment }
-            .onEach { findNavController().navigate(OpponentRankingFragmentDirections.toOpponentStats(it, isIndiv)) }
+            .onEach { findNavController().navigate(OpponentRankingFragmentDirections.toOpponentStats(stats = it.second, userId = it.first, isIndiv = isIndiv.isTrue)) }
             .launchIn(lifecycleScope)
         viewModel.sharedSortTypeSelected
             .onEach {

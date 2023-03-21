@@ -14,6 +14,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentTeamStatsBinding
 import fr.harmoniamk.statsmk.extension.clicks
+import fr.harmoniamk.statsmk.fragment.stats.indivStats.IndivStatsFragmentDirections
 import fr.harmoniamk.statsmk.model.local.MKWar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -44,7 +45,10 @@ class TeamStatsFragment : Fragment(R.layout.fragment_team_stats) {
             onWorstClick = binding.worstTrackview.clicks(),
             onMostPlayedClick = binding.mostPlayedTrackview.clicks(),
             onVictoryClick = binding.highestVictory.clicks(),
-            onDefeatClick = binding.highestDefeat.clicks()
+            onDefeatClick = binding.highestDefeat.clicks(),
+            onMostDefeatedTeamClick = binding.mostDefeatedTeamLayout.clicks(),
+            onMostPlayedTeamClick = binding.mostPlayedTeamLayout.clicks(),
+            onLessDefeatedTeamClick = binding.lessDefeatedTeamLayout.clicks()
         )
         binding.highestDefeat.clipToOutline = true
         binding.highestVictory.clipToOutline = true
@@ -95,11 +99,15 @@ class TeamStatsFragment : Fragment(R.layout.fragment_team_stats) {
 
         viewModel.sharedTrackClick
             .filter { findNavController().currentDestination?.id == R.id.teamStatsFragment }
-            .onEach { findNavController().navigate(TeamStatsFragmentDirections.toMapStats(it)) }
+            .onEach { findNavController().navigate(TeamStatsFragmentDirections.toMapStats(trackId = it.second, userId = it.first, isIndiv = false)) }
             .launchIn(lifecycleScope)
         viewModel.sharedWarClick
             .filter { findNavController().currentDestination?.id == R.id.teamStatsFragment }
             .onEach { findNavController().navigate(TeamStatsFragmentDirections.goToWarDetails(it)) }
+            .launchIn(lifecycleScope)
+        viewModel.sharedTeamClick
+            .filter { findNavController().currentDestination?.id == R.id.teamStatsFragment }
+            .onEach { findNavController().navigate(TeamStatsFragmentDirections.toOpponentStats(it, null)) }
             .launchIn(lifecycleScope)
     }
 

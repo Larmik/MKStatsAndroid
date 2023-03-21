@@ -19,7 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 @ExperimentalCoroutinesApi
 @FlowPreview
-class MapStatsViewModel @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val firebaseRepository: FirebaseRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface) : ViewModel() {
+class MapStatsViewModel @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val firebaseRepository: FirebaseRepositoryInterface) : ViewModel() {
 
     private val _sharedMapClick = MutableSharedFlow<MapDetails>()
     private val _sharedStats = MutableSharedFlow<MapStats>()
@@ -35,12 +35,14 @@ class MapStatsViewModel @Inject constructor(private val preferencesRepository: P
              onVictoryClick: Flow<Unit>,
              onDefeatClick: Flow<Unit>,
              isIndiv: Boolean?,
+             userId: String?,
+             teamId: String?,
              isWeek: Boolean?,
              isMonth: Boolean?,
              onDetailsClick: Flow<Unit>
     ) {
         val mapDetailsList = mutableListOf<MapDetails>()
-        val onlyIndiv = isIndiv.isTrue || preferencesRepository.currentTeam?.mid == null
+        val onlyIndiv = (isIndiv.isTrue && userId != null) || preferencesRepository.currentTeam?.mid == null
 
          firebaseRepository.getNewWars()
              .filter {
@@ -51,7 +53,7 @@ class MapStatsViewModel @Inject constructor(private val preferencesRepository: P
              .mapNotNull { list -> list
                  .map { MKWar(it) }
                  .filter { it.isOver }
-                 .filter {  !onlyIndiv || (onlyIndiv && it.hasPlayer(authenticationRepository.user?.uid)) }
+                 .filter {  !onlyIndiv || (onlyIndiv && it.hasPlayer(userId)) }
                  .filter {  !isWeek.isTrue || (isWeek.isTrue && it.isThisWeek) }
                  .filter {  !isMonth.isTrue || (isMonth.isTrue && it.isThisMonth) }
               }
@@ -60,7 +62,7 @@ class MapStatsViewModel @Inject constructor(private val preferencesRepository: P
                  it.withName(firebaseRepository).firstOrNull()?.let { list ->
                      list.forEach { mkWar ->
                          mkWar.warTracks?.filter { track -> track.index == trackIndex }?.forEach { track ->
-                             val position = track.track?.warPositions?.singleOrNull { it.playerId == authenticationRepository.user?.uid }?.position?.takeIf { isIndiv.isTrue }
+                             val position = track.track?.warPositions?.singleOrNull { it.playerId == userId }?.position?.takeIf { userId != null }
                              finalList.add(MapDetails(mkWar, MKWarTrack(track.track), position))
                          }
                      }
@@ -70,8 +72,12 @@ class MapStatsViewModel @Inject constructor(private val preferencesRepository: P
             .filter { it.isNotEmpty() }
             .onEach {
                 mapDetailsList.clear()
-                mapDetailsList.addAll(it.filter { !onlyIndiv || (onlyIndiv && it.war.war?.warTracks?.any { MKWarTrack(it).hasPlayer(authenticationRepository.user?.uid) }.isTrue) })
-                _sharedStats.emit(MapStats(mapDetailsList, onlyIndiv, authenticationRepository.user?.uid))
+                mapDetailsList.addAll(it
+                    .filter { !onlyIndiv || (onlyIndiv && it.war.war?.warTracks?.any { MKWarTrack(it).hasPlayer(userId) }.isTrue) }
+                    .filter { teamId == null || it.war.hasTeam(teamId) }
+
+                )
+                _sharedStats.emit(MapStats(mapDetailsList, onlyIndiv, userId))
             }.launchIn(viewModelScope)
 
         onDetailsClick.bind(_sharedDetailsClick, viewModelScope)
