@@ -46,7 +46,10 @@ class PlayerStatsFragment : Fragment(R.layout.fragment_player_stats) {
                 onWorstClick = binding.worstTrackview.clicks(),
                 onMostPlayedClick = binding.mostPlayedTrackview.clicks(),
                 onVictoryClick = binding.highestVictory.clicks(),
-                onDefeatClick = binding.highestDefeat.clicks()
+                onDefeatClick = binding.highestDefeat.clicks(),
+                onDetailsClick = binding.showDetailsBtn.clicks(),
+                onHighestScore = binding.highestScoreLayout.clicks(),
+                onLowestScore = binding.lowestScoreLayout.clicks()
             )
         }
         binding.highestDefeat.clipToOutline = true
@@ -116,12 +119,16 @@ class PlayerStatsFragment : Fragment(R.layout.fragment_player_stats) {
         }.launchIn(lifecycleScope)
 
         viewModel.sharedTrackClick
-            .filter { findNavController().currentDestination?.id == R.id.indivStatsFragment }
-            .onEach { findNavController().navigate(IndivStatsFragmentDirections.toMapStats(it)) }
+            .filter { findNavController().currentDestination?.id == R.id.playerStatsFragment }
+            .onEach { findNavController().navigate(PlayerStatsFragmentDirections.toMapStats(it)) }
             .launchIn(lifecycleScope)
         viewModel.sharedWarClick
-            .filter { findNavController().currentDestination?.id == R.id.indivStatsFragment }
-            .onEach { findNavController().navigate(IndivStatsFragmentDirections.goToWarDetails(it)) }
+            .filter { findNavController().currentDestination?.id == R.id.playerStatsFragment }
+            .onEach { findNavController().navigate(PlayerStatsFragmentDirections.goToWarDetails(it)) }
+            .launchIn(lifecycleScope)
+        viewModel.sharedGoToDetails
+            .filter { findNavController().currentDestination?.id == R.id.playerStatsFragment }
+            .onEach { findNavController().navigate(PlayerStatsFragmentDirections.goToWarList(it)) }
             .launchIn(lifecycleScope)
     }
 

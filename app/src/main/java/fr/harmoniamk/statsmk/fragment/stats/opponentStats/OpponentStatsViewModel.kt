@@ -3,17 +3,22 @@ package fr.harmoniamk.statsmk.fragment.stats.opponentStats
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.positionToPoints
 import fr.harmoniamk.statsmk.extension.sum
 import fr.harmoniamk.statsmk.fragment.stats.opponentRanking.OpponentRankingItemViewModel
+import fr.harmoniamk.statsmk.fragment.stats.playerRanking.PlayerRankingItemViewModel
 import fr.harmoniamk.statsmk.model.firebase.User
+import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarPosition
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
+@FlowPreview
 @HiltViewModel
 class OpponentStatsViewModel @Inject constructor(private val authenticationRepository: AuthenticationRepositoryInterface, private val firebaseRepository: FirebaseRepositoryInterface) : ViewModel() {
 
@@ -24,9 +29,23 @@ class OpponentStatsViewModel @Inject constructor(private val authenticationRepos
     private val _sharedDetailsClick = MutableSharedFlow<Unit>()
     val sharedDetailsClick = _sharedDetailsClick.asSharedFlow()
 
-    private val users = mutableListOf<User>()
 
-    fun bind(stats: OpponentRankingItemViewModel?, isIndiv: Boolean, onDetailsClick: Flow<Unit>) {
+    private val _sharedTrackClick = MutableSharedFlow<Int>()
+    private val _sharedWarClick = MutableSharedFlow<MKWar>()
+
+
+    val sharedTrackClick = _sharedTrackClick.asSharedFlow()
+    val sharedWarClick = _sharedWarClick.asSharedFlow()
+
+    private val users = mutableListOf<User>()
+    private var item: OpponentRankingItemViewModel? = null
+
+    fun bind(stats: OpponentRankingItemViewModel?, isIndiv: Boolean, onDetailsClick: Flow<Unit>,
+             onBestClick: Flow<Unit>,
+             onWorstClick: Flow<Unit>,
+             onMostPlayedClick: Flow<Unit>,
+             onVictoryClick: Flow<Unit>,
+             onDefeatClick: Flow<Unit>) {
 
         firebaseRepository.getUsers()
             .filter { isIndiv }
@@ -36,6 +55,7 @@ class OpponentStatsViewModel @Inject constructor(private val authenticationRepos
             }
             .mapNotNull { stats }
             .onEach {
+                item = it
                 val finalList = mutableListOf<Pair<Int, String?>>()
                 it.stats.warStats.list.forEach { war ->
                     val positions = mutableListOf<Pair<User?, Int>>()
@@ -65,6 +85,17 @@ class OpponentStatsViewModel @Inject constructor(private val authenticationRepos
             }
             .launchIn(viewModelScope)
         onDetailsClick.bind(_sharedDetailsClick, viewModelScope)
+        flowOf(
+            onBestClick.mapNotNull { item?.stats?.bestMap },
+            onWorstClick.mapNotNull { item?.stats?.worstMap },
+            onMostPlayedClick.mapNotNull { item?.stats?.mostPlayedMap },
+        ).flattenMerge()
+            .map { Maps.values().indexOf(it.map) }
+            .bind(_sharedTrackClick, viewModelScope)
+
+        flowOf(onVictoryClick.mapNotNull { item?.stats?.warStats?.highestVictory }, onDefeatClick.mapNotNull { item?.stats?.warStats?.loudestDefeat })
+            .flattenMerge()
+            .bind(_sharedWarClick, viewModelScope)
 
 
 

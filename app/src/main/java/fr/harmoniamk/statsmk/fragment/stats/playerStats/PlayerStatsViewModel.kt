@@ -20,16 +20,14 @@ class PlayerStatsViewModel @Inject constructor() : ViewModel() {
     private val _sharedTrackClick = MutableSharedFlow<Int>()
     private val _sharedWarClick = MutableSharedFlow<MKWar>()
     private val _sharedStats = MutableSharedFlow<PlayerRankingItemViewModel>()
+    private val _sharedGoToDetails = MutableSharedFlow<PlayerRankingItemViewModel>()
 
     val sharedTrackClick = _sharedTrackClick.asSharedFlow()
     val sharedWarClick = _sharedWarClick.asSharedFlow()
     val sharedStats = _sharedStats.asSharedFlow()
+    val sharedGoToDetails = _sharedGoToDetails.asSharedFlow()
 
-    private var bestMap: TrackStats? = null
-    private var worstMap: TrackStats? = null
-    private var mostPlayedMap: TrackStats? = null
-    private var highestVicory: MKWar? = null
-    private var loudestDefeat: MKWar? = null
+    private var item: PlayerRankingItemViewModel? = null
 
     fun bind(
         userStats: PlayerRankingItemViewModel,
@@ -37,30 +35,33 @@ class PlayerStatsViewModel @Inject constructor() : ViewModel() {
         onWorstClick: Flow<Unit>,
         onMostPlayedClick: Flow<Unit>,
         onVictoryClick: Flow<Unit>,
-        onDefeatClick: Flow<Unit>
+        onDefeatClick: Flow<Unit>,
+        onDetailsClick: Flow<Unit>,
+        onHighestScore: Flow<Unit>,
+        onLowestScore: Flow<Unit>,
     ) {
 
         flowOf(userStats)
             .onEach { itemVM ->
                 delay(500)
-                bestMap = itemVM.stats.averageForMaps.filter { it.totalPlayed >= 2 }.maxByOrNull { it.teamScore ?: 0 }
-                worstMap = itemVM.stats.averageForMaps.filter { it.totalPlayed >= 2 }.minByOrNull { it.teamScore ?: 0 }
-                mostPlayedMap = itemVM.stats.averageForMaps.maxByOrNull { it.totalPlayed }
-                highestVicory = itemVM.stats.warStats.highestVictory
-                loudestDefeat = itemVM.stats.warStats.loudestDefeat
+                item = itemVM
                 _sharedStats.emit(itemVM)
             }.launchIn(viewModelScope)
 
         flowOf(
-            onBestClick.mapNotNull { bestMap },
-            onWorstClick.mapNotNull { worstMap },
-            onMostPlayedClick.mapNotNull { mostPlayedMap },
+            onBestClick.mapNotNull { item?.stats?.averageForMaps?.filter { it.totalPlayed >= 2 }?.maxByOrNull { it.teamScore ?: 0 } },
+            onWorstClick.mapNotNull { item?.stats?.averageForMaps?.filter { it.totalPlayed >= 2 }?.minByOrNull { it.teamScore ?: 0 } },
+            onMostPlayedClick.mapNotNull { item?.stats?.averageForMaps?.maxByOrNull { it.totalPlayed } },
         ).flattenMerge()
             .map { Maps.values().indexOf(it.map) }
             .bind(_sharedTrackClick, viewModelScope)
 
-        flowOf(onVictoryClick.mapNotNull { highestVicory }, onDefeatClick.mapNotNull { loudestDefeat })
+        flowOf(onVictoryClick.mapNotNull { item?.stats?.warStats?.highestVictory }, onDefeatClick.mapNotNull { item?.stats?.warStats?.loudestDefeat }, onHighestScore.mapNotNull { item?.stats?.highestScore?.war }, onLowestScore.mapNotNull { item?.stats?.lowestScore?.war })
             .flattenMerge()
             .bind(_sharedWarClick, viewModelScope)
+
+        onDetailsClick
+            .mapNotNull { item }
+            .bind(_sharedGoToDetails, viewModelScope)
     }
 }

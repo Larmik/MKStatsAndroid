@@ -19,12 +19,17 @@ import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.extension.positionColor
 import fr.harmoniamk.statsmk.fragment.stats.opponentRanking.OpponentRankingItemViewModel
+import fr.harmoniamk.statsmk.fragment.stats.teamStats.TeamStatsFragmentDirections
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 
+@FlowPreview
+@ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class OpponentStatsFragment : Fragment(R.layout.fragment_opponent_stats) {
 
@@ -41,7 +46,13 @@ class OpponentStatsFragment : Fragment(R.layout.fragment_opponent_stats) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.bind(stats = stats, isIndiv = isIndiv.isTrue, onDetailsClick = binding.showDetailsBtn.clicks())
+        viewModel.bind(stats = stats, isIndiv = isIndiv.isTrue,
+            onDetailsClick = binding.showDetailsBtn.clicks(),
+            onBestClick = binding.bestTrackview.clicks(),
+            onWorstClick = binding.worstTrackview.clicks(),
+            onMostPlayedClick = binding.mostPlayedTrackview.clicks(),
+            onVictoryClick = binding.highestVictory.clicks(),
+            onDefeatClick = binding.loudestDefeat.clicks())
         viewModel.sharedLowestScore
             .filterNotNull()
             .onEach {
@@ -122,6 +133,15 @@ class OpponentStatsFragment : Fragment(R.layout.fragment_opponent_stats) {
                 binding.mapAverage.setTextSize(COMPLEX_UNIT_SP, 26f)
                 binding.mapAverageLabel.text = "Position moyenne"
             }
+
+            viewModel.sharedTrackClick
+                .filter { findNavController().currentDestination?.id == R.id.opponentStatsFragment }
+                .onEach { findNavController().navigate(OpponentStatsFragmentDirections.toMapStats(it)) }
+                .launchIn(lifecycleScope)
+            viewModel.sharedWarClick
+                .filter { findNavController().currentDestination?.id == R.id.opponentStatsFragment }
+                .onEach { findNavController().navigate(OpponentStatsFragmentDirections.goToWarDetails(it)) }
+                .launchIn(lifecycleScope)
 
         }
     }
