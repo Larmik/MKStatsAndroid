@@ -129,7 +129,7 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
 
         viewModel.sharedTrackClick
             .filter { findNavController().currentDestination?.id == R.id.currentWarFragment }
-            .onEach { findNavController().navigate(CurrentWarFragmentDirections.toTrackDetails(war = war?.war, index = it)) }
+            .onEach { findNavController().navigate(CurrentWarFragmentDirections.toTrackDetails(war = war?.war, warTrack = war?.warTracks?.get(it)?.track, index = it)) }
             .launchIn(lifecycleScope)
 
         viewModel.sharedPopupShowing
@@ -175,6 +175,7 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
             .launchIn(lifecycleScope)
 
         viewModel.sharedShockCount
+            .filter { lifecycle.isResumed }
             .onEach {
                 binding.shockLayout.isVisible = true
                 binding.shockCount.text = it
