@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.mapNotNull
 import kotlin.coroutines.CoroutineContext
 
 @ExperimentalCoroutinesApi
-class WarTrackResultAdapter(val items: MutableList<MKWarPosition> = mutableListOf(), val isCurrent: Boolean = true) : RecyclerView.Adapter<WarTrackResultAdapter.PlayerViewHolder>(), CoroutineScope {
+class WarTrackResultAdapter(val items: MutableList<MKWarPosition> = mutableListOf(), val shockLayoutVisible: Boolean = true, val positionVisible: Boolean = true) : RecyclerView.Adapter<WarTrackResultAdapter.PlayerViewHolder>(), CoroutineScope {
 
     val onShockAdded = MutableSharedFlow<String>()
     val onShockRemoved = MutableSharedFlow<String>()
@@ -39,8 +39,8 @@ class WarTrackResultAdapter(val items: MutableList<MKWarPosition> = mutableListO
                 R.color.black
             )
         )
-        holder.binding.playerPos.isVisible = true
-        holder.binding.shockLayout.isVisible = isCurrent
+        holder.binding.playerPos.isVisible = positionVisible
+        holder.binding.shockLayout.isVisible = shockLayoutVisible
         holder.binding.name.text = items[position].player?.name
         holder.binding.playerPos.text = items[position].position.position.toString()
         holder.binding.playerPos.setTextColor(ContextCompat.getColor(context, items[position].position.position.positionColor()))

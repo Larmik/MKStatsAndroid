@@ -14,6 +14,7 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentTrackDetailsBinding
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.fragment.editWarPositions.EditWarPositionsFragment
+import fr.harmoniamk.statsmk.fragment.editWarShocks.EditWarShocksFragment
 import fr.harmoniamk.statsmk.fragment.editWarTrack.EditWarTrackFragment
 import fr.harmoniamk.statsmk.fragment.warTrackResult.ShockAdapter
 import fr.harmoniamk.statsmk.ui.TrackView
@@ -46,7 +47,7 @@ class TrackDetailsFragment : Fragment(R.layout.fragment_track_details) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val adapter = WarTrackResultAdapter(isCurrent = false)
+        val adapter = WarTrackResultAdapter(shockLayoutVisible = false)
         val shockAdapter = ShockAdapter()
         binding.resultRv.adapter = adapter
         binding.shockRv.adapter = shockAdapter
@@ -74,7 +75,8 @@ class TrackDetailsFragment : Fragment(R.layout.fragment_track_details) {
             warTrack = warTrack,
             index = index,
             onEditTrack = binding.editTrackBtn.clicks(),
-            onEditPositions = binding.resetPositionsBtn.clicks()
+            onEditPositions = binding.resetPositionsBtn.clicks(),
+            onEditShocks = binding.resetShocksBtn.clicks()
         )
             viewModel.sharedWarName
                 .onEach {
@@ -88,6 +90,7 @@ class TrackDetailsFragment : Fragment(R.layout.fragment_track_details) {
             viewModel.sharedShocks
                 .onEach{
                     shockAdapter.addItems(it)
+                    warTrack?.shocks = it.map { it.second }
                 }
                 .launchIn(lifecycleScope)
 
@@ -115,13 +118,25 @@ class TrackDetailsFragment : Fragment(R.layout.fragment_track_details) {
                     }.launchIn(lifecycleScope)
             }.launchIn(lifecycleScope)
 
+        viewModel.sharedEditShocksClick
+            .onEach {
+                val dialog = EditWarShocksFragment(war, warTrack)
+                if (!dialog.isAdded)
+                    dialog.show(childFragmentManager, null)
+                dialog.onDismiss
+                    .onEach {
+                        dialog.dismiss()
+                        viewModel.refreshTrack()
+                    }.launchIn(lifecycleScope)
+            }.launchIn(lifecycleScope)
+
         viewModel.sharedTrackRefreshed
             .onEach {
                 binding.trackScore.text = it.displayedResult
                 binding.trackDiff.text = it.displayedDiff
                 textColor = when  {
                     it.displayedDiff.contains("-") -> R.color.lose
-                    it.displayedDiff.contains("+") -> R.color.win
+                    it.displayedDiff.contains("+") -> R.color.green
                     else -> R.color.harmonia_dark
                 }
                 binding.trackDiff.setTextColor(

@@ -32,6 +32,7 @@ class TrackDetailsViewModel @Inject constructor(
     private val _sharedPositions = MutableSharedFlow<List<MKWarPosition>>()
     private val _sharedEditTrackClick = MutableSharedFlow<Unit>()
     private val _sharedEditPositionsClick = MutableSharedFlow<Unit>()
+    private val _sharedEditShocksClick = MutableSharedFlow<Unit>()
     private val _sharedButtonsVisible = MutableSharedFlow<Boolean>()
     private val _sharedTrackRefreshed = MutableSharedFlow<MKWarTrack>()
     private val _sharedWarName = MutableSharedFlow<String?>()
@@ -40,6 +41,7 @@ class TrackDetailsViewModel @Inject constructor(
     val sharedPositions = _sharedPositions.asSharedFlow()
     val sharedEditTrackClick = _sharedEditTrackClick.asSharedFlow()
     val sharedEditPositionsClick = _sharedEditPositionsClick.asSharedFlow()
+    val sharedEditShocksClick = _sharedEditShocksClick.asSharedFlow()
     val sharedButtonsVisible = _sharedButtonsVisible.asSharedFlow()
     val sharedTrackRefreshed = _sharedTrackRefreshed.asSharedFlow()
     val sharedWarName = _sharedWarName.asSharedFlow()
@@ -50,7 +52,7 @@ class TrackDetailsViewModel @Inject constructor(
     private var warTrackId: String = ""
     private val users = mutableListOf<User>()
 
-    fun bind(war: NewWar, warTrack: NewWarTrack?, index: Int, onEditTrack: Flow<Unit>, onEditPositions: Flow<Unit>) {
+    fun bind(war: NewWar, warTrack: NewWarTrack?, index: Int, onEditTrack: Flow<Unit>, onEditPositions: Flow<Unit>, onEditShocks: Flow<Unit>) {
 
         warId = war.mid ?: ""
         warTrackId = warTrack?.mid ?: ""
@@ -93,10 +95,18 @@ class TrackDetailsViewModel @Inject constructor(
 
         onEditTrack.bind(_sharedEditTrackClick, viewModelScope)
         onEditPositions.bind(_sharedEditPositionsClick, viewModelScope)
+        onEditShocks.bind(_sharedEditShocksClick, viewModelScope)
     }
 
     fun refreshTrack() {
         firebaseRepository.getNewWar(warId)
+            .onEach {
+                val shocks = mutableListOf<Pair<String?, Shock>>()
+                it?.warTracks?.singleOrNull{it.mid == warTrackId}?.shocks?.forEach { shock ->
+                    shocks.add(Pair(users.singleOrNull { it.mid == shock.playerId }?.name, Shock(shock.playerId, shock.count)))
+                }
+                _sharedShocks.emit(shocks)
+            }
             .mapNotNull { MKWarTrack(it?.warTracks?.singleOrNull { it.mid == warTrackId }) }
             .onEach { _sharedTrackRefreshed.emit(it) }
             .mapNotNull { it.track?.warPositions }
