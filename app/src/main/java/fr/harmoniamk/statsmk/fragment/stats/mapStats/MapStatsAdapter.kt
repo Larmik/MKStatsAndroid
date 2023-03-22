@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlin.coroutines.CoroutineContext
 
 @ExperimentalCoroutinesApi
-class MapStatsAdapter(val items: MutableList<MapDetails> = mutableListOf(), val userId: String? = null) :
+class MapStatsAdapter(val items: MutableList<MapDetails> = mutableListOf(), val userId: String? = null, val isIndiv: Boolean = false) :
     RecyclerView.Adapter<MapStatsAdapter.MapStatsViewHolder>(), CoroutineScope {
 
     val onMapClick = MutableSharedFlow<MapDetails>()
@@ -32,14 +32,13 @@ class MapStatsAdapter(val items: MutableList<MapDetails> = mutableListOf(), val 
             binding.teamScoreTv.isVisible = true
             binding.shockIv.isVisible = false
             binding.root.background.mutate().setTint(ContextCompat.getColor(binding.root.context, track.warTrack.backgroundColor))
-            val isIndiv = track.position != null
             track.warTrack.track?.trackIndex?.let {
                 binding.trackIv.isVisible = false
                 binding.trackScore.text = track.warTrack.displayedResult
                 binding.trackDiff.text = track.warTrack.displayedDiff
                 binding.shortname.text = track.war.war?.createdDate
                 binding.name.text = track.war.name
-                track.position?.let {
+                track.position?.takeIf { isIndiv }?.let {
                     binding.root.background.mutate().setTint(ContextCompat.getColor(binding.root.context, R.color.white_alphaed))
                     binding.trackScore.isVisible = false
                     binding.trackDiff.isVisible = false
@@ -47,7 +46,7 @@ class MapStatsAdapter(val items: MutableList<MapDetails> = mutableListOf(), val 
                     binding.mapPos.text = it.toString()
                     binding.mapPos.setTextColor(ContextCompat.getColor(binding.root.context, it.positionColor()))
                 }
-                if (!isIndiv && track.warTrack.track.shocks?.isNotEmpty().isTrue || isIndiv && track.warTrack.track.shocks?.any { it.playerId == this@MapStatsAdapter.userId }.isTrue)
+                if ((!isIndiv && track.position == null) && track.warTrack.track.shocks?.isNotEmpty().isTrue || (isIndiv && track.position != null) && track.warTrack.track.shocks?.any { it.playerId == this@MapStatsAdapter.userId }.isTrue)
                     binding.shockIv.isVisible = true
             }
         }

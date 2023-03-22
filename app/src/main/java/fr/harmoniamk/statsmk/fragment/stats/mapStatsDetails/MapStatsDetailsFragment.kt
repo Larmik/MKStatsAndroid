@@ -52,7 +52,7 @@ class MapStatsDetailsFragment : Fragment(R.layout.fragment_map_stats_details) {
             binding.playFilterButton.visibility = View.INVISIBLE
         }
         trackIndex?.let { index ->
-            val adapter = MapStatsAdapter(userId = userId)
+            val adapter = MapStatsAdapter(userId = userId, isIndiv = isIndiv.isTrue)
             binding.statTrackview.bind(index)
             binding.mapDetailsRv.adapter = adapter
             adapter.addTracks(mapDetails)

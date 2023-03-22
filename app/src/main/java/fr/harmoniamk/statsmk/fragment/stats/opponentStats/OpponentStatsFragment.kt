@@ -48,13 +48,15 @@ class OpponentStatsFragment : Fragment(R.layout.fragment_opponent_stats) {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel.bind(stats = stats, userId = userId,
+        viewModel.bind(stats = stats, userId = userId, isIndiv = isIndiv.isTrue,
             onDetailsClick = binding.showDetailsBtn.clicks(),
             onBestClick = binding.bestTrackview.clicks(),
             onWorstClick = binding.worstTrackview.clicks(),
             onMostPlayedClick = binding.mostPlayedTrackview.clicks(),
             onVictoryClick = binding.highestVictory.clicks(),
-            onDefeatClick = binding.loudestDefeat.clicks())
+            onDefeatClick = binding.loudestDefeat.clicks(),
+            onHighestScore = binding.highestScoreLayout.clicks(),
+            onLowestScore = binding.lowestScoreLayout.clicks())
         viewModel.sharedLowestScore
             .filterNotNull()
             .onEach {
@@ -73,18 +75,18 @@ class OpponentStatsFragment : Fragment(R.layout.fragment_opponent_stats) {
             .launchIn(lifecycleScope)
 
         stats?.let {
-            val bestMap = when (userId) {
-                null -> it.stats.bestMap
-                else -> it.stats.bestPlayerMap
+            val bestMap = when (userId != null && isIndiv.isTrue) {
+                true -> it.stats.bestPlayerMap
+                else -> it.stats.bestMap
             }
-            val worstMap = when (userId) {
-                null -> it.stats.worstMap
-                else -> it.stats.worstPlayerMap
+            val worstMap = when (userId != null && isIndiv.isTrue) {
+                true -> it.stats.worstPlayerMap
+                else -> it.stats.worstMap
             }
             binding.playerName.text = it.teamName
-            binding.bestTrackview.bind(bestMap, shouldDisplayPosition = userId != null)
-            binding.worstTrackview.bind(worstMap, shouldDisplayPosition = userId != null)
-            binding.mostPlayedTrackview.bind(it.stats.mostPlayedMap, shouldDisplayPosition = userId != null)
+            binding.bestTrackview.bind(bestMap, shouldDisplayPosition = isIndiv.isTrue && userId != null)
+            binding.worstTrackview.bind(worstMap, shouldDisplayPosition = isIndiv.isTrue && userId != null)
+            binding.mostPlayedTrackview.bind(it.stats.mostPlayedMap, shouldDisplayPosition = isIndiv.isTrue && userId != null)
             it.stats.warStats.highestVictory?.let {
                 binding.noVictory.isVisible = false
                 binding.victoryLayout.isVisible = true
@@ -113,13 +115,13 @@ class OpponentStatsFragment : Fragment(R.layout.fragment_opponent_stats) {
                 it.stats.warStats.warsLoss
             )
             val averageWarColor = when  {
-                userId != null -> R.color.harmonia_dark
+                userId != null && isIndiv.isTrue -> R.color.harmonia_dark
                 it.stats.averagePointsLabel.contains("-") -> R.color.lose
                 it.stats.averagePointsLabel.contains("+") -> R.color.green
                 else -> R.color.harmonia_dark
             }
             val averageMapColor = when  {
-                userId != null -> it.averageMapLabel.toIntOrNull().positionColor()
+                userId != null && isIndiv.isTrue -> it.averageMapLabel.toIntOrNull().positionColor()
                 it.stats.averageMapPointsLabel.contains("-") -> R.color.lose
                 it.stats.averageMapPointsLabel.contains("+") -> R.color.green
                 else -> R.color.harmonia_dark
@@ -136,7 +138,7 @@ class OpponentStatsFragment : Fragment(R.layout.fragment_opponent_stats) {
                 else ContextCompat.getColor(requireContext(), averageMapColor)
             )
 
-            if (userId != null) {
+            if (userId != null && isIndiv.isTrue) {
                 val typeface = ResourcesCompat.getFont(requireContext(), R.font.mk_position)
                 binding.playerScoresLayout.isVisible = true
                 binding.mapAverage.typeface = typeface

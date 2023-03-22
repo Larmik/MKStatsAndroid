@@ -104,7 +104,7 @@ class MapStatsFragment : Fragment(R.layout.fragment_map_stats) {
                 }
                 viewModel.sharedDetailsClick
                     .filter { findNavController().currentDestination?.id == R.id.mapStatsFragment }
-                    .onEach { findNavController().navigate(MapStatsFragmentDirections.toMapStatsDetails(index, stats.list.toTypedArray(), userId != null, stats.userId)) }
+                    .onEach { findNavController().navigate(MapStatsFragmentDirections.toMapStatsDetails(index, stats.list.toTypedArray(), isIndiv.isTrue && userId != null, stats.userId)) }
                     .launchIn(lifecycleScope)
             }.launchIn(lifecycleScope)
 

@@ -52,7 +52,7 @@ class OpponentRankingViewModel @Inject constructor(
         flowOf(true).bind(_sharedLoading, viewModelScope)
         flowOf(list)
             .map { it.sortedBy { it.name }.filterNot { it.mid == preferencesRepository.currentTeam?.mid } }
-            .flatMapLatest { it.withFullTeamStats(firebaseRepository, authenticationRepository.takeIf { _sharedIndivStatsEnabled.value }?.user?.uid) }
+            .flatMapLatest { it.withFullTeamStats(firebaseRepository, authenticationRepository.user?.uid, isIndiv = _sharedIndivStatsEnabled.value) }
             .onEach {
                 itemsVM.clear()
                 itemsVM.addAll(it)
@@ -66,7 +66,7 @@ class OpponentRankingViewModel @Inject constructor(
                 _sharedTeamList.emit(itemsVM)
             }.launchIn(viewModelScope)
 
-        onTeamClick.map { Pair(authenticationRepository.takeIf { _sharedIndivStatsEnabled.value }?.user?.uid, it) }.bind(_sharedGoToStats, viewModelScope)
+        onTeamClick.map { Pair(authenticationRepository.user?.uid, it) }.bind(_sharedGoToStats, viewModelScope)
 
         onSortClick
             .onEach {
@@ -88,7 +88,7 @@ class OpponentRankingViewModel @Inject constructor(
         onIndivStatsSelected.onEach { indivEnabled ->
             _sharedIndivStatsEnabled.emit(indivEnabled)
             itemsVM.clear()
-            itemsVM.addAll(list.sortedBy { it.name }.filterNot { it.mid == preferencesRepository.currentTeam?.mid }.withFullTeamStats(firebaseRepository, authenticationRepository.takeIf { indivEnabled }?.user?.uid).first())
+            itemsVM.addAll(list.sortedBy { it.name }.filterNot { it.mid == preferencesRepository.currentTeam?.mid }.withFullTeamStats(firebaseRepository, authenticationRepository.user?.uid, isIndiv = indivEnabled).first())
             when (_sharedSortTypeSelected.value) {
                 PlayerSortType.NAME -> itemsVM.sortBy { it.teamName }
                 PlayerSortType.WINRATE -> itemsVM.sortByDescending { (it.stats.warStats.warsWon*100)/it.stats.warStats.warsPlayed}

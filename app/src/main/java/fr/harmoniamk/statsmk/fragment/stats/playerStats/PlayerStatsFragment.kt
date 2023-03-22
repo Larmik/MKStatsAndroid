@@ -135,7 +135,7 @@ class PlayerStatsFragment : Fragment(R.layout.fragment_player_stats) {
             .launchIn(lifecycleScope)
         viewModel.sharedTeamClick
             .filter { findNavController().currentDestination?.id == R.id.playerStatsFragment }
-            .onEach { findNavController().navigate(PlayerStatsFragmentDirections.toOpponentStats(stats = it.second, userId = it.first)) }
+            .onEach { findNavController().navigate(PlayerStatsFragmentDirections.toOpponentStats(stats = it.second, userId = it.first, isIndiv = true)) }
             .launchIn(lifecycleScope)
     }
 

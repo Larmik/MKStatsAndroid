@@ -126,7 +126,7 @@ class IndivStatsFragment : Fragment(R.layout.fragment_indiv_stats) {
             .launchIn(lifecycleScope)
         viewModel.sharedTeamClick
             .filter { findNavController().currentDestination?.id == R.id.indivStatsFragment }
-            .onEach { findNavController().navigate(IndivStatsFragmentDirections.toOpponentStats(stats = it.second, userId = it.first)) }
+            .onEach { findNavController().navigate(IndivStatsFragmentDirections.toOpponentStats(stats = it.second, userId = it.first, isIndiv = true)) }
             .launchIn(lifecycleScope)
     }
 

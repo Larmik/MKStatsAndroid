@@ -28,35 +28,35 @@ fun List<User>.withFullStats(firebaseRepository: FirebaseRepositoryInterface) = 
     val temp = mutableListOf<PlayerRankingItemViewModel>()
     val wars = firebaseRepository.getNewWars().first().map { MKWar(it) }.withName(firebaseRepository).first()
     this@withFullStats.forEach { user ->
-        val stats = wars.withFullStats(firebaseRepository, userId = user.mid).first()
+        val stats = wars.withFullStats(firebaseRepository, userId = user.mid, isIndiv = true).first()
         temp.add(PlayerRankingItemViewModel(user, stats))
     }
     emit(temp)
 }
 
 
-fun List<Team>.withFullTeamStats(firebaseRepository: FirebaseRepositoryInterface, userId: String? = null, weekOnly: Boolean = false, monthOnly: Boolean = false) = flow {
+fun List<Team>.withFullTeamStats(firebaseRepository: FirebaseRepositoryInterface, userId: String? = null, weekOnly: Boolean = false, monthOnly: Boolean = false, isIndiv: Boolean = false) = flow {
     val temp = mutableListOf<OpponentRankingItemViewModel>()
     val wars = firebaseRepository.getNewWars().first().map { MKWar(it) }
     this@withFullTeamStats.forEach { team ->
         val stats = wars
             .filter { !weekOnly || (weekOnly && it.isThisWeek) }
             .filter { !monthOnly || (monthOnly && it.isThisMonth) }
-            .withFullStats(firebaseRepository, teamId = team.mid, userId = userId).first()
+            .withFullStats(firebaseRepository, teamId = team.mid, userId = userId, isIndiv = isIndiv).first()
         if (stats.warStats.list.isNotEmpty())
-            temp.add(OpponentRankingItemViewModel(team, stats, userId))
+            temp.add(OpponentRankingItemViewModel(team, stats, userId, isIndiv))
     }
     emit(temp)
 }
 
-fun List<MKWar>.withFullStats(firebaseRepository: FirebaseRepositoryInterface, userId: String? = null, teamId: String? = null) = flow {
+fun List<MKWar>.withFullStats(firebaseRepository: FirebaseRepositoryInterface, userId: String? = null, teamId: String? = null, isIndiv: Boolean = false) = flow {
 
     val maps = mutableListOf<TrackStats>()
     val warScores = mutableListOf<WarScore>()
     val averageForMaps = mutableListOf<TrackStats>()
     val wars = when  {
-        userId != null && teamId != null -> this@withFullStats.filter { it.hasPlayer(userId) && it.hasTeam(teamId) }
-        userId != null -> this@withFullStats.filter { it.hasPlayer(userId) }
+        isIndiv && userId != null && teamId != null -> this@withFullStats.filter { it.hasPlayer(userId) && it.hasTeam(teamId) }
+        isIndiv && userId != null -> this@withFullStats.filter { it.hasPlayer(userId) }
         teamId != null -> this@withFullStats.filter { it.hasTeam(teamId) }
         else -> this@withFullStats.withName(firebaseRepository).first()
     }
@@ -95,9 +95,9 @@ fun List<MKWar>.withFullStats(firebaseRepository: FirebaseRepositoryInterface, u
                 track.track?.warPositions?.map { it.position.positionToPoints() }?.forEach {
                     teamScoreForTrack += it
                 }
-                currentPoints += when (userId) {
-                    null -> teamScoreForTrack
-                    else -> playerScoreForTrack
+                currentPoints += when (isIndiv && userId != null) {
+                    true -> playerScoreForTrack
+                    else -> teamScoreForTrack
                 }
                 var shockCount = 0
                 track.track?.shocks?.filter { userId == null || it.playerId == userId }?.map { it.count }?.forEach {

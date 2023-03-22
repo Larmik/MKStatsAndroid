@@ -132,7 +132,7 @@ class PeriodicStatsFragment : Fragment(R.layout.fragment_periodic_stats) {
 
         viewModel.sharedTeamClick
             .filter { findNavController().currentDestination?.id == R.id.periodicStatsFragment }
-            .onEach { findNavController().navigate(PeriodicStatsFragmentDirections.toOpponentStats(it, null)) }
+            .onEach { findNavController().navigate(PeriodicStatsFragmentDirections.toOpponentStats(it.second, userId = it.first)) }
             .launchIn(lifecycleScope)
     }
 

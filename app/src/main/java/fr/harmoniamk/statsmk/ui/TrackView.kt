@@ -136,7 +136,19 @@ class TrackView : LinearLayout {
                 else -> {
                     binding.bestTrackIv.isVisible = false
                     binding.bestTrackName.isVisible = false
-                    binding.averageTrackScoreLabel.text = "Aucune donnée."
+                    binding.scoreLayout.background.mutate().setTint(
+                        ContextCompat.getColor(
+                            binding.root.context,
+                            R.color.transparent
+                        )
+                    )
+                    binding.root.background.mutate().setTint(
+                        ContextCompat.getColor(
+                            binding.root.context,
+                            R.color.transparent
+                        )
+                    )
+                    binding.averageTrackScoreLabel.text = "Aucun"
                 }
             }
         }

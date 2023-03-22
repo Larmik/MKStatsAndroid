@@ -42,7 +42,7 @@ class MapStatsViewModel @Inject constructor(private val preferencesRepository: P
              onDetailsClick: Flow<Unit>
     ) {
         val mapDetailsList = mutableListOf<MapDetails>()
-        val onlyIndiv = (isIndiv.isTrue && userId != null) || preferencesRepository.currentTeam?.mid == null
+        val onlyIndiv = isIndiv.isTrue || preferencesRepository.currentTeam?.mid == null
 
          firebaseRepository.getNewWars()
              .filter {
@@ -77,7 +77,7 @@ class MapStatsViewModel @Inject constructor(private val preferencesRepository: P
                     .filter { teamId == null || it.war.hasTeam(teamId) }
 
                 )
-                _sharedStats.emit(MapStats(mapDetailsList, onlyIndiv, userId))
+                _sharedStats.emit(MapStats(mapDetailsList, onlyIndiv && userId != null, userId))
             }.launchIn(viewModelScope)
 
         onDetailsClick.bind(_sharedDetailsClick, viewModelScope)

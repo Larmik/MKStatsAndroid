@@ -40,12 +40,14 @@ class OpponentStatsViewModel @Inject constructor(private val firebaseRepository:
     private val users = mutableListOf<User>()
     private var item: OpponentRankingItemViewModel? = null
 
-    fun bind(stats: OpponentRankingItemViewModel?, userId: String?, onDetailsClick: Flow<Unit>,
+    fun bind(stats: OpponentRankingItemViewModel?, userId: String?, isIndiv: Boolean, onDetailsClick: Flow<Unit>,
              onBestClick: Flow<Unit>,
              onWorstClick: Flow<Unit>,
              onMostPlayedClick: Flow<Unit>,
              onVictoryClick: Flow<Unit>,
-             onDefeatClick: Flow<Unit>) {
+             onDefeatClick: Flow<Unit>,
+             onHighestScore: Flow<Unit>,
+             onLowestScore: Flow<Unit>) {
 
         firebaseRepository.getUsers()
             .onEach {
@@ -93,7 +95,7 @@ class OpponentStatsViewModel @Inject constructor(private val firebaseRepository:
             .map { Pair(userId, it) }
             .bind(_sharedTrackClick, viewModelScope)
 
-        flowOf(onVictoryClick.mapNotNull { item?.stats?.warStats?.highestVictory }, onDefeatClick.mapNotNull { item?.stats?.warStats?.loudestDefeat })
+        flowOf(onVictoryClick.mapNotNull { item?.stats?.warStats?.highestVictory }, onDefeatClick.mapNotNull { item?.stats?.warStats?.loudestDefeat }, onHighestScore.mapNotNull { item?.stats?.highestScore?.war }, onLowestScore.mapNotNull { item?.stats?.lowestScore?.war })
             .flattenMerge()
             .bind(_sharedWarClick, viewModelScope)
 

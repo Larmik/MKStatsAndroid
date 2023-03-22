@@ -284,7 +284,23 @@
         android:id="@+id/playerStatsDetailsFragment"
         android:name="fr.harmoniamk.statsmk.fragment.stats.playerStatsDetails.PlayerStatsDetailsFragment"
         tools:layout="@layout/fragment_player_stats_details"
-        android:label="PlayerStatsDetailsFragment"/>
+        android:label="PlayerStatsDetailsFragment">
+        <action
+            android:id="@+id/go_to_war_details"
+            app:destination="@id/warDetailsFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right">
+
+            <argument
+                android:name="war"
+                app:argType="fr.harmoniamk.statsmk.model.local.MKWar"
+                app:nullable="false"/>
+
+        </action>
+
+    </fragment>
 
 
     <fragment
@@ -308,6 +324,12 @@
                 android:name="userId"
                 app:argType="string"
                 app:nullable="true"/>
+
+
+            <argument
+                android:name="isIndiv"
+                app:argType="boolean"
+                android:defaultValue="true"/>
 
         </action>
         <action android:id="@+id/to_map_stats"
@@ -877,6 +899,12 @@
                 app:argType="string"
                 app:nullable="true"/>
 
+
+            <argument
+                android:name="isIndiv"
+                app:argType="boolean"
+                android:defaultValue="true"/>
+
         </action>
 
         <action android:id="@+id/to_map_stats"
@@ -1015,6 +1043,11 @@
                 android:name="userId"
                 app:argType="string"
                 app:nullable="true"/>
+
+            <argument
+                android:name="isIndiv"
+                app:argType="boolean"
+                android:defaultValue="true"/>
 
         </action>
 

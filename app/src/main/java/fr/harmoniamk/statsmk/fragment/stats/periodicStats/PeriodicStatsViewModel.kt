@@ -24,7 +24,7 @@ class PeriodicStatsViewModel @Inject constructor(private val firebaseRepository:
     private val _sharedWarClick = MutableSharedFlow<MKWar>()
     private val _sharedWeekStatsEnabled = MutableStateFlow(true)
     private val _sharedStats = MutableSharedFlow<Stats>()
-    private val _sharedTeamClick = MutableSharedFlow<OpponentRankingItemViewModel>()
+    private val _sharedTeamClick = MutableSharedFlow<Pair<String?, OpponentRankingItemViewModel>>()
 
     val sharedTrackClick = _sharedTrackClick.asSharedFlow()
     val sharedWarClick = _sharedWarClick.asSharedFlow()
@@ -66,6 +66,7 @@ class PeriodicStatsViewModel @Inject constructor(private val firebaseRepository:
 
         flowOf(onMostPlayedTeamClick.mapNotNull { mostPlayedTeam }, onMostDefeatedTeamClick.mapNotNull { mostDefeatedTeam }, onLessDefeatedTeamClick.mapNotNull { lessDefeatedTeam })
             .flattenMerge()
+            .map { Pair(authenticationRepository.user?.uid, it) }
             .bind(_sharedTeamClick, viewModelScope)
 
         flowOf(onVictoryClick.mapNotNull { highestVicory }, onDefeatClick.mapNotNull { loudestDefeat })
@@ -93,9 +94,9 @@ class PeriodicStatsViewModel @Inject constructor(private val firebaseRepository:
             .flatMapLatest { it.withName(firebaseRepository) }
             .flatMapLatest { it.withFullStats(firebaseRepository) }
             .onEach { stats ->
-                bestMap = stats.averageForMaps.filter { it.totalPlayed >= 2 }.maxByOrNull { it.teamScore ?: 0}
-                worstMap = stats.averageForMaps.filter { it.totalPlayed >= 2 }.minByOrNull { it.teamScore ?: 0}
-                mostPlayedMap = stats.averageForMaps.maxByOrNull { it.totalPlayed }
+                bestMap = stats.bestMap
+                worstMap = stats.worstMap
+                mostPlayedMap = stats.mostPlayedMap
                 highestVicory = stats.warStats.highestVictory
                 loudestDefeat = stats.warStats.loudestDefeat
                 mostPlayedTeam = listOfNotNull(stats.mostPlayedTeam?.team).withFullTeamStats(firebaseRepository, weekOnly = hebdo, monthOnly = !hebdo).first().singleOrNull()

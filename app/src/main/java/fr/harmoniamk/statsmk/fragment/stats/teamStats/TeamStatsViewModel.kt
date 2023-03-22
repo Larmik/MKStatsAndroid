@@ -23,7 +23,7 @@ class TeamStatsViewModel @Inject constructor(private val firebaseRepository: Fir
     private val _sharedTrackClick = MutableSharedFlow<Pair<String?, Int>>()
     private val _sharedWarClick = MutableSharedFlow<MKWar>()
     private val _sharedStats = MutableSharedFlow<Stats>()
-    private val _sharedTeamClick = MutableSharedFlow<OpponentRankingItemViewModel>()
+    private val _sharedTeamClick = MutableSharedFlow<Pair<String?, OpponentRankingItemViewModel>>()
 
     val sharedTrackClick = _sharedTrackClick.asSharedFlow()
     val sharedWarClick = _sharedWarClick.asSharedFlow()
@@ -86,6 +86,7 @@ class TeamStatsViewModel @Inject constructor(private val firebaseRepository: Fir
 
         flowOf(onMostPlayedTeamClick.mapNotNull { mostPlayedTeam }, onMostDefeatedTeamClick.mapNotNull { mostDefeatedTeam }, onLessDefeatedTeamClick.mapNotNull { lessDefeatedTeam })
             .flattenMerge()
+            .map { Pair(authenticationRepository.user?.uid, it) }
             .bind(_sharedTeamClick, viewModelScope)
     }
 }

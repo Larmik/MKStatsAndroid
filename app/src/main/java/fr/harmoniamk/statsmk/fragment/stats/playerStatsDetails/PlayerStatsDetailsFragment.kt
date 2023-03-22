@@ -74,8 +74,8 @@ class PlayerStatsDetailsFragment : Fragment(R.layout.fragment_player_stats_detai
                     updateFilterButton(binding.periodFilterButton, WarFilterType.WEEK, it)
                 }.launchIn(lifecycleScope)
             viewModel.sharedWarClick
-                .filter { findNavController().currentDestination?.id == R.id.opponentStatsDetailsFragment }
-                .onEach { findNavController().navigate(OpponentStatsDetailsFragmentDirections.goToWarDetails(it)) }
+                .filter { findNavController().currentDestination?.id == R.id.playerStatsDetailsFragment }
+                .onEach { findNavController().navigate(PlayerStatsDetailsFragmentDirections.goToWarDetails(it)) }
                 .launchIn(lifecycleScope)
 
             viewModel.sharedLoaded.onEach {
