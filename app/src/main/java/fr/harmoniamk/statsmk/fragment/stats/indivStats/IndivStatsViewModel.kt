@@ -61,7 +61,7 @@ class IndivStatsViewModel @Inject constructor(
              flowOf(list)
                 .filterNotNull()
                  .flatMapLatest { it.withName(firebaseRepository) }
-                 .flatMapLatest { it.withFullStats(firebaseRepository, authenticationRepository.user?.uid) }
+                 .flatMapLatest { it.withFullStats(firebaseRepository, authenticationRepository.user?.uid, isIndiv = true) }
                  .onEach { stats ->
                     bestMap = stats.bestPlayerMap
                     worstMap = stats.worstPlayerMap

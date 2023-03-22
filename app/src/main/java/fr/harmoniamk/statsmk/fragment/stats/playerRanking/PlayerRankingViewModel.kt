@@ -57,7 +57,7 @@ class PlayerRankingViewModel @Inject constructor(
                 when (it) {
                     PlayerSortType.NAME -> itemsVM.sortBy { it.user.name }
                     PlayerSortType.WINRATE -> itemsVM.sortByDescending { (it.stats.warStats.warsWon*100)/it.stats.warStats.warsPlayed}
-                    PlayerSortType.TOTAL_WIN -> itemsVM.sortByDescending { it.stats.warStats.warsWon }
+                    PlayerSortType.TOTAL_WIN -> itemsVM.sortByDescending { it.stats.warStats.warsPlayed }
                     PlayerSortType.AVERAGE -> itemsVM.sortByDescending { it.stats.averagePoints }
                 }
                 _sharedUserList.emit(itemsVM)

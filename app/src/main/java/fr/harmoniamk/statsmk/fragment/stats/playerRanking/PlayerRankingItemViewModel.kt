@@ -13,7 +13,10 @@ data class PlayerRankingItemViewModel(val user: User, val stats: Stats) : Parcel
     val warsPlayedLabel: String
         get() = stats.warStats.warsPlayed.toString()
     val winrateLabel: String
-        get() = "${(stats.warStats.warsWon*100)/stats.warStats.warsPlayed} %"
+        get() = when (stats.warStats.warsPlayed) {
+            0 -> "0 %"
+            else -> "${(stats.warStats.warsWon*100)/stats.warStats.warsPlayed} %"
+        }
     val averageLabel: String
         get() = stats.averagePoints.toString()
     val picture: String?

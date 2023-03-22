@@ -14,7 +14,10 @@ data class OpponentRankingItemViewModel(val team: Team?, val stats: Stats, val u
     val warsPlayedLabel: String
         get() = stats.warStats.warsPlayed.toString()
     val winrateLabel: String
-        get() = "${(stats.warStats.warsWon*100)/stats.warStats.warsPlayed} %"
+        get() = when (stats.warStats.warsPlayed) {
+            0 -> "0 %"
+            else -> "${(stats.warStats.warsWon*100)/stats.warStats.warsPlayed} %"
+        }
 
     val averageLabel: String
         get() = when (userId != null && isIndiv) {

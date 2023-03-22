@@ -14,8 +14,10 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.TrackItemBinding
 import fr.harmoniamk.statsmk.databinding.TrackItemCollapsedBinding
 import fr.harmoniamk.statsmk.enums.Maps
+import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.extension.pointsToPosition
 import fr.harmoniamk.statsmk.extension.positionColor
+import fr.harmoniamk.statsmk.extension.trackScoreToDiff
 import fr.harmoniamk.statsmk.model.local.MKTournamentTrack
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import fr.harmoniamk.statsmk.model.local.TrackStats
@@ -117,7 +119,7 @@ class TrackView : LinearLayout {
                             true -> R.font.mk_position
                             else -> R.font.orbitron_semibold
                         })
-                        binding.averageTrackScore.text = track.teamScore.toString()
+
 
                         if (shouldDisplayPosition) {
                             val position = track.playerScore.pointsToPosition()
@@ -129,6 +131,15 @@ class TrackView : LinearLayout {
                                     context.getColor(position.positionColor())
                                 else ContextCompat.getColor(context, position.positionColor())
                             )
+                        } else {
+                            val teamScore = track.teamScore?.trackScoreToDiff()
+                            binding.averageTrackScore.text = teamScore
+                            val textColor = when  {
+                                teamScore?.contains("-").isTrue -> R.color.lose
+                                teamScore?.contains("+").isTrue -> R.color.green
+                                else -> R.color.harmonia_dark
+                            }
+                            binding.averageTrackScore.setTextColor(ContextCompat.getColor(context, textColor))
                         }
                         binding.totalPlayed.text = "jouée ${track.totalPlayed} fois"
 

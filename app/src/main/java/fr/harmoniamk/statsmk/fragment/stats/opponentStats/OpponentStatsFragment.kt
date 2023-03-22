@@ -75,11 +75,11 @@ class OpponentStatsFragment : Fragment(R.layout.fragment_opponent_stats) {
             .launchIn(lifecycleScope)
 
         stats?.let {
-            val bestMap = when (userId != null && isIndiv.isTrue) {
+            val bestMap = when (userId != null || isIndiv.isTrue) {
                 true -> it.stats.bestPlayerMap
                 else -> it.stats.bestMap
             }
-            val worstMap = when (userId != null && isIndiv.isTrue) {
+            val worstMap = when (userId != null || isIndiv.isTrue) {
                 true -> it.stats.worstPlayerMap
                 else -> it.stats.worstMap
             }
