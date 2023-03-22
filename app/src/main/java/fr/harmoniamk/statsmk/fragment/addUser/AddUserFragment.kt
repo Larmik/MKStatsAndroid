@@ -3,6 +3,7 @@ package fr.harmoniamk.statsmk.fragment.addUser
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -58,6 +59,11 @@ class AddUserFragment : Fragment(R.layout.fragment_add_user) {
         viewModel.sharedButtonEnabled
             .onEach { binding.nextBtn.isEnabled = it }
             .launchIn(lifecycleScope)
+        viewModel.sharedLoading
+            .onEach {
+                binding.progress.isVisible = it
+                binding.layout.isVisible = !it
+            }.launchIn(lifecycleScope)
 
     }
 
