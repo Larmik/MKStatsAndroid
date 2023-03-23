@@ -18,7 +18,6 @@ import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.extension.pointsToPosition
 import fr.harmoniamk.statsmk.extension.positionColor
 import fr.harmoniamk.statsmk.extension.trackScoreToDiff
-import fr.harmoniamk.statsmk.model.local.MKTournamentTrack
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import fr.harmoniamk.statsmk.model.local.TrackStats
 
@@ -60,14 +59,6 @@ class TrackView : LinearLayout {
                         binding.shortname.text = map.name
                         binding.name.setText(map.label)
                     }
-                }
-                is MKTournamentTrack -> {
-                    binding.posTv.isVisible = true
-                    val map = Maps.values()[track.trackIndex]
-                    binding.trackIv.setImageResource(map.picture)
-                    binding.posTv.text = track.displayedPos
-                    binding.shortname.text = map.name
-                    binding.name.setText(map.label)
                 }
                 is Int -> {
                     val map = Maps.values()[track]

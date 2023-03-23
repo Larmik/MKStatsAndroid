@@ -21,7 +21,6 @@ import javax.inject.Inject
 @ExperimentalCoroutinesApi
 @FlowPreview
 interface PreferencesRepositoryInterface {
-    var hasCurrentTournament: Boolean
     var currentTeam: Team?
     var currentWar: NewWar?
     var currentWarTrack: NewWarTrack?
@@ -54,9 +53,6 @@ class PreferencesRepository @Inject constructor(
         EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
     )
 
-    override var hasCurrentTournament: Boolean
-        get() = preferences.getBoolean("hasCurrentTournament", false)
-        set(value) = preferences.edit().putBoolean("hasCurrentTournament", value).apply()
     override var currentTeam: Team?
         get() = Gson().fromJson(preferences.getString("currentTeam", null), Team::class.java)
         set(value) = preferences.edit().putString("currentTeam", Gson().toJson(value)).apply()

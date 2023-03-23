@@ -58,13 +58,7 @@ class SplashScreenViewModel @Inject constructor(private val preferencesRepositor
                 _sharedWelcomeScreen.emit(WelcomeScreen.HOME)
             }.launchIn(viewModelScope)
 
-        authenticate
-            .mapNotNull { it as? AuthUserResponse.Error }
-            .onEach {
-                delay(1000)
-                _sharedWelcomeScreen.emit(WelcomeScreen.REAUTH)
-            }
-            .launchIn(viewModelScope)
+
     }
 
 }

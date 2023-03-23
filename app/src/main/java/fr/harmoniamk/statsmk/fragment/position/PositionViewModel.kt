@@ -4,16 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.model.firebase.User
-import fr.harmoniamk.statsmk.model.local.MKTournamentTrack
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.firebase.NewWarPositions
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
-import fr.harmoniamk.statsmk.repository.PlayedTrackRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
-import fr.harmoniamk.statsmk.repository.TournamentRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
@@ -24,8 +21,6 @@ import javax.inject.Inject
 @ExperimentalCoroutinesApi
 @HiltViewModel
 class PositionViewModel @Inject constructor(
-    private val playedTrackRepository: PlayedTrackRepositoryInterface,
-    private val tournamentRepository: TournamentRepositoryInterface,
     private val firebaseRepository: FirebaseRepositoryInterface,
     private val preferencesRepository: PreferencesRepositoryInterface
 ) : ViewModel() {
@@ -81,20 +76,6 @@ class PositionViewModel @Inject constructor(
         onPos11.onEach { _sharedPos.emit(11) }.launchIn(viewModelScope)
         onPos12.onEach { _sharedPos.emit(12) }.launchIn(viewModelScope)
 
-        tournamentId?.takeIf { it != -1 }?.let { id ->
-            _sharedPos
-                .map { MKTournamentTrack(trackIndex = chosenTrack, position = it, tmId = id) }
-                .flatMapLatest { playedTrackRepository.insert(it) }
-                .flatMapLatest { tournamentRepository.incrementTrackNumber(id) }
-                .flatMapLatest { tournamentRepository.getbyId(id) }
-                .onEach { _validateTrack.emit(Unit) }
-                .launchIn(viewModelScope)
-
-            _sharedPos
-                .filter { it <= 3 }
-                .onEach { tournamentRepository.incrementTops(id) }
-                .launchIn(viewModelScope)
-        }
 
         preferencesRepository.currentWar?.let { war ->
             val back = onBack.shareIn(viewModelScope, SharingStarted.Eagerly, 1)

@@ -11,41 +11,6 @@
         tools:layout="@layout/fragment_home"
         android:label="HomeFragment">
 
-        <!--
-        <action
-            android:id="@+id/add_fragment"
-            app:destination="@id/addTournamentFragment"
-            app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right"/>
-
-               <action
-            android:id="@+id/goto_current"
-            app:destination="@id/currentTournamentFragment"
-            app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right">
-
-            <argument
-                android:name="MKTournament"
-                app:argType="fr.harmoniamk.statsmk.model.local.MKTournament"
-                app:nullable="false"/>
-
-        </action>
-
-          <action
-            android:id="@+id/manageTheme"
-            app:destination="@id/themeFragment"
-            app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right"/>
-
-
-            -->
-
         <action
             android:id="@+id/create_war"
             app:destination="@id/addWarFragment"
@@ -198,12 +163,6 @@
         </action>
 
     </fragment>
-<!--
-    <fragment
-        android:id="@+id/addTournamentFragment"
-        android:name="fr.harmoniamk.statsmk.fragment.addTournament.AddTournamentFragment"
-        tools:layout="@layout/fragment_add_tournament"
-        android:label="AddTournamentFragment"/>-->
 
     <fragment
         android:id="@+id/trackListFragment"
@@ -251,28 +210,6 @@
         </action>
 
     </fragment>
-
-   <!-- <fragment
-        android:id="@+id/currentTournamentFragment"
-        android:name="fr.harmoniamk.statsmk.fragment.currentTournament.CurrentTournamentFragment"
-        tools:layout="@layout/fragment_current_tournament"
-        android:label="CurrentTournamentFragment">
-
-        <action
-            android:id="@+id/add_track"
-            app:destination="@id/trackListFragment"
-            app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right">
-
-            <argument
-                android:name="tmId"
-                app:argType="integer"/>
-
-        </action>
-
-    </fragment>-->
 
     <fragment
         android:id="@+id/addWarFragment"
@@ -808,19 +745,6 @@
             app:popExitAnim="@anim/exit_to_right"/>
     </fragment>
 
-    <fragment
-        android:id="@+id/reauthUserFragment"
-        android:name="fr.harmoniamk.statsmk.fragment.reauthUser.ReauthUserFragment"
-        tools:layout="@layout/fragment_reauth_user"
-        android:label="ReauthUserFragment">
-        <action
-            android:id="@+id/go_to_home"
-            app:destination="@id/homeFragment"
-            app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right"/>
-    </fragment>
 
     <fragment
         android:id="@+id/warDetailsFragment"
