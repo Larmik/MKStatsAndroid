@@ -41,9 +41,7 @@ interface FirebaseRepositoryInterface{
     fun getNewWars(): Flow<List<NewWar>>
 
     //Get objects methods
-    fun getTeam(id: String?): Flow<Team?>
     fun getNewWar(id: String): Flow<NewWar?>
-    fun getUser(id: String?): Flow<User?>
     fun getPositions(warId: String, trackId: String): Flow<List<NewWarPositions>>
 
     //Firebase event listeners methods
@@ -68,16 +66,16 @@ interface FirebaseRepositoryModule {
 
 @FlowPreview
 @ExperimentalCoroutinesApi
-class FirebaseRepository @Inject constructor(@ApplicationContext private val context: Context) : FirebaseRepositoryInterface {
+class FirebaseRepository @Inject constructor(@ApplicationContext private val context: Context, private val databaseRepository: DatabaseRepositoryInterface) : FirebaseRepositoryInterface {
 
     @SuppressLint("HardwareIds")
     override val deviceId = Secure.getString(context.contentResolver, Secure.ANDROID_ID)
     private val database  = Firebase.database.reference
 
     override fun writeUser(user: User) = flow {
-        database.child("users").child(user.mid.toString()).setValue(user)
+        database.child("users").child(user.mid).setValue(user)
         emit(Unit)
-    }
+    }.flatMapLatest { databaseRepository.writeUser(user) }
 
     override fun writeNewWar(war: NewWar): Flow<Unit> = flow {
         database.child("newWars").child(war.mid.toString()).setValue(war)
@@ -85,9 +83,9 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
     }
 
     override fun writeTeam(team: Team): Flow<Unit> = flow {
-        database.child("teams").child(team.mid.toString()).setValue(team)
+        database.child("teams").child(team.mid).setValue(team)
         emit(Unit)
-    }
+    }.flatMapLatest { databaseRepository.writeTeam(team) }
 
     override fun getUsers(): Flow<List<User>> = callbackFlow {
         Log.d("FirebaseRepository", "getUsers")
@@ -144,24 +142,7 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
         awaitClose {  }
     }
 
-    override fun getTeam(id: String?): Flow<Team?> = callbackFlow {
-        Log.d("FirebaseRepository", "getTeam")
-        id?.let {
-            database.child("teams").child(it).get().addOnSuccessListener { snapshot ->
-                val map = (snapshot.value as? Map<*, *>)
-                if (isActive) offer(
-                    if (map == null) null
-                    else Team(
-                        mid = map["mid"].toString(),
-                        hasLeader = map["hasLeader"].toString().toBoolean(),
-                        name = map["name"].toString(),
-                        shortName = map["shortName"].toString()
-                    )
-                )
-            }
-            awaitClose { }
-        }
-    }
+
 
     override fun getNewWar(id: String): Flow<NewWar?> = callbackFlow {
         Log.d("FirebaseRepository", "getNewWar")
@@ -182,30 +163,6 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
             )
         }
         awaitClose {  }
-    }
-
-    override fun getUser(id: String?): Flow<User?> = callbackFlow {
-        Log.d("FirebaseRepository", "getUser")
-        id?.let {
-            database.child("users").child(id).get()
-                .addOnSuccessListener { snapshot ->
-                    val map = (snapshot.value as? Map<*, *>)
-                    if (isActive) offer(
-                        if (map == null) null
-                        else User(
-                            mid = map["mid"].toString(),
-                            name = map["name"].toString(),
-                            team = map["team"].toString(),
-                            currentWar = map["currentWar"].toString(),
-                            role = map["role"].toString().toIntOrNull(),
-                            picture = map["picture"].toString()
-                        )
-                    )
-                }.addOnCompleteListener {
-                    Log.d("MKDebug", "getUser: ${it.result}")
-                }
-        }
-        awaitClose { }
     }
 
     override fun getPositions(warId: String, trackId: String): Flow<List<NewWarPositions>> = callbackFlow {
@@ -279,12 +236,12 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
     override fun deleteUser(user: User) = flow {
         database.child("users").child(user.mid.toString()).removeValue()
         emit(Unit)
-    }
+    }.flatMapLatest { databaseRepository.deleteUser(user) }
 
     override fun deleteTeam(team: Team)= flow {
         database.child("teams").child(team.mid.toString()).removeValue()
         emit(Unit)
-    }
+    }.flatMapLatest { databaseRepository.deleteTeam(team) }
 
     override fun deleteNewWar(warId: String) = flow {
         database.child("newWars").child(warId).removeValue()

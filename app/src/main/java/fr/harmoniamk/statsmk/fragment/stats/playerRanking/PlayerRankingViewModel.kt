@@ -8,6 +8,7 @@ import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.extension.withFullStats
 import fr.harmoniamk.statsmk.model.firebase.User
+import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
@@ -17,7 +18,7 @@ import javax.inject.Inject
 @ExperimentalCoroutinesApi
 @HiltViewModel
 class PlayerRankingViewModel @Inject constructor(
-    private val firebaseRepository: FirebaseRepositoryInterface
+    private val firebaseRepository: FirebaseRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface
 ) : ViewModel()  {
 
     private val _sharedUserList = MutableSharedFlow<List<PlayerRankingItemViewModel>>()
@@ -36,7 +37,7 @@ class PlayerRankingViewModel @Inject constructor(
         flowOf(true).bind(_sharedLoading, viewModelScope)
         flowOf(list)
             .map { it.sortedBy { it.name } }
-            .flatMapLatest { it.withFullStats(firebaseRepository) }
+            .flatMapLatest { it.withFullStats(firebaseRepository, databaseRepository) }
             .onEach {
                 itemsVM.clear()
                 itemsVM.addAll(it)

@@ -15,6 +15,7 @@ import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import fr.harmoniamk.statsmk.model.local.TrackStats
 import fr.harmoniamk.statsmk.model.local.WarStats
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
+import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -30,7 +31,7 @@ import javax.inject.Inject
 class OpponentRankingViewModel @Inject constructor(
     private val firebaseRepository: FirebaseRepositoryInterface,
     private val preferencesRepository: PreferencesRepositoryInterface,
-    private val authenticationRepository: AuthenticationRepositoryInterface
+    private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface
 ) : ViewModel()  {
 
     private val _sharedTeamList = MutableSharedFlow<List<OpponentRankingItemViewModel>>()
@@ -52,7 +53,7 @@ class OpponentRankingViewModel @Inject constructor(
         flowOf(true).bind(_sharedLoading, viewModelScope)
         flowOf(list)
             .map { it.sortedBy { it.name }.filterNot { it.mid == preferencesRepository.currentTeam?.mid } }
-            .flatMapLatest { it.withFullTeamStats(firebaseRepository, authenticationRepository.user?.uid, isIndiv = _sharedIndivStatsEnabled.value) }
+            .flatMapLatest { it.withFullTeamStats(firebaseRepository, databaseRepository, authenticationRepository.user?.uid, isIndiv = _sharedIndivStatsEnabled.value) }
             .onEach {
                 itemsVM.clear()
                 itemsVM.addAll(it)
@@ -88,7 +89,7 @@ class OpponentRankingViewModel @Inject constructor(
         onIndivStatsSelected.onEach { indivEnabled ->
             _sharedIndivStatsEnabled.emit(indivEnabled)
             itemsVM.clear()
-            itemsVM.addAll(list.sortedBy { it.name }.filterNot { it.mid == preferencesRepository.currentTeam?.mid }.withFullTeamStats(firebaseRepository, authenticationRepository.user?.uid, isIndiv = indivEnabled).first())
+            itemsVM.addAll(list.sortedBy { it.name }.filterNot { it.mid == preferencesRepository.currentTeam?.mid }.withFullTeamStats(firebaseRepository, databaseRepository, authenticationRepository.user?.uid, isIndiv = indivEnabled).first())
             when (_sharedSortTypeSelected.value) {
                 PlayerSortType.NAME -> itemsVM.sortBy { it.teamName }
                 PlayerSortType.WINRATE -> itemsVM.sortByDescending { (it.stats.warStats.warsWon*100)/it.stats.warStats.warsPlayed}

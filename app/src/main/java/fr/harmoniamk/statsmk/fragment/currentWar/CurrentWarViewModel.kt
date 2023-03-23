@@ -11,9 +11,7 @@ import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarPosition
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
-import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
-import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
-import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
+import fr.harmoniamk.statsmk.repository.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
@@ -23,7 +21,7 @@ import javax.inject.Inject
 @ExperimentalCoroutinesApi
 @HiltViewModel
 @FlowPreview
-class CurrentWarViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface) : ViewModel() {
+class CurrentWarViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
 
     private val _sharedButtonVisible = MutableSharedFlow<Boolean>()
     private val _sharedCurrentWar = MutableSharedFlow<MKWar>()
@@ -58,7 +56,7 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
            val warFlow =  flowOf(firebaseRepository.getNewWars(), firebaseRepository.listenToNewWars())
             .flattenMerge()
             .mapNotNull { it.map { w -> MKWar(w) }.getCurrent(preferencesRepository.currentTeam?.mid) }
-            .flatMapLatest { listOf(it).withName(firebaseRepository) }
+            .flatMapLatest { listOf(it).withName(databaseRepository) }
             .mapNotNull { it.singleOrNull() }
             .shareIn(viewModelScope, SharingStarted.Lazily)
 
@@ -69,13 +67,13 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
                 _sharedCurrentWar.emit(war)
                 _sharedButtonVisible.emit(isAdmin.isTrue && !war.isOver)
                 _sharedTracks.emit(war.war?.warTracks.orEmpty().map { MKWarTrack(it) })
-                val players = firebaseRepository.getUsers().first().filter { it.currentWar == preferencesRepository.currentWar?.mid }
+                val players = databaseRepository.getUsers().first().filter { it.currentWar == preferencesRepository.currentWar?.mid }
                     .sortedBy { it.name?.toLowerCase(Locale.ROOT) }
                 _sharedWarPlayers.takeIf { war.war?.warTracks == null }?.emit(players.map { CurrentPlayerModel(it, 0) })
 
             }
             .mapNotNull { it.war?.penalties }
-            .flatMapLatest { it.withTeamName(firebaseRepository) }
+            .flatMapLatest { it.withTeamName(databaseRepository) }
             .bind(_sharedPenalties, viewModelScope)
 
         val trackPlayersFlow = warFlow
@@ -83,7 +81,7 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
             .map {
                 var shockCount = 0
                 val positions = mutableListOf<Pair<User?, Int>>()
-                val players = firebaseRepository.getUsers().firstOrNull()
+                val players = databaseRepository.getUsers().firstOrNull()
                 _sharedTracks.emit(it)
                 it.forEach {
                     it.track?.warPositions?.let { warPositions ->
@@ -107,7 +105,7 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
                     val isNew = it.size > it.filter { track -> track.hasPlayer(pair.first?.mid) }.size && pair.first?.currentWar == preferencesRepository.currentWar?.mid
                     finalList.add(CurrentPlayerModel(pair.first, pair.second, isOld, isNew))
                 }
-                firebaseRepository.getUsers().firstOrNull()
+                databaseRepository.getUsers().firstOrNull()
                     ?.filter { it.currentWar == preferencesRepository.currentWar?.mid && !finalList.map { it.player?.mid }.contains(it.mid)}
                     ?.forEach { finalList.add(CurrentPlayerModel(it, 0, isNew = true)) }
                 _sharedWarPlayers.emit(finalList)
@@ -140,10 +138,13 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
 
     fun bindPopup(onDelete: Flow<Unit>, onDismiss: Flow<Unit>) {
         onDelete
-            .flatMapLatest { firebaseRepository.getUsers() }
+            .flatMapLatest { databaseRepository.getUsers() }
             .map { list -> list.filter { user -> user.currentWar == preferencesRepository.currentWar?.mid } }
             .onEach { list ->
-                list.forEach { firebaseRepository.writeUser(it.apply { this.currentWar = "-1" }).first() }
+                list.forEach {
+                    val newUser = it.apply { this.currentWar = "-1" }
+                    firebaseRepository.writeUser(newUser).first()
+                }
             }.mapNotNull { preferencesRepository.currentWar?.mid }
             .flatMapLatest { firebaseRepository.deleteNewWar(it) }
             .bind(_sharedBackToWars, viewModelScope)

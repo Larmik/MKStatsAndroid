@@ -9,6 +9,7 @@ import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
 import fr.harmoniamk.statsmk.model.firebase.Shock
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.MKWarPosition
+import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
@@ -16,7 +17,7 @@ import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class EditWarShocksViewModel  @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface): ViewModel() {
+class EditWarShocksViewModel  @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface): ViewModel() {
 
     private val _sharedPlayers = MutableSharedFlow<List<MKWarPosition>?>()
     private val _sharedShocks = MutableSharedFlow<List<Pair<String?, Shock>>>()
@@ -33,7 +34,7 @@ class EditWarShocksViewModel  @Inject constructor(private val firebaseRepository
 
     fun bind(war: NewWar, track: NewWarTrack?, onValid: Flow<Unit>, onShockAdded: Flow<String>, onShockRemoved: Flow<String>) {
         val shocks = mutableMapOf<String?, Int>()
-        firebaseRepository.getUsers()
+        databaseRepository.getUsers()
             .onEach { list ->
                 users.addAll(list)
                 track?.warPositions?.forEach {
@@ -57,7 +58,7 @@ class EditWarShocksViewModel  @Inject constructor(private val firebaseRepository
                 shockList.clear()
                 shocks.forEach { shock ->
                     shock.takeIf { map -> map.value > 0 }?.let {
-                        val name = firebaseRepository.getUser(it.key).firstOrNull()?.name
+                        val name = databaseRepository.getUser(it.key).firstOrNull()?.name
                         shockList.add(Pair(name, Shock(it.key, it.value)))
                     }
                 }
@@ -73,7 +74,7 @@ class EditWarShocksViewModel  @Inject constructor(private val firebaseRepository
                     shocks[id] = 1
                 shocks.forEach { shock ->
                     shock.takeIf { map -> map.value > 0 }?.let {
-                        val name = firebaseRepository.getUser(it.key).firstOrNull()?.name
+                        val name = databaseRepository.getUser(it.key).firstOrNull()?.name
                         shockList.add(Pair(name, Shock(it.key, it.value)))
                     }
                 }

@@ -6,6 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.firebase.Penalty
+import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
@@ -14,7 +15,7 @@ import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class AddPenaltyViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface) : ViewModel() {
+class AddPenaltyViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
 
     private val _sharedTeam1Label = MutableSharedFlow<String>()
     private val _sharedTeam2Label = MutableSharedFlow<String>()
@@ -30,13 +31,13 @@ class AddPenaltyViewModel @Inject constructor(private val firebaseRepository: Fi
 
     fun bind(war: NewWar, onTeamSelected: Flow<String>, onAmountAdded: Flow<String?>, onPenaltyClick: Flow<Unit>) {
         var teamSelected: String? = war.teamHost
-        firebaseRepository.getTeam(war.teamHost)
+        databaseRepository.getTeam(war.teamHost)
             .mapNotNull { it?.name }
             .onEach {
                 _sharedTeam1Selected.emit(true)
                 _sharedTeam1Label.emit(it)
             }.launchIn(viewModelScope)
-        firebaseRepository.getTeam(war.teamOpponent)
+        databaseRepository.getTeam(war.teamOpponent)
             .mapNotNull { it?.name }
             .bind(_sharedTeam2Label, viewModelScope)
 

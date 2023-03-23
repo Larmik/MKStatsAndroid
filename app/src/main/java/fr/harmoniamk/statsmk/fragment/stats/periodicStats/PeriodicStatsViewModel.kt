@@ -8,6 +8,7 @@ import fr.harmoniamk.statsmk.extension.*
 import fr.harmoniamk.statsmk.fragment.stats.opponentRanking.OpponentRankingItemViewModel
 import fr.harmoniamk.statsmk.model.local.*
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
+import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -18,7 +19,7 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class PeriodicStatsViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface) : ViewModel() {
+class PeriodicStatsViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
 
     private val _sharedTrackClick = MutableSharedFlow<Pair<String?, Int>>()
     private val _sharedWarClick = MutableSharedFlow<MKWar>()
@@ -91,17 +92,17 @@ class PeriodicStatsViewModel @Inject constructor(private val firebaseRepository:
                     else -> it.isThisMonth
                 }
             } }
-            .flatMapLatest { it.withName(firebaseRepository) }
-            .flatMapLatest { it.withFullStats(firebaseRepository) }
+            .flatMapLatest { it.withName(databaseRepository) }
+            .flatMapLatest { it.withFullStats(databaseRepository) }
             .onEach { stats ->
                 bestMap = stats.bestMap
                 worstMap = stats.worstMap
                 mostPlayedMap = stats.mostPlayedMap
                 highestVicory = stats.warStats.highestVictory
                 loudestDefeat = stats.warStats.loudestDefeat
-                mostPlayedTeam = listOfNotNull(stats.mostPlayedTeam?.team).withFullTeamStats(firebaseRepository, weekOnly = hebdo, monthOnly = !hebdo).first().singleOrNull()
-                mostDefeatedTeam = listOfNotNull(stats.mostDefeatedTeam?.team).withFullTeamStats(firebaseRepository, weekOnly = hebdo, monthOnly = !hebdo).first().singleOrNull()
-                lessDefeatedTeam = listOfNotNull(stats.lessDefeatedTeam?.team).withFullTeamStats(firebaseRepository, weekOnly = hebdo, monthOnly = !hebdo).first().singleOrNull()
+                mostPlayedTeam = listOfNotNull(stats.mostPlayedTeam?.team).withFullTeamStats(firebaseRepository, databaseRepository, weekOnly = hebdo, monthOnly = !hebdo).first().singleOrNull()
+                mostDefeatedTeam = listOfNotNull(stats.mostDefeatedTeam?.team).withFullTeamStats(firebaseRepository, databaseRepository, weekOnly = hebdo, monthOnly = !hebdo).first().singleOrNull()
+                lessDefeatedTeam = listOfNotNull(stats.lessDefeatedTeam?.team).withFullTeamStats(firebaseRepository, databaseRepository, weekOnly = hebdo, monthOnly = !hebdo).first().singleOrNull()
                 _sharedStats.emit(stats)
             }
             .launchIn(viewModelScope)

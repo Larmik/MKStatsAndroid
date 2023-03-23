@@ -10,12 +10,13 @@ import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
+import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 @HiltViewModel
-class OpponentStatsDetailsViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface): ViewModel() {
+class OpponentStatsDetailsViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface): ViewModel() {
 
     private val filters = mutableListOf<WarFilterType>()
 
@@ -36,7 +37,7 @@ class OpponentStatsDetailsViewModel @Inject constructor(private val firebaseRepo
     private val wars = mutableListOf<MKWar>()
 
     fun bind(list: List<MKWar>, onSortClick: Flow<WarSortType>, onFilterClick: Flow<WarFilterType>, onItemClick: Flow<MKWar>) {
-       list.withName(firebaseRepository)
+       list.withName(databaseRepository)
             .onEach {
                 wars.clear()
                 wars.addAll(it)

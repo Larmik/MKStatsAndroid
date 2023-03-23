@@ -7,6 +7,7 @@ import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.model.firebase.*
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
+import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -18,7 +19,7 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class AddUserViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface) : ViewModel() {
+class AddUserViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
 
     private val _sharedNext = MutableSharedFlow<Unit>()
     private val _sharedToast = MutableSharedFlow<String>()
@@ -64,51 +65,52 @@ class AddUserViewModel @Inject constructor(private val firebaseRepository: Fireb
             .mapNotNull { authenticationRepository.user }
             .map { fbUser ->
                 var finalUser: User? = null
-                firebaseRepository.getUsers().firstOrNull()?.singleOrNull { user ->
+                databaseRepository.getUsers().firstOrNull()?.singleOrNull { user ->
                     user.name?.toLowerCase(Locale.getDefault())
                         ?.trim() == name?.toLowerCase(Locale.getDefault())?.trim()
                 }?.let {
                     finalUser = it
                     firebaseRepository.deleteUser(it).first()
-                }
-                firebaseRepository.getNewWars().first().forEach { war ->
-                    val newWarTrack = mutableListOf<NewWarTrack>()
-                    war.warTracks?.forEach {
-                        val newWarPosition = mutableListOf<NewWarPositions>()
-                        val newShocks = mutableListOf<Shock>()
-                        it.warPositions?.forEach { pos ->
-                            if (pos.playerId == finalUser?.mid)
-                                newWarPosition.add(
-                                    NewWarPositions(
-                                    pos.mid,
-                                    fbUser.uid,
-                                    pos.position
-                                )
-                                )
-                            else
-                                newWarPosition.add(pos)
+                    firebaseRepository.getNewWars().first().forEach { war ->
+                        val newWarTrack = mutableListOf<NewWarTrack>()
+                        war.warTracks?.forEach {
+                            val newWarPosition = mutableListOf<NewWarPositions>()
+                            val newShocks = mutableListOf<Shock>()
+                            it.warPositions?.forEach { pos ->
+                                if (pos.playerId == finalUser?.mid)
+                                    newWarPosition.add(
+                                        NewWarPositions(
+                                            pos.mid,
+                                            fbUser.uid,
+                                            pos.position
+                                        )
+                                    )
+                                else
+                                    newWarPosition.add(pos)
+                            }
+                            it.shocks?.forEach {
+                                if (it.playerId == finalUser?.mid) {
+                                    newShocks.add(Shock(
+                                        fbUser.uid,
+                                        it.count
+                                    ))
+                                } else newShocks.add(it)
+                            }
+                            newWarTrack.add(NewWarTrack(it.mid, it.trackIndex, newWarPosition, newShocks))
                         }
-                        it.shocks?.forEach {
-                            if (it.playerId == finalUser?.mid) {
-                                newShocks.add(Shock(
-                                    fbUser.uid,
-                                    it.count
-                                ))
-                            } else newShocks.add(it)
-                        }
-                        newWarTrack.add(NewWarTrack(it.mid, it.trackIndex, newWarPosition, newShocks))
+                        firebaseRepository.writeNewWar(NewWar(
+                            war.mid,
+                            war.playerHostId,
+                            war.teamHost,
+                            war.teamOpponent,
+                            war.createdDate,
+                            newWarTrack,
+                            war.penalties,
+                            war.isOfficial
+                        )).first()
                     }
-                    firebaseRepository.writeNewWar(NewWar(
-                        war.mid,
-                        war.playerHostId,
-                        war.teamHost,
-                        war.teamOpponent,
-                        war.createdDate,
-                        newWarTrack,
-                        war.penalties,
-                        war.isOfficial
-                    )).first()
                 }
+
                 User(
                     mid = fbUser.uid,
                     name = finalUser?.name ?: name,
@@ -122,7 +124,7 @@ class AddUserViewModel @Inject constructor(private val firebaseRepository: Fireb
                 preferencesRepository.authEmail = email
                 preferencesRepository.authPassword = code
                 preferencesRepository.firstLaunch = false
-                preferencesRepository.currentTeam = firebaseRepository.getTeam(it.team).firstOrNull()
+                preferencesRepository.currentTeam = databaseRepository.getTeam(it.team.takeIf { it != "-1" }).firstOrNull()
             }
             .flatMapLatest { firebaseRepository.writeUser(it) }
             .onEach { _sharedLoading.emit(false) }

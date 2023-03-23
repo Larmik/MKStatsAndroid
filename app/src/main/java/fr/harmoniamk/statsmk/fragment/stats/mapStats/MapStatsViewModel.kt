@@ -9,6 +9,7 @@ import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import fr.harmoniamk.statsmk.model.local.MapDetails
 import fr.harmoniamk.statsmk.model.local.MapStats
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
+import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -19,7 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 @ExperimentalCoroutinesApi
 @FlowPreview
-class MapStatsViewModel @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val firebaseRepository: FirebaseRepositoryInterface) : ViewModel() {
+class MapStatsViewModel @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val firebaseRepository: FirebaseRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
 
     private val _sharedMapClick = MutableSharedFlow<MapDetails>()
     private val _sharedStats = MutableSharedFlow<MapStats>()
@@ -59,7 +60,7 @@ class MapStatsViewModel @Inject constructor(private val preferencesRepository: P
               }
              .map {
                 val finalList = mutableListOf<MapDetails>()
-                 it.withName(firebaseRepository).firstOrNull()?.let { list ->
+                 it.withName(databaseRepository).firstOrNull()?.let { list ->
                      list.forEach { mkWar ->
                          mkWar.warTracks?.filter { track -> track.index == trackIndex }?.forEach { track ->
                              val position = track.track?.warPositions?.singleOrNull { it.playerId == userId }?.position?.takeIf { userId != null }

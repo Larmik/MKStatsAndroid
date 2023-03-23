@@ -10,6 +10,7 @@ import fr.harmoniamk.statsmk.fragment.stats.opponentRanking.OpponentRankingItemV
 import fr.harmoniamk.statsmk.fragment.stats.playerRanking.PlayerRankingItemViewModel
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.TrackStats
+import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
@@ -18,7 +19,7 @@ import javax.inject.Inject
 
 @FlowPreview
 @HiltViewModel
-class PlayerStatsViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface) : ViewModel() {
+class PlayerStatsViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
 
     private val _sharedTrackClick = MutableSharedFlow<Pair<String?, Int>>()
     private val _sharedWarClick = MutableSharedFlow<MKWar>()
@@ -57,9 +58,9 @@ class PlayerStatsViewModel @Inject constructor(private val firebaseRepository: F
             .onEach { itemVM ->
                 delay(500)
                 item = itemVM
-                mostPlayedTeam = listOfNotNull(itemVM.stats.mostPlayedTeam?.team).withFullTeamStats(firebaseRepository, itemVM.user.mid, isIndiv = true).first().singleOrNull()
-                mostDefeatedTeam = listOfNotNull(itemVM.stats.mostDefeatedTeam?.team).withFullTeamStats(firebaseRepository, itemVM.user.mid, isIndiv = true).first().singleOrNull()
-                lessDefeatedTeam = listOfNotNull(itemVM.stats.lessDefeatedTeam?.team).withFullTeamStats(firebaseRepository, itemVM.user.mid, isIndiv = true).first().singleOrNull()
+                mostPlayedTeam = listOfNotNull(itemVM.stats.mostPlayedTeam?.team).withFullTeamStats(firebaseRepository, databaseRepository, itemVM.user.mid, isIndiv = true).first().singleOrNull()
+                mostDefeatedTeam = listOfNotNull(itemVM.stats.mostDefeatedTeam?.team).withFullTeamStats(firebaseRepository, databaseRepository, itemVM.user.mid, isIndiv = true).first().singleOrNull()
+                lessDefeatedTeam = listOfNotNull(itemVM.stats.lessDefeatedTeam?.team).withFullTeamStats(firebaseRepository, databaseRepository, itemVM.user.mid, isIndiv = true).first().singleOrNull()
                 _sharedStats.emit(itemVM)
             }.launchIn(viewModelScope)
 

@@ -11,6 +11,7 @@ import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.firebase.NewWarPositions
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
+import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -23,7 +24,7 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class SettingsViewModel @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val firebaseRepository: FirebaseRepositoryInterface) : ViewModel() {
+class SettingsViewModel @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val firebaseRepository: FirebaseRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
 
     private val _sharedThemePopup = MutableSharedFlow<Boolean>()
     private val _sharedManageTeam = MutableSharedFlow<Unit>()
@@ -67,10 +68,10 @@ class SettingsViewModel @Inject constructor(private val preferencesRepository: P
     fun simulate() : Flow<Unit> {
         val teamPlayerIds = mutableListOf<String>()
         val teamIdList = mutableListOf<String>()
-        return firebaseRepository.getUsers()
+        return databaseRepository.getUsers()
             .map { it.filter { user -> user.team == preferencesRepository.currentTeam?.mid }.mapNotNull { it.mid } }
             .onEach { teamPlayerIds.addAll(it) }
-            .flatMapLatest { firebaseRepository.getTeams() }
+            .flatMapLatest { databaseRepository.getTeams() }
             .onEach { teamIdList.addAll(it.mapNotNull { team -> team.mid }.filterNot { it == preferencesRepository.currentTeam?.mid }) }
             .map {
                 for (i in 1 .. 100) {

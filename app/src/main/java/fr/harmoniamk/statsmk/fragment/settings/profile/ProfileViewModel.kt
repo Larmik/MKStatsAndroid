@@ -19,7 +19,7 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class ProfileViewModel @Inject constructor(private val authenticationRepository: AuthenticationRepositoryInterface, private val storageRepository: StorageRepository, private val preferencesRepository: PreferencesRepositoryInterface, private val firebaseRepository: FirebaseRepositoryInterface) : ViewModel() {
+class ProfileViewModel @Inject constructor(private val authenticationRepository: AuthenticationRepositoryInterface, private val storageRepository: StorageRepository, private val preferencesRepository: PreferencesRepositoryInterface, private val firebaseRepository: FirebaseRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
 
     private val _sharedProfile = MutableSharedFlow<FirebaseUser>()
     private val _sharedEditPicture = MutableSharedFlow<Unit>()
@@ -57,7 +57,7 @@ class ProfileViewModel @Inject constructor(private val authenticationRepository:
         storageRepository.getPicture(authenticationRepository.user?.uid)
             .mapNotNull { authenticationRepository.user }
             .onEach { _sharedProfile.emit(it) }
-            .flatMapLatest { firebaseRepository.getUser(it.uid) }
+            .flatMapLatest { databaseRepository.getUser(it.uid) }
             .mapNotNull { it?.role  }
             .onEach {
                 _sharedRole.emit(when (it){
@@ -79,7 +79,7 @@ class ProfileViewModel @Inject constructor(private val authenticationRepository:
             .mapNotNull { authenticationRepository.user?.uid }
             .flatMapLatest { storageRepository.getPicture(it) }
             .mapNotNull { url = (it as? PictureResponse.Success)?.url; url }
-            .flatMapLatest { firebaseRepository.getUser(authenticationRepository.user?.uid) }
+            .flatMapLatest { databaseRepository.getUser(authenticationRepository.user?.uid) }
             .filterNotNull()
             .flatMapLatest { firebaseRepository.writeUser(it.apply { this.picture = url }) }
             .flatMapLatest { authenticationRepository.updateProfile(authenticationRepository.user?.displayName.toString(), url) }
@@ -109,7 +109,7 @@ class ProfileViewModel @Inject constructor(private val authenticationRepository:
         onChangeEmailClick.bind(_sharedEditEmail, viewModelScope)
 
         onLeaveTeam
-            .flatMapLatest { firebaseRepository.getUsers() }
+            .flatMapLatest { databaseRepository.getUsers() }
             .map { it.filter { user -> user.team == preferencesRepository.currentTeam?.mid && (user.role ?: 0) >= UserRole.LEADER.ordinal }.size > 1 }
             .onEach {
                 val role = authenticationRepository.userRole.firstOrNull() ?: 0
@@ -139,7 +139,7 @@ class ProfileViewModel @Inject constructor(private val authenticationRepository:
                 onTextChange.onEach { name = it }.launchIn(viewModelScope)
                 onValidate
                     .flatMapLatest { authenticationRepository.updateProfile(name, null) }
-                    .flatMapLatest { firebaseRepository.getUser(authenticationRepository.user?.uid) }
+                    .flatMapLatest { databaseRepository.getUser(authenticationRepository.user?.uid) }
                     .mapNotNull { it?.copy(name = name) }
                     .flatMapLatest { firebaseRepository.writeUser(it) }
                     .onEach { _sharedNewName.emit(name) }
@@ -155,7 +155,7 @@ class ProfileViewModel @Inject constructor(private val authenticationRepository:
     fun bindLeavePopup(onCancel: Flow<Unit>, onLeave: Flow<Unit>) {
         onCancel.bind(_sharedCancelLeavePopup, viewModelScope)
         onLeave
-            .flatMapLatest { firebaseRepository.getUser(authenticationRepository.user?.uid) }
+            .flatMapLatest { databaseRepository.getUser(authenticationRepository.user?.uid) }
             .mapNotNull { it.apply { this?.team = "-1" } }
             .flatMapLatest { firebaseRepository.writeUser(it) }
             .bind(_sharedTeamLeft, viewModelScope)

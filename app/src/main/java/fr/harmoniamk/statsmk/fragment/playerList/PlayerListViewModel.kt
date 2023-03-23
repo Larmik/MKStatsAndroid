@@ -10,6 +10,7 @@ import fr.harmoniamk.statsmk.fragment.playerSelect.UserSelector
 import fr.harmoniamk.statsmk.fragment.settings.managePlayers.ManagePlayersItemViewModel
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
+import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -21,7 +22,7 @@ import javax.inject.Inject
 @ExperimentalCoroutinesApi
 @FlowPreview
 @HiltViewModel
-class PlayerListViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface) : ViewModel() {
+class PlayerListViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
 
     private val _sharedPlayerList = MutableSharedFlow<List<ManagePlayersItemViewModel>>()
     private val _sharedAddPlayerList = MutableSharedFlow<List<UserSelector>>()
@@ -89,7 +90,7 @@ class PlayerListViewModel @Inject constructor(private val firebaseRepository: Fi
 
     fun refresh() {
         allPlayers.clear()
-        firebaseRepository.getUsers()
+        databaseRepository.getUsers()
             .map {
                 val role = authenticationRepository.userRole.firstOrNull() ?: 0
                 it.filter { user -> user.team == "-1" }
@@ -155,7 +156,7 @@ class PlayerListViewModel @Inject constructor(private val firebaseRepository: Fi
             var name = user.name
             onTextChange.onEach { name = it }.launchIn(viewModelScope)
             onValidate
-                .flatMapLatest { firebaseRepository.getUser(user.mid) }
+                .flatMapLatest { databaseRepository.getUser(user.mid) }
                 .mapNotNull { it?.copy(name = name) }
                 .flatMapLatest { firebaseRepository.writeUser(it) }
                 .onEach { _sharedNewName.emit(name) }

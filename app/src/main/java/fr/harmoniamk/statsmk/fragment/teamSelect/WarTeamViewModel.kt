@@ -6,6 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.isTrue
+import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -17,7 +18,7 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class WarTeamViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface): ViewModel() {
+class WarTeamViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface): ViewModel() {
 
     private val _sharedTeams = MutableSharedFlow<List<Team>>()
     private val _sharedTeamSelected = MutableSharedFlow<Team>()
@@ -31,7 +32,7 @@ class WarTeamViewModel @Inject constructor(private val firebaseRepository: Fireb
 
     fun bind(onTeamClick: Flow<Team>, onSearch: Flow<String>, onAddTeam: Flow<Unit>) {
         onTeamClick.bind(_sharedTeamSelected, viewModelScope)
-        firebaseRepository.getTeams()
+        databaseRepository.getTeams()
             .map {
                 teams.clear()
                 teams.addAll(it.filterNot { team -> team.mid == preferencesRepository.currentTeam?.mid })
@@ -51,7 +52,7 @@ class WarTeamViewModel @Inject constructor(private val firebaseRepository: Fireb
 
     fun bindAddDialog(onTeamAdded: Flow<Unit>) {
         onTeamAdded
-            .flatMapLatest {  firebaseRepository.getTeams() }
+            .flatMapLatest {  databaseRepository.getTeams() }
             .map { list -> list.sortedBy { it.name }.filterNot { vm -> vm.mid == preferencesRepository.currentTeam?.mid } }
             .bind(_sharedTeams, viewModelScope)
     }

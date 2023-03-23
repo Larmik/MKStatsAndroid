@@ -13,6 +13,7 @@ import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarPosition
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
+import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
@@ -20,7 +21,7 @@ import javax.inject.Inject
 
 @FlowPreview
 @HiltViewModel
-class OpponentStatsViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface) : ViewModel() {
+class OpponentStatsViewModel @Inject constructor(private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
 
     private val _sharedHighestScore = MutableSharedFlow<Pair<Int, String?>?>()
     val sharedHighestScore = _sharedHighestScore.asSharedFlow()
@@ -49,7 +50,7 @@ class OpponentStatsViewModel @Inject constructor(private val firebaseRepository:
              onHighestScore: Flow<Unit>,
              onLowestScore: Flow<Unit>) {
 
-        firebaseRepository.getUsers()
+        databaseRepository.getUsers()
             .onEach {
                 users.clear()
                 users.addAll(it)

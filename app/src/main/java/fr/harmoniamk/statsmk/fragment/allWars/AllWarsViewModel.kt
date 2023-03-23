@@ -9,6 +9,7 @@ import fr.harmoniamk.statsmk.extension.*
 import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
+import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -19,7 +20,7 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class AllWarsViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface) : ViewModel() {
+class AllWarsViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
     private val filters = mutableListOf<WarFilterType>()
 
     private val _sharedWars = MutableSharedFlow<List<MKWar>>()
@@ -41,7 +42,7 @@ class AllWarsViewModel @Inject constructor(private val firebaseRepository: Fireb
         flowOf(true).bind(_sharedLoading, viewModelScope)
         firebaseRepository.getNewWars()
             .mapNotNull { list -> list.filter { war -> war.teamHost == preferencesRepository.currentTeam?.mid }.sortedByDescending { it.mid }.map { MKWar(it) } }
-            .flatMapLatest { it.withName(firebaseRepository) }
+            .flatMapLatest { it.withName(databaseRepository) }
             .onEach {
                 wars.clear()
                 wars.addAll(it)
@@ -68,7 +69,7 @@ class AllWarsViewModel @Inject constructor(private val firebaseRepository: Fireb
                 _sharedFilterList.emit(filters)
                 _sharedLoading.emit(false)
             }
-            .flatMapLatest { firebaseRepository.getTeams() }
+            .flatMapLatest { databaseRepository.getTeams() }
             .onEach {
                 teams.clear()
                 teams.addAll(it)

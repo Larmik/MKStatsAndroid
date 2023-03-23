@@ -10,6 +10,7 @@ import fr.harmoniamk.statsmk.extension.getLasts
 import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
+import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -20,7 +21,7 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface) : ViewModel() {
+class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
 
     private val _sharedHasTeam = MutableSharedFlow<Boolean>()
     private val _sharedTeamName = MutableSharedFlow<String>()
@@ -73,7 +74,7 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
 
         warsFlow
             .map { war = it.getCurrent(preferencesRepository.currentTeam?.mid); war}
-            .flatMapLatest { listOf(it).withName(firebaseRepository) }
+            .flatMapLatest { listOf(it).withName(databaseRepository) }
             .onEach { _sharedCurrentWar.emit(it.singleOrNull()) }
             .launchIn(viewModelScope)
 
@@ -82,8 +83,8 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
             .map {
                 val temp = mutableListOf<MKWar>()
                 it.forEach {
-                    val hostName = firebaseRepository.getTeam(it.war?.teamHost).firstOrNull()?.shortName
-                    val opponentName = firebaseRepository.getTeam(it.war?.teamOpponent).firstOrNull()?.shortName
+                    val hostName = databaseRepository.getTeam(it.war?.teamHost).firstOrNull()?.shortName
+                    val opponentName = databaseRepository.getTeam(it.war?.teamOpponent).firstOrNull()?.shortName
                     temp.add(it.apply { this.name = "$hostName - $opponentName" })
                 }
                 temp
@@ -94,11 +95,9 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
             .mapNotNull { preferencesRepository.currentTeam?.name }
             .bind(_sharedTeamName, viewModelScope)
 
-        firebaseRepository.getUsers()
+        databaseRepository.getUser(authenticationRepository.user?.uid)
             .map{
-                it.singleOrNull {
-                        user -> user.mid == authenticationRepository.user?.uid
-                }?.team != "-1"
+                it?.team != "-1"
             }
             .bind(_sharedHasTeam, viewModelScope)
     }

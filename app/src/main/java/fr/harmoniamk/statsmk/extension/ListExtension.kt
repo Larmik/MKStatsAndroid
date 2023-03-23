@@ -6,17 +6,18 @@ import fr.harmoniamk.statsmk.fragment.stats.opponentRanking.OpponentRankingItemV
 import fr.harmoniamk.statsmk.fragment.stats.playerRanking.PlayerRankingItemViewModel
 import fr.harmoniamk.statsmk.model.firebase.*
 import fr.harmoniamk.statsmk.model.local.*
+import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import kotlinx.coroutines.flow.*
 
 fun List<MKWar>.getLasts(teamId: String?) = this.filter { war -> war.isOver && war.war?.teamHost == teamId }.sortedByDescending{ it.war?.createdDate?.formatToDate() }.safeSubList(0, 5)
 fun List<MKWar>.getCurrent(teamId: String?) = this.singleOrNull { war -> !war.isOver && war.war?.teamHost == teamId }
-fun List<MKWar?>.withName(firebaseRepository: FirebaseRepositoryInterface) = flow {
+fun List<MKWar?>.withName(databaseRepository: DatabaseRepositoryInterface) = flow {
     val temp = mutableListOf<MKWar>()
     this@withName.forEach { war ->
         war?.let {
-            val hostName = firebaseRepository.getTeam(it.war?.teamHost).firstOrNull()?.shortName
-            val opponentName = firebaseRepository.getTeam(it.war?.teamOpponent).firstOrNull()?.shortName
+            val hostName = databaseRepository.getTeam(it.war?.teamHost).firstOrNull()?.shortName
+            val opponentName = databaseRepository.getTeam(it.war?.teamOpponent).firstOrNull()?.shortName
             temp.add(it.apply { this.name = "$hostName - $opponentName" })
         }
     }
@@ -24,32 +25,32 @@ fun List<MKWar?>.withName(firebaseRepository: FirebaseRepositoryInterface) = flo
 }
 
 
-fun List<User>.withFullStats(firebaseRepository: FirebaseRepositoryInterface) = flow {
+fun List<User>.withFullStats(firebaseRepository: FirebaseRepositoryInterface, databaseRepository: DatabaseRepositoryInterface) = flow {
     val temp = mutableListOf<PlayerRankingItemViewModel>()
-    val wars = firebaseRepository.getNewWars().first().map { MKWar(it) }.withName(firebaseRepository).first()
+    val wars = firebaseRepository.getNewWars().first().map { MKWar(it) }.withName(databaseRepository).first()
     this@withFullStats.forEach { user ->
-        val stats = wars.withFullStats(firebaseRepository, userId = user.mid, isIndiv = true).first()
+        val stats = wars.withFullStats(databaseRepository, userId = user.mid, isIndiv = true).first()
         temp.add(PlayerRankingItemViewModel(user, stats))
     }
     emit(temp)
 }
 
 
-fun List<Team>.withFullTeamStats(firebaseRepository: FirebaseRepositoryInterface, userId: String? = null, weekOnly: Boolean = false, monthOnly: Boolean = false, isIndiv: Boolean = false) = flow {
+fun List<Team>.withFullTeamStats(firebaseRepository: FirebaseRepositoryInterface, databaseRepository: DatabaseRepositoryInterface, userId: String? = null, weekOnly: Boolean = false, monthOnly: Boolean = false, isIndiv: Boolean = false) = flow {
     val temp = mutableListOf<OpponentRankingItemViewModel>()
     val wars = firebaseRepository.getNewWars().first().map { MKWar(it) }
     this@withFullTeamStats.forEach { team ->
         val stats = wars
             .filter { !weekOnly || (weekOnly && it.isThisWeek) }
             .filter { !monthOnly || (monthOnly && it.isThisMonth) }
-            .withFullStats(firebaseRepository, teamId = team.mid, userId = userId, isIndiv = isIndiv).first()
+            .withFullStats(databaseRepository, teamId = team.mid, userId = userId, isIndiv = isIndiv).first()
         if (stats.warStats.list.isNotEmpty())
             temp.add(OpponentRankingItemViewModel(team, stats, userId, isIndiv))
     }
     emit(temp)
 }
 
-fun List<MKWar>.withFullStats(firebaseRepository: FirebaseRepositoryInterface, userId: String? = null, teamId: String? = null, isIndiv: Boolean = false) = flow {
+fun List<MKWar>.withFullStats(databaseRepository: DatabaseRepositoryInterface, userId: String? = null, teamId: String? = null, isIndiv: Boolean = false) = flow {
 
     val maps = mutableListOf<TrackStats>()
     val warScores = mutableListOf<WarScore>()
@@ -58,7 +59,7 @@ fun List<MKWar>.withFullStats(firebaseRepository: FirebaseRepositoryInterface, u
         isIndiv && userId != null && teamId != null -> this@withFullStats.filter { it.hasPlayer(userId) && it.hasTeam(teamId) }
         isIndiv && userId != null -> this@withFullStats.filter { it.hasPlayer(userId) }
         teamId != null -> this@withFullStats.filter { it.hasTeam(teamId) }
-        else -> this@withFullStats.withName(firebaseRepository).first()
+        else -> this@withFullStats.withName(databaseRepository).first()
     }
 
     val mostPlayedTeamId = wars
@@ -121,13 +122,13 @@ fun List<MKWar>.withFullStats(firebaseRepository: FirebaseRepositoryInterface, u
             averageForMaps.add(stats)
         }
 
-    val mostPlayedTeamData = firebaseRepository.getTeam(mostPlayedTeamId?.first ?: "")
+    val mostPlayedTeamData = databaseRepository.getTeam(mostPlayedTeamId?.first)
         .mapNotNull { TeamStats(it, mostPlayedTeamId?.second?.size) }
         .firstOrNull()
-    val mostDefeatedTeamData = firebaseRepository.getTeam(mostDefeatedTeamId?.first ?: "")
+    val mostDefeatedTeamData = databaseRepository.getTeam(mostDefeatedTeamId?.first)
         .mapNotNull { TeamStats(it, mostDefeatedTeamId?.second?.size) }
         .firstOrNull()
-    val lessDefeatedTeamData = firebaseRepository.getTeam(lessDefeatedTeamId?.first ?: "")
+    val lessDefeatedTeamData = databaseRepository.getTeam(lessDefeatedTeamId?.first)
         .mapNotNull { TeamStats(it, lessDefeatedTeamId?.second?.size) }
         .firstOrNull()
 
@@ -143,10 +144,10 @@ fun List<MKWar>.withFullStats(firebaseRepository: FirebaseRepositoryInterface, u
     emit(newStats)
 }
 
-fun List<Penalty>.withTeamName(firebaseRepository: FirebaseRepositoryInterface) = flow {
+fun List<Penalty>.withTeamName(databaseRepository: DatabaseRepositoryInterface) = flow {
     val temp = mutableListOf<Penalty>()
     this@withTeamName.forEach {
-        val teamName = firebaseRepository.getTeam(it.teamId).firstOrNull()?.name
+        val teamName = databaseRepository.getTeam(it.teamId).firstOrNull()?.name
         temp.add(it.apply { this.teamName = teamName })
     }
     emit(temp)

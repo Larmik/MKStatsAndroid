@@ -44,7 +44,7 @@ interface AuthenticationRepositoryModule {
 
 @FlowPreview
 @ExperimentalCoroutinesApi
-class AuthenticationRepository @Inject constructor(@ApplicationContext private val context: Context) : AuthenticationRepositoryInterface {
+class AuthenticationRepository @Inject constructor(private val databaseRepository: DatabaseRepositoryInterface) : AuthenticationRepositoryInterface {
 
     private val auth: FirebaseAuth
         get() = FirebaseAuth.getInstance()
@@ -140,6 +140,6 @@ class AuthenticationRepository @Inject constructor(@ApplicationContext private v
 
     override val userRole: Flow<Int>
         get() = flowOf(auth.currentUser?.uid)
-            .flatMapLatest { FirebaseRepository(context).getUser(it) }
+            .flatMapLatest { databaseRepository.getUser(it) }
             .mapNotNull { it?.role }
 }

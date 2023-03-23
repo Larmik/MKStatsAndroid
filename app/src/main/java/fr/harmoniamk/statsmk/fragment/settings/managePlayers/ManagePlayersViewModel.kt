@@ -10,6 +10,7 @@ import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
+import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -21,7 +22,7 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class ManagePlayersViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface) : ViewModel() {
+class ManagePlayersViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
 
     private val _sharedPlayers = MutableSharedFlow<List<ManagePlayersItemViewModel>>()
     private val _sharedAddPlayer = MutableSharedFlow<Unit>()
@@ -60,14 +61,14 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
         onDelete
             .filter { it.mid != authenticationRepository.user?.uid }
             .flatMapLatest { firebaseRepository.deleteUser(it) }
-            .flatMapLatest {  firebaseRepository.getUsers() }
+            .flatMapLatest {  databaseRepository.getUsers() }
             .map { createPlayersList(list = it) }
             .filter { authenticationRepository.user != null }
             .bind(_sharedPlayers, viewModelScope)
 
         onPlayerEdited
             .flatMapLatest { firebaseRepository.writeUser(it) }
-            .flatMapLatest {  firebaseRepository.getUsers() }
+            .flatMapLatest {  databaseRepository.getUsers() }
             .map { createPlayersList(list = it) }
             .bind(_sharedPlayers, viewModelScope)
 
@@ -81,7 +82,7 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
         onTeamLeft
             .filter { it.mid != authenticationRepository.user?.uid }
             .flatMapLatest { firebaseRepository.writeUser(it) }
-            .flatMapLatest {  firebaseRepository.getUsers() }
+            .flatMapLatest {  databaseRepository.getUsers() }
             .map { createPlayersList(list = it) }
             .bind(_sharedPlayers, viewModelScope)
 
@@ -112,7 +113,7 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
     }
 
     private fun refresh() {
-        firebaseRepository.getUsers()
+        databaseRepository.getUsers()
             .map { createPlayersList(list = it) }
             .onEach {
                 allPlayers.addAll(it)

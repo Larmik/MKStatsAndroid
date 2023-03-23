@@ -10,6 +10,7 @@ import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarPosition
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
+import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -21,7 +22,7 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class WarTrackResultViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface) : ViewModel() {
+class WarTrackResultViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
 
     private val _sharedWarPos = MutableSharedFlow<List<MKWarPosition>>()
     private val _sharedBack = MutableSharedFlow<Unit>()
@@ -42,7 +43,7 @@ class WarTrackResultViewModel @Inject constructor(private val firebaseRepository
 
     fun bind(onBack: Flow<Unit>, onValid: Flow<Unit>, onShockAdded: Flow<String>, onShockRemoved: Flow<String>) {
         val shocks = mutableMapOf<String?, Int>()
-        firebaseRepository.getUsers()
+        databaseRepository.getUsers()
             .onEach {
                 users.clear()
                 users.addAll(it)
@@ -70,7 +71,7 @@ class WarTrackResultViewModel @Inject constructor(private val firebaseRepository
                     finalList.clear()
                     shocks.forEach { shock ->
                         shock.takeIf { map -> map.value > 0 }?.let {
-                            val name = firebaseRepository.getUser(it.key).firstOrNull()?.name
+                            val name = databaseRepository.getUser(it.key).firstOrNull()?.name
                             finalList.add(Pair(name, Shock(it.key, it.value)))
                         }
                     }
@@ -94,7 +95,7 @@ class WarTrackResultViewModel @Inject constructor(private val firebaseRepository
                     finalList.clear()
                     shocks.forEach { shock ->
                         shock.takeIf { map -> map.value > 0 }?.let {
-                            val name = firebaseRepository.getUser(it.key).firstOrNull()?.name
+                            val name = databaseRepository.getUser(it.key).firstOrNull()?.name
                             finalList.add(Pair(name, Shock(it.key, it.value)))
                         }
                     }
@@ -116,7 +117,7 @@ class WarTrackResultViewModel @Inject constructor(private val firebaseRepository
                 .onEach { war ->
                     firebaseRepository.writeNewWar(war).first()
                     if (MKWar(war).isOver) {
-                        firebaseRepository.getUsers().first().filter { it.currentWar == war.mid }.forEach {
+                        databaseRepository.getUsers().first().filter { it.currentWar == war.mid }.forEach {
                             val new = it.apply { this.currentWar = "-1" }
                             firebaseRepository.writeUser(new).first()
                         }

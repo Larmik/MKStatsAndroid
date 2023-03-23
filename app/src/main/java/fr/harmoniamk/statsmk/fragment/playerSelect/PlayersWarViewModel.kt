@@ -6,6 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.isTrue
+import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -17,7 +18,7 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class PlayersWarViewModel@Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface): ViewModel() {
+class PlayersWarViewModel@Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface): ViewModel() {
 
     private val _sharedPlayers = MutableSharedFlow<List<UserSelector>>()
     private val _sharedUsersSelected = MutableSharedFlow<List<User>>()
@@ -31,7 +32,7 @@ class PlayersWarViewModel@Inject constructor(private val firebaseRepository: Fir
     fun bind(onUserSelected: Flow<UserSelector>, onOfficialChecked: Flow<Boolean>) {
         val usersSelected = mutableListOf<User>()
 
-        firebaseRepository.getUsers()
+        databaseRepository.getUsers()
             .map { list ->
                  val temp = mutableListOf<UserSelector>()
                 temp.add(UserSelector(isCategory = true))

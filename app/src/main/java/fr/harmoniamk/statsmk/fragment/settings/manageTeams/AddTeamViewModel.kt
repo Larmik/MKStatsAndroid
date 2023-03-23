@@ -6,6 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
+import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -17,7 +18,7 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class AddTeamViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface) : ViewModel() {
+class AddTeamViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
     private val _sharedTeamAdded = MutableSharedFlow<Unit>()
     private val _sharedToast = MutableSharedFlow<String>()
     private val _sharedButtonEnabled = MutableSharedFlow<Boolean>()
@@ -41,7 +42,7 @@ class AddTeamViewModel @Inject constructor(private val firebaseRepository: Fireb
 
         val addClick =  onAddClick
             .filter { name != null && shortName != null }
-            .flatMapLatest { firebaseRepository.getTeams() }
+            .flatMapLatest { databaseRepository.getTeams() }
             .shareIn(viewModelScope, SharingStarted.Lazily)
 
         addClick
@@ -74,7 +75,7 @@ class AddTeamViewModel @Inject constructor(private val firebaseRepository: Fireb
                 team
             }
             .flatMapLatest { firebaseRepository.writeTeam(it) }
-            .flatMapLatest { firebaseRepository.getUser(authenticationRepository.user?.uid) }
+            .flatMapLatest { databaseRepository.getUser(authenticationRepository.user?.uid) }
             .filterNotNull()
             .flatMapLatest { firebaseRepository.writeUser(it.apply {
                 this.role = UserRole.LEADER.ordinal

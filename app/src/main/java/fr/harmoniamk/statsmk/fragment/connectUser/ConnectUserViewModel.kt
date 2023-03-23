@@ -3,9 +3,11 @@ package fr.harmoniamk.statsmk.fragment.connectUser
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import fr.harmoniamk.statsmk.enums.WelcomeScreen
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.model.firebase.AuthUserResponse
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
+import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -16,7 +18,7 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class ConnectUserViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface) : ViewModel() {
+class ConnectUserViewModel @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
 
     private val _sharedNext = MutableSharedFlow<Unit>()
     private val _sharedGoToSignup = MutableSharedFlow<Unit>()
@@ -51,15 +53,13 @@ class ConnectUserViewModel @Inject constructor(private val firebaseRepository: F
 
         connectUser
             .mapNotNull { (it as? AuthUserResponse.Success)?.user?.uid }
-            .flatMapLatest { firebaseRepository.getUser(it) }
+            .flatMapLatest { databaseRepository.getUser(it) }
             .onEach {
                 preferencesRepository.authEmail = email
                 preferencesRepository.authPassword = password
-            }
-            .map { it?.team }
-            .flatMapLatest { firebaseRepository.getTeam(it) }
-            .onEach {
-                preferencesRepository.currentTeam = it
+                it?.team?.takeIf { it != "-1" }?.let { team ->
+                    preferencesRepository.currentTeam = databaseRepository.getTeam(team).firstOrNull()
+                }
                 preferencesRepository.firstLaunch = false
                 _sharedNext.emit(Unit)
             }.launchIn(viewModelScope)

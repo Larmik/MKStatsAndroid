@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.extension.bind
+import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -16,7 +17,7 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class AddPlayersViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface) : ViewModel() {
+class AddPlayersViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
 
     private val _sharedUserAdded = MutableSharedFlow<Unit>()
     private val _sharedToast = MutableSharedFlow<String>()
@@ -33,7 +34,7 @@ class AddPlayersViewModel @Inject constructor(private val firebaseRepository: Fi
             _sharedButtonEnabled.emit(!name.isNullOrEmpty())
         }.launchIn(viewModelScope)
         val playerAdded = onPlayerAdded
-            .flatMapLatest { firebaseRepository.getUsers() }
+            .flatMapLatest { databaseRepository.getUsers() }
             .shareIn(viewModelScope, SharingStarted.Lazily)
 
         onTeamChecked

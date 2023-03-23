@@ -15,6 +15,7 @@ import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarPosition
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
+import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -26,7 +27,8 @@ import javax.inject.Inject
 @HiltViewModel
 class TrackDetailsViewModel @Inject constructor(
     private val firebaseRepository: FirebaseRepositoryInterface,
-    private val authenticationRepository: AuthenticationRepositoryInterface
+    private val authenticationRepository: AuthenticationRepositoryInterface,
+    private val databaseRepository: DatabaseRepositoryInterface
 ): ViewModel() {
 
     private val _sharedPositions = MutableSharedFlow<List<MKWarPosition>>()
@@ -58,7 +60,7 @@ class TrackDetailsViewModel @Inject constructor(
         warTrackId = warTrack?.mid ?: ""
         this.index = index
 
-        firebaseRepository.getUsers()
+        databaseRepository.getUsers()
             .onEach {
                 users.clear()
                 users.addAll(it)
@@ -66,7 +68,7 @@ class TrackDetailsViewModel @Inject constructor(
 
         firebaseRepository.getNewWar(warId)
             .onEach {
-                _sharedWarName.emit(listOf(MKWar(it)).withName(firebaseRepository).firstOrNull()?.singleOrNull()?.name)
+                _sharedWarName.emit(listOf(MKWar(it)).withName(databaseRepository).firstOrNull()?.singleOrNull()?.name)
                 val shocks = mutableListOf<Pair<String?, Shock>>()
                 it?.warTracks?.singleOrNull{it.mid == warTrackId}?.shocks?.forEach { shock ->
                     shocks.add(Pair(users.singleOrNull { it.mid == shock.playerId }?.name, Shock(shock.playerId, shock.count)))

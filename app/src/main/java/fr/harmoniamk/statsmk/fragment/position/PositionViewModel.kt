@@ -9,6 +9,7 @@ import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.firebase.NewWarPositions
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
 import fr.harmoniamk.statsmk.model.local.MKWar
+import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -22,7 +23,8 @@ import javax.inject.Inject
 @HiltViewModel
 class PositionViewModel @Inject constructor(
     private val firebaseRepository: FirebaseRepositoryInterface,
-    private val preferencesRepository: PreferencesRepositoryInterface
+    private val preferencesRepository: PreferencesRepositoryInterface,
+    private val databaseRepository: DatabaseRepositoryInterface
 ) : ViewModel() {
 
     private val _sharedPos = MutableSharedFlow<Int>()
@@ -92,11 +94,11 @@ class PositionViewModel @Inject constructor(
                         _sharedTrackNumber.emit(it.size+1)
                     }
                 }
-                .flatMapLatest { listOf(it).withName(firebaseRepository) }
+                .flatMapLatest { listOf(it).withName(databaseRepository) }
                 .mapNotNull { it.singleOrNull()?.name }
                 .bind(_sharedWarName, viewModelScope)
 
-            firebaseRepository.getUsers()
+            databaseRepository.getUsers()
                 .onEach {
                     currentUsers = it.filter { user -> user.currentWar == war.mid }.sortedBy { it.name }
                     currentUser = currentUsers[0]

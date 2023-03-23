@@ -9,6 +9,7 @@ import fr.harmoniamk.statsmk.fragment.stats.opponentRanking.OpponentRankingItemV
 import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.model.local.*
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
+import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -20,7 +21,7 @@ import javax.inject.Inject
 @HiltViewModel
 class IndivStatsViewModel @Inject constructor(
     private val firebaseRepository: FirebaseRepositoryInterface,
-    private val authenticationRepository: AuthenticationRepositoryInterface
+    private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface
 ) : ViewModel() {
 
     private val _sharedTrackClick = MutableSharedFlow<Pair<String?, Int>>()
@@ -60,8 +61,8 @@ class IndivStatsViewModel @Inject constructor(
 
              flowOf(list)
                 .filterNotNull()
-                 .flatMapLatest { it.withName(firebaseRepository) }
-                 .flatMapLatest { it.withFullStats(firebaseRepository, authenticationRepository.user?.uid, isIndiv = true) }
+                 .flatMapLatest { it.withName(databaseRepository) }
+                 .flatMapLatest { it.withFullStats(databaseRepository, authenticationRepository.user?.uid, isIndiv = true) }
                  .onEach { stats ->
                     bestMap = stats.bestPlayerMap
                     worstMap = stats.worstPlayerMap
@@ -70,9 +71,9 @@ class IndivStatsViewModel @Inject constructor(
                     loudestDefeat = stats.warStats.loudestDefeat
                      highestScore = stats.highestScore?.war
                      lowestScore = stats.lowestScore?.war
-                     mostPlayedTeam = listOfNotNull(stats.mostPlayedTeam?.team).withFullTeamStats(firebaseRepository, authenticationRepository.user?.uid, isIndiv = true).first().singleOrNull()
-                     mostDefeatedTeam = listOfNotNull(stats.mostDefeatedTeam?.team).withFullTeamStats(firebaseRepository, authenticationRepository.user?.uid, isIndiv = true).first().singleOrNull()
-                     lessDefeatedTeam = listOfNotNull(stats.lessDefeatedTeam?.team).withFullTeamStats(firebaseRepository, authenticationRepository.user?.uid, isIndiv = true).first().singleOrNull()
+                     mostPlayedTeam = listOfNotNull(stats.mostPlayedTeam?.team).withFullTeamStats(firebaseRepository, databaseRepository, authenticationRepository.user?.uid, isIndiv = true).first().singleOrNull()
+                     mostDefeatedTeam = listOfNotNull(stats.mostDefeatedTeam?.team).withFullTeamStats(firebaseRepository, databaseRepository, authenticationRepository.user?.uid, isIndiv = true).first().singleOrNull()
+                     lessDefeatedTeam = listOfNotNull(stats.lessDefeatedTeam?.team).withFullTeamStats(firebaseRepository, databaseRepository, authenticationRepository.user?.uid, isIndiv = true).first().singleOrNull()
                     _sharedStats.emit(stats)
                 }.launchIn(viewModelScope)
 

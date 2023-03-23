@@ -8,6 +8,7 @@ import fr.harmoniamk.statsmk.model.firebase.NewWarPositions
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.MKWarPosition
+import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -17,7 +18,7 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class EditWarPositionsViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface) : ViewModel() {
+class EditWarPositionsViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
 
     private val _sharedDismiss = MutableSharedFlow<Unit>()
     private val _sharedPlayerLabel = MutableSharedFlow<String?>()
@@ -49,7 +50,7 @@ class EditWarPositionsViewModel @Inject constructor(private val firebaseReposito
         var currentPlayer = warPositions?.get(positions.size)?.playerId
         var playerLabel: String?
 
-        firebaseRepository.getUsers()
+        databaseRepository.getUsers()
             .onEach {
                 users.clear()
                 users.addAll(it)

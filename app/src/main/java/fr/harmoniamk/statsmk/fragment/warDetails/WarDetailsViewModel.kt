@@ -12,6 +12,7 @@ import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarPosition
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
+import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -21,7 +22,7 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class WarDetailsViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface) : ViewModel() {
+class WarDetailsViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
 
     private val _sharedWarPlayers = MutableSharedFlow<List<CurrentPlayerModel>>()
     private val _sharedTracks = MutableSharedFlow<List<MKWarTrack>>()
@@ -50,22 +51,22 @@ class WarDetailsViewModel @Inject constructor(private val firebaseRepository: Fi
     fun bind(warId: String?, onTrackClick: Flow<Int>, onDeleteWar: Flow<Unit>) {
         warId?.let { id ->
 
-            firebaseRepository.getUser(authenticationRepository.user?.uid)
+            databaseRepository.getUser(authenticationRepository.user?.uid)
                 .mapNotNull { it?.role == UserRole.GOD.ordinal}
                 .bind(_sharedDeleteWarVisible, viewModelScope)
 
             firebaseRepository.getNewWar(id)
                 .onEach {
-                    _sharedPlayerHost.emit("Créée par ${firebaseRepository.getUser(it?.playerHostId ?: "").firstOrNull()?.name ?: ""}")
-                    _sharedWarName.emit(listOf(MKWar(it)).withName(firebaseRepository).firstOrNull()?.singleOrNull()?.name)
+                    _sharedPlayerHost.emit("Créée par ${databaseRepository.getUser(it?.playerHostId).firstOrNull()?.name ?: ""}")
+                    _sharedWarName.emit(listOf(MKWar(it)).withName(databaseRepository).firstOrNull()?.singleOrNull()?.name)
                     it?.penalties?.let { penalty ->
-                        _sharedPenalties.emit(penalty.withTeamName(firebaseRepository).firstOrNull())
+                        _sharedPenalties.emit(penalty.withTeamName(databaseRepository).firstOrNull())
                     }
                 }
                 .mapNotNull { it?.warTracks?.map { MKWarTrack(it) } }
                 .onEach {
                     val positions = mutableListOf<Pair<User?, Int>>()
-                    val players = firebaseRepository.getUsers().firstOrNull()
+                    val players = databaseRepository.getUsers().firstOrNull()
                     _sharedTracks.emit(it)
                     _sharedBestTrack.emit(it.sortedByDescending { track -> track.teamScore }.first())
                     _sharedWorstTrack.emit(it.sortedBy { track -> track.teamScore }.first())

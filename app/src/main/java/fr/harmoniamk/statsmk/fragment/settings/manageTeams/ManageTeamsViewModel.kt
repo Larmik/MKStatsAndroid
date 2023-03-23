@@ -9,6 +9,7 @@ import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
+import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -20,7 +21,7 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class ManageTeamsViewModel @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val firebaseRepository: FirebaseRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface): ViewModel() {
+class ManageTeamsViewModel @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val firebaseRepository: FirebaseRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface): ViewModel() {
 
     private val _sharedTeams = MutableSharedFlow<List<ManageTeamsItemViewModel>>()
     private val _sharedAddTeam = MutableSharedFlow<Unit>()
@@ -38,7 +39,7 @@ class ManageTeamsViewModel @Inject constructor(private val preferencesRepository
     private val teams = mutableListOf<ManageTeamsItemViewModel>()
 
     fun bind(onAddTeam: Flow<Unit>, onEditClick: Flow<Team>, onSearch: Flow<String>) {
-        firebaseRepository.getTeams()
+        databaseRepository.getTeams()
             .map {
                 teams.clear()
                 teams.addAll(it.filterNot { team -> team.mid == preferencesRepository.currentTeam?.mid }.map { ManageTeamsItemViewModel(it, authenticationRepository) }); teams.sortedBy { it.name }
@@ -75,7 +76,7 @@ class ManageTeamsViewModel @Inject constructor(private val preferencesRepository
     fun bindDialog(onTeamEdit: Flow<Team>, onTeamDelete: Flow<Team>) {
         onTeamDelete
             .flatMapLatest { firebaseRepository.deleteTeam(it) }
-            .flatMapLatest { firebaseRepository.getTeams() }
+            .flatMapLatest { databaseRepository.getTeams() }
             .map { list -> list.map { ManageTeamsItemViewModel(it, authenticationRepository) } }
             .onEach {
                 _sharedShowDialog.emit(false)
@@ -88,7 +89,7 @@ class ManageTeamsViewModel @Inject constructor(private val preferencesRepository
                     preferencesRepository.currentTeam = it
             }
             .flatMapLatest { firebaseRepository.writeTeam(it) }
-            .flatMapLatest {  firebaseRepository.getTeams() }
+            .flatMapLatest {  databaseRepository.getTeams() }
             .map { list -> list.sortedBy { it.name }.map { ManageTeamsItemViewModel(it, authenticationRepository) } }
             .onEach {
                 _sharedShowDialog.emit(false)
@@ -98,7 +99,7 @@ class ManageTeamsViewModel @Inject constructor(private val preferencesRepository
 
     fun bindAddDialog(onTeamAdded: Flow<Unit>) {
         onTeamAdded
-            .flatMapLatest {  firebaseRepository.getTeams() }
+            .flatMapLatest {  databaseRepository.getTeams() }
             .map { list -> list.sortedBy { it.name }.map { ManageTeamsItemViewModel(it, authenticationRepository) }.filterNot { vm -> vm.team.mid == preferencesRepository.currentTeam?.mid } }
             .bind(_sharedTeams, viewModelScope)
     }

@@ -8,6 +8,7 @@ import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
+import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -18,7 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 @FlowPreview
 @ExperimentalCoroutinesApi
-class StatsViewModel @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val firebaseRepository: FirebaseRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface) : ViewModel() {
+class StatsViewModel @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val firebaseRepository: FirebaseRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
 
     private val _sharedToast = MutableSharedFlow<String>()
     private val _sharedIndiv = MutableSharedFlow<List<MKWar>>()
@@ -81,13 +82,13 @@ class StatsViewModel @Inject constructor(private val preferencesRepository: Pref
 
         playerClick
             .filter { preferencesRepository.currentTeam != null }
-            .flatMapLatest { firebaseRepository.getUsers() }
+            .flatMapLatest { databaseRepository.getUsers() }
             .map { it.filter { user -> user.team == preferencesRepository.currentTeam?.mid } }
             .bind(_sharedPlayers, viewModelScope)
 
         opponentClick
             .filter { preferencesRepository.currentTeam != null }
-            .flatMapLatest { firebaseRepository.getTeams() }
+            .flatMapLatest { databaseRepository.getTeams() }
             .bind(_sharedOpponents, viewModelScope)
 
         mapClick.bind(_sharedMap, viewModelScope)
