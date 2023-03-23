@@ -14,6 +14,7 @@ import fr.harmoniamk.statsmk.extension.backPressedDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.launchIn
 import fr.harmoniamk.statsmk.extension.onTextChanged
+import fr.harmoniamk.statsmk.model.local.MKWar
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.onEach
@@ -31,12 +32,16 @@ class TrackListFragment :
     private var tmId : Int? = null
     private var warId: String? = null
     private var forStats: Boolean? = null
+    private val list = mutableListOf<MKWar>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         tmId = arguments?.getInt("tmId").takeIf { it != 0 }
         warId = arguments?.getString("warId")
         forStats = arguments?.getBoolean("forStats")
+        (arguments?.get("wars") as? Array<out MKWar>)?.let {
+            list.addAll(it)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

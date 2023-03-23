@@ -48,14 +48,14 @@ class WarDetailsViewModel @Inject constructor(private val firebaseRepository: Fi
     val sharedPenalties = _sharedPenalties.asSharedFlow()
     val sharedShockCount = _sharedShockCount.asSharedFlow()
 
-    fun bind(warId: String?, onTrackClick: Flow<Int>, onDeleteWar: Flow<Unit>) {
-        warId?.let { id ->
+    fun bind(war: MKWar?, onTrackClick: Flow<Int>, onDeleteWar: Flow<Unit>) {
+        war?.let {
 
             databaseRepository.getUser(authenticationRepository.user?.uid)
                 .mapNotNull { it?.role == UserRole.GOD.ordinal}
                 .bind(_sharedDeleteWarVisible, viewModelScope)
 
-            firebaseRepository.getNewWar(id)
+            flowOf(it.war)
                 .onEach {
                     _sharedPlayerHost.emit("Créée par ${databaseRepository.getUser(it?.playerHostId).firstOrNull()?.name ?: ""}")
                     _sharedWarName.emit(listOf(MKWar(it)).withName(databaseRepository).firstOrNull()?.singleOrNull()?.name)
@@ -105,7 +105,8 @@ class WarDetailsViewModel @Inject constructor(private val firebaseRepository: Fi
                 .launchIn(viewModelScope)
             onTrackClick.bind(_sharedTrackClick, viewModelScope)
             onDeleteWar
-                .flatMapLatest { firebaseRepository.deleteNewWar(id) }
+                .mapNotNull { war.war?.mid }
+                .flatMapLatest { firebaseRepository.deleteNewWar(it) }
                 .bind(_sharedWarDeleted, viewModelScope)
         }
     }

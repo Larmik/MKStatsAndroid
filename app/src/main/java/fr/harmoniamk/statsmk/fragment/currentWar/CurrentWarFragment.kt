@@ -180,6 +180,12 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
                 binding.shockLayout.isVisible = true
                 binding.shockCount.text = it
             }.launchIn(lifecycleScope)
+
+        viewModel.sharedLoading
+            .onEach {
+                binding.progress.isVisible = it
+                binding.mainLayout.isVisible = !it
+            }.launchIn(lifecycleScope)
     }
 
 }

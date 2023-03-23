@@ -18,6 +18,7 @@ import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.extension.onTextChanged
 import fr.harmoniamk.statsmk.model.firebase.Team
+import fr.harmoniamk.statsmk.model.local.MKWar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
@@ -30,12 +31,16 @@ class OpponentRankingFragment : Fragment(R.layout.fragment_opponent_ranking) {
     private val binding: FragmentOpponentRankingBinding by viewBinding()
     private val viewModel: OpponentRankingViewModel by viewModels()
     private val teams = mutableListOf<Team>()
+    private val wars = mutableListOf<MKWar>()
     private var isIndiv = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         (arguments?.get("teams") as? Array<out Team>)?.let {
             teams.addAll(it)
+        }
+        (arguments?.get("wars") as? Array<out MKWar>)?.let {
+            wars.addAll(it)
         }
     }
 
@@ -49,6 +54,7 @@ class OpponentRankingFragment : Fragment(R.layout.fragment_opponent_ranking) {
         binding.mostPlayedRv.adapter = adapter
         viewModel.bind(
             list = teams,
+            warList = wars,
             onTeamClick = adapter.sharedTeamSelected,
             onSortClick = flowOf(
                 binding.nameSortButton.clicks().map { PlayerSortType.NAME },
@@ -77,7 +83,7 @@ class OpponentRankingFragment : Fragment(R.layout.fragment_opponent_ranking) {
 
         viewModel.sharedLoading.onEach {
             binding.progress.isVisible = it
-            binding.mostPlayedRv.isVisible = !it
+            binding.mainLayout.isVisible = !it
         }.launchIn(lifecycleScope)
 
         viewModel.sharedIndivStatsEnabled

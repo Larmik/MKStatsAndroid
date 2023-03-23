@@ -29,11 +29,13 @@ class IndivStatsFragment : Fragment(R.layout.fragment_indiv_stats) {
 
     private val binding: FragmentIndivStatsBinding by viewBinding()
     private val viewModel: IndivStatsViewModel by viewModels()
-    private var list: List<MKWar>? = null
+    private val list = mutableListOf<MKWar>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        list = (arguments?.get("wars") as? Array<MKWar>)?.toList()
+        (arguments?.get("wars") as? Array<out MKWar>)?.let {
+            list.addAll(it)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -118,7 +120,7 @@ class IndivStatsFragment : Fragment(R.layout.fragment_indiv_stats) {
 
         viewModel.sharedTrackClick
             .filter { findNavController().currentDestination?.id == R.id.indivStatsFragment }
-            .onEach { findNavController().navigate(IndivStatsFragmentDirections.toMapStats(userId = it.first, trackId = it.second)) }
+            .onEach { findNavController().navigate(IndivStatsFragmentDirections.toMapStats(userId = it.first, trackId = it.second, wars = list.toTypedArray())) }
             .launchIn(lifecycleScope)
         viewModel.sharedWarClick
             .filter { findNavController().currentDestination?.id == R.id.indivStatsFragment }

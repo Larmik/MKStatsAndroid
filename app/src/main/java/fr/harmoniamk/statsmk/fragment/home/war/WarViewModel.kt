@@ -70,6 +70,7 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
         val warsFlow = flowOf(firebaseRepository.getNewWars(), firebaseRepository.listenToNewWars())
             .flattenMerge()
             .map { it.map { MKWar(it) } }
+            .flatMapLatest { it.withName(databaseRepository) }
             .shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
 
         warsFlow
@@ -80,22 +81,15 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
 
         warsFlow
             .map { it.getLasts(preferencesRepository.currentTeam?.mid) }
-            .map {
-                val temp = mutableListOf<MKWar>()
-                it.forEach {
-                    val hostName = databaseRepository.getTeam(it.war?.teamHost).firstOrNull()?.shortName
-                    val opponentName = databaseRepository.getTeam(it.war?.teamOpponent).firstOrNull()?.shortName
-                    temp.add(it.apply { this.name = "$hostName - $opponentName" })
-                }
-                temp
-            }
             .bind(_sharedLastWars, viewModelScope)
 
         warsFlow
             .mapNotNull { preferencesRepository.currentTeam?.name }
             .bind(_sharedTeamName, viewModelScope)
 
-        databaseRepository.getUser(authenticationRepository.user?.uid)
+        warsFlow
+            .flatMapLatest { databaseRepository.getUser(authenticationRepository.user?.uid) }
+
             .map{
                 it?.team != "-1"
             }

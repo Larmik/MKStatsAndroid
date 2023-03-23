@@ -88,8 +88,8 @@ class OpponentStatsViewModel @Inject constructor(private val databaseRepository:
             .launchIn(viewModelScope)
         onDetailsClick.bind(_sharedDetailsClick, viewModelScope)
         flowOf(
-            onBestClick.mapNotNull { if (userId != null) item?.stats?.bestPlayerMap else item?.stats?.bestMap },
-            onWorstClick.mapNotNull { if (userId != null) item?.stats?.worstPlayerMap else item?.stats?.worstMap },
+            onBestClick.mapNotNull { if (isIndiv && userId != null) item?.stats?.bestPlayerMap else item?.stats?.bestMap },
+            onWorstClick.mapNotNull { if (isIndiv && userId != null) item?.stats?.worstPlayerMap else item?.stats?.worstMap },
             onMostPlayedClick.mapNotNull { item?.stats?.mostPlayedMap },
         ).flattenMerge()
             .map { Maps.values().indexOf(it.map) }

@@ -41,6 +41,7 @@ class PlayerStatsViewModel @Inject constructor(private val firebaseRepository: F
 
     fun bind(
         userStats: PlayerRankingItemViewModel,
+        warList: List<MKWar>,
         onBestClick: Flow<Unit>,
         onWorstClick: Flow<Unit>,
         onMostPlayedClick: Flow<Unit>,
@@ -58,9 +59,9 @@ class PlayerStatsViewModel @Inject constructor(private val firebaseRepository: F
             .onEach { itemVM ->
                 delay(500)
                 item = itemVM
-                mostPlayedTeam = listOfNotNull(itemVM.stats.mostPlayedTeam?.team).withFullTeamStats(firebaseRepository, databaseRepository, itemVM.user.mid, isIndiv = true).first().singleOrNull()
-                mostDefeatedTeam = listOfNotNull(itemVM.stats.mostDefeatedTeam?.team).withFullTeamStats(firebaseRepository, databaseRepository, itemVM.user.mid, isIndiv = true).first().singleOrNull()
-                lessDefeatedTeam = listOfNotNull(itemVM.stats.lessDefeatedTeam?.team).withFullTeamStats(firebaseRepository, databaseRepository, itemVM.user.mid, isIndiv = true).first().singleOrNull()
+                mostPlayedTeam = listOfNotNull(itemVM.stats.mostPlayedTeam?.team).withFullTeamStats(warList, databaseRepository, itemVM.user.mid, isIndiv = true).first().singleOrNull()
+                mostDefeatedTeam = listOfNotNull(itemVM.stats.mostDefeatedTeam?.team).withFullTeamStats(warList, databaseRepository, itemVM.user.mid, isIndiv = true).first().singleOrNull()
+                lessDefeatedTeam = listOfNotNull(itemVM.stats.lessDefeatedTeam?.team).withFullTeamStats(warList, databaseRepository, itemVM.user.mid, isIndiv = true).first().singleOrNull()
                 _sharedStats.emit(itemVM)
             }.launchIn(viewModelScope)
 

@@ -5,111 +5,122 @@
     android:orientation="vertical"
     android:layout_height="match_parent">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:id="@+id/logout_layout">
-
-        <TextView
+        android:layout_height="wrap_content">
+        <ProgressBar
+            android:id="@+id/progress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/harmonia_dark"
-            android:fontFamily="@font/montserrat_regular"
-            android:textSize="16sp"
-            android:id="@+id/indiv_stats"
-            android:paddingVertical="15dp"
-            android:text="Statistiques individuelles"/>
+            android:layout_centerInParent="true"
+            android:progressTint="?android:colorAccent"
+            android:indeterminate="true"/>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/white"/>
 
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/harmonia_dark"
-            android:fontFamily="@font/montserrat_regular"
-            android:textSize="16sp"
-            android:id="@+id/team_stats"
-            android:paddingVertical="15dp"
-            android:text="Statistiques de l'équipe"/>
+            android:visibility="gone"
+            android:orientation="vertical"
+            android:id="@+id/logout_layout">
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/white"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/harmonia_dark"
+                android:fontFamily="@font/montserrat_regular"
+                android:textSize="16sp"
+                android:id="@+id/indiv_stats"
+                android:paddingVertical="15dp"
+                android:text="Statistiques individuelles"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/harmonia_dark"
-            android:fontFamily="@font/montserrat_regular"
-            android:textSize="16sp"
-            android:id="@+id/player_stats"
-            android:paddingVertical="15dp"
-            android:text="Statistiques des joueurs"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/white"/>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/white"/>
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/harmonia_dark"
-            android:fontFamily="@font/montserrat_regular"
-            android:textSize="16sp"
-            android:id="@+id/opponents_stats"
-            android:paddingVertical="15dp"
-            android:text="Statistiques des adversaires"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/harmonia_dark"
+                android:fontFamily="@font/montserrat_regular"
+                android:textSize="16sp"
+                android:id="@+id/team_stats"
+                android:paddingVertical="15dp"
+                android:text="Statistiques de l'équipe"/>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/white"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/white"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/harmonia_dark"
-            android:fontFamily="@font/montserrat_regular"
-            android:textSize="16sp"
-            android:id="@+id/map_stats"
-            android:paddingVertical="15dp"
-            android:text="Statistiques des circuits"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/harmonia_dark"
+                android:fontFamily="@font/montserrat_regular"
+                android:textSize="16sp"
+                android:id="@+id/player_stats"
+                android:paddingVertical="15dp"
+                android:text="Statistiques des joueurs"/>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/white"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/white"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/harmonia_dark"
+                android:fontFamily="@font/montserrat_regular"
+                android:textSize="16sp"
+                android:id="@+id/opponents_stats"
+                android:paddingVertical="15dp"
+                android:text="Statistiques des adversaires"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/white"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/harmonia_dark"
+                android:fontFamily="@font/montserrat_regular"
+                android:textSize="16sp"
+                android:id="@+id/map_stats"
+                android:paddingVertical="15dp"
+                android:text="Statistiques des circuits"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/white"/>
 
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/harmonia_dark"
-            android:fontFamily="@font/montserrat_regular"
-            android:textSize="16sp"
-            android:id="@+id/periodic_stats"
-            android:paddingVertical="15dp"
-            android:text="Statistiques périodiques"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/harmonia_dark"
+                android:fontFamily="@font/montserrat_regular"
+                android:textSize="16sp"
+                android:id="@+id/periodic_stats"
+                android:paddingVertical="15dp"
+                android:text="Statistiques périodiques"/>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/white"/>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/white"/>
 
-    </LinearLayout>
+        </LinearLayout>
 
-    <TextView
-        android:id="@+id/current_user_label"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textColor="@color/text_color"
-        android:fontFamily="@font/montserrat_regular"
-        android:gravity="bottom|end"/>
+    </RelativeLayout>
+
+
+
+
 
 
 </LinearLayout>

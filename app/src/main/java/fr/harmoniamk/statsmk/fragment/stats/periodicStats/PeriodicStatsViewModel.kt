@@ -100,9 +100,9 @@ class PeriodicStatsViewModel @Inject constructor(private val firebaseRepository:
                 mostPlayedMap = stats.mostPlayedMap
                 highestVicory = stats.warStats.highestVictory
                 loudestDefeat = stats.warStats.loudestDefeat
-                mostPlayedTeam = listOfNotNull(stats.mostPlayedTeam?.team).withFullTeamStats(firebaseRepository, databaseRepository, weekOnly = hebdo, monthOnly = !hebdo).first().singleOrNull()
-                mostDefeatedTeam = listOfNotNull(stats.mostDefeatedTeam?.team).withFullTeamStats(firebaseRepository, databaseRepository, weekOnly = hebdo, monthOnly = !hebdo).first().singleOrNull()
-                lessDefeatedTeam = listOfNotNull(stats.lessDefeatedTeam?.team).withFullTeamStats(firebaseRepository, databaseRepository, weekOnly = hebdo, monthOnly = !hebdo).first().singleOrNull()
+                mostPlayedTeam = listOfNotNull(stats.mostPlayedTeam?.team).withFullTeamStats(warList, databaseRepository, weekOnly = hebdo, monthOnly = !hebdo).first().singleOrNull()
+                mostDefeatedTeam = listOfNotNull(stats.mostDefeatedTeam?.team).withFullTeamStats(warList, databaseRepository, weekOnly = hebdo, monthOnly = !hebdo).first().singleOrNull()
+                lessDefeatedTeam = listOfNotNull(stats.lessDefeatedTeam?.team).withFullTeamStats(warList, databaseRepository, weekOnly = hebdo, monthOnly = !hebdo).first().singleOrNull()
                 _sharedStats.emit(stats)
             }
             .launchIn(viewModelScope)

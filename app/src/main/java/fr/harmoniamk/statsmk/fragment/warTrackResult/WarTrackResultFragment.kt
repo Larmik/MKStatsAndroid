@@ -4,6 +4,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -89,6 +90,12 @@ class WarTrackResultFragment : Fragment(R.layout.fragment_result_war_track) {
             .filter { findNavController().currentDestination?.id == R.id.warTrackResultFragment }
             .onEach { findNavController().navigate(WarTrackResultFragmentDirections.goToWarDetails(it)) }
             .launchIn(lifecycleScope)
+
+        viewModel.sharedLoading
+            .onEach {
+                binding.progress.isVisible = it
+                binding.mainLayout.isVisible = !it
+            }.launchIn(lifecycleScope)
     }
 
 }

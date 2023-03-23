@@ -48,7 +48,7 @@
             android:progressTint="?android:colorAccent"
             tools:targetApi="n_mr1"
             android:visibility="gone"
-            android:layout_below="@id/title_layout"
+            android:layout_centerInParent="true"
             android:indeterminate="true"/>
 
         <LinearLayout

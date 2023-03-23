@@ -61,7 +61,7 @@ class WarDetailsFragment : Fragment(R.layout.fragment_war_details) {
                     requireContext().getColor(textColor)
                 else ContextCompat.getColor(requireContext(), textColor)
             )
-            viewModel.bind(war.war?.mid, adapter.sharedClick, binding.deleteWarBtn.clicks())
+            viewModel.bind(war, adapter.sharedClick, binding.deleteWarBtn.clicks())
             viewModel.sharedWarName
                 .onEach {
                     binding.warTitleTv.text = it

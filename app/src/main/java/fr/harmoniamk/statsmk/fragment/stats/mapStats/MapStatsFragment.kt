@@ -17,6 +17,7 @@ import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.extension.positionColor
 import fr.harmoniamk.statsmk.extension.trackScoreToDiff
+import fr.harmoniamk.statsmk.model.local.MKWar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.filter
@@ -36,6 +37,7 @@ class MapStatsFragment : Fragment(R.layout.fragment_map_stats) {
     private var isIndiv: Boolean? = null
     private var isWeek: Boolean? = null
     private var isMonth: Boolean? = null
+    private val wars = mutableListOf<MKWar>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +47,9 @@ class MapStatsFragment : Fragment(R.layout.fragment_map_stats) {
         isWeek = arguments?.getBoolean("isWeek")
         isIndiv = arguments?.getBoolean("isIndiv")
         isMonth = arguments?.getBoolean("isMonth")
+        (arguments?.get("wars") as? Array<out MKWar>)?.let {
+            wars.addAll(it)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -53,6 +58,7 @@ class MapStatsFragment : Fragment(R.layout.fragment_map_stats) {
             binding.statTrackview.bind(index)
             viewModel.bind(
                 trackIndex = index,
+                warList = wars,
                 onVictoryClick = binding.highestVictory.clicks(),
                 onDefeatClick = binding.loudestDefeat.clicks(),
                 isIndiv = isIndiv,

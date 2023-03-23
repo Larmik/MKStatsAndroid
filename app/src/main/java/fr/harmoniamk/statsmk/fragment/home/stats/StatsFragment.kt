@@ -3,6 +3,7 @@ package fr.harmoniamk.statsmk.fragment.home.stats
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -44,19 +45,23 @@ class StatsFragment : Fragment(R.layout.fragment_stats) {
             .launchIn(lifecycleScope)
         viewModel.sharedMap
             .filter { findNavController().currentDestination?.id == R.id.homeFragment }
-            .onEach { findNavController().navigate(HomeFragmentDirections.toMapRanking()) }
+            .onEach { findNavController().navigate(HomeFragmentDirections.toMapRanking(it.toTypedArray())) }
             .launchIn(lifecycleScope)
         viewModel.sharedToast
             .onEach { Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show() }
             .launchIn(lifecycleScope)
         viewModel.sharedPlayers
             .filter { findNavController().currentDestination?.id == R.id.homeFragment }
-            .onEach { findNavController().navigate(HomeFragmentDirections.toPlayerRanking(it.toTypedArray())) }
+            .onEach { findNavController().navigate(HomeFragmentDirections.toPlayerRanking(it.first.toTypedArray(), it.second.toTypedArray())) }
             .launchIn(lifecycleScope)
         viewModel.sharedOpponents
             .filter { findNavController().currentDestination?.id == R.id.homeFragment }
-            .onEach { findNavController().navigate(HomeFragmentDirections.toOpponentRanking(it.toTypedArray())) }
+            .onEach { findNavController().navigate(HomeFragmentDirections.toOpponentRanking(it.first.toTypedArray(), it.second.toTypedArray())) }
             .launchIn(lifecycleScope)
+        viewModel.sharedLoaded
+            .onEach { binding.progress.isVisible = false
+            binding.logoutLayout.isVisible = true
+            }.launchIn(lifecycleScope)
     }
 
 }

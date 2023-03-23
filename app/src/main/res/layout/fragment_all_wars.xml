@@ -38,7 +38,6 @@
         android:layout_height="wrap_content"
         android:progressTint="?android:colorAccent"
         tools:targetApi="n_mr1"
-        android:layout_below="@id/search_et"
         android:indeterminate="true"/>
 
     <LinearLayout

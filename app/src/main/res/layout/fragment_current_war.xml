@@ -10,326 +10,352 @@
     xmlns:tools="http://schemas.android.com/tools">
 
 
-    <TextView
-        android:id="@+id/war_title_tv"
+
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/harmonia_dark"
-        android:gravity="center"
-        tools:text="HR vs OF"
-        android:textSize="20sp"
-        android:fontFamily="@font/orbitron_semibold"/>
+        android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginVertical="5dp"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/war_date_tv"
-            android:layout_width="0dp"
-            android:gravity="center"
-            android:textSize="14sp"
-            android:layout_height="wrap_content"
-            android:textColor="@color/harmonia_dark"
-            android:fontFamily="@font/montserrat_regular"
-            tools:text="26/01/2022 - 22h"
-            android:layout_weight="1"/>
-
-        <TextView
-            android:id="@+id/current_war_tv"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:textSize="14sp"
-            android:layout_height="wrap_content"
-            android:textColor="@color/harmonia_dark"
-            android:fontFamily="@font/montserrat_regular"
-            android:text="Tournoi en cours (8/12)"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_marginHorizontal="4dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:padding="5dp"
-            tools:visibility="visible"
-            android:background="@drawable/rounded_bg"
-            android:backgroundTint="?android:colorAccent"
-            tools:targetApi="n_mr1"
-            android:textSize="12sp"
-            android:text="Remplacement"
-            android:id="@+id/sub_btn"
-            android:fontFamily="@font/roboto"
-            android:textColor="@color/text_color"
-            android:gravity="center"/>
-        <TextView
-
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:padding="5dp"
-            tools:visibility="visible"
-            android:layout_marginHorizontal="4dp"
-            android:background="@drawable/rounded_bg"
-            android:backgroundTint="?android:colorAccent"
-            tools:targetApi="n_mr1"
-            android:textSize="12sp"
-            android:text="Pénalité"
-            android:id="@+id/penalty_btn"
-            android:fontFamily="@font/roboto"
-            android:textColor="@color/text_color"
-            android:gravity="center"/>
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:padding="5dp"
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:progressTint="?android:colorAccent"
             android:visibility="gone"
-            tools:visibility="visible"
-            android:background="@drawable/rounded_bg"
-            android:layout_marginHorizontal="4dp"
-            android:backgroundTint="?android:colorAccent"
-            tools:targetApi="n_mr1"
-            android:textSize="12sp"
-            android:text="Annuler le match"
-            android:id="@+id/delete_war_btn"
-            android:fontFamily="@font/roboto"
-            android:textColor="@color/text_color"
-            android:gravity="center"/>
-    </LinearLayout>
-
-
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_margin="10dp"
-        android:background="@color/white"/>
-
-
+            android:layout_centerInParent="true"
+            android:indeterminate="true"/>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="10dp"
             android:orientation="vertical"
-            >
+            android:id="@+id/main_layout">
 
             <TextView
+                android:id="@+id/war_title_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:textSize="16sp"
-                android:layout_marginBottom="5dp"
-                android:fontFamily="@font/montserrat_bold"
                 android:textColor="@color/harmonia_dark"
-                android:text="Joueurs :"/>
+                android:gravity="center"
+                tools:text="HR vs OF"
+                android:textSize="20sp"
+                android:fontFamily="@font/orbitron_semibold"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
+                android:layout_marginVertical="5dp"
                 android:orientation="horizontal">
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/firsts_players_rv"
+                <TextView
+                    android:id="@+id/war_date_tv"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"/>
+                    android:gravity="center"
+                    android:textSize="14sp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/harmonia_dark"
+                    android:fontFamily="@font/montserrat_regular"
+                    tools:text="26/01/2022 - 22h"
+                    android:layout_weight="1"/>
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/lasts_players_rv"
+                <TextView
+                    android:id="@+id/current_war_tv"
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     android:layout_weight="1"
-                    android:orientation="vertical"/>
+                    android:gravity="center"
+                    android:textSize="14sp"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/harmonia_dark"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:text="Tournoi en cours (8/12)"/>
 
             </LinearLayout>
 
-        </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_marginHorizontal="4dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:padding="5dp"
+                    tools:visibility="visible"
+                    android:background="@drawable/rounded_bg"
+                    android:backgroundTint="?android:colorAccent"
+                    tools:targetApi="n_mr1"
+                    android:textSize="12sp"
+                    android:text="Remplacement"
+                    android:id="@+id/sub_btn"
+                    android:fontFamily="@font/roboto"
+                    android:textColor="@color/text_color"
+                    android:gravity="center"/>
+                <TextView
+
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:padding="5dp"
+                    tools:visibility="visible"
+                    android:layout_marginHorizontal="4dp"
+                    android:background="@drawable/rounded_bg"
+                    android:backgroundTint="?android:colorAccent"
+                    tools:targetApi="n_mr1"
+                    android:textSize="12sp"
+                    android:text="Pénalité"
+                    android:id="@+id/penalty_btn"
+                    android:fontFamily="@font/roboto"
+                    android:textColor="@color/text_color"
+                    android:gravity="center"/>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:padding="5dp"
+                    android:visibility="gone"
+                    tools:visibility="visible"
+                    android:background="@drawable/rounded_bg"
+                    android:layout_marginHorizontal="4dp"
+                    android:backgroundTint="?android:colorAccent"
+                    tools:targetApi="n_mr1"
+                    android:textSize="12sp"
+                    android:text="Annuler le match"
+                    android:id="@+id/delete_war_btn"
+                    android:fontFamily="@font/roboto"
+                    android:textColor="@color/text_color"
+                    android:gravity="center"/>
+            </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_margin="10dp"
+                android:background="@color/white"/>
 
 
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_margin="10dp"
-        android:background="@color/white"/>
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_marginBottom="10dp"
-        android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="10dp"
+                android:orientation="vertical"
+                >
 
-        <LinearLayout
-            android:id="@+id/warscore_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:background="@drawable/rounded_bg"
-            android:backgroundTint="@color/white_alphaed"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:paddingHorizontal="10dp">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textSize="16sp"
+                    android:layout_marginBottom="5dp"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:textColor="@color/harmonia_dark"
+                    android:text="Joueurs :"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/firsts_players_rv"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"/>
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/lasts_players_rv"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        android:layout_weight="1"
+                        android:orientation="vertical"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_margin="10dp"
+                android:background="@color/white"/>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_marginBottom="10dp"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:id="@+id/warscore_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:background="@drawable/rounded_bg"
+                    android:backgroundTint="@color/white_alphaed"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="10dp">
+
+                    <TextView
+                        android:id="@+id/score_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:autoSizeTextType="uniform"
+                        android:fontFamily="@font/orbitron_semibold"
+                        android:maxLines="1"
+                        android:textColor="@color/harmonia_dark"
+                        android:textSize="30sp"
+                        tools:targetApi="o"
+                        tools:text="229 - 190" />
+
+                    <TextView
+                        android:id="@+id/diff_score_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/orbitron_semibold"
+                        android:textColor="@color/text_color"
+                        android:textSize="20sp"
+                        tools:text="+39" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_toEndOf="@id/warscore_layout"
+                    tools:visibility="visible"
+                    android:layout_marginVertical="5dp"
+                    android:id="@+id/shock_layout">
+
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/shock"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/shock_count"
+                        tools:text="x6"
+                        android:textSize="20sp"
+                        android:textColor="@color/black"
+                        android:fontFamily="@font/mk_position"/>
+
+                </LinearLayout>
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:id="@+id/penalties_layout">
+
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="5dp"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:textColor="@color/harmonia_dark"
+                    android:text="Pénalités :"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    android:orientation="vertical"
+                    android:id="@+id/penalties_rv"/>
+
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/white"
+                    android:layout_margin="10dp"/>
+
+
+            </LinearLayout>
 
             <TextView
-                android:id="@+id/score_tv"
-                android:layout_width="wrap_content"
+                android:id="@+id/next_track_btn"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:autoSizeTextType="uniform"
-                android:fontFamily="@font/orbitron_semibold"
-                android:maxLines="1"
-                android:textColor="@color/harmonia_dark"
-                android:textSize="30sp"
-                tools:targetApi="o"
-                tools:text="229 - 190" />
-
-            <TextView
-                android:id="@+id/diff_score_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/orbitron_semibold"
+                android:background="@drawable/button_background"
+                android:fontFamily="@font/roboto"
+                android:gravity="center"
+                android:paddingVertical="10dp"
+                android:text="Prochaine course"
                 android:textColor="@color/text_color"
-                android:textSize="20sp"
-                tools:text="+39" />
+                android:visibility="gone"
+                tools:targetApi="n_mr1"
+                tools:visibility="visible" />
 
-        </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:visibility="gone"
-            android:layout_centerVertical="true"
-            android:layout_alignParentEnd="true"
-            android:layout_toEndOf="@id/warscore_layout"
-            tools:visibility="visible"
-            android:layout_marginVertical="5dp"
-            android:id="@+id/shock_layout">
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_margin="10dp"
+                android:background="@color/white"/>
 
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:src="@drawable/shock"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/shock_count"
-                tools:text="x6"
-                android:textSize="20sp"
-                android:textColor="@color/black"
-                android:fontFamily="@font/mk_position"/>
+                android:text="Courses jouées"
+                android:id="@+id/played_label"
+                android:textColor="@color/harmonia_dark"
+                android:textSize="16sp"
+                android:visibility="gone"
+                android:fontFamily="@font/montserrat_bold"/>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="7dp"
+                android:layout_weight="1">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:textSize="14sp"
+                    android:textAlignment="center"
+                    android:id="@+id/empty_track"
+                    android:visibility="gone"
+                    android:text="Le match est sur le point de commencer. Vous pourrez ajouter une première course dès que le résultat du vote sera connu. \n \n Bonne chance, faites preuve de fair-play et de bienveillance, et surtout n'oubliez pas : le plaisir avant tout !"
+                    android:textColor="@color/harmonia_dark"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/current_tracks_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+            </RelativeLayout>
+
 
         </LinearLayout>
-
     </RelativeLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="gone"
-        android:id="@+id/penalties_layout">
 
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:textSize="14sp"
-            android:layout_marginBottom="5dp"
-            android:fontFamily="@font/montserrat_bold"
-            android:textColor="@color/harmonia_dark"
-            android:text="Pénalités :"/>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            android:orientation="vertical"
-            android:id="@+id/penalties_rv"/>
-
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/white"
-            android:layout_margin="10dp"/>
-
-
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/next_track_btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/button_background"
-        android:fontFamily="@font/roboto"
-        android:gravity="center"
-        android:paddingVertical="10dp"
-        android:text="Prochaine course"
-        android:textColor="@color/text_color"
-        android:visibility="gone"
-        tools:targetApi="n_mr1"
-        tools:visibility="visible" />
-
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_margin="10dp"
-        android:background="@color/white"/>
-
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Courses jouées"
-        android:id="@+id/played_label"
-        android:textColor="@color/harmonia_dark"
-        android:textSize="16sp"
-        android:visibility="gone"
-        android:fontFamily="@font/montserrat_bold"/>
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="7dp"
-        android:layout_weight="1">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/montserrat_regular"
-            android:textSize="14sp"
-            android:textAlignment="center"
-            android:id="@+id/empty_track"
-            android:visibility="gone"
-            android:text="Le match est sur le point de commencer. Vous pourrez ajouter une première course dès que le résultat du vote sera connu. \n \n Bonne chance, faites preuve de fair-play et de bienveillance, et surtout n'oubliez pas : le plaisir avant tout !"
-            android:textColor="@color/harmonia_dark"/>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/current_tracks_rv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-
-    </RelativeLayout>
 
 
 

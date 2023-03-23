@@ -8,6 +8,7 @@ import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.extension.withFullStats
 import fr.harmoniamk.statsmk.model.firebase.User
+import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -22,7 +23,7 @@ class PlayerRankingViewModel @Inject constructor(
 ) : ViewModel()  {
 
     private val _sharedUserList = MutableSharedFlow<List<PlayerRankingItemViewModel>>()
-    private val _sharedGoToStats = MutableSharedFlow<PlayerRankingItemViewModel>()
+    private val _sharedGoToStats = MutableSharedFlow<Pair<PlayerRankingItemViewModel, List<MKWar>>>()
     private val _sharedLoading = MutableSharedFlow<Boolean>()
     private val _sharedSortTypeSelected = MutableStateFlow(PlayerSortType.NAME)
 
@@ -33,11 +34,11 @@ class PlayerRankingViewModel @Inject constructor(
     private val itemsVM = mutableListOf<PlayerRankingItemViewModel>()
 
 
-    fun bind(list: List<User>, onPlayerClick: Flow<PlayerRankingItemViewModel>, onSortClick: Flow<PlayerSortType>, onSearch: Flow<String>) {
+    fun bind(list: List<User>, warList: List<MKWar>, onPlayerClick: Flow<PlayerRankingItemViewModel>, onSortClick: Flow<PlayerSortType>, onSearch: Flow<String>) {
         flowOf(true).bind(_sharedLoading, viewModelScope)
         flowOf(list)
             .map { it.sortedBy { it.name } }
-            .flatMapLatest { it.withFullStats(firebaseRepository, databaseRepository) }
+            .flatMapLatest { it.withFullStats(warList, databaseRepository) }
             .onEach {
                 itemsVM.clear()
                 itemsVM.addAll(it)
@@ -51,7 +52,7 @@ class PlayerRankingViewModel @Inject constructor(
                 _sharedUserList.emit(itemsVM)
             }.launchIn(viewModelScope)
 
-        onPlayerClick.bind(_sharedGoToStats, viewModelScope)
+        onPlayerClick.map { Pair(it, warList) }.bind(_sharedGoToStats, viewModelScope)
 
         onSortClick
             .onEach {

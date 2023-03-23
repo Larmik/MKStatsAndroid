@@ -71,9 +71,9 @@ class IndivStatsViewModel @Inject constructor(
                     loudestDefeat = stats.warStats.loudestDefeat
                      highestScore = stats.highestScore?.war
                      lowestScore = stats.lowestScore?.war
-                     mostPlayedTeam = listOfNotNull(stats.mostPlayedTeam?.team).withFullTeamStats(firebaseRepository, databaseRepository, authenticationRepository.user?.uid, isIndiv = true).first().singleOrNull()
-                     mostDefeatedTeam = listOfNotNull(stats.mostDefeatedTeam?.team).withFullTeamStats(firebaseRepository, databaseRepository, authenticationRepository.user?.uid, isIndiv = true).first().singleOrNull()
-                     lessDefeatedTeam = listOfNotNull(stats.lessDefeatedTeam?.team).withFullTeamStats(firebaseRepository, databaseRepository, authenticationRepository.user?.uid, isIndiv = true).first().singleOrNull()
+                     mostPlayedTeam = listOfNotNull(stats.mostPlayedTeam?.team).withFullTeamStats(list, databaseRepository, authenticationRepository.user?.uid, isIndiv = true).first().singleOrNull()
+                     mostDefeatedTeam = listOfNotNull(stats.mostDefeatedTeam?.team).withFullTeamStats(list, databaseRepository, authenticationRepository.user?.uid, isIndiv = true).first().singleOrNull()
+                     lessDefeatedTeam = listOfNotNull(stats.lessDefeatedTeam?.team).withFullTeamStats(list, databaseRepository, authenticationRepository.user?.uid, isIndiv = true).first().singleOrNull()
                     _sharedStats.emit(stats)
                 }.launchIn(viewModelScope)
 

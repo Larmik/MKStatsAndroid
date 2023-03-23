@@ -30,6 +30,7 @@ class WarTrackResultViewModel @Inject constructor(private val firebaseRepository
     private val _sharedGoToWarResume = MutableSharedFlow<MKWar>()
     private val _sharedScore = MutableSharedFlow<MKWarTrack>()
     private val _sharedShocks = MutableSharedFlow<List<Pair<String?, Shock>>>()
+    private val _sharedLoading = MutableSharedFlow<Boolean>()
 
     val sharedWarPos = _sharedWarPos.asSharedFlow()
     val sharedBack = _sharedBack.asSharedFlow()
@@ -37,6 +38,7 @@ class WarTrackResultViewModel @Inject constructor(private val firebaseRepository
     val sharedScore = _sharedScore.asSharedFlow()
     val sharedGoToWarResume = _sharedGoToWarResume.asSharedFlow()
     val sharedShocks = _sharedShocks.asSharedFlow()
+    val sharedLoading = _sharedLoading.asSharedFlow()
 
     private val users = mutableListOf<User>()
     private val finalList = mutableListOf<Pair<String?, Shock>>()
@@ -115,6 +117,7 @@ class WarTrackResultViewModel @Inject constructor(private val firebaseRepository
             onValid
                 .mapNotNull { preferencesRepository.currentWar }
                 .onEach { war ->
+                    _sharedLoading.emit(true)
                     firebaseRepository.writeNewWar(war).first()
                     if (MKWar(war).isOver) {
                         databaseRepository.getUsers().first().filter { it.currentWar == war.mid }.forEach {

@@ -20,6 +20,7 @@ import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.extension.positionColor
 import fr.harmoniamk.statsmk.fragment.stats.opponentRanking.OpponentRankingItemViewModel
 import fr.harmoniamk.statsmk.fragment.stats.teamStats.TeamStatsFragmentDirections
+import fr.harmoniamk.statsmk.model.local.MKWar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.filter
@@ -38,12 +39,16 @@ class OpponentStatsFragment : Fragment(R.layout.fragment_opponent_stats) {
     private var stats: OpponentRankingItemViewModel? = null
     private var userId: String? = null
     private var isIndiv: Boolean? = null
+    private val wars = mutableListOf<MKWar>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         stats = arguments?.get("stats") as? OpponentRankingItemViewModel
         userId = arguments?.getString("userId")
         isIndiv = arguments?.getBoolean("isIndiv")
+        (arguments?.get("wars") as? Array<out MKWar>)?.let {
+            wars.addAll(it)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -75,11 +80,11 @@ class OpponentStatsFragment : Fragment(R.layout.fragment_opponent_stats) {
             .launchIn(lifecycleScope)
 
         stats?.let {
-            val bestMap = when (userId != null || isIndiv.isTrue) {
+            val bestMap = when (userId != null && isIndiv.isTrue) {
                 true -> it.stats.bestPlayerMap
                 else -> it.stats.bestMap
             }
-            val worstMap = when (userId != null || isIndiv.isTrue) {
+            val worstMap = when (userId != null && isIndiv.isTrue) {
                 true -> it.stats.worstPlayerMap
                 else -> it.stats.worstMap
             }
@@ -148,7 +153,7 @@ class OpponentStatsFragment : Fragment(R.layout.fragment_opponent_stats) {
 
             viewModel.sharedTrackClick
                 .filter { findNavController().currentDestination?.id == R.id.opponentStatsFragment }
-                .onEach { findNavController().navigate(OpponentStatsFragmentDirections.toMapStats(trackId = it.second, userId = it.first, teamId = stats?.team?.mid, isIndiv = isIndiv.isTrue)) }
+                .onEach { findNavController().navigate(OpponentStatsFragmentDirections.toMapStats(trackId = it.second, userId = it.first, teamId = stats?.team?.mid, isIndiv = isIndiv.isTrue, wars = stats?.stats?.warStats?.list?.toTypedArray() ?: arrayOf())) }
                 .launchIn(lifecycleScope)
             viewModel.sharedWarClick
                 .filter { findNavController().currentDestination?.id == R.id.opponentStatsFragment }

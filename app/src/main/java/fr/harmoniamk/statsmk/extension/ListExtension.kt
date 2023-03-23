@@ -7,7 +7,6 @@ import fr.harmoniamk.statsmk.fragment.stats.playerRanking.PlayerRankingItemViewM
 import fr.harmoniamk.statsmk.model.firebase.*
 import fr.harmoniamk.statsmk.model.local.*
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
-import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import kotlinx.coroutines.flow.*
 
 fun List<MKWar>.getLasts(teamId: String?) = this.filter { war -> war.isOver && war.war?.teamHost == teamId }.sortedByDescending{ it.war?.createdDate?.formatToDate() }.safeSubList(0, 5)
@@ -25,9 +24,8 @@ fun List<MKWar?>.withName(databaseRepository: DatabaseRepositoryInterface) = flo
 }
 
 
-fun List<User>.withFullStats(firebaseRepository: FirebaseRepositoryInterface, databaseRepository: DatabaseRepositoryInterface) = flow {
+fun List<User>.withFullStats(wars: List<MKWar>, databaseRepository: DatabaseRepositoryInterface) = flow {
     val temp = mutableListOf<PlayerRankingItemViewModel>()
-    val wars = firebaseRepository.getNewWars().first().map { MKWar(it) }.withName(databaseRepository).first()
     this@withFullStats.forEach { user ->
         val stats = wars.withFullStats(databaseRepository, userId = user.mid, isIndiv = true).first()
         temp.add(PlayerRankingItemViewModel(user, stats))
@@ -36,16 +34,17 @@ fun List<User>.withFullStats(firebaseRepository: FirebaseRepositoryInterface, da
 }
 
 
-fun List<Team>.withFullTeamStats(firebaseRepository: FirebaseRepositoryInterface, databaseRepository: DatabaseRepositoryInterface, userId: String? = null, weekOnly: Boolean = false, monthOnly: Boolean = false, isIndiv: Boolean = false) = flow {
+fun List<Team>.withFullTeamStats(wars: List<MKWar>?, databaseRepository: DatabaseRepositoryInterface, userId: String? = null, weekOnly: Boolean = false, monthOnly: Boolean = false, isIndiv: Boolean = false) = flow {
     val temp = mutableListOf<OpponentRankingItemViewModel>()
-    val wars = firebaseRepository.getNewWars().first().map { MKWar(it) }
     this@withFullTeamStats.forEach { team ->
-        val stats = wars
-            .filter { !weekOnly || (weekOnly && it.isThisWeek) }
-            .filter { !monthOnly || (monthOnly && it.isThisMonth) }
-            .withFullStats(databaseRepository, teamId = team.mid, userId = userId, isIndiv = isIndiv).first()
-        if (stats.warStats.list.isNotEmpty())
-            temp.add(OpponentRankingItemViewModel(team, stats, userId, isIndiv))
+        wars
+            ?.filter { !weekOnly || (weekOnly && it.isThisWeek) }
+            ?.filter { !monthOnly || (monthOnly && it.isThisMonth) }
+            ?.withFullStats(databaseRepository, teamId = team.mid, userId = userId, isIndiv = isIndiv)?.first()
+            ?.let {
+                if (it.warStats.list.isNotEmpty())
+                    temp.add(OpponentRankingItemViewModel(team, it, userId, isIndiv))
+            }
     }
     emit(temp)
 }

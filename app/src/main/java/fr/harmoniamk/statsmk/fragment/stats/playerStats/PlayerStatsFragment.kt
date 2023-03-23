@@ -17,6 +17,7 @@ import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.extension.positionColor
 import fr.harmoniamk.statsmk.fragment.stats.indivStats.IndivStatsFragmentDirections
 import fr.harmoniamk.statsmk.fragment.stats.playerRanking.PlayerRankingItemViewModel
+import fr.harmoniamk.statsmk.model.local.MKWar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.filter
@@ -31,10 +32,14 @@ class PlayerStatsFragment : Fragment(R.layout.fragment_player_stats) {
     private val binding: FragmentPlayerStatsBinding by viewBinding()
     private val viewModel: PlayerStatsViewModel by viewModels()
     private var stats: PlayerRankingItemViewModel? = null
+    private var wars = mutableListOf<MKWar>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         stats = arguments?.get("stats") as? PlayerRankingItemViewModel
+        (arguments?.get("wars") as? Array<out MKWar>)?.let {
+            wars.addAll(it)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -42,6 +47,7 @@ class PlayerStatsFragment : Fragment(R.layout.fragment_player_stats) {
         stats?.let {
             viewModel.bind(
                 userStats = it,
+                warList = wars,
                 onBestClick = binding.bestTrackview.clicks(),
                 onWorstClick = binding.worstTrackview.clicks(),
                 onMostPlayedClick = binding.mostPlayedTrackview.clicks(),
@@ -123,7 +129,7 @@ class PlayerStatsFragment : Fragment(R.layout.fragment_player_stats) {
 
         viewModel.sharedTrackClick
             .filter { findNavController().currentDestination?.id == R.id.playerStatsFragment }
-            .onEach { findNavController().navigate(PlayerStatsFragmentDirections.toMapStats(trackId = it.second, userId = it.first, )) }
+            .onEach { findNavController().navigate(PlayerStatsFragmentDirections.toMapStats(trackId = it.second, userId = it.first, wars = wars.toTypedArray())) }
             .launchIn(lifecycleScope)
         viewModel.sharedWarClick
             .filter { findNavController().currentDestination?.id == R.id.playerStatsFragment }

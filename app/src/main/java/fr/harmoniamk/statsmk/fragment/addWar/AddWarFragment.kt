@@ -3,6 +3,7 @@ package fr.harmoniamk.statsmk.fragment.addWar
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -44,9 +45,15 @@ class AddWarFragment : Fragment(R.layout.fragment_add_war) {
             binding.title.text = "Nouvelle war : $it"
         }.launchIn(lifecycleScope)
 
+        viewModel.sharedLoading
+            .onEach {
+                binding.mainLayout.isVisible = !it
+                binding.progress.isVisible = it
+            }.launchIn(lifecycleScope)
+
         viewModel.sharedStarted
             .filter { findNavController().currentDestination?.id == R.id.addWarFragment }
-            .onEach { findNavController().popBackStack() }
+            .onEach { findNavController().navigate(AddWarFragmentDirections.goToCurrentWar())}
             .launchIn(lifecycleScope)
 
         viewModel.sharedAlreadyCreated

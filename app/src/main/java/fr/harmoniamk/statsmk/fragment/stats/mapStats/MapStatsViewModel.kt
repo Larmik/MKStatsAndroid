@@ -33,6 +33,7 @@ class MapStatsViewModel @Inject constructor(private val preferencesRepository: P
 
 
     fun bind(trackIndex: Int,
+             warList: List<MKWar>,
              onVictoryClick: Flow<Unit>,
              onDefeatClick: Flow<Unit>,
              isIndiv: Boolean?,
@@ -45,14 +46,13 @@ class MapStatsViewModel @Inject constructor(private val preferencesRepository: P
         val mapDetailsList = mutableListOf<MapDetails>()
         val onlyIndiv = isIndiv.isTrue || preferencesRepository.currentTeam?.mid == null
 
-         firebaseRepository.getNewWars()
+         flowOf(warList)
              .filter {
-                 (!onlyIndiv && it.mapNotNull { war -> war.teamHost}.contains(preferencesRepository.currentTeam?.mid)
-                         || it.map {war -> war.teamOpponent}.contains(preferencesRepository.currentTeam?.mid))
+                 (!onlyIndiv && it.mapNotNull { war -> war.war?.teamHost}.contains(preferencesRepository.currentTeam?.mid)
+                         || it.map {war -> war.war?.teamOpponent}.contains(preferencesRepository.currentTeam?.mid))
                          || onlyIndiv
              }
              .mapNotNull { list -> list
-                 .map { MKWar(it) }
                  .filter { it.isOver }
                  .filter {  !onlyIndiv || (onlyIndiv && it.hasPlayer(userId)) }
                  .filter {  !isWeek.isTrue || (isWeek.isTrue && it.isThisWeek) }

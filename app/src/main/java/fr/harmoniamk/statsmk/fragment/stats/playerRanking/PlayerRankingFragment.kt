@@ -17,6 +17,7 @@ import fr.harmoniamk.statsmk.enums.PlayerSortType
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.extension.onTextChanged
 import fr.harmoniamk.statsmk.model.firebase.User
+import fr.harmoniamk.statsmk.model.local.MKWar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
@@ -29,11 +30,15 @@ class PlayerRankingFragment : Fragment(R.layout.fragment_player_ranking) {
     private val binding: FragmentPlayerRankingBinding by viewBinding()
     private val viewModel: PlayerRankingViewModel by viewModels()
     private val players = mutableListOf<User>()
+    private val wars = mutableListOf<MKWar>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         (arguments?.get("players") as? Array<out User>)?.let {
             players.addAll(it)
+        }
+        (arguments?.get("wars") as? Array<out MKWar>)?.let {
+            wars.addAll(it)
         }
     }
 
@@ -43,6 +48,7 @@ class PlayerRankingFragment : Fragment(R.layout.fragment_player_ranking) {
         binding.mostPlayedRv.adapter = adapter
         viewModel.bind(
             list = players,
+            warList = wars,
             onPlayerClick = adapter.sharedUserSelected,
             onSortClick = flowOf(
                 binding.nameSortButton.clicks().map { PlayerSortType.NAME },
@@ -58,7 +64,7 @@ class PlayerRankingFragment : Fragment(R.layout.fragment_player_ranking) {
 
         viewModel.sharedGoToStats
             .filter { findNavController().currentDestination?.id == R.id.playerRankingFragment }
-            .onEach { findNavController().navigate(PlayerRankingFragmentDirections.toPlayerStats(it)) }
+            .onEach { findNavController().navigate(PlayerRankingFragmentDirections.toPlayerStats(it.first, it.second.toTypedArray())) }
             .launchIn(lifecycleScope)
         viewModel.sharedSortTypeSelected
             .onEach {
@@ -70,7 +76,7 @@ class PlayerRankingFragment : Fragment(R.layout.fragment_player_ranking) {
 
         viewModel.sharedLoading.onEach {
             binding.progress.isVisible = it
-            binding.mostPlayedRv.isVisible = !it
+            binding.mainLayout.isVisible = !it
         }.launchIn(lifecycleScope)
     }
 

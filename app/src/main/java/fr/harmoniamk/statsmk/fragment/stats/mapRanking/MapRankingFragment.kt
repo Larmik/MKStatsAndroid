@@ -16,6 +16,7 @@ import fr.harmoniamk.statsmk.databinding.FragmentMapRankingBinding
 import fr.harmoniamk.statsmk.enums.TrackSortType
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.extension.onTextChanged
+import fr.harmoniamk.statsmk.model.local.MKWar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
@@ -28,11 +29,22 @@ class MapRankingFragment : Fragment(R.layout.fragment_map_ranking) {
     private val binding: FragmentMapRankingBinding by viewBinding()
     private val viewModel: MapRankingViewModel by viewModels()
 
+    private val wars = mutableListOf<MKWar>()
+    private var indivEnabled = true
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        (arguments?.get("wars") as? Array<out MKWar>)?.let {
+            wars.addAll(it)
+        }
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val mostPlayedAdapter = MapRankingAdapter()
         binding.mostPlayedRv.adapter = mostPlayedAdapter
         viewModel.bind(
+            warList = wars,
             onTrackClick = mostPlayedAdapter.sharedClick,
             onSortClick = flowOf(
                 binding.totalPlaySortButton.clicks().map { TrackSortType.TOTAL_PLAYED },
@@ -60,11 +72,12 @@ class MapRankingFragment : Fragment(R.layout.fragment_map_ranking) {
         viewModel.sharedGoToStats
             .filter { findNavController().currentDestination?.id == R.id.mapRankingFragment }
             .onEach {
-                findNavController().navigate(MapRankingFragmentDirections.toMapStats(trackId = it.second, userId = it.first))
+                findNavController().navigate(MapRankingFragmentDirections.toMapStats(trackId = it.second, isIndiv = indivEnabled, userId = it.first, wars = wars.toTypedArray()))
             }
             .launchIn(lifecycleScope)
         viewModel.sharedIndivStatsEnabled
             .onEach {
+                indivEnabled = it
                 binding.indivBtn.setBackgroundColor(ContextCompat.getColor(requireContext(),
                     when (it) {
                         true -> R.color.transparent_white

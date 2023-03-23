@@ -17,6 +17,7 @@ import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import java.util.*
 import javax.inject.Inject
@@ -24,7 +25,7 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class MapRankingViewModel @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val firebaseRepository: FirebaseRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface) : ViewModel() {
+class MapRankingViewModel @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface) : ViewModel() {
 
 
     private val _sharedMaps = MutableSharedFlow<List<TrackStats>>()
@@ -40,15 +41,16 @@ class MapRankingViewModel @Inject constructor(private val preferencesRepository:
     private val temp = mutableListOf<NewWarTrack>()
     val final = mutableListOf<TrackStats>()
 
-    fun bind(onTrackClick: Flow<Int>, onSortClick: Flow<TrackSortType>, onSearch: Flow<String>, onIndivStatsSelected: Flow<Boolean>) {
+    fun bind(warList: List<MKWar>, onTrackClick: Flow<Int>, onSortClick: Flow<TrackSortType>, onSearch: Flow<String>, onIndivStatsSelected: Flow<Boolean>) {
         val onlyIndiv = preferencesRepository.currentTeam?.mid == null
-         firebaseRepository.getNewWars()
+        flowOf(warList)
+            .onEach { delay(100) }
             .filter {
-                (!onlyIndiv && it.mapNotNull { war -> war.teamHost}.contains(preferencesRepository.currentTeam?.mid)
-                        || it.map {war -> war.teamOpponent}.contains(preferencesRepository.currentTeam?.mid))
+                (!onlyIndiv && it.mapNotNull { war -> war.war?.teamHost}.contains(preferencesRepository.currentTeam?.mid)
+                        || it.map {war -> war.war?.teamOpponent}.contains(preferencesRepository.currentTeam?.mid))
                         || onlyIndiv
             }
-            .mapNotNull { list -> list.map { MKWar(it) }.filter { it.isOver && (!onlyIndiv || (onlyIndiv && it.hasPlayer(authenticationRepository.user?.uid)))} }
+            .mapNotNull { list -> list.filter { it.isOver && (!onlyIndiv || (onlyIndiv && it.hasPlayer(authenticationRepository.user?.uid)))} }
             .map { list ->
                 val allTracksPlayed = mutableListOf<NewWarTrack>()
                 list.mapNotNull { it.war?.warTracks }.forEach {

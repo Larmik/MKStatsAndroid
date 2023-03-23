@@ -19,7 +19,7 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class TeamStatsViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
+class TeamStatsViewModel @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
 
     private val _sharedTrackClick = MutableSharedFlow<Pair<String?, Int>>()
     private val _sharedWarClick = MutableSharedFlow<MKWar>()
@@ -66,9 +66,9 @@ class TeamStatsViewModel @Inject constructor(private val firebaseRepository: Fir
                 mostPlayedMap = stats.mostPlayedMap
                 highestVicory = stats.warStats.highestVictory
                 loudestDefeat = stats.warStats.loudestDefeat
-                mostPlayedTeam = listOfNotNull(stats.mostPlayedTeam?.team).withFullTeamStats(firebaseRepository, databaseRepository).first().singleOrNull()
-                mostDefeatedTeam = listOfNotNull(stats.mostDefeatedTeam?.team).withFullTeamStats(firebaseRepository,databaseRepository).first().singleOrNull()
-                lessDefeatedTeam = listOfNotNull(stats.lessDefeatedTeam?.team).withFullTeamStats(firebaseRepository, databaseRepository).first().singleOrNull()
+                mostPlayedTeam = listOfNotNull(stats.mostPlayedTeam?.team).withFullTeamStats(list, databaseRepository).first().singleOrNull()
+                mostDefeatedTeam = listOfNotNull(stats.mostDefeatedTeam?.team).withFullTeamStats(list,databaseRepository).first().singleOrNull()
+                lessDefeatedTeam = listOfNotNull(stats.lessDefeatedTeam?.team).withFullTeamStats(list, databaseRepository).first().singleOrNull()
                 _sharedStats.emit(stats)
             }.launchIn(viewModelScope)
 

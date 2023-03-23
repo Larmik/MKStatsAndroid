@@ -27,10 +27,12 @@ class AddWarViewModel @Inject constructor(private val firebaseRepository: Fireba
     private val _sharedStarted = MutableSharedFlow<Unit>()
     private val _sharedTeamSelected = MutableSharedFlow<String?>()
     private val _sharedAlreadyCreated = MutableSharedFlow<Unit>()
+    private val _sharedLoading = MutableSharedFlow<Boolean>()
 
     val sharedStarted = _sharedStarted.asSharedFlow()
     val sharedTeamSelected = _sharedTeamSelected.asSharedFlow()
     val sharedAlreadyCreated = _sharedAlreadyCreated.asSharedFlow()
+    val sharedLoading = _sharedLoading.asSharedFlow()
 
     fun bind(onTeamClick: Flow<Team>, onCreateWar: Flow<Unit>, onUserSelected: Flow<List<User>>, onOfficialCheck: Flow<Boolean>) {
 
@@ -49,6 +51,7 @@ class AddWarViewModel @Inject constructor(private val firebaseRepository: Fireba
         onOfficialCheck.onEach { official = it }.launchIn(viewModelScope)
 
         val createWar = onCreateWar
+            .onEach { _sharedLoading.emit(true) }
             .flatMapLatest { firebaseRepository.getNewWars() }
             .map { it.map { w -> MKWar(w) }.getCurrent(preferencesRepository.currentTeam?.mid) }
             .shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
@@ -79,6 +82,7 @@ class AddWarViewModel @Inject constructor(private val firebaseRepository: Fireba
 
         createWar
             .filter { it != null }
+            .onEach { _sharedLoading.emit(false) }
             .map {  }
             .bind(_sharedAlreadyCreated, viewModelScope)
 

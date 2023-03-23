@@ -46,7 +46,6 @@ interface FirebaseRepositoryInterface{
 
     //Firebase event listeners methods
     fun listenToNewWars(): Flow<List<NewWar>>
-    fun listenToUsers(): Flow<List<User>>
 
     //delete methods
     fun deleteUser(user: User): Flow<Unit>
@@ -142,8 +141,6 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
         awaitClose {  }
     }
 
-
-
     override fun getNewWar(id: String): Flow<NewWar?> = callbackFlow {
         Log.d("FirebaseRepository", "getNewWar")
         database.child("newWars").child(id).get().addOnSuccessListener { snapshot ->
@@ -210,36 +207,14 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
         awaitClose {  }
     }
 
-    override fun listenToUsers(): Flow<List<User>> = callbackFlow {
-        Log.d("FirebaseRepository", "listenUsers")
-        val postListener = object : ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val users: List<User> = dataSnapshot.child("users").children.map { it.value as Map<*, *> }.map {
-                    User(
-                        mid = it["mid"].toString(),
-                        name = it["name"].toString(),
-                        team = it["team"].toString(),
-                        currentWar = it["currentWar"].toString(),
-                        role = it["role"].toString().toInt(),
-                        picture = it["picture"].toString()
-                    )  }
-                if (isActive) offer(users)
-            }
-
-            override fun onCancelled(databaseError: DatabaseError) {
-            }
-        }
-        database.addValueEventListener(postListener)
-        awaitClose {  }
-    }
 
     override fun deleteUser(user: User) = flow {
-        database.child("users").child(user.mid.toString()).removeValue()
+        database.child("users").child(user.mid).removeValue()
         emit(Unit)
     }.flatMapLatest { databaseRepository.deleteUser(user) }
 
     override fun deleteTeam(team: Team)= flow {
-        database.child("teams").child(team.mid.toString()).removeValue()
+        database.child("teams").child(team.mid).removeValue()
         emit(Unit)
     }.flatMapLatest { databaseRepository.deleteTeam(team) }
 

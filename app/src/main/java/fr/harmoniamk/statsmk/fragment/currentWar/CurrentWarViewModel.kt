@@ -36,6 +36,7 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
     private val _sharedWarPlayers = MutableSharedFlow<List<CurrentPlayerModel>>()
     private val _sharedSubPlayer = MutableSharedFlow<Unit>()
     private val _sharedShockCount = MutableSharedFlow<String>()
+    private val _sharedLoading = MutableSharedFlow<Boolean>()
 
     val sharedButtonVisible = _sharedButtonVisible.asSharedFlow()
     val sharedCurrentWar = _sharedCurrentWar.asSharedFlow()
@@ -50,10 +51,12 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
     val sharedWarPlayers = _sharedWarPlayers.asSharedFlow()
     val sharedSubPlayer = _sharedSubPlayer.asSharedFlow()
     val sharedShockCount = _sharedShockCount.asSharedFlow()
+    val sharedLoading = _sharedLoading.asSharedFlow()
 
 
     fun bind(onBack: Flow<Unit>, onNextTrack: Flow<Unit>, onTrackClick: Flow<Int>, onPopup: Flow<Unit>, onPenalty: Flow<Unit>, onSub: Flow<Unit>, onSubDismiss: Flow<Unit>) {
            val warFlow =  flowOf(firebaseRepository.getNewWars(), firebaseRepository.listenToNewWars())
+            .onEach { _sharedLoading.emit(true) }
             .flattenMerge()
             .mapNotNull { it.map { w -> MKWar(w) }.getCurrent(preferencesRepository.currentTeam?.mid) }
             .flatMapLatest { listOf(it).withName(databaseRepository) }
@@ -74,6 +77,7 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
             }
             .mapNotNull { it.war?.penalties }
             .flatMapLatest { it.withTeamName(databaseRepository) }
+                .onEach { _sharedLoading.emit(false) }
             .bind(_sharedPenalties, viewModelScope)
 
         val trackPlayersFlow = warFlow
@@ -138,6 +142,10 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
 
     fun bindPopup(onDelete: Flow<Unit>, onDismiss: Flow<Unit>) {
         onDelete
+            .onEach {
+                _sharedPopupShowing.emit(false)
+                _sharedLoading.emit(true)
+            }
             .flatMapLatest { databaseRepository.getUsers() }
             .map { list -> list.filter { user -> user.currentWar == preferencesRepository.currentWar?.mid } }
             .onEach { list ->
