@@ -55,9 +55,8 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
 
 
     fun bind(onBack: Flow<Unit>, onNextTrack: Flow<Unit>, onTrackClick: Flow<Int>, onPopup: Flow<Unit>, onPenalty: Flow<Unit>, onSub: Flow<Unit>, onSubDismiss: Flow<Unit>) {
-           val warFlow =  flowOf(firebaseRepository.getNewWars(), firebaseRepository.listenToNewWars())
+           val warFlow =  firebaseRepository.getNewWars()
             .onEach { _sharedLoading.emit(true) }
-            .flattenMerge()
             .mapNotNull { it.map { w -> MKWar(w) }.getCurrent(preferencesRepository.currentTeam?.mid) }
             .flatMapLatest { listOf(it).withName(databaseRepository) }
             .mapNotNull { it.singleOrNull() }
@@ -155,6 +154,10 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
                 }
             }.mapNotNull { preferencesRepository.currentWar?.mid }
             .flatMapLatest { firebaseRepository.deleteNewWar(it) }
+            .onEach {
+                val war = databaseRepository.warList.last()
+                databaseRepository.warList.remove(war)
+            }
             .bind(_sharedBackToWars, viewModelScope)
 
         onDismiss

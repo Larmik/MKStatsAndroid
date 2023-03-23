@@ -16,6 +16,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import fr.harmoniamk.statsmk.fragment.home.HomeFragmentDirections
 import fr.harmoniamk.statsmk.fragment.settings.manageTeams.AddTeamFragment
+import fr.harmoniamk.statsmk.model.local.MKWar
 import kotlinx.coroutines.flow.*
 
 @FlowPreview
@@ -25,6 +26,8 @@ class WarFragment : Fragment(R.layout.fragment_war) {
 
     private val binding: FragmentWarBinding by viewBinding()
     private val viewModel: WarViewModel by viewModels()
+
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -42,13 +45,11 @@ class WarFragment : Fragment(R.layout.fragment_war) {
             viewModel.sharedHasTeam
                 .onEach {
                     binding.noTeamLayout.isVisible = !it
-                    binding.progress.isVisible = false
                     binding.mainWarLayout.isVisible = it
                 }.launchIn(lifecycleScope)
 
             viewModel.sharedTeamName
                 .onEach {
-                    binding.progress.isVisible = false
                     binding.currentTeamTv.text = it
                     binding.createWarLayout.isVisible = true
                 }

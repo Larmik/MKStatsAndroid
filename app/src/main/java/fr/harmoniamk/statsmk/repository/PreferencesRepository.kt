@@ -10,6 +10,7 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
@@ -17,6 +18,7 @@ import fr.harmoniamk.statsmk.model.firebase.Team
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
+import javax.inject.Singleton
 
 @ExperimentalCoroutinesApi
 @FlowPreview
@@ -33,8 +35,9 @@ interface PreferencesRepositoryInterface {
 @FlowPreview
 @ExperimentalCoroutinesApi
 @Module
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 interface PreferencesRepositoryModule {
+    @Singleton
     @Binds
     fun bindRepository(impl: PreferencesRepository): PreferencesRepositoryInterface
 }

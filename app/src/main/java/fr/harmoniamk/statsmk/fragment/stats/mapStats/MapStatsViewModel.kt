@@ -14,6 +14,7 @@ import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
@@ -60,12 +61,10 @@ class MapStatsViewModel @Inject constructor(private val preferencesRepository: P
               }
              .map {
                 val finalList = mutableListOf<MapDetails>()
-                 it.withName(databaseRepository).firstOrNull()?.let { list ->
-                     list.forEach { mkWar ->
-                         mkWar.warTracks?.filter { track -> track.index == trackIndex }?.forEach { track ->
-                             val position = track.track?.warPositions?.singleOrNull { it.playerId == userId }?.position?.takeIf { userId != null }
-                             finalList.add(MapDetails(mkWar, MKWarTrack(track.track), position))
-                         }
+                 it.forEach { mkWar ->
+                     mkWar.warTracks?.filter { track -> track.index == trackIndex }?.forEach { track ->
+                         val position = track.track?.warPositions?.singleOrNull { it.playerId == userId }?.position?.takeIf { userId != null }
+                         finalList.add(MapDetails(mkWar, MKWarTrack(track.track), position))
                      }
                  }
                 finalList
@@ -78,6 +77,7 @@ class MapStatsViewModel @Inject constructor(private val preferencesRepository: P
                     .filter { teamId == null || it.war.hasTeam(teamId) }
 
                 )
+                delay(50)
                 _sharedStats.emit(MapStats(mapDetailsList, onlyIndiv && userId != null, userId))
             }.launchIn(viewModelScope)
 

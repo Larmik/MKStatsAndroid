@@ -56,10 +56,10 @@ class WarDetailsViewModel @Inject constructor(private val firebaseRepository: Fi
                 .bind(_sharedDeleteWarVisible, viewModelScope)
 
             flowOf(it.war)
-                .onEach {
-                    _sharedPlayerHost.emit("Créée par ${databaseRepository.getUser(it?.playerHostId).firstOrNull()?.name ?: ""}")
-                    _sharedWarName.emit(listOf(MKWar(it)).withName(databaseRepository).firstOrNull()?.singleOrNull()?.name)
-                    it?.penalties?.let { penalty ->
+                .onEach { war ->
+                    _sharedPlayerHost.emit("Créée par ${databaseRepository.getUser(war?.playerHostId).firstOrNull()?.name ?: ""}")
+                    _sharedWarName.emit(it.name)
+                    war?.penalties?.let { penalty ->
                         _sharedPenalties.emit(penalty.withTeamName(databaseRepository).firstOrNull())
                     }
                 }

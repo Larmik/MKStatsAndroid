@@ -69,7 +69,6 @@ class MapStatsFragment : Fragment(R.layout.fragment_map_stats) {
                 onDetailsClick = binding.showDetailsBtn.clicks()
             )
             viewModel.sharedStats.onEach { stats ->
-                binding.progress.isVisible = false
                 binding.emptyLayout.isVisible = stats.list.isEmpty()
                 binding.mainLayout.isVisible = stats.list.isNotEmpty()
                 binding.warPlayed.text = stats.trackPlayed.toString()

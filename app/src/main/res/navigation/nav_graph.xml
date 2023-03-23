@@ -51,8 +51,6 @@
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right"/>
 
-
-
         <action
             android:id="@+id/go_to_current_war"
             app:destination="@id/currentWarFragment"
@@ -68,6 +66,7 @@
             app:exitAnim="@anim/exit_to_left"
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right"/>
+
         <action
             android:id="@+id/to_indiv_stats"
             app:destination="@id/indivStatsFragment"
@@ -81,6 +80,7 @@
                 app:argType="fr.harmoniamk.statsmk.model.local.MKWar[]"/>
 
         </action>
+
         <action
             android:id="@+id/to_team_stats"
             app:destination="@id/teamStatsFragment"
@@ -94,6 +94,7 @@
                 app:argType="fr.harmoniamk.statsmk.model.local.MKWar[]"/>
 
         </action>
+
         <action
             android:id="@+id/to_periodic_stats"
             app:destination="@id/periodicStatsFragment"
@@ -107,6 +108,7 @@
                 app:argType="fr.harmoniamk.statsmk.model.local.MKWar[]"/>
 
         </action>
+
         <action
             android:id="@+id/to_player_ranking"
             app:destination="@id/playerRankingFragment"
@@ -125,6 +127,7 @@
 
 
         </action>
+
         <action
             android:id="@+id/to_opponent_ranking"
             app:destination="@id/opponentRankingFragment"
@@ -143,6 +146,7 @@
 
 
         </action>
+
         <action
             android:id="@+id/to_map_ranking"
             app:destination="@id/mapRankingFragment"
@@ -157,6 +161,7 @@
                 app:argType="fr.harmoniamk.statsmk.model.local.MKWar[]"/>
 
         </action>
+
         <action
             android:id="@+id/to_profile"
             app:destination="@id/profileFragment"
@@ -164,6 +169,7 @@
             app:exitAnim="@anim/exit_to_left"
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right"/>
+
         <action
             android:id="@+id/to_player_list"
             app:destination="@id/playerListFragment"

@@ -58,7 +58,6 @@ class TeamStatsViewModel @Inject constructor(private val preferencesRepository: 
             .filter { it.mapNotNull { war -> war.war?.teamHost}.contains(preferencesRepository.currentTeam?.mid)
                         || it.map {war -> war.war?.teamOpponent}.contains(preferencesRepository.currentTeam?.mid) }
             .mapNotNull { wars -> wars.filter { it.isOver } }
-            .flatMapLatest { it.withName(databaseRepository) }
             .flatMapLatest { it.withFullStats(databaseRepository) }
             .onEach { stats ->
                 bestMap = stats.bestMap
@@ -66,9 +65,15 @@ class TeamStatsViewModel @Inject constructor(private val preferencesRepository: 
                 mostPlayedMap = stats.mostPlayedMap
                 highestVicory = stats.warStats.highestVictory
                 loudestDefeat = stats.warStats.loudestDefeat
-                mostPlayedTeam = listOfNotNull(stats.mostPlayedTeam?.team).withFullTeamStats(list, databaseRepository).first().singleOrNull()
-                mostDefeatedTeam = listOfNotNull(stats.mostDefeatedTeam?.team).withFullTeamStats(list,databaseRepository).first().singleOrNull()
-                lessDefeatedTeam = listOfNotNull(stats.lessDefeatedTeam?.team).withFullTeamStats(list, databaseRepository).first().singleOrNull()
+
+                val teamStats = listOfNotNull(
+                    stats.mostPlayedTeam?.team,
+                    stats.mostDefeatedTeam?.team,
+                    stats.lessDefeatedTeam?.team
+                ).withFullTeamStats(list, databaseRepository).first()
+                mostPlayedTeam = teamStats.getOrNull(0)
+                mostDefeatedTeam = teamStats.getOrNull(1)
+                lessDefeatedTeam = teamStats.getOrNull(2)
                 _sharedStats.emit(stats)
             }.launchIn(viewModelScope)
 

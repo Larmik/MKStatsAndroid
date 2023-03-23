@@ -15,6 +15,7 @@ import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
@@ -30,7 +31,6 @@ class StatsViewModel @Inject constructor(private val preferencesRepository: Pref
     private val _sharedPlayers = MutableSharedFlow<Pair<List<User>, List<MKWar>>>()
     private val _sharedOpponents = MutableSharedFlow<Pair<List<Team>, List<MKWar>>>()
     private val _sharedMap = MutableSharedFlow<List<MKWar>>()
-    private val _sharedLoaded = MutableSharedFlow<Unit>()
 
     val sharedToast = _sharedToast.asSharedFlow()
     val sharedIndiv = _sharedIndiv.asSharedFlow()
@@ -39,7 +39,6 @@ class StatsViewModel @Inject constructor(private val preferencesRepository: Pref
     val sharedMap = _sharedMap.asSharedFlow()
     val sharedPlayers = _sharedPlayers.asSharedFlow()
     val sharedOpponents = _sharedOpponents.asSharedFlow()
-    val sharedLoaded = _sharedLoaded.asSharedFlow()
 
     val warList = mutableListOf<MKWar>()
 
@@ -52,19 +51,11 @@ class StatsViewModel @Inject constructor(private val preferencesRepository: Pref
         val playerClick = onPlayer.shareIn(viewModelScope, SharingStarted.Lazily)
         val opponentClick = onOpponent.shareIn(viewModelScope, SharingStarted.Lazily)
 
-        firebaseRepository.getNewWars()
-            .map { it.map { MKWar(it) } }
-            .flatMapLatest { it.withName(databaseRepository) }
-            .onEach {
-                warList.addAll(it)
-                _sharedLoaded.emit(Unit)
-            }
-            .launchIn(viewModelScope)
 
 
         indivClick
             .map {
-                warList.filter { war -> war.hasPlayer(authenticationRepository.user?.uid)  }
+                databaseRepository.warList.filter { war -> war.hasPlayer(authenticationRepository.user?.uid)  }
             }
             .onEach {
                 when (it.isEmpty()) {
@@ -75,7 +66,7 @@ class StatsViewModel @Inject constructor(private val preferencesRepository: Pref
 
         teamClick
             .filter { preferencesRepository.currentTeam != null }
-            .map { warList.filter { newWar -> newWar.war?.teamHost == preferencesRepository.currentTeam?.mid || newWar.war?.teamOpponent == preferencesRepository.currentTeam?.mid } }
+            .map { databaseRepository.warList.filter { newWar -> newWar.war?.teamHost == preferencesRepository.currentTeam?.mid || newWar.war?.teamOpponent == preferencesRepository.currentTeam?.mid } }
             .onEach {
                 when (it.isEmpty()) {
                     true -> _sharedToast.emit("Votre équipe doit avoir fait au moins une war pour avoir accès à cette fonctionnalité.")
@@ -85,7 +76,7 @@ class StatsViewModel @Inject constructor(private val preferencesRepository: Pref
 
         periodicClick
             .filter { preferencesRepository.currentTeam != null }
-            .map { warList.filter { newWar -> newWar.war?.teamHost == preferencesRepository.currentTeam?.mid || newWar.war?.teamOpponent == preferencesRepository.currentTeam?.mid } }
+            .map { databaseRepository.warList.filter { newWar -> newWar.war?.teamHost == preferencesRepository.currentTeam?.mid || newWar.war?.teamOpponent == preferencesRepository.currentTeam?.mid } }
             .onEach {
                 when (it.isEmpty()) {
                     true -> _sharedToast.emit("Votre équipe doit avoir fait au moins une war pour avoir accès à cette fonctionnalité.")
@@ -97,16 +88,16 @@ class StatsViewModel @Inject constructor(private val preferencesRepository: Pref
             .filter { preferencesRepository.currentTeam != null }
             .flatMapLatest { databaseRepository.getUsers() }
             .map { it.filter { user -> user.team == preferencesRepository.currentTeam?.mid } }
-            .map { Pair(it, warList) }
+            .map { Pair(it, databaseRepository.warList) }
             .bind(_sharedPlayers, viewModelScope)
 
         opponentClick
             .filter { preferencesRepository.currentTeam != null }
             .flatMapLatest { databaseRepository.getTeams() }
-            .map { Pair(it, warList) }
+            .map { Pair(it, databaseRepository.warList) }
             .bind(_sharedOpponents, viewModelScope)
 
-        mapClick.map { warList }.bind(_sharedMap, viewModelScope)
+        mapClick.map { databaseRepository.warList }.bind(_sharedMap, viewModelScope)
 
         merge(teamClick, periodicClick, playerClick, opponentClick)
             .filter { preferencesRepository.currentTeam == null }

@@ -12,6 +12,7 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import fr.harmoniamk.statsmk.model.firebase.AuthUserResponse
 import fr.harmoniamk.statsmk.model.firebase.ResetPasswordResponse
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -20,6 +21,7 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.isActive
 import javax.inject.Inject
+import javax.inject.Singleton
 
 interface AuthenticationRepositoryInterface {
     fun createUser(email: String, password: String): Flow<AuthUserResponse>
@@ -36,9 +38,10 @@ interface AuthenticationRepositoryInterface {
 @FlowPreview
 @ExperimentalCoroutinesApi
 @Module
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 interface AuthenticationRepositoryModule {
     @Binds
+    @Singleton
     fun bindRepository(impl: AuthenticationRepository): AuthenticationRepositoryInterface
 }
 
@@ -55,7 +58,6 @@ class AuthenticationRepository @Inject constructor(private val databaseRepositor
                 if (isActive && task.isSuccessful) offer(AuthUserResponse.Success(auth.currentUser))
             }
             .addOnFailureListener {
-                Log.d("MKDebug", "createUser: ${it.message}")
                 offer(AuthUserResponse.Error(it.localizedMessage ?: it.message.toString()))
             }
         awaitClose {  }
@@ -67,7 +69,6 @@ class AuthenticationRepository @Inject constructor(private val databaseRepositor
                 if (isActive && task.isSuccessful) offer(AuthUserResponse.Success(auth.currentUser))
             }
             .addOnFailureListener {
-                Log.d("MKDebug", "createUser: ${it.message}")
                 offer(AuthUserResponse.Error(it.localizedMessage ?: it.message.toString()))
             }
 

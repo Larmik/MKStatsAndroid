@@ -9,48 +9,16 @@ import fr.harmoniamk.statsmk.model.local.*
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import kotlinx.coroutines.flow.*
 
-fun List<MKWar>.getLasts(teamId: String?) = this.filter { war -> war.isOver && war.war?.teamHost == teamId }.sortedByDescending{ it.war?.createdDate?.formatToDate() }.safeSubList(0, 5)
+fun <T> List<T>.safeSubList(from: Int, to: Int): List<T> = when {
+    this.size < to -> this
+    else -> this.subList(from, to)
+}
+
+fun Any?.toMapList(): List<Map<*,*>>? = this as? List<Map<*,*>>
+
 fun List<MKWar>.getCurrent(teamId: String?) = this.singleOrNull { war -> !war.isOver && war.war?.teamHost == teamId }
-fun List<MKWar?>.withName(databaseRepository: DatabaseRepositoryInterface) = flow {
-    val temp = mutableListOf<MKWar>()
-    this@withName.forEach { war ->
-        war?.let {
-            val hostName = databaseRepository.getTeam(it.war?.teamHost).firstOrNull()?.shortName
-            val opponentName = databaseRepository.getTeam(it.war?.teamOpponent).firstOrNull()?.shortName
-            temp.add(it.apply { this.name = "$hostName - $opponentName" })
-        }
-    }
-    emit(temp)
-}
-
-
-fun List<User>.withFullStats(wars: List<MKWar>, databaseRepository: DatabaseRepositoryInterface) = flow {
-    val temp = mutableListOf<PlayerRankingItemViewModel>()
-    this@withFullStats.forEach { user ->
-        val stats = wars.withFullStats(databaseRepository, userId = user.mid, isIndiv = true).first()
-        temp.add(PlayerRankingItemViewModel(user, stats))
-    }
-    emit(temp)
-}
-
-
-fun List<Team>.withFullTeamStats(wars: List<MKWar>?, databaseRepository: DatabaseRepositoryInterface, userId: String? = null, weekOnly: Boolean = false, monthOnly: Boolean = false, isIndiv: Boolean = false) = flow {
-    val temp = mutableListOf<OpponentRankingItemViewModel>()
-    this@withFullTeamStats.forEach { team ->
-        wars
-            ?.filter { !weekOnly || (weekOnly && it.isThisWeek) }
-            ?.filter { !monthOnly || (monthOnly && it.isThisMonth) }
-            ?.withFullStats(databaseRepository, teamId = team.mid, userId = userId, isIndiv = isIndiv)?.first()
-            ?.let {
-                if (it.warStats.list.isNotEmpty())
-                    temp.add(OpponentRankingItemViewModel(team, it, userId, isIndiv))
-            }
-    }
-    emit(temp)
-}
-
 fun List<MKWar>.withFullStats(databaseRepository: DatabaseRepositoryInterface, userId: String? = null, teamId: String? = null, isIndiv: Boolean = false) = flow {
-
+    Log.d("MKDebugOnly", "ListExtension withFullStats: userId = $userId, teamId = $teamId, isIndiv= $isIndiv")
     val maps = mutableListOf<TrackStats>()
     val warScores = mutableListOf<WarScore>()
     val averageForMaps = mutableListOf<TrackStats>()
@@ -58,7 +26,7 @@ fun List<MKWar>.withFullStats(databaseRepository: DatabaseRepositoryInterface, u
         isIndiv && userId != null && teamId != null -> this@withFullStats.filter { it.hasPlayer(userId) && it.hasTeam(teamId) }
         isIndiv && userId != null -> this@withFullStats.filter { it.hasPlayer(userId) }
         teamId != null -> this@withFullStats.filter { it.hasTeam(teamId) }
-        else -> this@withFullStats.withName(databaseRepository).first()
+        else -> this@withFullStats
     }
 
     val mostPlayedTeamId = wars
@@ -117,7 +85,6 @@ fun List<MKWar>.withFullStats(databaseRepository: DatabaseRepositoryInterface, u
                 playerScore = (entry.value.map { it.playerScore }.sum() / entry.value.map { it.playerScore }.count()),
                 totalPlayed = entry.value.size
             )
-            Log.d("MKDebug", "averageFor map ${stats.map?.name}, score ${stats.teamScore}")
             averageForMaps.add(stats)
         }
 
@@ -142,6 +109,41 @@ fun List<MKWar>.withFullStats(databaseRepository: DatabaseRepositoryInterface, u
     )
     emit(newStats)
 }
+fun List<MKWar?>.withName(databaseRepository: DatabaseRepositoryInterface) = flow {
+    val temp = mutableListOf<MKWar>()
+    Log.d("MKDebugOnly", "ListExtension withName: ")
+    this@withName.forEach { war ->
+        war?.let {
+            val hostName = databaseRepository.getTeam(it.war?.teamHost).firstOrNull()?.shortName
+            val opponentName = databaseRepository.getTeam(it.war?.teamOpponent).firstOrNull()?.shortName
+            temp.add(it.apply { this.name = "$hostName - $opponentName" })
+        }
+    }
+    emit(temp)
+}
+fun NewWar?.withName(databaseRepository: DatabaseRepositoryInterface) = flow {
+    this@withName?.let {
+        val hostName = databaseRepository.getTeam(it?.teamHost).firstOrNull()?.shortName
+        val opponentName = databaseRepository.getTeam(it?.teamOpponent).firstOrNull()?.shortName
+        emit(MKWar(it).apply { this.name = "$hostName - $opponentName" })
+    }
+}
+
+fun List<Team>.withFullTeamStats(wars: List<MKWar>?, databaseRepository: DatabaseRepositoryInterface, userId: String? = null, weekOnly: Boolean = false, monthOnly: Boolean = false, isIndiv: Boolean = false) = flow {
+    val temp = mutableListOf<OpponentRankingItemViewModel>()
+    Log.d("MKDebugOnly", "ListExtension withFullTeamStats:  wars = ${wars?.map { it.name }}, weekOnly = $weekOnly, monthOnly = $monthOnly, isIndiv= $isIndiv")
+    this@withFullTeamStats.forEach { team ->
+        wars
+            ?.filter { !weekOnly || (weekOnly && it.isThisWeek) }
+            ?.filter { !monthOnly || (monthOnly && it.isThisMonth) }
+            ?.withFullStats(databaseRepository, teamId = team.mid, userId = userId, isIndiv = isIndiv)?.first()
+            ?.let {
+                if (it.warStats.list.isNotEmpty())
+                    temp.add(OpponentRankingItemViewModel(team, it, userId, isIndiv))
+            }
+    }
+    emit(temp)
+}
 
 fun List<Penalty>.withTeamName(databaseRepository: DatabaseRepositoryInterface) = flow {
     val temp = mutableListOf<Penalty>()
@@ -157,13 +159,6 @@ fun List<Int?>?.sum(): Int {
     this?.filterNotNull()?.forEach { sum += it }
     return sum
 }
-
-fun <T> List<T>.safeSubList(from: Int, to: Int): List<T> = when {
-    this.size < to -> this
-    else -> this.subList(from, to)
-}
-
-fun Any?.toMapList(): List<Map<*,*>>? = this as? List<Map<*,*>>
 
 fun List<Map<*,*>>?.parseTracks() : List<NewWarTrack>? =
     this?.map { track ->
@@ -188,6 +183,7 @@ fun List<Map<*,*>>?.parseTracks() : List<NewWarTrack>? =
         )
 
 }
+
 fun List<Map<*,*>>?.parsePenalties() : List<Penalty>? =
     this?.map { item ->
         Penalty(

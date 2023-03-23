@@ -6,6 +6,7 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.fragment.home.settings.SettingsFragment
 import fr.harmoniamk.statsmk.fragment.home.stats.StatsFragment
 import fr.harmoniamk.statsmk.fragment.home.war.WarFragment
+import fr.harmoniamk.statsmk.model.local.MKWar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 

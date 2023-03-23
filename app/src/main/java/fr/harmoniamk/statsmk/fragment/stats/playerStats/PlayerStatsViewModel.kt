@@ -59,9 +59,14 @@ class PlayerStatsViewModel @Inject constructor(private val firebaseRepository: F
             .onEach { itemVM ->
                 delay(500)
                 item = itemVM
-                mostPlayedTeam = listOfNotNull(itemVM.stats.mostPlayedTeam?.team).withFullTeamStats(warList, databaseRepository, itemVM.user.mid, isIndiv = true).first().singleOrNull()
-                mostDefeatedTeam = listOfNotNull(itemVM.stats.mostDefeatedTeam?.team).withFullTeamStats(warList, databaseRepository, itemVM.user.mid, isIndiv = true).first().singleOrNull()
-                lessDefeatedTeam = listOfNotNull(itemVM.stats.lessDefeatedTeam?.team).withFullTeamStats(warList, databaseRepository, itemVM.user.mid, isIndiv = true).first().singleOrNull()
+                val teamStats = listOfNotNull(
+                    itemVM.stats.mostPlayedTeam?.team,
+                    itemVM.stats.mostDefeatedTeam?.team,
+                    itemVM.stats.lessDefeatedTeam?.team
+                ).withFullTeamStats(warList, databaseRepository, itemVM.user.mid, isIndiv = true).first()
+                mostPlayedTeam = teamStats.getOrNull(0)
+                mostDefeatedTeam = teamStats.getOrNull(1)
+                lessDefeatedTeam = teamStats.getOrNull(2)
                 _sharedStats.emit(itemVM)
             }.launchIn(viewModelScope)
 

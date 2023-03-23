@@ -38,10 +38,14 @@ class PlayerRankingViewModel @Inject constructor(
         flowOf(true).bind(_sharedLoading, viewModelScope)
         flowOf(list)
             .map { it.sortedBy { it.name } }
-            .flatMapLatest { it.withFullStats(warList, databaseRepository) }
             .onEach {
+                val temp = mutableListOf<PlayerRankingItemViewModel>()
+                it.forEach { user ->
+                    val stats = warList.withFullStats(databaseRepository, userId = user.mid, isIndiv = true).first()
+                    temp.add(PlayerRankingItemViewModel(user, stats))
+                }
                 itemsVM.clear()
-                itemsVM.addAll(it)
+                itemsVM.addAll(temp)
                 when (_sharedSortTypeSelected.value) {
                     PlayerSortType.NAME -> itemsVM.sortBy { it.user.name }
                     PlayerSortType.WINRATE -> itemsVM.sortByDescending { (it.stats.warStats.warsWon*100)/it.stats.warStats.warsPlayed}

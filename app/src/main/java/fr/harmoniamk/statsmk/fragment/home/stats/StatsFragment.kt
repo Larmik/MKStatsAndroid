@@ -14,6 +14,7 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentStatsBinding
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.fragment.home.HomeFragmentDirections
+import fr.harmoniamk.statsmk.model.local.MKWar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.filter
@@ -23,7 +24,7 @@ import kotlinx.coroutines.flow.onEach
 @FlowPreview
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
-class StatsFragment : Fragment(R.layout.fragment_stats) {
+class StatsFragment() : Fragment(R.layout.fragment_stats) {
 
     private val binding: FragmentStatsBinding by viewBinding()
     private val viewModel: StatsViewModel by viewModels()
@@ -58,10 +59,6 @@ class StatsFragment : Fragment(R.layout.fragment_stats) {
             .filter { findNavController().currentDestination?.id == R.id.homeFragment }
             .onEach { findNavController().navigate(HomeFragmentDirections.toOpponentRanking(it.first.toTypedArray(), it.second.toTypedArray())) }
             .launchIn(lifecycleScope)
-        viewModel.sharedLoaded
-            .onEach { binding.progress.isVisible = false
-            binding.logoutLayout.isVisible = true
-            }.launchIn(lifecycleScope)
     }
 
 }

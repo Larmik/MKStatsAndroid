@@ -4,10 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.enums.UserRole
-import fr.harmoniamk.statsmk.extension.bind
-import fr.harmoniamk.statsmk.extension.getCurrent
-import fr.harmoniamk.statsmk.extension.getLasts
-import fr.harmoniamk.statsmk.extension.withName
+import fr.harmoniamk.statsmk.extension.*
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
@@ -43,15 +40,20 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
     val sharedGoToWar = _sharedGoToWar.asSharedFlow()
     val sharedButtonVisible = _sharedButtonVisible.asSharedFlow()
 
-    private var war: MKWar? = null
-
-
     fun bind(onCreateWar: Flow<Unit>, onCurrentWarClick: Flow<Unit>, onWarClick: Flow<MKWar>, onCreateTeam: Flow<Unit>) {
         refresh()
         onCreateTeam.onEach { _sharedCreateTeamDialog.emit(true) }.launchIn(viewModelScope)
         onWarClick.bind(_sharedGoToWar, viewModelScope)
         onCreateWar.bind(_sharedCreateWar, viewModelScope)
-        onCurrentWarClick.mapNotNull { war }.bind(_sharedCurrentWarClick, viewModelScope)
+        onCurrentWarClick.mapNotNull { databaseRepository.warList.getCurrent(preferencesRepository.currentTeam?.mid) }.bind(_sharedCurrentWarClick, viewModelScope)
+        firebaseRepository.listenToNewWars()
+            .map { it.map { MKWar(it) } }
+            .flatMapLatest { it.withName(databaseRepository) }
+            .onEach {
+                databaseRepository.warList.clear()
+                databaseRepository.warList.addAll(it)
+                refresh()
+            }.launchIn(viewModelScope)
     }
 
     fun bindAddTeamDialog(onTeamAdded: Flow<Unit>) {
@@ -62,38 +64,22 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
             }.launchIn(viewModelScope)
     }
 
-    private fun refresh() {
+    fun refresh() {
         authenticationRepository.userRole
-            .mapNotNull { it >= UserRole.ADMIN.ordinal }
-            .bind(_sharedButtonVisible, viewModelScope)
+            .onEach {
+                preferencesRepository.currentTeam?.name?.let { _sharedTeamName.emit(it) }
+                _sharedButtonVisible.emit(it >= UserRole.ADMIN.ordinal)
+                _sharedHasTeam.emit(preferencesRepository.currentTeam?.mid != "-1")
+                _sharedCurrentWar.emit(databaseRepository.warList.getCurrent(preferencesRepository.currentTeam?.mid))
+                _sharedLastWars.emit(databaseRepository.warList.filter { war -> war.isOver && war.war?.teamHost == preferencesRepository.currentTeam?.mid }.sortedByDescending{ it.war?.createdDate?.formatToDate() }.safeSubList(0, 5))
 
-        val warsFlow = flowOf(firebaseRepository.getNewWars(), firebaseRepository.listenToNewWars())
-            .flattenMerge()
-            .map { it.map { MKWar(it) } }
-            .flatMapLatest { it.withName(databaseRepository) }
-            .shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
+            }.launchIn(viewModelScope)
 
-        warsFlow
-            .map { war = it.getCurrent(preferencesRepository.currentTeam?.mid); war}
-            .flatMapLatest { listOf(it).withName(databaseRepository) }
-            .onEach { _sharedCurrentWar.emit(it.singleOrNull()) }
-            .launchIn(viewModelScope)
 
-        warsFlow
-            .map { it.getLasts(preferencesRepository.currentTeam?.mid) }
-            .bind(_sharedLastWars, viewModelScope)
 
-        warsFlow
-            .mapNotNull { preferencesRepository.currentTeam?.name }
-            .bind(_sharedTeamName, viewModelScope)
 
-        warsFlow
-            .flatMapLatest { databaseRepository.getUser(authenticationRepository.user?.uid) }
 
-            .map{
-                it?.team != "-1"
-            }
-            .bind(_sharedHasTeam, viewModelScope)
+
     }
 
 }

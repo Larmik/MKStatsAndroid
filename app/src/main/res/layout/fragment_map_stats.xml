@@ -41,15 +41,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <ProgressBar
-                android:id="@+id/progress"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_centerInParent="true"
-                android:progressTint="?android:colorAccent"
-                tools:targetApi="n_mr1"
-                android:indeterminate="true"/>
-
             <TextView
                 android:id="@+id/empty_layout"
                 android:layout_width="match_parent"

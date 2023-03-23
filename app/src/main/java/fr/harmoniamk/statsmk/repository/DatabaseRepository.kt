@@ -4,15 +4,20 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.components.SingletonComponent
 import fr.harmoniamk.statsmk.datasource.TeamLocalDataSourceInterface
 import fr.harmoniamk.statsmk.datasource.UserLocalDataSourceInterface
 import fr.harmoniamk.statsmk.model.firebase.*
+import fr.harmoniamk.statsmk.model.local.MKWar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
+import javax.inject.Singleton
 
 interface DatabaseRepositoryInterface {
+    val warList: MutableList<MKWar>
+
     fun getUsers(): Flow<List<User>>
     fun getTeams(): Flow<List<Team>>
 
@@ -32,15 +37,18 @@ interface DatabaseRepositoryInterface {
 @FlowPreview
 @ExperimentalCoroutinesApi
 @Module
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 interface DatabaseRepositoryModule {
     @Binds
+    @Singleton
     fun bindRepository(impl: DatabaseRepository): DatabaseRepositoryInterface
 }
 
 @FlowPreview
 @ExperimentalCoroutinesApi
 class DatabaseRepository @Inject constructor(private val userDataSource: UserLocalDataSourceInterface, private val teamDataSource: TeamLocalDataSourceInterface) : DatabaseRepositoryInterface {
+
+    override val warList = mutableListOf<MKWar>()
 
     override fun getUsers(): Flow<List<User>> = userDataSource.getAll()
 

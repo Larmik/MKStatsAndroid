@@ -48,9 +48,8 @@ class OpponentRankingViewModel @Inject constructor(
 
 
     fun bind(list: List<Team>, warList: List<MKWar>, onTeamClick: Flow<OpponentRankingItemViewModel>, onSortClick: Flow<PlayerSortType>, onSearch: Flow<String>,  onIndivStatsSelected: Flow<Boolean>) {
-        flowOf(warList)
-            .flatMapLatest { it.withName(databaseRepository) }
-            .mapNotNull { list }
+        flowOf(list)
+            .filterNotNull()
             .map { it.sortedBy { it.name }.filterNot { it.mid == preferencesRepository.currentTeam?.mid } }
             .flatMapLatest { it.withFullTeamStats(warList, databaseRepository, authenticationRepository.user?.uid, isIndiv = _sharedIndivStatsEnabled.value) }
             .onEach {

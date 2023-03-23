@@ -4,7 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.enums.WelcomeScreen
+import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.firebase.AuthUserResponse
+import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
@@ -27,15 +29,9 @@ class SplashScreenViewModel @Inject constructor(private val preferencesRepositor
     fun bind() {
 
         firebaseRepository.getUsers()
-            .flatMapLatest {
-                databaseRepository.writeUsers(it)
-            }
-            .flatMapLatest {
-                firebaseRepository.getTeams()
-            }
-            .flatMapLatest {
-                databaseRepository.writeTeams(it)
-            }
+            .flatMapLatest { databaseRepository.writeUsers(it) }
+            .flatMapLatest { firebaseRepository.getTeams() }
+            .flatMapLatest { databaseRepository.writeTeams(it) }
             .onEach {
                 flowOf(preferencesRepository.authEmail)
                     .filterNotNull()
@@ -51,8 +47,16 @@ class SplashScreenViewModel @Inject constructor(private val preferencesRepositor
                         it?.team?.takeIf { it != "-1" }?.let { team ->
                             preferencesRepository.currentTeam = databaseRepository.getTeam(team).firstOrNull()
                         }
+                    }
+                    .flatMapLatest { firebaseRepository.getNewWars() }
+                    .map { list -> list.map { MKWar(it) } }
+                    .flatMapLatest { it.withName(databaseRepository) }
+                    .onEach {
+                        databaseRepository.warList.clear()
+                        databaseRepository.warList.addAll(it)
                         _sharedWelcomeScreen.emit(WelcomeScreen.HOME)
-                    }.launchIn(viewModelScope)
+                    }
+                    .launchIn(viewModelScope)
 
                 flowOf(preferencesRepository.firstLaunch)
                     .filter { it }

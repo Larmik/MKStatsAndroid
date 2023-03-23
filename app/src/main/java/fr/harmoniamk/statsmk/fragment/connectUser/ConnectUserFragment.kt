@@ -3,6 +3,7 @@ package fr.harmoniamk.statsmk.fragment.connectUser
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -64,6 +65,12 @@ class ConnectUserFragment: Fragment(R.layout.fragment_connect_user) {
             .map { ResetPasswordFragment() }
             .onEach { it.show(childFragmentManager, null) }
             .launchIn(lifecycleScope)
+
+        viewModel.sharedLoading
+            .onEach {
+                binding.progress.isVisible = it
+                binding.mainLayout.isVisible = !it
+            }.launchIn(lifecycleScope)
     }
 
 }

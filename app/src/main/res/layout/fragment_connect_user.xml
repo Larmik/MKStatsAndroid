@@ -19,59 +19,75 @@
         android:gravity="center"
         android:text="Connexion"/>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
         android:layout_weight="1"
-        android:gravity="center"
-        android:orientation="vertical">
-
-
-
-        <com.google.android.material.textfield.TextInputLayout
+        android:layout_height="0dp">
+        <ProgressBar
+            android:id="@+id/progress"
             android:layout_width="match_parent"
-            android:layout_marginHorizontal="10dp"
-            android:layout_marginVertical="5dp"
-            android:backgroundTint="@color/white_alphaed"
-            android:background="@drawable/rounded_bg"
-            android:textColorHint="@color/harmonia_dark"
-            app:hintTextColor="@color/harmonia_dark"
-            android:layout_height="70dp">
+            android:layout_height="50dp"
+            android:progressTint="?android:colorAccent"
+            android:indeterminate="true"/>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/email_et"
-                android:background="@color/white"
-                android:textColor="@color/harmonia_dark"
-                android:inputType="textEmailAddress"
-                android:textCursorDrawable="@null"
-                android:hint="Entrez votre adresse email:" />
-
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_marginHorizontal="10dp"
-            app:hintTextColor="@color/harmonia_dark"
-            android:backgroundTint="@color/white_alphaed"
-            android:textColorHint="@color/harmonia_dark"
-            android:background="@drawable/rounded_bg"
-            android:layout_height="70dp">
+            android:layout_height="wrap_content"
+            android:id="@+id/main_layout"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:orientation="vertical">
 
-            <com.google.android.material.textfield.TextInputEditText
+
+
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:textCursorDrawable="@null"
-                android:background="@color/white"
-                android:id="@+id/password_et"
-                android:textColor="@color/harmonia_dark"
-                android:inputType="textPassword"
-                android:hint="Entrez votre mot de passe:" />
+                android:layout_marginHorizontal="10dp"
+                android:layout_marginVertical="5dp"
+                android:backgroundTint="@color/white_alphaed"
+                android:background="@drawable/rounded_bg"
+                android:textColorHint="@color/harmonia_dark"
+                app:hintTextColor="@color/harmonia_dark"
+                android:layout_height="70dp">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/email_et"
+                    android:background="@color/white"
+                    android:textColor="@color/harmonia_dark"
+                    android:inputType="textEmailAddress"
+                    android:textCursorDrawable="@null"
+                    android:hint="Entrez votre adresse email:" />
 
-    </LinearLayout>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_marginHorizontal="10dp"
+                app:hintTextColor="@color/harmonia_dark"
+                android:backgroundTint="@color/white_alphaed"
+                android:textColorHint="@color/harmonia_dark"
+                android:background="@drawable/rounded_bg"
+                android:layout_height="70dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textCursorDrawable="@null"
+                    android:background="@color/white"
+                    android:id="@+id/password_et"
+                    android:textColor="@color/harmonia_dark"
+                    android:inputType="textPassword"
+                    android:hint="Entrez votre mot de passe:" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
+
+
+    </RelativeLayout>
+
 
 
     <TextView

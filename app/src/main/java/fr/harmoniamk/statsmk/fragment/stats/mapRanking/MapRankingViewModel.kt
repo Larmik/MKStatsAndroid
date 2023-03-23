@@ -74,7 +74,7 @@ class MapRankingViewModel @Inject constructor(private val preferencesRepository:
             .bind(_sharedMaps, viewModelScope)
 
         onTrackClick.onEach {
-            _sharedGoToStats.emit(Pair(authenticationRepository.takeIf {  onlyIndiv || _sharedIndivStatsEnabled.value }?.user?.uid, it))
+            _sharedGoToStats.emit(Pair(authenticationRepository.user?.uid, it))
         }.launchIn(viewModelScope)
         onIndivStatsSelected.onEach { indivEnabled ->
             _sharedIndivStatsEnabled.emit(indivEnabled)

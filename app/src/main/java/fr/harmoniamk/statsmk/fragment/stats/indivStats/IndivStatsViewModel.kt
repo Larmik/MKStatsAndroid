@@ -1,5 +1,6 @@
 package fr.harmoniamk.statsmk.fragment.stats.indivStats
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -61,7 +62,6 @@ class IndivStatsViewModel @Inject constructor(
 
              flowOf(list)
                 .filterNotNull()
-                 .flatMapLatest { it.withName(databaseRepository) }
                  .flatMapLatest { it.withFullStats(databaseRepository, authenticationRepository.user?.uid, isIndiv = true) }
                  .onEach { stats ->
                     bestMap = stats.bestPlayerMap
@@ -71,9 +71,14 @@ class IndivStatsViewModel @Inject constructor(
                     loudestDefeat = stats.warStats.loudestDefeat
                      highestScore = stats.highestScore?.war
                      lowestScore = stats.lowestScore?.war
-                     mostPlayedTeam = listOfNotNull(stats.mostPlayedTeam?.team).withFullTeamStats(list, databaseRepository, authenticationRepository.user?.uid, isIndiv = true).first().singleOrNull()
-                     mostDefeatedTeam = listOfNotNull(stats.mostDefeatedTeam?.team).withFullTeamStats(list, databaseRepository, authenticationRepository.user?.uid, isIndiv = true).first().singleOrNull()
-                     lessDefeatedTeam = listOfNotNull(stats.lessDefeatedTeam?.team).withFullTeamStats(list, databaseRepository, authenticationRepository.user?.uid, isIndiv = true).first().singleOrNull()
+                     val teamStats = listOfNotNull(
+                         stats.mostPlayedTeam?.team,
+                         stats.mostDefeatedTeam?.team,
+                         stats.lessDefeatedTeam?.team
+                     ).withFullTeamStats(list, databaseRepository, authenticationRepository.user?.uid, isIndiv = true).first()
+                     mostPlayedTeam = teamStats.getOrNull(0)
+                     mostDefeatedTeam = teamStats.getOrNull(1)
+                     lessDefeatedTeam = teamStats.getOrNull(2)
                     _sharedStats.emit(stats)
                 }.launchIn(viewModelScope)
 

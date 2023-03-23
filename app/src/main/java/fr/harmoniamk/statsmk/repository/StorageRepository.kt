@@ -7,6 +7,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ApplicationComponent
+import dagger.hilt.components.SingletonComponent
 import fr.harmoniamk.statsmk.model.firebase.PictureResponse
 import fr.harmoniamk.statsmk.model.firebase.UploadPictureResponse
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -16,6 +17,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.isActive
 import javax.inject.Inject
+import javax.inject.Singleton
 
 interface StorageRepositoryInterface {
     fun uploadPicture(userId: String?, image: Uri): Flow<UploadPictureResponse>
@@ -25,9 +27,10 @@ interface StorageRepositoryInterface {
 @FlowPreview
 @ExperimentalCoroutinesApi
 @Module
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 interface StorageRepositoryModule {
     @Binds
+    @Singleton
     fun bindRepository(impl: StorageRepository): StorageRepositoryInterface
 }
 

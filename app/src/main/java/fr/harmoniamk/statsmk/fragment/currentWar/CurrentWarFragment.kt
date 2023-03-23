@@ -62,6 +62,8 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
             .filter { lifecycle.isResumed }
             .onEach {
                 war = it
+                binding.progress.isVisible = false
+                binding.mainLayout.isVisible = true
                 binding.warTitleTv.text = it.name
                 binding.warDateTv.text = it.war?.createdDate
                 binding.currentWarTv.text = it.displayedState
