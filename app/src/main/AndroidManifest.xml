@@ -5,7 +5,7 @@
     <application
         android:allowBackup="false"
         android:fullBackupContent="false"
-        android:icon="@mipmap/hr_logo"
+        android:icon="@mipmap/mk_stats_logo"
         android:label="${appLabel}"
         android:supportsRtl="true"
         android:name=".application.MainApplication"

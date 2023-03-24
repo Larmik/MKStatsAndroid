@@ -69,7 +69,7 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
             .onEach {
                 preferencesRepository.currentTeam?.name?.let { _sharedTeamName.emit(it) }
                 _sharedButtonVisible.emit(it >= UserRole.ADMIN.ordinal)
-                _sharedHasTeam.emit(preferencesRepository.currentTeam?.mid != "-1")
+                _sharedHasTeam.emit(preferencesRepository.currentTeam?.mid != null && preferencesRepository.currentTeam?.mid != "-1")
                 _sharedCurrentWar.emit(databaseRepository.warList.getCurrent(preferencesRepository.currentTeam?.mid))
                 _sharedLastWars.emit(databaseRepository.warList.filter { war -> war.isOver && war.war?.teamHost == preferencesRepository.currentTeam?.mid }.sortedByDescending{ it.war?.createdDate?.formatToDate() }.safeSubList(0, 5))
 

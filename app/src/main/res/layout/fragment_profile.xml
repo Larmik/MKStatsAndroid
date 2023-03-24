@@ -6,177 +6,206 @@
     android:background="@color/harmonia_clear"
     android:layout_height="match_parent">
 
-<LinearLayout
-    android:layout_width="match_parent"
-    android:padding="20dp"
-    android:orientation="vertical"
-    android:gravity="center_horizontal"
-    android:layout_height="wrap_content">
-
-    <ImageView
-        android:id="@+id/profile_pic"
-        android:layout_width="170dp"
-        android:scaleType="fitCenter"
-        android:layout_marginVertical="15dp"
-        android:src="@mipmap/hr_logo"
-        android:background="@drawable/circle_bg"
-        android:layout_height="170dp"/>
-    <TextView
-        android:layout_width="wrap_content"
-        android:textSize="26sp"
-        android:fontFamily="@font/montserrat_bold"
-        android:textColor="@color/harmonia_dark"
-        tools:text="Lari"
-        android:layout_height="wrap_content"
-        android:id="@+id/username"/>
-
-
-    <View
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginVertical="15dp"
-        android:background="@color/white"/>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="start"
-        android:orientation="vertical">
-
-        <LinearLayout
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/role_team_layout"
+            android:layout_marginVertical="10dp"
+            android:fontFamily="@font/montserrat_bold"
+            android:gravity="center"
+            android:text="Profil"
+            android:textColor="@color/harmonia_dark"
+            android:textSize="20sp" />
+
+        <ProgressBar
+            android:id="@+id/progress"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:progressTint="?android:colorAccent"
+            tools:targetApi="n_mr1"
+            android:layout_below="@id/title"
+            android:indeterminate="true"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:padding="20dp"
+            android:orientation="vertical"
+            android:id="@+id/main_layout"
             android:visibility="gone"
-            android:orientation="vertical">
+            android:layout_below="@id/title"
+            android:gravity="center_horizontal"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/profile_pic"
+                android:layout_width="170dp"
+                android:scaleType="fitCenter"
+                android:layout_marginVertical="15dp"
+                android:background="@drawable/circle_bg"
+                android:layout_height="170dp"/>
             <TextView
                 android:layout_width="wrap_content"
-                android:text="Equipe actuelle:"
-                android:layout_marginBottom="5dp"
-                android:fontFamily="@font/montserrat_regular"
-                android:textColor="@color/harmonia_dark"
-                android:layout_height="wrap_content"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:textSize="16sp"
-                tools:text="Harmonia"
+                android:textSize="26sp"
                 android:fontFamily="@font/montserrat_bold"
                 android:textColor="@color/harmonia_dark"
+                tools:text="Lari"
                 android:layout_height="wrap_content"
+                android:id="@+id/username"/>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginVertical="15dp"
+                android:background="@color/white"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/role_team_layout"
+                    android:visibility="gone"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:text="Equipe actuelle:"
+                        android:layout_marginBottom="5dp"
+                        android:fontFamily="@font/montserrat_regular"
+                        android:textColor="@color/harmonia_dark"
+                        android:layout_height="wrap_content"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:textSize="16sp"
+                        tools:text="Harmonia"
+                        android:fontFamily="@font/montserrat_bold"
+                        android:textColor="@color/harmonia_dark"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="15dp"
+                        android:id="@+id/team_tv"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:text="Rôle:"
+                        android:layout_marginBottom="5dp"
+                        android:fontFamily="@font/montserrat_regular"
+                        android:textColor="@color/harmonia_dark"
+                        android:layout_height="wrap_content"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:textSize="16sp"
+                        tools:text="Admin"
+                        android:fontFamily="@font/montserrat_bold"
+                        android:textColor="@color/harmonia_dark"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="15dp"
+                        android:id="@+id/role_tv"/>
+
+
+                </LinearLayout>
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:text="Adresse mail:"
+                    android:layout_marginBottom="5dp"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:textColor="@color/harmonia_dark"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:textSize="16sp"
+                    tools:text="lari@harmoniamk.fr"
+                    android:fontFamily="@font/montserrat_bold"
+                    android:textColor="@color/harmonia_dark"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="15dp"
+                    android:id="@+id/email"/>
+
+            </LinearLayout>
+
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
                 android:layout_marginBottom="15dp"
-                android:id="@+id/team_tv"/>
+                android:background="@color/white"/>
 
             <TextView
-                android:layout_width="wrap_content"
-                android:text="Rôle:"
-                android:layout_marginBottom="5dp"
-                android:fontFamily="@font/montserrat_regular"
-                android:textColor="@color/harmonia_dark"
-                android:layout_height="wrap_content"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:textSize="16sp"
-                tools:text="Admin"
-                android:fontFamily="@font/montserrat_bold"
-                android:textColor="@color/harmonia_dark"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
-                android:id="@+id/role_tv"/>
+                android:textColor="@color/harmonia_dark"
+                android:fontFamily="@font/montserrat_regular"
+                android:textSize="16sp"
+                android:id="@+id/change_name_btn"
+                android:paddingVertical="10dp"
+                android:text="Changer mon pseudo"/>
+
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/harmonia_dark"
+                android:fontFamily="@font/montserrat_regular"
+                android:textSize="16sp"
+                android:id="@+id/change_email_btn"
+                android:paddingVertical="10dp"
+                android:text="Changer mon email"/>
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/harmonia_dark"
+                android:fontFamily="@font/montserrat_regular"
+                android:textSize="16sp"
+                android:id="@+id/change_password_btn"
+                android:paddingVertical="10dp"
+                android:text="Changer mon mot de passe"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/harmonia_dark"
+                android:fontFamily="@font/montserrat_regular"
+                android:textSize="16sp"
+                android:id="@+id/change_picture_btn"
+                android:paddingVertical="10dp"
+                android:text="Changer ma photo de profil"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/harmonia_dark"
+                android:fontFamily="@font/montserrat_regular"
+                android:textSize="16sp"
+                android:id="@+id/leave_team_btn"
+                android:visibility="gone"
+                android:paddingVertical="10dp"
+                android:text="Quitter mon équipe"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/harmonia_dark"
+                android:fontFamily="@font/montserrat_regular"
+                android:textSize="16sp"
+                android:id="@+id/disconnect_btn"
+                android:paddingVertical="10dp"
+                android:text="Se déconnecter"/>
 
 
         </LinearLayout>
 
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:text="Adresse mail:"
-            android:layout_marginBottom="5dp"
-            android:fontFamily="@font/montserrat_regular"
-            android:textColor="@color/harmonia_dark"
-            android:layout_height="wrap_content"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:textSize="16sp"
-            tools:text="lari@harmoniamk.fr"
-            android:fontFamily="@font/montserrat_bold"
-            android:textColor="@color/harmonia_dark"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:id="@+id/email"/>
 
-    </LinearLayout>
+    </RelativeLayout>
 
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginBottom="15dp"
-        android:background="@color/white"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/harmonia_dark"
-        android:fontFamily="@font/montserrat_regular"
-        android:textSize="16sp"
-        android:id="@+id/change_name_btn"
-        android:paddingVertical="10dp"
-        android:text="Changer mon pseudo"/>
-
-
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/harmonia_dark"
-        android:fontFamily="@font/montserrat_regular"
-        android:textSize="16sp"
-        android:id="@+id/change_email_btn"
-        android:paddingVertical="10dp"
-        android:text="Changer mon email"/>
-
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/harmonia_dark"
-        android:fontFamily="@font/montserrat_regular"
-        android:textSize="16sp"
-        android:id="@+id/change_password_btn"
-        android:paddingVertical="10dp"
-        android:text="Changer mon mot de passe"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/harmonia_dark"
-        android:fontFamily="@font/montserrat_regular"
-        android:textSize="16sp"
-        android:id="@+id/change_picture_btn"
-        android:paddingVertical="10dp"
-        android:text="Changer ma photo de profil"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/harmonia_dark"
-        android:fontFamily="@font/montserrat_regular"
-        android:textSize="16sp"
-        android:id="@+id/leave_team_btn"
-        android:visibility="gone"
-        android:paddingVertical="10dp"
-        android:text="Quitter mon équipe"/>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/harmonia_dark"
-        android:fontFamily="@font/montserrat_regular"
-        android:textSize="16sp"
-        android:id="@+id/disconnect_btn"
-        android:paddingVertical="10dp"
-        android:text="Se déconnecter"/>
-
-
-</LinearLayout>
 </ScrollView>

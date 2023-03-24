@@ -12,6 +12,8 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentAddWarBinding
+import fr.harmoniamk.statsmk.extension.isTrue
+import fr.harmoniamk.statsmk.fragment.popup.PopupFragment
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.filter
@@ -25,6 +27,8 @@ class AddWarFragment : Fragment(R.layout.fragment_add_war) {
 
     private val binding: FragmentAddWarBinding by viewBinding()
     private val viewModel: AddWarViewModel by viewModels()
+    private val popup by lazy { PopupFragment("Création de la war en cours, veuillez patienter", loading = true) }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -46,14 +50,12 @@ class AddWarFragment : Fragment(R.layout.fragment_add_war) {
         }.launchIn(lifecycleScope)
 
         viewModel.sharedLoading
-            .onEach {
-                binding.mainLayout.isVisible = !it
-                binding.progress.isVisible = it
-            }.launchIn(lifecycleScope)
+            .onEach { popup.takeIf { !it.isAdded }?.show(childFragmentManager, null) }
+            .launchIn(lifecycleScope)
 
         viewModel.sharedStarted
             .filter { findNavController().currentDestination?.id == R.id.addWarFragment }
-            .onEach { findNavController().navigate(AddWarFragmentDirections.goToCurrentWar())}
+            .onEach { findNavController().navigate(AddWarFragmentDirections.goToCurrentWar()) }
             .launchIn(lifecycleScope)
 
         viewModel.sharedAlreadyCreated

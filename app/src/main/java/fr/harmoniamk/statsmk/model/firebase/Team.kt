@@ -9,7 +9,8 @@ data class Team(
     val mid: String,
     var name: String? = null,
     var shortName: String? = null,
-    var hasLeader: Boolean? = null
+    var hasLeader: Boolean? = null,
+    var picture: String? = null
 ): Parcelable {
     constructor(entity: TeamEntity) : this(entity.mid, entity.name, entity.shortName)
 

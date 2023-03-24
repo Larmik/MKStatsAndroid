@@ -17,6 +17,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.extension.onTextChanged
+import fr.harmoniamk.statsmk.fragment.popup.PopupFragment
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -28,6 +29,7 @@ class AddUserFragment : Fragment(R.layout.fragment_add_user) {
 
     private val binding: FragmentAddUserBinding by viewBinding()
     private val viewModel: AddUserViewModel by viewModels()
+    private val loadingPopup = PopupFragment("Création du joueur en cours...", loading = true)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -61,8 +63,14 @@ class AddUserFragment : Fragment(R.layout.fragment_add_user) {
             .launchIn(lifecycleScope)
         viewModel.sharedLoading
             .onEach {
-                binding.progress.isVisible = it
-                binding.layout.isVisible = !it
+                when (it) {
+                    true -> loadingPopup.takeIf { !it.isAdded }?.show(childFragmentManager, null)
+                    else -> loadingPopup.dismiss()
+                }
+            }.launchIn(lifecycleScope)
+        viewModel.sharedLoadingMessage
+            .onEach {
+                loadingPopup.setLoading(it)
             }.launchIn(lifecycleScope)
 
     }

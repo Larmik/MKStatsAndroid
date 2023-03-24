@@ -1,5 +1,6 @@
 package fr.harmoniamk.statsmk.fragment.settings.managePlayers
 
+import android.net.Uri
 import android.view.View
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,11 +9,10 @@ import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.isTrue
+import fr.harmoniamk.statsmk.model.firebase.PictureResponse
 import fr.harmoniamk.statsmk.model.firebase.Team
-import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
-import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
-import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
-import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
+import fr.harmoniamk.statsmk.model.firebase.UploadPictureResponse
+import fr.harmoniamk.statsmk.repository.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
@@ -22,7 +22,7 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class ManagePlayersViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
+class ManagePlayersViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val storageRepository: StorageRepository, private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
 
     private val _sharedPlayers = MutableSharedFlow<List<ManagePlayersItemViewModel>>()
     private val _sharedAddPlayer = MutableSharedFlow<Unit>()
@@ -31,6 +31,8 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
     private val _sharedRedirectToSettings = MutableSharedFlow<Unit>()
     private val _sharedTeamName = MutableSharedFlow<String?>()
     private val _sharedTeamEdit = MutableSharedFlow<Team>()
+    private val _sharedEditPicture = MutableSharedFlow<Unit>()
+    private val _sharedPictureLoaded = MutableSharedFlow<String?>()
 
     val sharedPlayers = _sharedPlayers.asSharedFlow()
     val sharedAddPlayer = _sharedAddPlayer.asSharedFlow()
@@ -39,11 +41,15 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
     val sharedRedirectToSettings = _sharedRedirectToSettings.asSharedFlow()
     val sharedTeamName = _sharedTeamName.asSharedFlow()
     val sharedTeamEdit = _sharedTeamEdit.asSharedFlow()
+    val sharedEditPicture =_sharedEditPicture.asSharedFlow()
+    val sharedPictureLoaded =_sharedPictureLoaded.asSharedFlow()
 
     private val players = mutableListOf<ManagePlayersItemViewModel>()
     private val allPlayers = mutableListOf<ManagePlayersItemViewModel>()
 
-    fun bind(onAdd: Flow<Unit>, onEdit: Flow<User>, onSearch: Flow<String>, onEditTeam: Flow<Unit>) {
+    fun bind(onPictureClick: Flow<Unit>, onPictureEdited: Flow<String>, onAdd: Flow<Unit>, onEdit: Flow<User>, onSearch: Flow<String>, onEditTeam: Flow<Unit>) {
+        var url: String? = null
+
         refresh()
         onAdd.bind(_sharedAddPlayer, viewModelScope)
         onEdit.bind(_sharedEdit, viewModelScope)
@@ -54,6 +60,21 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
             .map { searched ->
                 createPlayersList(modelList = allPlayers.filter { it.name?.toLowerCase(Locale.ROOT)?.contains(searched.toLowerCase(Locale.ROOT)).isTrue })}
             .bind(_sharedPlayers, viewModelScope)
+
+        onPictureClick.bind(_sharedEditPicture, viewModelScope)
+
+
+        onPictureEdited
+            .flatMapLatest { storageRepository.uploadPicture(preferencesRepository.currentTeam?.mid, Uri.parse(it)) }
+            .filter { it is UploadPictureResponse.Success }
+            .mapNotNull { preferencesRepository.currentTeam?.mid }
+            .flatMapLatest { storageRepository.getPicture(it) }
+            .mapNotNull { url = (it as? PictureResponse.Success)?.url; url }
+            .onEach { preferencesRepository.currentTeam = preferencesRepository.currentTeam?.apply { this.picture = url } }
+            .mapNotNull { preferencesRepository.currentTeam }
+            .flatMapLatest { firebaseRepository.writeTeam(it) }
+            .onEach { _sharedPictureLoaded.emit(url) }
+            .launchIn(viewModelScope)
     }
 
     fun bindEditDialog(onDelete: Flow<User>, onPlayerEdited: Flow<User>, onTeamLeft: Flow<User>) {
@@ -113,7 +134,9 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
     }
 
     private fun refresh() {
-        databaseRepository.getUsers()
+        storageRepository.getPicture(preferencesRepository.currentTeam?.mid)
+            .onEach { _sharedPictureLoaded.emit((it as? PictureResponse.Success)?.url) }
+            .flatMapLatest { databaseRepository.getUsers() }
             .map { createPlayersList(list = it) }
             .onEach {
                 allPlayers.addAll(it)

@@ -1,5 +1,7 @@
 package fr.harmoniamk.statsmk.fragment.settings.managePlayers
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
@@ -10,8 +12,10 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentManagePlayersBinding
+import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.extension.onTextChanged
+import fr.harmoniamk.statsmk.extension.setImageURL
 import fr.harmoniamk.statsmk.fragment.settings.manageTeams.EditTeamFragment
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -24,12 +28,16 @@ class ManagePlayersFragment : Fragment(R.layout.fragment_manage_players) {
 
     private val binding: FragmentManagePlayersBinding by viewBinding()
     private val viewModel: ManagePlayersViewModel by viewModels()
+    private val _onPictureSave = MutableSharedFlow<String>()
+    private var isPicking = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val adapter = ManagePlayersAdapter()
         binding.playersRv.adapter = adapter
         viewModel.bind(
+            onPictureClick = binding.editLogoBtn.clicks(),
+            onPictureEdited = _onPictureSave,
             onAdd = binding.addPlayerBtn.clicks(),
             onEdit = adapter.sharedEdit,
             onSearch = binding.searchEt.onTextChanged(),
@@ -39,6 +47,7 @@ class ManagePlayersFragment : Fragment(R.layout.fragment_manage_players) {
             .filterNotNull()
             .onEach { binding.teamName.text = it }
             .launchIn(lifecycleScope)
+
 
         viewModel.sharedPlayers.onEach {
             adapter.addPlayers(it)
@@ -58,6 +67,19 @@ class ManagePlayersFragment : Fragment(R.layout.fragment_manage_players) {
             .filter { findNavController().currentDestination?.id == R.id.managePlayersFragment }
             .onEach { findNavController().popBackStack() }
             .launchIn(lifecycleScope)
+
+        viewModel.sharedPictureLoaded
+            .onEach { binding.teamLogo.setImageURL(it) }
+            .launchIn(lifecycleScope)
+
+        viewModel.sharedEditPicture
+            .filterNot { isPicking }
+            .onEach {
+                val intent = Intent(Intent.ACTION_GET_CONTENT)
+                intent.type = "image/*"
+                startActivityForResult(intent, 456)
+                isPicking = true
+            }.launchIn(lifecycleScope)
 
         viewLifecycleOwner.lifecycleScope.launchWhenStarted {
             viewModel.sharedTeamEdit.collect {
@@ -88,5 +110,15 @@ class ManagePlayersFragment : Fragment(R.layout.fragment_manage_players) {
 
         }
 
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        isPicking = false
+        if (requestCode == 456 && resultCode == Activity.RESULT_OK) {
+            flowOf(data?.data?.toString())
+                .filterNotNull()
+                .bind(_onPictureSave, lifecycleScope)
+        }
     }
 }

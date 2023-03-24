@@ -26,9 +26,11 @@ class AddUserViewModel @Inject constructor(private val firebaseRepository: Fireb
     private val _sharedGoToConnect = MutableSharedFlow<Unit>()
     private val _sharedButtonEnabled = MutableSharedFlow<Boolean>()
     private val _sharedLoading = MutableSharedFlow<Boolean>()
+    private val _sharedLoadingMessage = MutableSharedFlow<String>()
     val sharedButtonEnabled = _sharedButtonEnabled.asSharedFlow()
     val sharedNext = _sharedNext.asSharedFlow()
     val sharedLoading = _sharedLoading.asSharedFlow()
+    val sharedLoadingMessage = _sharedLoadingMessage.asSharedFlow()
     val sharedToast = _sharedToast.asSharedFlow()
     val sharedGoToConnect = _sharedGoToConnect.asSharedFlow()
 
@@ -61,9 +63,10 @@ class AddUserViewModel @Inject constructor(private val firebaseRepository: Fireb
         createUser
             .mapNotNull { (it as? AuthUserResponse.Success)?.user?.uid }
             .mapNotNull { name }
-            .flatMapLatest { authenticationRepository.updateProfile(it, "https://firebasestorage.googleapis.com/v0/b/stats-mk-debug.appspot.com/o/hr_logo.png?alt=media&token=6f4452bf-7028-4203-8d77-0c3eb0d8cd48") }
+            .flatMapLatest { authenticationRepository.updateProfile(it, "https://firebasestorage.googleapis.com/v0/b/stats-mk.appspot.com/o/mk_stats_logo.png?alt=media&token=930c6fdb-9e42-4b23-a9de-3c069d2f982b") }
             .mapNotNull { authenticationRepository.user }
             .map { fbUser ->
+                _sharedLoadingMessage.emit("Récupération des données...")
                 var finalUser: User? = null
                 databaseRepository.getUsers().firstOrNull()?.singleOrNull { user ->
                     user.name?.toLowerCase(Locale.getDefault())

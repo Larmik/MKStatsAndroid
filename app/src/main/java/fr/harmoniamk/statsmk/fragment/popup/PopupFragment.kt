@@ -15,7 +15,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 
 @ExperimentalCoroutinesApi
-class PopupFragment(val message: String, val positiveText: String? = null, private val negativeText: String = "Retour", val editTextHint: String? = null) : DialogFragment() {
+class PopupFragment(val message: String, val positiveText: String? = null, private val negativeText: String = "Retour", val editTextHint: String? = null, val loading: Boolean = false) : DialogFragment() {
 
     lateinit var binding: FragmentPopupBinding
 
@@ -47,6 +47,17 @@ class PopupFragment(val message: String, val positiveText: String? = null, priva
             binding.positiveButton.text = positiveText
             binding.positiveButton.clicks().bind(onPositiveClick, lifecycleScope)
         }
+        if (loading){
+            binding.progress.isVisible = true
+            binding.buttonsLayout.isVisible = false
+        }
     }
+
+    fun setLoading(text: String) {
+        binding.progress.isVisible = true
+        binding.popupMessage.text = text
+        binding.buttonsLayout.isVisible = false
+    }
+
 
 }

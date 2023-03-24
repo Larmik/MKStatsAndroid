@@ -27,7 +27,7 @@ class ConnectUserViewModel @Inject constructor(private val firebaseRepository: F
     private val _sharedToast = MutableSharedFlow<String>()
     private val _sharedGoToReset = MutableSharedFlow<Unit>()
     private val _sharedButtonEnabled = MutableSharedFlow<Boolean>()
-    private val _sharedLoading = MutableSharedFlow<Boolean>()
+    private val _sharedLoading = MutableSharedFlow<String?>()
 
     val sharedNext = _sharedNext.asSharedFlow()
     val sharedToast = _sharedToast.asSharedFlow()
@@ -52,7 +52,7 @@ class ConnectUserViewModel @Inject constructor(private val firebaseRepository: F
 
         val connectUser = onConnect
             .mapNotNull { password }
-            .onEach { _sharedLoading.emit(true) }
+            .onEach { _sharedLoading.emit(null) }
             .flatMapLatest { authenticationRepository.signIn(email.toString(), password.toString()) }
             .shareIn(viewModelScope, SharingStarted.Lazily)
 
@@ -67,6 +67,7 @@ class ConnectUserViewModel @Inject constructor(private val firebaseRepository: F
                         databaseRepository.getTeam(team).firstOrNull()
                 }
                 preferencesRepository.firstLaunch = false
+                _sharedLoading.emit("Récupération des données en cours...")
             }.flatMapLatest { firebaseRepository.getNewWars() }
             .map { it.map { MKWar(it) } }
             .flatMapLatest { it.withName(databaseRepository) }

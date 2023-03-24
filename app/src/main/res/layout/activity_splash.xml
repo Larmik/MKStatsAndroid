@@ -1,38 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:background="@color/black"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/splash_bg"
     android:orientation="vertical"
     android:layout_height="match_parent">
 
 
-    <View
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:background="@mipmap/hr_logo"
-        android:layout_weight="10"/>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:padding="10dp"
+        android:src="@drawable/mk_stats_logo_picture"/>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="9"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/mk_position"
             android:gravity="center"
             android:text="MARIO KART"
-            android:textColor="@color/harmonia_clear"
-            android:textSize="100sp"/>
+            android:textColor="@color/harmonia_dark"
+            android:textSize="80sp"/>
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/orbitron_semibold"
             android:gravity="center"
             android:text="Stats"
-            android:textColor="@color/harmonia_clear"
-            android:textSize="50sp"/>
+            android:textColor="@color/harmonia_dark"
+            android:textSize="40sp"/>
+        <View android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:layout_margin="10dp"
+            android:orientation="vertical"
+            android:background="@drawable/rounded_bg"
+            android:backgroundTint="@color/transparent_white">
+
+            <ProgressBar
+                android:id="@+id/progress"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:progressTint="@color/white"
+                android:indeterminate="true"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:textSize="16sp"
+                android:textColor="@color/harmonia_dark"
+                android:textAlignment="center"
+                android:text="Mise à jour des données..."
+                android:layout_height="wrap_content"
+                android:id="@+id/loading_label"/>
+
+        </LinearLayout>
+
     </LinearLayout>
 
 

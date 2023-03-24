@@ -15,6 +15,7 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentResultWarTrackBinding
 import fr.harmoniamk.statsmk.extension.backPressedDispatcher
 import fr.harmoniamk.statsmk.extension.clicks
+import fr.harmoniamk.statsmk.fragment.popup.PopupFragment
 import fr.harmoniamk.statsmk.ui.TrackView
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -30,6 +31,8 @@ class WarTrackResultFragment : Fragment(R.layout.fragment_result_war_track) {
     private val binding : FragmentResultWarTrackBinding by viewBinding()
     private val viewModel: WarTrackResultViewModel by viewModels()
     private var track: Int? = null
+    private val popup by lazy { PopupFragment("Création de la war en cours, veuillez patienter", loading = true) }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -93,8 +96,7 @@ class WarTrackResultFragment : Fragment(R.layout.fragment_result_war_track) {
 
         viewModel.sharedLoading
             .onEach {
-                binding.progress.isVisible = it
-                binding.mainLayout.isVisible = !it
+                popup.takeIf { !it.isAdded }?.show(childFragmentManager, null)
             }.launchIn(lifecycleScope)
     }
 

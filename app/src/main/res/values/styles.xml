@@ -13,6 +13,13 @@
 
     -->
 
+    <style name="LaunchScreenTheme" parent="AppThemeWaluigi">
+        <item name="android:windowActionBarOverlay">false</item>
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="windowActionBar">false</item>
+    </style>
+
     <style name="AppThemeWaluigi" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:forceDarkAllowed" tools:targetApi="q"> false </item>
         <!-- Primary brand color. -->

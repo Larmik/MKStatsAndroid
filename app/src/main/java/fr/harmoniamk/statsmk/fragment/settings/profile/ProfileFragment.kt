@@ -72,6 +72,8 @@ class ProfileFragment: Fragment(R.layout.fragment_profile) {
 
         viewModel.sharedProfile
             .onEach {
+                binding.progress.isVisible = false
+                binding.mainLayout.isVisible = true
                 binding.username.text = it.displayName
                 binding.email.text = it.email
                 binding.profilePic.setImageURL(it.photoUrl.toString())

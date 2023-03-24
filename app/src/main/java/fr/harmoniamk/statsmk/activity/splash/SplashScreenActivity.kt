@@ -6,6 +6,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
+import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.activity.MainActivity
 import fr.harmoniamk.statsmk.databinding.ActivitySplashBinding
 import fr.harmoniamk.statsmk.repository.PreferencesRepository
@@ -27,7 +28,7 @@ class SplashScreenActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val intent = Intent(this, MainActivity::class.java)
         val preferences = PreferencesRepository(this)
-        this.setTheme(preferences.currentTheme)
+        this.setTheme(R.style.LaunchScreenTheme)
         this.setContentView(this.binding.root)
         viewModel.bind()
         viewModel.sharedWelcomeScreen

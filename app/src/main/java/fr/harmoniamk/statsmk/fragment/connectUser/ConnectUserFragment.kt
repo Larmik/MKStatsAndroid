@@ -15,6 +15,7 @@ import fr.harmoniamk.statsmk.databinding.FragmentConnectUserBinding
 import fr.harmoniamk.statsmk.extension.backPressedDispatcher
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.extension.onTextChanged
+import fr.harmoniamk.statsmk.fragment.popup.PopupFragment
 import fr.harmoniamk.statsmk.fragment.resetPassword.ResetPasswordFragment
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -27,6 +28,7 @@ class ConnectUserFragment: Fragment(R.layout.fragment_connect_user) {
 
     private val binding: FragmentConnectUserBinding by viewBinding()
     private val viewModel: ConnectUserViewModel by viewModels()
+    private val loadingPopup = PopupFragment("Connexion en cours...", loading = true)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -67,9 +69,9 @@ class ConnectUserFragment: Fragment(R.layout.fragment_connect_user) {
             .launchIn(lifecycleScope)
 
         viewModel.sharedLoading
-            .onEach {
-                binding.progress.isVisible = it
-                binding.mainLayout.isVisible = !it
+            .onEach { text ->
+                text?.let { loadingPopup.setLoading(it) }
+                loadingPopup.takeIf { !it.isAdded }?.show(childFragmentManager, null)
             }.launchIn(lifecycleScope)
     }
 

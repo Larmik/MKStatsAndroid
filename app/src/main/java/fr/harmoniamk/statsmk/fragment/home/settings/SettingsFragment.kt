@@ -28,15 +28,13 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
 
     private val binding: FragmentSettingsBinding by viewBinding()
     private val viewModel: SettingsViewModel by viewModels()
-    private val themePopup by lazy { PopupFragment("La fonctionnalité des thèmes n'a pas pu être testée à fond et est encore au stade expérimental, il se peut qu'elle ne fonctionne pas correctement. Voulez-vous continuer malgré tout ?", positiveText = "Essayer les thèmes") }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.bind(
             onManageTeam = binding.manageTeamBtn.clicks(),
-            onTheme = themePopup.onPositiveClick,
+            onTheme = flowOf(),
             onManagePlayers = binding.managePlayersBtn.clicks(),
-            onPopupTheme =  themePopup.onNegativeClick.map { false },
             onProfileClick = binding.profileBtn.clicks(),
             onPlayersClick = binding.playersBtn.clicks(),
             onSimulate = binding.simulateBtn.clicks()
@@ -53,19 +51,6 @@ class SettingsFragment : Fragment(R.layout.fragment_settings) {
             .filter { findNavController().currentDestination?.id == R.id.homeFragment }
             .onEach { findNavController().navigate(HomeFragmentDirections.managePlayers()) }
             .launchIn(lifecycleScope)
-   /*     viewModel.sharedThemeClick
-            .filter { findNavController().currentDestination?.id == R.id.homeFragment }
-            .onEach {
-                themePopup.dismiss()
-                findNavController().navigate(HomeFragmentDirections.manageTheme())
-            }.launchIn(lifecycleScope)*/
-        viewModel.sharedThemePopup
-            .onEach {
-                when (it) {
-                    true -> themePopup.takeIf { !it.isAdded }?.show(childFragmentManager, null)
-                    else -> themePopup.dismiss()
-                }
-            }.launchIn(lifecycleScope)
         viewModel.sharedToast
             .onEach { Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show() }
             .launchIn(lifecycleScope)

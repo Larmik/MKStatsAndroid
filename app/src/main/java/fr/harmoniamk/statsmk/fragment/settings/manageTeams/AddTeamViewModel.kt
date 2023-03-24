@@ -52,7 +52,8 @@ class AddTeamViewModel @Inject constructor(private val firebaseRepository: Fireb
                 val team = Team(
                     mid = id,
                     name = name,
-                    shortName = shortName
+                    shortName = shortName,
+                    picture = "https://firebasestorage.googleapis.com/v0/b/stats-mk.appspot.com/o/mk_stats_logo.png?alt=media&token=930c6fdb-9e42-4b23-a9de-3c069d2f982b"
                 )
                 if (teamWithLeader) preferencesRepository.currentTeam = team
                 team
@@ -69,7 +70,8 @@ class AddTeamViewModel @Inject constructor(private val firebaseRepository: Fireb
                     mid = id,
                     name = name,
                     shortName = shortName,
-                    hasLeader = true
+                    hasLeader = true,
+                    picture = "https://firebasestorage.googleapis.com/v0/b/stats-mk.appspot.com/o/mk_stats_logo.png?alt=media&token=930c6fdb-9e42-4b23-a9de-3c069d2f982b"
                 )
                 preferencesRepository.currentTeam = team
                 team
@@ -87,6 +89,7 @@ class AddTeamViewModel @Inject constructor(private val firebaseRepository: Fireb
 
 
         addClick
+            .filterNot { teamWithLeader }
             .filter {
                 it.map { team -> team.name?.toLowerCase(Locale.getDefault()) }.contains(name?.toLowerCase(Locale.getDefault()))
             }

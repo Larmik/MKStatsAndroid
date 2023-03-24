@@ -141,10 +141,6 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
 
     fun bindPopup(onDelete: Flow<Unit>, onDismiss: Flow<Unit>) {
         onDelete
-            .onEach {
-                _sharedPopupShowing.emit(false)
-                _sharedLoading.emit(true)
-            }
             .flatMapLatest { databaseRepository.getUsers() }
             .map { list -> list.filter { user -> user.currentWar == preferencesRepository.currentWar?.mid } }
             .onEach { list ->

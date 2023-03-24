@@ -33,6 +33,7 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
     private val viewModel: CurrentWarViewModel by viewModels()
     private var war: MKWar? = null
     private var popup = PopupFragment("Êtes-vous sûr de vouloir supprimer le match ?", "Supprimer")
+
     private var subFragment = SubPlayerFragment()
 
     private var popupShowing = false
@@ -140,7 +141,7 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
                     true -> {
                         if (!popup.isAdded && !popupShowing) {
                             popup = PopupFragment("Êtes-vous sûr de vouloir supprimer le match ?", "Supprimer")
-                            viewModel.bindPopup(onDelete = popup.onPositiveClick, onDismiss = popup.onNegativeClick)
+                            viewModel.bindPopup(onDelete = popup.onPositiveClick.onEach { popup.setLoading("Suppression de la war en cours, veuillez patienter") }, onDismiss = popup.onNegativeClick)
                             popup.show(childFragmentManager, null)
                             popupShowing = true
                         }
