@@ -22,7 +22,7 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class ManagePlayersViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val storageRepository: StorageRepository, private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
+class ManagePlayersViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val storageRepository: StorageRepository, private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface, private val networkRepository: NetworkRepositoryInterface) : ViewModel() {
 
     private val _sharedPlayers = MutableSharedFlow<List<ManagePlayersItemViewModel>>()
     private val _sharedAddPlayer = MutableSharedFlow<Unit>()
@@ -32,6 +32,7 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
     private val _sharedTeamName = MutableSharedFlow<String?>()
     private val _sharedTeamEdit = MutableSharedFlow<Team>()
     private val _sharedEditPicture = MutableSharedFlow<Unit>()
+    private val _sharedManageVisible = MutableSharedFlow<Boolean>()
     private val _sharedPictureLoaded = MutableSharedFlow<String?>()
 
     val sharedPlayers = _sharedPlayers.asSharedFlow()
@@ -43,6 +44,7 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
     val sharedTeamEdit = _sharedTeamEdit.asSharedFlow()
     val sharedEditPicture =_sharedEditPicture.asSharedFlow()
     val sharedPictureLoaded =_sharedPictureLoaded.asSharedFlow()
+    val sharedManageVisible =_sharedManageVisible.asSharedFlow()
 
     private val players = mutableListOf<ManagePlayersItemViewModel>()
     private val allPlayers = mutableListOf<ManagePlayersItemViewModel>()
@@ -119,38 +121,35 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
 
     private fun createPlayersList(list: List<User>? = null, modelList: List<ManagePlayersItemViewModel>? = null): List<ManagePlayersItemViewModel> {
         players.clear()
-        players.add(ManagePlayersItemViewModel(isCategory = true))
+        players.add(ManagePlayersItemViewModel(isCategory = true, isConnected = networkRepository.networkAvailable))
         list?.let {
-            players.addAll(list.map { ManagePlayersItemViewModel(player = it, preferencesRepository = preferencesRepository, authenticationRepository = authenticationRepository) }.filterNot { it.isAlly }.sortedBy { it.name })
-            players.add(ManagePlayersItemViewModel(isCategory = true))
-            players.addAll(list.map { ManagePlayersItemViewModel(player = it, preferencesRepository = preferencesRepository, authenticationRepository = authenticationRepository) }.filter { it.isAlly }.sortedBy { it.name })
+            players.addAll(list.map { ManagePlayersItemViewModel(player = it, preferencesRepository = preferencesRepository, authenticationRepository = authenticationRepository, isConnected = networkRepository.networkAvailable) }.filterNot { it.isAlly }.sortedBy { it.name })
+            players.add(ManagePlayersItemViewModel(isCategory = true, isConnected = networkRepository.networkAvailable))
+            players.addAll(list.map { ManagePlayersItemViewModel(player = it, preferencesRepository = preferencesRepository, authenticationRepository = authenticationRepository, isConnected = networkRepository.networkAvailable) }.filter { it.isAlly }.sortedBy { it.name })
         }
         modelList?.let {
             players.addAll(modelList.filterNot { it.isAlly }.sortedBy { it.name })
-            players.add(ManagePlayersItemViewModel(isCategory = true))
+            players.add(ManagePlayersItemViewModel(isCategory = true, isConnected = networkRepository.networkAvailable))
             players.addAll(modelList.filter { it.isAlly }.sortedBy { it.name })
         }
         return players
     }
 
     private fun refresh() {
-        storageRepository.getPicture(preferencesRepository.currentTeam?.mid)
-            .onEach { _sharedPictureLoaded.emit((it as? PictureResponse.Success)?.url) }
-            .flatMapLatest { databaseRepository.getUsers() }
+        databaseRepository.getUsers()
             .map { createPlayersList(list = it) }
             .onEach {
                 allPlayers.addAll(it)
                 _sharedTeamName.emit(preferencesRepository.currentTeam?.name)
-            }.bind(_sharedPlayers, viewModelScope)
+                _sharedPlayers.emit(it)
+            }
+            .flatMapLatest { storageRepository.getPicture(preferencesRepository.currentTeam?.mid) }
+            .onEach { _sharedPictureLoaded.emit((it as? PictureResponse.Success)?.url) }
+            .launchIn(viewModelScope)
 
         authenticationRepository.userRole
-            .mapNotNull { it >= UserRole.LEADER.ordinal }
-            .mapNotNull {
-                when (it) {
-                    true -> View.VISIBLE
-                    else -> View.GONE
-                }
-            }.bind(_sharedAddPlayerVisibility, viewModelScope)
+            .mapNotNull { it >= UserRole.LEADER.ordinal && networkRepository.networkAvailable }
+           .bind(_sharedManageVisible, viewModelScope)
 
     }
 }

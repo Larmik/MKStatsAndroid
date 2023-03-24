@@ -9,10 +9,7 @@ import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.fragment.playerSelect.UserSelector
 import fr.harmoniamk.statsmk.fragment.settings.managePlayers.ManagePlayersItemViewModel
 import fr.harmoniamk.statsmk.model.firebase.User
-import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
-import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
-import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
-import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
+import fr.harmoniamk.statsmk.repository.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
@@ -22,7 +19,7 @@ import javax.inject.Inject
 @ExperimentalCoroutinesApi
 @FlowPreview
 @HiltViewModel
-class PlayerListViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
+class PlayerListViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface, private val networkRepository: NetworkRepositoryInterface) : ViewModel() {
 
     private val _sharedPlayerList = MutableSharedFlow<List<ManagePlayersItemViewModel>>()
     private val _sharedAddPlayerList = MutableSharedFlow<List<UserSelector>>()
@@ -33,6 +30,7 @@ class PlayerListViewModel @Inject constructor(private val firebaseRepository: Fi
     private val _sharedNewName = MutableSharedFlow<String?>()
     private val _sharedPlayerAdded = MutableSharedFlow<Unit>()
     private val _sharedAddToTeamButtonVisible = MutableSharedFlow<Boolean>()
+    private val _sharedButtonVisible = MutableSharedFlow<Boolean>()
 
 
     val sharedPlayerList = _sharedPlayerList.asSharedFlow()
@@ -44,6 +42,7 @@ class PlayerListViewModel @Inject constructor(private val firebaseRepository: Fi
     val sharedNewName = _sharedNewName.asSharedFlow()
     val sharedPlayerAdded = _sharedPlayerAdded.asSharedFlow()
     val sharedAddToTeamButtonVisible = _sharedAddToTeamButtonVisible.asSharedFlow()
+    val sharedButtonvisible = _sharedButtonVisible.asSharedFlow()
 
 
     private val players = mutableListOf<ManagePlayersItemViewModel>()
@@ -95,13 +94,14 @@ class PlayerListViewModel @Inject constructor(private val firebaseRepository: Fi
                 val role = authenticationRepository.userRole.firstOrNull() ?: 0
                 it.filter { user -> user.team == "-1" }
                     .map { ManagePlayersItemViewModel(
-                        it, false, preferencesRepository, authenticationRepository
+                        it, false, preferencesRepository, authenticationRepository, isConnected = networkRepository.networkAvailable
                     ) }
                     .filter { !it.hasAccount || (it.hasAccount && role >= UserRole.LEADER.ordinal)}
 
             }
             .onEach { allPlayers.addAll(it) }
             .onEach { _sharedAddPlayerList.emit(it.map { UserSelector(it.player) }) }
+            .onEach { _sharedButtonVisible.emit(networkRepository.networkAvailable) }
             .bind(_sharedPlayerList, viewModelScope)
     }
 
@@ -138,15 +138,15 @@ class PlayerListViewModel @Inject constructor(private val firebaseRepository: Fi
 
     private fun createPlayersList(list: List<User>? = null, modelList: List<ManagePlayersItemViewModel>? = null): List<ManagePlayersItemViewModel> {
         players.clear()
-        players.add(ManagePlayersItemViewModel(isCategory = true))
+        players.add(ManagePlayersItemViewModel(isCategory = true, isConnected = networkRepository.networkAvailable))
         list?.let {
-            players.addAll(list.map { ManagePlayersItemViewModel(player = it, preferencesRepository = preferencesRepository, authenticationRepository = authenticationRepository) }.filterNot { it.isAlly }.sortedBy { it.name })
-            players.add(ManagePlayersItemViewModel(isCategory = true))
-            players.addAll(list.map { ManagePlayersItemViewModel(player = it, preferencesRepository = preferencesRepository, authenticationRepository = authenticationRepository) }.filter { it.isAlly }.sortedBy { it.name })
+            players.addAll(list.map { ManagePlayersItemViewModel(player = it, preferencesRepository = preferencesRepository, authenticationRepository = authenticationRepository, isConnected = networkRepository.networkAvailable) }.filterNot { it.isAlly }.sortedBy { it.name })
+            players.add(ManagePlayersItemViewModel(isCategory = true, isConnected = networkRepository.networkAvailable))
+            players.addAll(list.map { ManagePlayersItemViewModel(player = it, preferencesRepository = preferencesRepository, authenticationRepository = authenticationRepository, isConnected = networkRepository.networkAvailable) }.filter { it.isAlly }.sortedBy { it.name })
         }
         modelList?.let {
             players.addAll(modelList.filterNot { it.isAlly }.sortedBy { it.name })
-            players.add(ManagePlayersItemViewModel(isCategory = true))
+            players.add(ManagePlayersItemViewModel(isCategory = true, isConnected = networkRepository.networkAvailable))
             players.addAll(modelList.filter { it.isAlly }.sortedBy { it.name })
         }
         return players

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "7c3ef80ea4f28fa2c34a20fc7a74f49e",
+    "identityHash": "4474d57a9aad315c11d6a9bc915d45d6",
     "entities": [
       {
         "tableName": "UserEntity",
@@ -85,12 +85,80 @@
         },
         "indices": [],
         "foreignKeys": []
+      },
+      {
+        "tableName": "WarEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`mid` TEXT NOT NULL, `name` TEXT, `playerHostId` TEXT, `teamHost` TEXT, `teamOpponent` TEXT, `createdDate` TEXT, `warTracks` TEXT, `penalties` TEXT, `isOfficial` INTEGER, PRIMARY KEY(`mid`))",
+        "fields": [
+          {
+            "fieldPath": "mid",
+            "columnName": "mid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "entityName",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "playerHostId",
+            "columnName": "playerHostId",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "teamHost",
+            "columnName": "teamHost",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "teamOpponent",
+            "columnName": "teamOpponent",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "createdDate",
+            "columnName": "createdDate",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "warTracks",
+            "columnName": "warTracks",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "penalties",
+            "columnName": "penalties",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "isOfficial",
+            "columnName": "isOfficial",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "mid"
+          ],
+          "autoGenerate": false
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '7c3ef80ea4f28fa2c34a20fc7a74f49e')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4474d57a9aad315c11d6a9bc915d45d6')"
     ]
   }
 }

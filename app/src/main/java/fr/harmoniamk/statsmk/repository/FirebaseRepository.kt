@@ -21,6 +21,7 @@ import fr.harmoniamk.statsmk.extension.parsePenalties
 import fr.harmoniamk.statsmk.extension.parseTracks
 import fr.harmoniamk.statsmk.extension.toMapList
 import fr.harmoniamk.statsmk.model.firebase.*
+import fr.harmoniamk.statsmk.model.local.MKWar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.channels.awaitClose
@@ -42,17 +43,13 @@ interface FirebaseRepositoryInterface{
     fun getTeams(): Flow<List<Team>>
     fun getNewWars(): Flow<List<NewWar>>
 
-    //Get objects methods
-    fun getNewWar(id: String): Flow<NewWar?>
-    fun getPositions(warId: String, trackId: String): Flow<List<NewWarPositions>>
-
     //Firebase event listeners methods
     fun listenToNewWars(): Flow<List<NewWar>>
 
     //delete methods
     fun deleteUser(user: User): Flow<Unit>
     fun deleteTeam(team: Team): Flow<Unit>
-    fun deleteNewWar(warId: String): Flow<Unit>
+    fun deleteNewWar(war: MKWar): Flow<Unit>
 
 }
 
@@ -144,45 +141,7 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
         awaitClose {  }
     }
 
-    override fun getNewWar(id: String): Flow<NewWar?> = callbackFlow {
-        Log.d("MKDebugOnly", "FirebaseRepository getNewWar")
-        database.child("newWars").child(id).get().addOnSuccessListener { snapshot ->
-            val map = (snapshot.value as? Map<*,*>)
-            if (isActive) offer(
-                if (map == null) null
-                else NewWar(
-                    mid = map["mid"].toString(),
-                    playerHostId = map["playerHostId"].toString(),
-                    teamOpponent = map["teamOpponent"].toString(),
-                    teamHost = map["teamHost"].toString(),
-                    createdDate = map["createdDate"].toString(),
-                    warTracks = map["warTracks"].toMapList().parseTracks(),
-                    penalties = map["penalties"].toMapList().parsePenalties(),
-                    isOfficial = map["official"].toString().toBoolean()
-                )
-            )
-        }
-        awaitClose {  }
-    }
 
-    override fun getPositions(warId: String, trackId: String): Flow<List<NewWarPositions>> = callbackFlow {
-        Log.d("MKDebugOnly", "FirebaseRepository getPositions")
-        database.child("newWars").child(warId).child("warTracks").get().addOnSuccessListener { snapshot ->
-            val tracks: List<NewWarTrack> = snapshot.children
-                .map { it.value as Map<*, *> }
-                .map {map -> NewWarTrack(
-                    mid = map["mid"].toString(),
-                    trackIndex = map["trackIndex"].toString().toInt(),
-                    warPositions = GsonBuilder().serializeNulls().create().fromJson(map["warPositions"].toString(), object: TypeToken<List<NewWarPositions>>(){}.type ),
-                    shocks = GsonBuilder().serializeNulls().create().fromJson(map["shocks"].toString(), object: TypeToken<List<Shock>>(){}.type ))
-                }
-            tracks.singleOrNull { it.mid == trackId }?.warPositions?.let {
-                if (isActive) offer(it)
-            }
-
-        }
-        awaitClose {  }
-    }
 
     override fun listenToNewWars(): Flow<List<NewWar>> = callbackFlow {
         Log.d("MKDebugOnly", "FirebaseRepository listenNewWars")
@@ -216,13 +175,15 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
         emit(Unit)
     }.flatMapLatest { databaseRepository.deleteUser(user) }
 
-    override fun deleteTeam(team: Team)= flow {
+    override fun deleteTeam(team: Team) = flow {
         database.child("teams").child(team.mid).removeValue()
         emit(Unit)
     }.flatMapLatest { databaseRepository.deleteTeam(team) }
 
-    override fun deleteNewWar(warId: String) = flow {
-        database.child("newWars").child(warId).removeValue()
-        emit(Unit)
-    }
+    override fun deleteNewWar(war: MKWar) = flow {
+        war.war?.let {
+            database.child("newWars").child(it.mid).removeValue()
+            emit(Unit)
+        }
+    }.flatMapLatest { databaseRepository.deleteWar(war) }
 }

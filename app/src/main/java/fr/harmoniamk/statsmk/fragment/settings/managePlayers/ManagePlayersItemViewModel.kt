@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.map
 
 @FlowPreview
 @ExperimentalCoroutinesApi
-class ManagePlayersItemViewModel(val player: User? = null, val isCategory: Boolean = false, private val preferencesRepository: PreferencesRepositoryInterface? = null, private val authenticationRepository: AuthenticationRepositoryInterface? = null) {
+class ManagePlayersItemViewModel(val player: User? = null, val isCategory: Boolean = false, private val preferencesRepository: PreferencesRepositoryInterface? = null, private val authenticationRepository: AuthenticationRepositoryInterface? = null, private val isConnected: Boolean = true) {
 
     val buttonsVisibility
         get() = authenticationRepository?.userRole?.map {
@@ -19,7 +19,7 @@ class ManagePlayersItemViewModel(val player: User? = null, val isCategory: Boole
                     || (!hasAccount && it >= UserRole.ADMIN.ordinal)
                     ||  (it >= UserRole.LEADER.ordinal && player?.team == preferencesRepository?.currentTeam?.mid)
                     || (!hasAccount && player?.team == "-1")
-            when (isVisible) {
+            when (isVisible && isConnected) {
                 true -> View.VISIBLE
                 else -> View.INVISIBLE
             }

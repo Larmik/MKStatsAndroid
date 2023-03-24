@@ -148,12 +148,8 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
                     val newUser = it.apply { this.currentWar = "-1" }
                     firebaseRepository.writeUser(newUser).first()
                 }
-            }.mapNotNull { preferencesRepository.currentWar?.mid }
+            }.mapNotNull { MKWar(preferencesRepository.currentWar) }
             .flatMapLatest { firebaseRepository.deleteNewWar(it) }
-            .onEach {
-                val war = databaseRepository.warList.last()
-                databaseRepository.warList.remove(war)
-            }
             .bind(_sharedBackToWars, viewModelScope)
 
         onDismiss

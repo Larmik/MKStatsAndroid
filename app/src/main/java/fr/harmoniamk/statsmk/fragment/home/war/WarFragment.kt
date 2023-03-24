@@ -2,6 +2,7 @@ package fr.harmoniamk.statsmk.fragment.home.war
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -74,8 +75,12 @@ class WarFragment : Fragment(R.layout.fragment_war) {
 
             viewModel.sharedCurrentWarClick
                 .filter { findNavController().currentDestination?.id == R.id.homeFragment }
-                .onEach { findNavController().navigate(HomeFragmentDirections.goToCurrentWar()) }
-                .launchIn(lifecycleScope)
+                .onEach {
+                    when (it.second) {
+                        true -> findNavController().navigate(HomeFragmentDirections.goToCurrentWar())
+                        else -> Toast.makeText(requireContext(), "Vous ne pouvez pas accéder à la war en cour car vous êtes hors connexion.", Toast.LENGTH_SHORT).show()
+                    }
+                }.launchIn(lifecycleScope)
 
             viewModel.sharedLastWars
                 .onEach {

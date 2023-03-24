@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseUser
 import dagger.hilt.android.lifecycle.HiltViewModel
+import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.model.firebase.PictureResponse
@@ -13,13 +14,14 @@ import fr.harmoniamk.statsmk.model.firebase.UploadPictureResponse
 import fr.harmoniamk.statsmk.repository.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class ProfileViewModel @Inject constructor(private val authenticationRepository: AuthenticationRepositoryInterface, private val storageRepository: StorageRepository, private val preferencesRepository: PreferencesRepositoryInterface, private val firebaseRepository: FirebaseRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
+class ProfileViewModel @Inject constructor(private val authenticationRepository: AuthenticationRepositoryInterface, private val storageRepository: StorageRepository, private val preferencesRepository: PreferencesRepositoryInterface, private val firebaseRepository: FirebaseRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface, private val networkRepository: NetworkRepositoryInterface) : ViewModel() {
 
     private val _sharedProfile = MutableSharedFlow<FirebaseUser>()
     private val _sharedEditPicture = MutableSharedFlow<Unit>()
@@ -35,6 +37,7 @@ class ProfileViewModel @Inject constructor(private val authenticationRepository:
     private val _sharedLeavePopup = MutableSharedFlow<Pair<String, String?>>()
     private val _sharedCancelLeavePopup = MutableSharedFlow<Unit>()
     private val _sharedTeamLeft = MutableSharedFlow<Unit>()
+    private val _sharedLocalPicture = MutableSharedFlow<Int>()
 
     val sharedProfile =_sharedProfile.asSharedFlow()
     val sharedEditPicture =_sharedEditPicture.asSharedFlow()
@@ -50,13 +53,17 @@ class ProfileViewModel @Inject constructor(private val authenticationRepository:
     val sharedLeavePopup = _sharedLeavePopup.asSharedFlow()
     val sharedCancelLeavePopup = _sharedCancelLeavePopup.asSharedFlow()
     val sharedTeamLeft = _sharedTeamLeft.asSharedFlow()
+    val sharedLocalPicture = _sharedLocalPicture.asSharedFlow()
 
     fun bind(onPictureClick: Flow<Unit>, onPictureEdited: Flow<String>, onChangePasswordClick: Flow<Unit>, onLogout: Flow<Unit>, onPopup: Flow<Boolean>, onChangeNameClick: Flow<Unit>, onChangeEmailClick: Flow<Unit>, onLeaveTeam: Flow<Unit>) {
         var url: String? = null
 
-        storageRepository.getPicture(authenticationRepository.user?.uid)
-            .mapNotNull { authenticationRepository.user }
-            .onEach { _sharedProfile.emit(it) }
+        flowOf(authenticationRepository.user)
+            .filterNotNull()
+            .onEach {
+                delay(100)
+                _sharedProfile.emit(it)
+            }
             .flatMapLatest { databaseRepository.getUser(it.uid) }
             .mapNotNull { it?.role  }
             .onEach {
@@ -68,8 +75,11 @@ class ProfileViewModel @Inject constructor(private val authenticationRepository:
                     else -> null
                 } )
                 _sharedTeam.emit(preferencesRepository.currentTeam?.name)
-            }
-            .launchIn(viewModelScope)
+                if (!networkRepository.networkAvailable)
+                    _sharedLocalPicture.emit(R.drawable.mk_stats_logo_picture)
+            }.launchIn(viewModelScope)
+
+
 
         onPopup.bind(_sharedDisconnectPopup, viewModelScope)
 

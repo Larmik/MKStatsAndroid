@@ -54,6 +54,7 @@
             android:background="@drawable/rounded_bg"
             android:backgroundTint="@color/white_alphaed"
             android:orientation="vertical"
+            android:id="@+id/manage_layout"
             android:gravity="center"
             android:layout_weight="1">
             <TextView

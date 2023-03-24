@@ -4,13 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.enums.WelcomeScreen
+import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.withName
+import fr.harmoniamk.statsmk.fragment.popup.PopupFragment
 import fr.harmoniamk.statsmk.model.firebase.AuthUserResponse
 import fr.harmoniamk.statsmk.model.local.MKWar
-import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
-import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
-import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
-import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
+import fr.harmoniamk.statsmk.repository.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
@@ -20,15 +19,31 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class SplashScreenViewModel @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val firebaseRepository: FirebaseRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
+class SplashScreenViewModel @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val firebaseRepository: FirebaseRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface, private val networkRepository: NetworkRepositoryInterface) : ViewModel() {
 
     private val _sharedWelcomeScreen = MutableSharedFlow<WelcomeScreen>()
+    private val  _sharedQuit = MutableSharedFlow<Unit>()
+    private val  _sharedShowPopup = MutableSharedFlow<List<MKWar>>()
 
     val sharedWelcomeScreen = _sharedWelcomeScreen.asSharedFlow()
+    val sharedQuit = _sharedQuit.asSharedFlow()
+    val sharedShowPopup = _sharedShowPopup.asSharedFlow()
+
+
 
     fun bind() {
+        val isConnected = flowOf(networkRepository.networkAvailable)
+            .onEach { delay(100) }
+            .shareIn(viewModelScope, SharingStarted.Lazily)
 
-        firebaseRepository.getUsers()
+        isConnected
+            .filterNot { it }
+            .flatMapLatest { databaseRepository.getWars() }
+            .bind(_sharedShowPopup, viewModelScope)
+
+        isConnected
+            .filter { it }
+            .flatMapLatest {  firebaseRepository.getUsers() }
             .flatMapLatest { databaseRepository.writeUsers(it) }
             .flatMapLatest { firebaseRepository.getTeams() }
             .flatMapLatest { databaseRepository.writeTeams(it) }
@@ -51,11 +66,8 @@ class SplashScreenViewModel @Inject constructor(private val preferencesRepositor
                     .flatMapLatest { firebaseRepository.getNewWars() }
                     .map { list -> list.map { MKWar(it) } }
                     .flatMapLatest { it.withName(databaseRepository) }
-                    .onEach {
-                        databaseRepository.warList.clear()
-                        databaseRepository.warList.addAll(it)
-                        _sharedWelcomeScreen.emit(WelcomeScreen.HOME)
-                    }
+                    .flatMapLatest { databaseRepository.writeWars(it) }
+                    .onEach { _sharedWelcomeScreen.emit(WelcomeScreen.HOME) }
                     .launchIn(viewModelScope)
 
                 flowOf(preferencesRepository.firstLaunch)

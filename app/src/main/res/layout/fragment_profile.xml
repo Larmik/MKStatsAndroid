@@ -137,69 +137,78 @@
                 android:layout_marginBottom="15dp"
                 android:background="@color/white"/>
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/harmonia_dark"
-                android:fontFamily="@font/montserrat_regular"
-                android:textSize="16sp"
-                android:id="@+id/change_name_btn"
-                android:paddingVertical="10dp"
-                android:text="Changer mon pseudo"/>
+                android:orientation="vertical"
+                android:id="@+id/profile_options">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/harmonia_dark"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:textSize="16sp"
+                    android:id="@+id/change_name_btn"
+                    android:paddingVertical="10dp"
+                    android:text="Changer mon pseudo"/>
 
 
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/harmonia_dark"
-                android:fontFamily="@font/montserrat_regular"
-                android:textSize="16sp"
-                android:id="@+id/change_email_btn"
-                android:paddingVertical="10dp"
-                android:text="Changer mon email"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/harmonia_dark"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:textSize="16sp"
+                    android:id="@+id/change_email_btn"
+                    android:paddingVertical="10dp"
+                    android:text="Changer mon email"/>
 
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/harmonia_dark"
-                android:fontFamily="@font/montserrat_regular"
-                android:textSize="16sp"
-                android:id="@+id/change_password_btn"
-                android:paddingVertical="10dp"
-                android:text="Changer mon mot de passe"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/harmonia_dark"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:textSize="16sp"
+                    android:id="@+id/change_password_btn"
+                    android:paddingVertical="10dp"
+                    android:text="Changer mon mot de passe"/>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/harmonia_dark"
-                android:fontFamily="@font/montserrat_regular"
-                android:textSize="16sp"
-                android:id="@+id/change_picture_btn"
-                android:paddingVertical="10dp"
-                android:text="Changer ma photo de profil"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/harmonia_dark"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:textSize="16sp"
+                    android:id="@+id/change_picture_btn"
+                    android:paddingVertical="10dp"
+                    android:text="Changer ma photo de profil"/>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/harmonia_dark"
-                android:fontFamily="@font/montserrat_regular"
-                android:textSize="16sp"
-                android:id="@+id/leave_team_btn"
-                android:visibility="gone"
-                android:paddingVertical="10dp"
-                android:text="Quitter mon équipe"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/harmonia_dark"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:textSize="16sp"
+                    android:id="@+id/leave_team_btn"
+                    android:visibility="gone"
+                    android:paddingVertical="10dp"
+                    android:text="Quitter mon équipe"/>
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/harmonia_dark"
-                android:fontFamily="@font/montserrat_regular"
-                android:textSize="16sp"
-                android:id="@+id/disconnect_btn"
-                android:paddingVertical="10dp"
-                android:text="Se déconnecter"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/harmonia_dark"
+                    android:fontFamily="@font/montserrat_regular"
+                    android:textSize="16sp"
+                    android:id="@+id/disconnect_btn"
+                    android:paddingVertical="10dp"
+                    android:text="Se déconnecter"/>
+
+            </LinearLayout>
+
 
 
         </LinearLayout>

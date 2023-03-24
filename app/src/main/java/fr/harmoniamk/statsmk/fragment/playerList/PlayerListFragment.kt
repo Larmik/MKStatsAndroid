@@ -73,6 +73,10 @@ class PlayerListFragment : Fragment(R.layout.fragment_player_list) {
             }
         }
 
+        viewModel.sharedButtonvisible
+            .onEach { binding.addPlayerBtn.isVisible = it }
+            .launchIn(lifecycleScope)
+
         viewModel.sharedAddPlayer
             .onEach {
                 val addPlayerFragment = AddPlayersFragment()

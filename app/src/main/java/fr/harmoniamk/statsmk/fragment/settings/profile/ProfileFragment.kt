@@ -1,6 +1,7 @@
 package fr.harmoniamk.statsmk.fragment.settings.profile
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -9,6 +10,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -113,6 +115,12 @@ class ProfileFragment: Fragment(R.layout.fragment_profile) {
                 }
             }
             .launchIn(lifecycleScope)
+
+        viewModel.sharedLocalPicture
+            .onEach {
+                binding.profileOptions.isVisible = false
+                binding.profilePic.setImageDrawable(ContextCompat.getDrawable(requireContext(), it))
+            }.launchIn(lifecycleScope)
 
         viewModel.sharedEditName
             .onEach {

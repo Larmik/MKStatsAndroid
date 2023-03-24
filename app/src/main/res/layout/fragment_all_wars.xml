@@ -32,19 +32,10 @@
 
 
 
-    <ProgressBar
-        android:id="@+id/progress"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:progressTint="?android:colorAccent"
-        tools:targetApi="n_mr1"
-        android:indeterminate="true"/>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:visibility="gone"
         android:id="@+id/main_layout">
         <View
             android:layout_width="match_parent"

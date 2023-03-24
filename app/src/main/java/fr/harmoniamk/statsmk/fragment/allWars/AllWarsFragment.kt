@@ -69,10 +69,6 @@ class AllWarsFragment : Fragment(R.layout.fragment_all_wars) {
             .onEach { findNavController().navigate(AllWarsFragmentDirections.goToWarDetails(it)) }
             .launchIn(lifecycleScope)
 
-        viewModel.sharedLoading.onEach {
-            binding.progress.isVisible = it
-            binding.mainLayout.isVisible = !it
-        }.launchIn(lifecycleScope)
     }
 
     private fun updateSortButton(

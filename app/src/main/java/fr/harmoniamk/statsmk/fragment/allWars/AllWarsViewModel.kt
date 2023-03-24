@@ -20,17 +20,15 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class AllWarsViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
+class AllWarsViewModel @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
     private val filters = mutableListOf<WarFilterType>()
 
     private val _sharedWars = MutableSharedFlow<List<MKWar>>()
-    private val _sharedLoading = MutableSharedFlow<Boolean>()
     private val _sharedWarClick = MutableSharedFlow<MKWar>()
     private val _sharedSortTypeSelected = MutableStateFlow(WarSortType.DATE)
     private val _sharedFilterList = MutableSharedFlow<List<WarFilterType>>()
 
     val sharedWars = _sharedWars.asSharedFlow()
-    val sharedLoading = _sharedLoading.asSharedFlow()
     val sharedWarClick = _sharedWarClick.asSharedFlow()
     val sharedSortTypeSelected = _sharedSortTypeSelected.asStateFlow()
     val sharedFilterList = _sharedFilterList.asSharedFlow()
@@ -39,10 +37,8 @@ class AllWarsViewModel @Inject constructor(private val firebaseRepository: Fireb
     private val teams = mutableListOf<Team>()
 
     fun bind(onItemClick: Flow<MKWar>, onSearch: Flow<String>, onSortClick: Flow<WarSortType>, onFilterClick: Flow<WarFilterType>) {
-        flowOf(true).bind(_sharedLoading, viewModelScope)
-        firebaseRepository.getNewWars()
-            .mapNotNull { list -> list.filter { war -> war.teamHost == preferencesRepository.currentTeam?.mid }.sortedByDescending { it.mid }.map { MKWar(it) } }
-            .flatMapLatest { it.withName(databaseRepository) }
+        databaseRepository.getWars()
+            .mapNotNull { list -> list.filter { war -> war.war?.teamHost == preferencesRepository.currentTeam?.mid }.sortedByDescending { it.war?.mid } }
             .onEach {
                 wars.clear()
                 wars.addAll(it)
@@ -67,7 +63,6 @@ class AllWarsViewModel @Inject constructor(private val firebaseRepository: Fireb
                     WarSortType.TEAM -> filteredWars.sortedBy { it.name }.filter { it.isOver }
                 })
                 _sharedFilterList.emit(filters)
-                _sharedLoading.emit(false)
             }
             .flatMapLatest { databaseRepository.getTeams() }
             .onEach {

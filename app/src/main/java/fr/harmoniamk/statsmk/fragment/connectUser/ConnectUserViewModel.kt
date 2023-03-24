@@ -71,11 +71,8 @@ class ConnectUserViewModel @Inject constructor(private val firebaseRepository: F
             }.flatMapLatest { firebaseRepository.getNewWars() }
             .map { it.map { MKWar(it) } }
             .flatMapLatest { it.withName(databaseRepository) }
-            .onEach {
-                databaseRepository.warList.clear()
-                databaseRepository.warList.addAll(it)
-                _sharedNext.emit(Unit)
-            }.launchIn(viewModelScope)
+            .flatMapLatest {  databaseRepository.writeWars(it) }
+            .onEach { _sharedNext.emit(Unit) }.launchIn(viewModelScope)
 
 
         connectUser

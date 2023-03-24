@@ -12,12 +12,12 @@ import kotlinx.coroutines.flow.flow
 
 @FlowPreview
 @ExperimentalCoroutinesApi
-class ManageTeamsItemViewModel(val team: Team, private val authenticationRepository: AuthenticationRepositoryInterface) {
+class ManageTeamsItemViewModel(val team: Team, private val authenticationRepository: AuthenticationRepositoryInterface, private val isConnected: Boolean = true) {
 
     val buttonVisibility
         get() = flow {
             val isAdmin = (authenticationRepository.userRole.firstOrNull() ?: 0) >= UserRole.ADMIN.ordinal && (!team.hasLeader.isTrue)
-            when (isAdmin) {
+            when (isAdmin && isConnected) {
                 true -> emit(View.VISIBLE)
                 else -> emit(View.INVISIBLE)
         }

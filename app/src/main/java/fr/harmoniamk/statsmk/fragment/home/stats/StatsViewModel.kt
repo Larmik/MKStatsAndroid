@@ -50,12 +50,17 @@ class StatsViewModel @Inject constructor(private val preferencesRepository: Pref
         val periodicClick = onPeriodic.shareIn(viewModelScope, SharingStarted.Lazily)
         val playerClick = onPlayer.shareIn(viewModelScope, SharingStarted.Lazily)
         val opponentClick = onOpponent.shareIn(viewModelScope, SharingStarted.Lazily)
+        databaseRepository.getWars()
+            .onEach {
+                warList.clear()
+                warList.addAll(it)
+            }.launchIn(viewModelScope)
 
 
 
         indivClick
             .map {
-                databaseRepository.warList.filter { war -> war.hasPlayer(authenticationRepository.user?.uid)  }
+               warList.filter { war -> war.hasPlayer(authenticationRepository.user?.uid)  }
             }
             .onEach {
                 when (it.isEmpty()) {
@@ -66,7 +71,7 @@ class StatsViewModel @Inject constructor(private val preferencesRepository: Pref
 
         teamClick
             .filter { preferencesRepository.currentTeam != null }
-            .map { databaseRepository.warList.filter { newWar -> newWar.war?.teamHost == preferencesRepository.currentTeam?.mid || newWar.war?.teamOpponent == preferencesRepository.currentTeam?.mid } }
+            .map { warList.filter { newWar -> newWar.war?.teamHost == preferencesRepository.currentTeam?.mid || newWar.war?.teamOpponent == preferencesRepository.currentTeam?.mid } }
             .onEach {
                 when (it.isEmpty()) {
                     true -> _sharedToast.emit("Votre équipe doit avoir fait au moins une war pour avoir accès à cette fonctionnalité.")
@@ -76,7 +81,7 @@ class StatsViewModel @Inject constructor(private val preferencesRepository: Pref
 
         periodicClick
             .filter { preferencesRepository.currentTeam != null }
-            .map { databaseRepository.warList.filter { newWar -> newWar.war?.teamHost == preferencesRepository.currentTeam?.mid || newWar.war?.teamOpponent == preferencesRepository.currentTeam?.mid } }
+            .map { warList.filter { newWar -> newWar.war?.teamHost == preferencesRepository.currentTeam?.mid || newWar.war?.teamOpponent == preferencesRepository.currentTeam?.mid } }
             .onEach {
                 when (it.isEmpty()) {
                     true -> _sharedToast.emit("Votre équipe doit avoir fait au moins une war pour avoir accès à cette fonctionnalité.")
@@ -88,16 +93,16 @@ class StatsViewModel @Inject constructor(private val preferencesRepository: Pref
             .filter { preferencesRepository.currentTeam != null }
             .flatMapLatest { databaseRepository.getUsers() }
             .map { it.filter { user -> user.team == preferencesRepository.currentTeam?.mid } }
-            .map { Pair(it, databaseRepository.warList) }
+            .map { Pair(it, warList) }
             .bind(_sharedPlayers, viewModelScope)
 
         opponentClick
             .filter { preferencesRepository.currentTeam != null }
             .flatMapLatest { databaseRepository.getTeams() }
-            .map { Pair(it, databaseRepository.warList) }
+            .map { Pair(it, warList) }
             .bind(_sharedOpponents, viewModelScope)
 
-        mapClick.map { databaseRepository.warList }.bind(_sharedMap, viewModelScope)
+        mapClick.map { warList }.bind(_sharedMap, viewModelScope)
 
         merge(teamClick, periodicClick, playerClick, opponentClick)
             .filter { preferencesRepository.currentTeam == null }

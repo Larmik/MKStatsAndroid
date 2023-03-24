@@ -46,6 +46,7 @@
             android:padding="10dp"
             android:layout_margin="10dp"
             android:orientation="vertical"
+            android:id="@+id/loading_layout"
             android:background="@drawable/rounded_bg"
             android:backgroundTint="@color/transparent_white">
 
@@ -58,7 +59,7 @@
 
             <TextView
                 android:layout_width="match_parent"
-                android:textSize="16sp"
+                android:textSize="12sp"
                 android:textColor="@color/harmonia_dark"
                 android:textAlignment="center"
                 android:text="Mise à jour des données..."

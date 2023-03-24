@@ -14,6 +14,7 @@ import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
+import fr.harmoniamk.statsmk.repository.NetworkRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
@@ -22,7 +23,7 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class WarDetailsViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
+class WarDetailsViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface, private val networkRepository: NetworkRepositoryInterface) : ViewModel() {
 
     private val _sharedWarPlayers = MutableSharedFlow<List<CurrentPlayerModel>>()
     private val _sharedTracks = MutableSharedFlow<List<MKWarTrack>>()
@@ -52,7 +53,8 @@ class WarDetailsViewModel @Inject constructor(private val firebaseRepository: Fi
         war?.let {
 
             databaseRepository.getUser(authenticationRepository.user?.uid)
-                .mapNotNull { it?.role == UserRole.GOD.ordinal}
+                .mapNotNull { it?.role }
+                .mapNotNull { it >= UserRole.LEADER.ordinal && networkRepository.networkAvailable }
                 .bind(_sharedDeleteWarVisible, viewModelScope)
 
             flowOf(it.war)
@@ -105,7 +107,7 @@ class WarDetailsViewModel @Inject constructor(private val firebaseRepository: Fi
                 .launchIn(viewModelScope)
             onTrackClick.bind(_sharedTrackClick, viewModelScope)
             onDeleteWar
-                .mapNotNull { war.war?.mid }
+                .mapNotNull { war }
                 .flatMapLatest { firebaseRepository.deleteNewWar(it) }
                 .bind(_sharedWarDeleted, viewModelScope)
         }
