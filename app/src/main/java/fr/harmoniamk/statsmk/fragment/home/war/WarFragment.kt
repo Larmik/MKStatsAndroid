@@ -45,8 +45,8 @@ class WarFragment : Fragment(R.layout.fragment_war) {
 
             viewModel.sharedHasTeam
                 .onEach {
+                    binding.progress.isVisible = it
                     binding.noTeamLayout.isVisible = !it
-                    binding.mainWarLayout.isVisible = it
                 }.launchIn(lifecycleScope)
 
             viewModel.sharedTeamName
@@ -76,10 +76,16 @@ class WarFragment : Fragment(R.layout.fragment_war) {
             viewModel.sharedCurrentWarClick
                 .filter { findNavController().currentDestination?.id == R.id.homeFragment }
                 .onEach {
-                    when (it.second) {
+                    when (it) {
                         true -> findNavController().navigate(HomeFragmentDirections.goToCurrentWar())
                         else -> Toast.makeText(requireContext(), "Vous ne pouvez pas accéder à la war en cour car vous êtes hors connexion.", Toast.LENGTH_SHORT).show()
                     }
+                }.launchIn(lifecycleScope)
+
+            viewModel.sharedLoaded
+                .onEach {
+                    binding.progress.isVisible = false
+                    binding.mainWarLayout.isVisible = true
                 }.launchIn(lifecycleScope)
 
             viewModel.sharedLastWars

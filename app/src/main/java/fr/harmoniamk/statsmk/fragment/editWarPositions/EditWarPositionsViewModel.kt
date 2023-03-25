@@ -20,7 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class EditWarPositionsViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
 
-    private val _sharedDismiss = MutableSharedFlow<Unit>()
+    private val _sharedDismiss = MutableSharedFlow<NewWarTrack>()
     private val _sharedPlayerLabel = MutableSharedFlow<String?>()
     private val _sharedSelectedPositions = MutableSharedFlow<List<Int>>()
     private val _sharedPos = MutableSharedFlow<Int>()
@@ -84,7 +84,7 @@ class EditWarPositionsViewModel @Inject constructor(private val firebaseReposito
                         newTrackList?.remove(track)
                         newTrackList?.add(index, track.apply { this.warPositions = positions })
                         firebaseRepository.writeNewWar(war.apply { this.warTracks = newTrackList }).first()
-                        _sharedDismiss.emit(Unit)
+                        _sharedDismiss.emit(track.apply { this.warPositions = positions })
                     }
                 }
                 else {

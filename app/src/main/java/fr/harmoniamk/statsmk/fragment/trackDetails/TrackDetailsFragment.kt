@@ -24,6 +24,7 @@ import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -84,10 +85,12 @@ class TrackDetailsFragment : Fragment(R.layout.fragment_track_details) {
                 }.launchIn(lifecycleScope)
 
         viewModel.sharedPositions
+            .distinctUntilChanged()
             .onEach { adapter.addResults(it) }
             .launchIn(lifecycleScope)
 
             viewModel.sharedShocks
+                .distinctUntilChanged()
                 .onEach{
                     shockAdapter.addItems(it)
                     warTrack?.shocks = it.map { it.second }
@@ -114,7 +117,7 @@ class TrackDetailsFragment : Fragment(R.layout.fragment_track_details) {
                 dialog.onDismiss
                     .onEach {
                         dialog.dismiss()
-                        viewModel.refreshTrack()
+                        viewModel.refresh(it)
                     }.launchIn(lifecycleScope)
             }.launchIn(lifecycleScope)
 
@@ -126,7 +129,7 @@ class TrackDetailsFragment : Fragment(R.layout.fragment_track_details) {
                 dialog.onDismiss
                     .onEach {
                         dialog.dismiss()
-                        viewModel.refreshTrack()
+                        viewModel.refresh(it)
                     }.launchIn(lifecycleScope)
             }.launchIn(lifecycleScope)
 

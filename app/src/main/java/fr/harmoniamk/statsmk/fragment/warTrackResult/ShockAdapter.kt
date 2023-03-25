@@ -33,10 +33,13 @@ class ShockAdapter(val items: MutableList<Pair<String?, Shock>> = mutableListOf(
     override fun getItemCount() = items.size
 
     fun addItems(list: List<Pair<String?, Shock>>) {
-        notifyItemRangeRemoved(0, itemCount)
-        items.clear()
-        items.addAll(list.sortedBy { it.first })
-        notifyItemRangeInserted(0, itemCount)
+        if (list.sortedBy { it.second.playerId }.map { it.second.toString() } != items.sortedBy { it.second.playerId }.map { it.second.toString() }) {
+
+            notifyItemRangeRemoved(0, itemCount)
+            items.clear()
+            items.addAll(list.sortedBy { it.first })
+            notifyItemRangeInserted(0, itemCount)
+        }
     }
 
     override val coroutineContext: CoroutineContext

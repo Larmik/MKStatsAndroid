@@ -55,7 +55,7 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
 
 
     fun bind(onBack: Flow<Unit>, onNextTrack: Flow<Unit>, onTrackClick: Flow<Int>, onPopup: Flow<Unit>, onPenalty: Flow<Unit>, onSub: Flow<Unit>, onSubDismiss: Flow<Unit>) {
-           val warFlow =  firebaseRepository.getNewWars()
+           val warFlow =  firebaseRepository.listenToNewWars()
             .onEach { _sharedLoading.emit(true) }
             .mapNotNull { it.map { w -> MKWar(w) }.getCurrent(preferencesRepository.currentTeam?.mid) }
             .flatMapLatest { listOf(it).withName(databaseRepository) }

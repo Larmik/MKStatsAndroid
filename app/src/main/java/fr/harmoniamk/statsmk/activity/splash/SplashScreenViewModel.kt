@@ -23,15 +23,18 @@ class SplashScreenViewModel @Inject constructor(private val preferencesRepositor
 
     private val _sharedWelcomeScreen = MutableSharedFlow<WelcomeScreen>()
     private val  _sharedQuit = MutableSharedFlow<Unit>()
-    private val  _sharedShowPopup = MutableSharedFlow<List<MKWar>>()
+    private val  _sharedShowPopup = MutableSharedFlow<Pair<WelcomeScreen, List<MKWar>>>()
+    private val _sharedLoadingVisible = MutableSharedFlow<String>()
 
     val sharedWelcomeScreen = _sharedWelcomeScreen.asSharedFlow()
     val sharedQuit = _sharedQuit.asSharedFlow()
     val sharedShowPopup = _sharedShowPopup.asSharedFlow()
+    val sharedLoadingVisible = _sharedLoadingVisible.asSharedFlow()
 
 
 
     fun bind() {
+
         val isConnected = flowOf(networkRepository.networkAvailable)
             .onEach { delay(100) }
             .shareIn(viewModelScope, SharingStarted.Lazily)
@@ -39,6 +42,14 @@ class SplashScreenViewModel @Inject constructor(private val preferencesRepositor
         isConnected
             .filterNot { it }
             .flatMapLatest { databaseRepository.getWars() }
+            .map {
+                val screen = when (preferencesRepository.authEmail) {
+                    null -> WelcomeScreen.CONNECT
+                    else -> WelcomeScreen.HOME
+
+                }
+                Pair(screen, it)
+            }
             .bind(_sharedShowPopup, viewModelScope)
 
         isConnected
@@ -48,6 +59,7 @@ class SplashScreenViewModel @Inject constructor(private val preferencesRepositor
             .flatMapLatest { firebaseRepository.getTeams() }
             .flatMapLatest { databaseRepository.writeTeams(it) }
             .onEach {
+                _sharedLoadingVisible.emit("Authentification...")
                 flowOf(preferencesRepository.authEmail)
                     .filterNotNull()
                     .flatMapLatest {
@@ -63,6 +75,7 @@ class SplashScreenViewModel @Inject constructor(private val preferencesRepositor
                             preferencesRepository.currentTeam = databaseRepository.getTeam(team).firstOrNull()
                         }
                     }
+                    .onEach { _sharedLoadingVisible.emit("Récupération des statistiques...") }
                     .flatMapLatest { firebaseRepository.getNewWars() }
                     .map { list -> list.map { MKWar(it) } }
                     .flatMapLatest { it.withName(databaseRepository) }

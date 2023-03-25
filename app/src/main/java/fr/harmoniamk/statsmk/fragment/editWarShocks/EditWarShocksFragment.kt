@@ -29,7 +29,7 @@ class EditWarShocksFragment(val war: NewWar, val warTrack: NewWarTrack?): Bottom
 
     lateinit var binding: FragmentEditWarShocksBinding
     private val viewModel: EditWarShocksViewModel by viewModels()
-    val onDismiss = MutableSharedFlow<Unit>()
+    val onDismiss = MutableSharedFlow<NewWarTrack>()
 
     override fun onCreateView(
         inflater: LayoutInflater,

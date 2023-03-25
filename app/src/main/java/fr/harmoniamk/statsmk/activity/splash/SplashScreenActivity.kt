@@ -42,27 +42,32 @@ class SplashScreenActivity : AppCompatActivity() {
                 startActivity(intent)
                 finish()
             }.launchIn(lifecycleScope)
+        viewModel.sharedLoadingVisible
+            .onEach {
+                binding.loadingLabel.text = it
+            }.launchIn(lifecycleScope)
 
 
         viewModel.sharedShowPopup
-            .onEach { list ->
-                binding.loadingLayout.isVisible = false
-                val popup = when (list.isEmpty()) {
+            .onEach { pair ->
+                val popup = when (pair.second.isEmpty()) {
                     true -> PopupFragment("Vous êtes hors connexion. \n \n Veuillez redémarrer l’application en étant connecté à Internet pour continuer")
                     else -> PopupFragment("Vous êtes hors connexion. \n \n Vous pourrez toujours consulter les wars et statistiques mais vous n'aurez pas accès à la war en cours ni à l'édition des joueurs et équipes.", negativeText = "Continuer")
                 }
-                popup.onNegativeClick.onEach {
-                    when (list.isEmpty()) {
-                        true -> finish()
-                        else -> {
-                            intent.putExtra("screen", WelcomeScreen.HOME.name)
-                            startActivity(intent)
-                            finish()
-                        }
+                binding.loadingLayout.isVisible = false
+                intent.putExtra("screen", pair.first.name)
+                popup.onNegativeClick
+                    .onEach {
+                        if (pair.second.isNotEmpty()) startActivity(intent)
+                        finish()
+                    }.launchIn(lifecycleScope)
+                when (pair.first) {
+                    WelcomeScreen.CONNECT, WelcomeScreen.WELCOME -> {
+                        startActivity(intent)
+                        finish()
                     }
-
-                }.launchIn(lifecycleScope)
-                popup.takeIf { !it.isAdded }?.show(supportFragmentManager, null)
+                    else -> popup.takeIf { !it.isAdded }?.show(supportFragmentManager, null)
+                }
             }.launchIn(lifecycleScope)
 
     }

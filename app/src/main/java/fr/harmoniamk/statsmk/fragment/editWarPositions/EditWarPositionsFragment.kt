@@ -13,6 +13,7 @@ import fr.harmoniamk.statsmk.databinding.FragmentEditWarPositionsBinding
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.model.firebase.NewWar
+import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -30,7 +31,7 @@ class EditWarPositionsFragment(val newWar: NewWar, val index: Int = 0) : BottomS
     lateinit var binding: FragmentEditWarPositionsBinding
     private val viewModel: EditWarPositionsViewModel by viewModels()
 
-    val onDismiss = MutableSharedFlow<Unit>()
+    val onDismiss = MutableSharedFlow<NewWarTrack>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentEditWarPositionsBinding.inflate(inflater, container, false)

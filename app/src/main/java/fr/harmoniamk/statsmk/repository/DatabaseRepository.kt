@@ -32,6 +32,7 @@ interface DatabaseRepositoryInterface {
 
     fun writeUser(user: User): Flow<Unit>
     fun writeTeam(team: Team): Flow<Unit>
+    fun writeWar(war: MKWar): Flow<Unit>
 
     fun deleteUser(user: User): Flow<Unit>
     fun deleteTeam(team: Team): Flow<Unit>
@@ -74,6 +75,8 @@ class DatabaseRepository @Inject constructor(private val userDataSource: UserLoc
     override fun writeUser(user: User): Flow<Unit> = userDataSource.insert(user)
 
     override fun writeTeam(team: Team): Flow<Unit> = teamDataSource.insert(team)
+
+    override fun writeWar(war: MKWar): Flow<Unit> = warDataSource.insert(war)
 
     override fun deleteUser(user: User): Flow<Unit> = userDataSource.delete(user)
 

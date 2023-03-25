@@ -185,6 +185,7 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
             }.launchIn(lifecycleScope)
 
         viewModel.sharedLoading
+            .filter { lifecycle.isResumed }
             .onEach {
                 binding.progress.isVisible = it
                 binding.mainLayout.isVisible = !it

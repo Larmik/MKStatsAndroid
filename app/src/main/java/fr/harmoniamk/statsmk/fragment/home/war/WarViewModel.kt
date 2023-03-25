@@ -22,10 +22,11 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
     private val _sharedCreateWar = MutableSharedFlow<Unit>()
     private val _sharedCreateTeamDialog = MutableSharedFlow<Boolean>()
     private val _sharedCurrentWar = MutableSharedFlow<MKWar?>()
-    private val _sharedCurrentWarClick = MutableSharedFlow<Pair<MKWar, Boolean>>()
+    private val _sharedCurrentWarClick = MutableSharedFlow<Boolean>()
     private val _sharedLastWars = MutableSharedFlow<List<MKWar>>()
     private val _sharedGoToWar = MutableSharedFlow<MKWar>()
     private val _sharedButtonVisible = MutableSharedFlow<Boolean>()
+    private val _sharedLoaded = MutableSharedFlow<Unit>()
 
     val sharedHasTeam = _sharedHasTeam.asSharedFlow()
     val sharedTeamName = _sharedTeamName.asSharedFlow()
@@ -36,6 +37,7 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
     val sharedLastWars = _sharedLastWars.asSharedFlow()
     val sharedGoToWar = _sharedGoToWar.asSharedFlow()
     val sharedButtonVisible = _sharedButtonVisible.asSharedFlow()
+    val sharedLoaded = _sharedLoaded.asSharedFlow()
 
     private var firstCall = true
 
@@ -47,7 +49,7 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
         onCurrentWarClick
             .flatMapLatest { databaseRepository.getWars() }
             .mapNotNull { it.getCurrent(preferencesRepository.currentTeam?.mid) }
-            .map { Pair(it, networkRepository.networkAvailable) }
+            .map { networkRepository.networkAvailable }
             .bind(_sharedCurrentWarClick, viewModelScope)
 
         firebaseRepository.listenToNewWars()
@@ -85,7 +87,10 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
             .onEach {
                 _sharedCurrentWar.emit(it.takeIf { networkRepository.networkAvailable }?.getCurrent(preferencesRepository.currentTeam?.mid))
                 _sharedLastWars.emit(it.filter { war -> war.isOver && war.war?.teamHost == preferencesRepository.currentTeam?.mid }.sortedByDescending{ it.war?.createdDate?.formatToDate() }.safeSubList(0, 5))
-            }.launchIn(viewModelScope)
+                _sharedLoaded.emit(Unit)
+            }
+
+            .launchIn(viewModelScope)
 
 
 

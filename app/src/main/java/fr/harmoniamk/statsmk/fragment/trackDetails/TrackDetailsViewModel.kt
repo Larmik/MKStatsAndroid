@@ -1,5 +1,6 @@
 package fr.harmoniamk.statsmk.fragment.trackDetails
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,6 +21,7 @@ import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.NetworkRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
@@ -81,7 +83,6 @@ class TrackDetailsViewModel @Inject constructor(
             else -> {
                 databaseRepository.getWar(warId)
                     .mapNotNull { it?.warTracks?.singleOrNull { track -> track.track?.mid == warTrackId }?.track?.warPositions }
-              //  firebaseRepository.getPositions(warId, warTrackId)
             }
         }
 
@@ -105,26 +106,25 @@ class TrackDetailsViewModel @Inject constructor(
         onEditShocks.bind(_sharedEditShocksClick, viewModelScope)
     }
 
-    fun refreshTrack() {
-        databaseRepository.getWar(warId)
+
+    fun refresh(warTrack: NewWarTrack) {
+        flowOf(Unit)
             .onEach {
                 val shocks = mutableListOf<Pair<String?, Shock>>()
-                it?.war?.warTracks?.singleOrNull{it.mid == warTrackId}?.shocks?.forEach { shock ->
+               warTrack.shocks?.forEach { shock ->
                     shocks.add(Pair(users.singleOrNull { it.mid == shock.playerId }?.name, Shock(shock.playerId, shock.count)))
                 }
                 _sharedShocks.emit(shocks)
-            }
-            .mapNotNull { MKWarTrack(it?.war?.warTracks?.singleOrNull { it.mid == warTrackId }) }
-            .onEach { _sharedTrackRefreshed.emit(it) }
-            .mapNotNull { it.track?.warPositions }
-            .map {
                 val positions = mutableListOf<MKWarPosition>()
-                it.forEach { pos ->
+                warTrack.warPositions?.forEach { pos ->
                     positions.add(MKWarPosition(pos, users.singleOrNull{it.mid == pos.playerId}))
                 }
-                positions
-            }
-            .bind(_sharedPositions, viewModelScope)
+                _sharedPositions.emit(positions)
+                _sharedTrackRefreshed.emit(MKWarTrack(warTrack))
+            }.launchIn(viewModelScope)
     }
+
+
+
 
 }

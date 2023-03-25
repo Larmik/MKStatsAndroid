@@ -47,6 +47,7 @@ class ConnectUserFragment: Fragment(R.layout.fragment_connect_user) {
 
         viewModel.sharedToast
             .onEach {
+                loadingPopup.dismiss()
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
             }.launchIn(lifecycleScope)
 

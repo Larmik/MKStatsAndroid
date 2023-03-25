@@ -21,7 +21,7 @@ class EditWarShocksViewModel  @Inject constructor(private val firebaseRepository
 
     private val _sharedPlayers = MutableSharedFlow<List<MKWarPosition>?>()
     private val _sharedShocks = MutableSharedFlow<List<Pair<String?, Shock>>>()
-    private val _sharedDismiss = MutableSharedFlow<Unit>()
+    private val _sharedDismiss = MutableSharedFlow<NewWarTrack>()
     val sharedShocks = _sharedShocks.asSharedFlow()
     val sharedPlayers = _sharedPlayers.asSharedFlow()
     val sharedDismiss = _sharedDismiss.asSharedFlow()
@@ -93,9 +93,10 @@ class EditWarShocksViewModel  @Inject constructor(private val firebaseRepository
                     else
                         newTrackList.add(track)
                 }
+                _sharedDismiss.emit(newWarTrack)
                 NewWar(war.mid, war.playerHostId, war.teamHost, war.teamOpponent, war.createdDate, newTrackList, war.penalties, war.isOfficial)
             }.flatMapLatest { firebaseRepository.writeNewWar(it) }
-            .bind(_sharedDismiss, viewModelScope)
+            .launchIn(viewModelScope)
 
 
 

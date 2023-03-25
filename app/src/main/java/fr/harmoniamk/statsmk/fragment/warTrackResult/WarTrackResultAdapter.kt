@@ -55,10 +55,13 @@ class WarTrackResultAdapter(val items: MutableList<MKWarPosition> = mutableListO
     override fun getItemCount() = items.size
 
     fun addResults(results: List<MKWarPosition>) {
-        notifyItemRangeRemoved(0, itemCount)
-        items.clear()
-        items.addAll(results.sortedBy { it.position.position })
-        notifyItemRangeInserted(0, itemCount)
+        if (results.sortedBy { it.position.mid }.map { it.position.toString() } != items.sortedBy { it.position.mid }.map { it.position.toString() }) {
+            notifyItemRangeRemoved(0, itemCount)
+            items.clear()
+            items.addAll(results.sortedBy { it.position.position })
+            notifyItemRangeInserted(0, itemCount)
+        }
+
     }
 
     override val coroutineContext: CoroutineContext
