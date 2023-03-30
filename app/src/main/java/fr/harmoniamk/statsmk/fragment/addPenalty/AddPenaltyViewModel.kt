@@ -15,7 +15,9 @@ import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class AddPenaltyViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
+class AddPenaltyViewModel @Inject constructor(
+    private val firebaseRepository: FirebaseRepositoryInterface,
+    private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
 
     private val _sharedTeam1Label = MutableSharedFlow<String>()
     private val _sharedTeam2Label = MutableSharedFlow<String>()

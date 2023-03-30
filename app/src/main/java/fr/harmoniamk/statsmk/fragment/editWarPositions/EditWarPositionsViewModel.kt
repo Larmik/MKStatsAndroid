@@ -18,7 +18,9 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class EditWarPositionsViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
+class EditWarPositionsViewModel @Inject constructor(
+    private val firebaseRepository: FirebaseRepositoryInterface,
+    private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
 
     private val _sharedDismiss = MutableSharedFlow<NewWarTrack>()
     private val _sharedPlayerLabel = MutableSharedFlow<String?>()

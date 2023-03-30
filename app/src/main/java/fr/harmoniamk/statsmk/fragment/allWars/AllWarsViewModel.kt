@@ -20,7 +20,11 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class AllWarsViewModel @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
+class AllWarsViewModel @Inject constructor(
+    private val preferencesRepository: PreferencesRepositoryInterface,
+    private val authenticationRepository: AuthenticationRepositoryInterface,
+    private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
+
     private val filters = mutableListOf<WarFilterType>()
 
     private val _sharedWars = MutableSharedFlow<List<MKWar>>()

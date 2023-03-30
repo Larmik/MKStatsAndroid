@@ -17,7 +17,9 @@ import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class EditWarShocksViewModel  @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface): ViewModel() {
+class EditWarShocksViewModel  @Inject constructor(
+    private val firebaseRepository: FirebaseRepositoryInterface,
+    private val databaseRepository: DatabaseRepositoryInterface): ViewModel() {
 
     private val _sharedPlayers = MutableSharedFlow<List<MKWarPosition>?>()
     private val _sharedShocks = MutableSharedFlow<List<Pair<String?, Shock>>>()

@@ -19,7 +19,12 @@ import javax.inject.Inject
 @ExperimentalCoroutinesApi
 @FlowPreview
 @HiltViewModel
-class PlayerListViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface, private val networkRepository: NetworkRepositoryInterface) : ViewModel() {
+class PlayerListViewModel @Inject constructor(
+    private val firebaseRepository: FirebaseRepositoryInterface,
+    private val authenticationRepository: AuthenticationRepositoryInterface,
+    private val preferencesRepository: PreferencesRepositoryInterface,
+    private val databaseRepository: DatabaseRepositoryInterface,
+    private val networkRepository: NetworkRepositoryInterface) : ViewModel() {
 
     private val _sharedPlayerList = MutableSharedFlow<List<ManagePlayersItemViewModel>>()
     private val _sharedAddPlayerList = MutableSharedFlow<List<UserSelector>>()

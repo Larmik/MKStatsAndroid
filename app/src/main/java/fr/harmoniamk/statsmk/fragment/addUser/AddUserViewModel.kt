@@ -19,7 +19,11 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class AddUserViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
+class AddUserViewModel @Inject constructor(
+    private val firebaseRepository: FirebaseRepositoryInterface,
+    private val preferencesRepository: PreferencesRepositoryInterface,
+    private val authenticationRepository: AuthenticationRepositoryInterface,
+    private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
 
     private val _sharedNext = MutableSharedFlow<Unit>()
     private val _sharedToast = MutableSharedFlow<String>()

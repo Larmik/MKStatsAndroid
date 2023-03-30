@@ -19,13 +19,15 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class SubPlayerViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
+class SubPlayerViewModel @Inject constructor(
+    private val firebaseRepository: FirebaseRepositoryInterface,
+    private val preferencesRepository: PreferencesRepositoryInterface,
+    private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
 
     private val _sharedCurrentPlayers = MutableSharedFlow<List<UserSelector>>()
     private val _sharedOtherPlayers = MutableSharedFlow<List<UserSelector>>()
     private val _sharedDismissDialog = MutableSharedFlow<Unit>()
     private val _sharedPlayerSelected = MutableSharedFlow<User>()
-    private val _sharedState = MutableSharedFlow<Int>()
 
     val sharedCurrentPlayers = _sharedCurrentPlayers.asSharedFlow()
     val sharedOtherPlayers = _sharedOtherPlayers.asSharedFlow()

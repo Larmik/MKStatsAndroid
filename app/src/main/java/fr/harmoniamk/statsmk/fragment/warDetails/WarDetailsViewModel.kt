@@ -23,7 +23,11 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class WarDetailsViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface, private val networkRepository: NetworkRepositoryInterface) : ViewModel() {
+class WarDetailsViewModel @Inject constructor(
+    private val firebaseRepository: FirebaseRepositoryInterface,
+    private val authenticationRepository: AuthenticationRepositoryInterface,
+    private val databaseRepository: DatabaseRepositoryInterface,
+    private val networkRepository: NetworkRepositoryInterface) : ViewModel() {
 
     private val _sharedWarPlayers = MutableSharedFlow<List<CurrentPlayerModel>>()
     private val _sharedTracks = MutableSharedFlow<List<MKWarTrack>>()

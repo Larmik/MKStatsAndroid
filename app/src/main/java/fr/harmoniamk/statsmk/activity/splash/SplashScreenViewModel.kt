@@ -22,16 +22,12 @@ import javax.inject.Inject
 class SplashScreenViewModel @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val firebaseRepository: FirebaseRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface, private val networkRepository: NetworkRepositoryInterface) : ViewModel() {
 
     private val _sharedWelcomeScreen = MutableSharedFlow<WelcomeScreen>()
-    private val  _sharedQuit = MutableSharedFlow<Unit>()
     private val  _sharedShowPopup = MutableSharedFlow<Pair<WelcomeScreen, List<MKWar>>>()
     private val _sharedLoadingVisible = MutableSharedFlow<String>()
 
     val sharedWelcomeScreen = _sharedWelcomeScreen.asSharedFlow()
-    val sharedQuit = _sharedQuit.asSharedFlow()
     val sharedShowPopup = _sharedShowPopup.asSharedFlow()
     val sharedLoadingVisible = _sharedLoadingVisible.asSharedFlow()
-
-
 
     fun bind() {
 

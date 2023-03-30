@@ -24,7 +24,10 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class AddWarViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface): ViewModel() {
+class AddWarViewModel @Inject constructor(
+    private val firebaseRepository: FirebaseRepositoryInterface,
+    private val preferencesRepository: PreferencesRepositoryInterface,
+    private val authenticationRepository: AuthenticationRepositoryInterface): ViewModel() {
 
     private val _sharedStarted = MutableSharedFlow<Unit>()
     private val _sharedTeamSelected = MutableSharedFlow<String?>()

@@ -22,7 +22,6 @@ import javax.inject.Inject
 @ExperimentalCoroutinesApi
 @HiltViewModel
 class PositionViewModel @Inject constructor(
-    private val firebaseRepository: FirebaseRepositoryInterface,
     private val preferencesRepository: PreferencesRepositoryInterface,
     private val databaseRepository: DatabaseRepositoryInterface
 ) : ViewModel() {

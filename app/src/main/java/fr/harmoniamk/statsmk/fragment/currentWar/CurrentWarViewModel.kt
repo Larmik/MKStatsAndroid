@@ -21,7 +21,11 @@ import javax.inject.Inject
 @ExperimentalCoroutinesApi
 @HiltViewModel
 @FlowPreview
-class CurrentWarViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
+class CurrentWarViewModel @Inject constructor(
+    private val firebaseRepository: FirebaseRepositoryInterface,
+    private val preferencesRepository: PreferencesRepositoryInterface,
+    private val authenticationRepository: AuthenticationRepositoryInterface,
+    private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
 
     private val _sharedButtonVisible = MutableSharedFlow<Boolean>()
     private val _sharedCurrentWar = MutableSharedFlow<MKWar>()
@@ -53,7 +57,6 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
     val sharedShockCount = _sharedShockCount.asSharedFlow()
     val sharedLoading = _sharedLoading.asSharedFlow()
 
-
     fun bind(onBack: Flow<Unit>, onNextTrack: Flow<Unit>, onTrackClick: Flow<Int>, onPopup: Flow<Unit>, onPenalty: Flow<Unit>, onSub: Flow<Unit>, onSubDismiss: Flow<Unit>) {
            val warFlow =  firebaseRepository.listenToNewWars()
             .onEach { _sharedLoading.emit(true) }
@@ -61,7 +64,6 @@ class CurrentWarViewModel @Inject constructor(private val firebaseRepository: Fi
             .flatMapLatest { listOf(it).withName(databaseRepository) }
             .mapNotNull { it.singleOrNull() }
             .shareIn(viewModelScope, SharingStarted.Lazily)
-
 
             warFlow.onEach { war ->
                 val isAdmin = (authenticationRepository.userRole.firstOrNull() ?: 0) >= UserRole.ADMIN.ordinal

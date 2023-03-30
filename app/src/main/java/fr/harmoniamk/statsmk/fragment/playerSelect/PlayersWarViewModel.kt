@@ -18,7 +18,9 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class PlayersWarViewModel@Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface): ViewModel() {
+class PlayersWarViewModel@Inject constructor(
+    private val preferencesRepository: PreferencesRepositoryInterface,
+    private val databaseRepository: DatabaseRepositoryInterface): ViewModel() {
 
     private val _sharedPlayers = MutableSharedFlow<List<UserSelector>>()
     private val _sharedUsersSelected = MutableSharedFlow<List<User>>()
