@@ -31,8 +31,6 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 interface FirebaseRepositoryInterface{
-    val deviceId: String?
-
     //Write and edit methods
     fun writeUser(user: User): Flow<Unit>
     fun writeNewWar(war: NewWar): Flow<Unit>
@@ -41,7 +39,7 @@ interface FirebaseRepositoryInterface{
     //Get lists methods
     fun getUsers(): Flow<List<User>>
     fun getTeams(): Flow<List<Team>>
-    fun getNewWars(): Flow<List<NewWar>>
+    fun getNewWars(teamId: String): Flow<List<NewWar>>
 
     //Firebase event listeners methods
     fun listenToNewWars(): Flow<List<NewWar>>
@@ -65,10 +63,8 @@ interface FirebaseRepositoryModule {
 
 @FlowPreview
 @ExperimentalCoroutinesApi
-class FirebaseRepository @Inject constructor(@ApplicationContext private val context: Context, private val databaseRepository: DatabaseRepositoryInterface) : FirebaseRepositoryInterface {
+class FirebaseRepository @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : FirebaseRepositoryInterface {
 
-    @SuppressLint("HardwareIds")
-    override val deviceId = Secure.getString(context.contentResolver, Secure.ANDROID_ID)
     private val database  = Firebase.database.reference
 
     override fun writeUser(user: User) = flow {
@@ -77,8 +73,10 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
     }.flatMapLatest { databaseRepository.writeUser(user) }
 
     override fun writeNewWar(war: NewWar): Flow<Unit> = flow {
-        database.child("newWars").child(war.mid.toString()).setValue(war)
-        emit(Unit)
+        preferencesRepository.currentTeam?.mid?.let {
+            database.child("newWars").child(it).child(war.mid).setValue(war)
+            emit(Unit)
+        }
     }
 
     override fun writeTeam(team: Team): Flow<Unit> = flow {
@@ -97,7 +95,8 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
                     currentWar = it["currentWar"].toString(),
                     team = it["team"].toString(),
                     role = it["role"].toString().toIntOrNull(),
-                    picture = it["picture"].toString()
+                    picture = it["picture"].toString(),
+                    formerTeams = it["formerTeams"] as List<String>?
                 ) }
             if (isActive) offer(users)
         }
@@ -120,9 +119,9 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
         awaitClose {  }
     }
 
-    override fun getNewWars(): Flow<List<NewWar>> = callbackFlow {
+    override fun getNewWars(teamId: String): Flow<List<NewWar>> = callbackFlow {
         Log.d("MKDebugOnly", "FirebaseRepository getNewWars")
-        database.child("newWars").get().addOnSuccessListener { snapshot ->
+        database.child("newWars").child(teamId).get().addOnSuccessListener { snapshot ->
             val wars: List<NewWar> = snapshot.children
                 .map { it.value as Map<*, *> }
                 .map {map -> NewWar(
@@ -141,13 +140,11 @@ class FirebaseRepository @Inject constructor(@ApplicationContext private val con
         awaitClose {  }
     }
 
-
-
     override fun listenToNewWars(): Flow<List<NewWar>> = callbackFlow {
         Log.d("MKDebugOnly", "FirebaseRepository listenNewWars")
         val postListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val wars: List<NewWar> = dataSnapshot.child("newWars").children.map { it.value as Map<*, *> }.map {
+                val wars: List<NewWar> = dataSnapshot.child("newWars").child(preferencesRepository.currentTeam?.mid ?: "-1").children.map { it.value as Map<*, *> }.map {
                     NewWar(
                     mid = it["mid"].toString(),
                     playerHostId = it["playerHostId"].toString(),

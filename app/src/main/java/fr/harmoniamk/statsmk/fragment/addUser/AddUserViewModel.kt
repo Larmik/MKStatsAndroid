@@ -78,7 +78,8 @@ class AddUserViewModel @Inject constructor(
                 }?.let {
                     finalUser = it
                     firebaseRepository.deleteUser(it).first()
-                    firebaseRepository.getNewWars().first().forEach { war ->
+                    firebaseRepository.getNewWars(it.team ?: "-1").firstOrNull()?.let {
+                        it.forEach { war ->
                         val newWarTrack = mutableListOf<NewWarTrack>()
                         war.warTracks?.forEach {
                             val newWarPosition = mutableListOf<NewWarPositions>()
@@ -115,6 +116,7 @@ class AddUserViewModel @Inject constructor(
                             war.penalties,
                             war.isOfficial
                         )).first()
+                    }
                     }
                 }
 

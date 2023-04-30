@@ -166,7 +166,16 @@ class ProfileViewModel @Inject constructor(private val authenticationRepository:
         onCancel.bind(_sharedCancelLeavePopup, viewModelScope)
         onLeave
             .flatMapLatest { databaseRepository.getUser(authenticationRepository.user?.uid) }
-            .mapNotNull { it.apply { this?.team = "-1" } }
+            .mapNotNull {
+                val formerTeams = mutableListOf<String?>()
+                formerTeams.addAll(it?.formerTeams.orEmpty())
+                formerTeams.add(preferencesRepository.currentTeam?.mid)
+
+                it.apply {
+                    this?.team = "-1"
+                    this?.formerTeams = formerTeams.filterNotNull()
+                }
+            }
             .flatMapLatest { firebaseRepository.writeUser(it) }
             .bind(_sharedTeamLeft, viewModelScope)
     }

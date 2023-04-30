@@ -66,10 +66,10 @@ class SettingsViewModel @Inject constructor(private val preferencesRepository: P
     fun simulate() : Flow<Unit> {
         val teamPlayerIds = mutableListOf<String>()
         val teamIdList = mutableListOf<String>()
-        return databaseRepository.getUsers()
+        return firebaseRepository.getUsers()
             .map { it.filter { user -> user.team == preferencesRepository.currentTeam?.mid }.mapNotNull { it.mid } }
             .onEach { teamPlayerIds.addAll(it) }
-            .flatMapLatest { databaseRepository.getTeams() }
+            .flatMapLatest { firebaseRepository.getTeams() }
             .onEach { teamIdList.addAll(it.mapNotNull { team -> team.mid }.filterNot { it == preferencesRepository.currentTeam?.mid }) }
             .map {
                 for (i in 1 .. 100) {

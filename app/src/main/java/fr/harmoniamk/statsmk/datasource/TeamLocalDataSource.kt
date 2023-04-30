@@ -22,6 +22,7 @@ interface TeamLocalDataSourceInterface {
     fun insert(teams: List<Team>): Flow<Unit>
     fun insert(team: Team): Flow<Unit>
     fun delete(team: Team): Flow<Unit>
+    fun clear(): Flow<Unit>
 }
 
 @FlowPreview
@@ -49,5 +50,8 @@ class TeamLocalDataSource @Inject constructor(@ApplicationContext private val co
     override fun insert(team: Team): Flow<Unit> = flow { emit(dao.insert(team.toEntity())) }
 
     override fun delete(team: Team): Flow<Unit> = flow { emit(dao.delete(team.toEntity())) }
+
+    override fun clear(): Flow<Unit> = flow { emit(dao.clear()) }
+
 
 }

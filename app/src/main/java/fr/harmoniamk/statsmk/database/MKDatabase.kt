@@ -5,10 +5,9 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import fr.harmoniamk.statsmk.database.converters.PenaltyConverter
-import fr.harmoniamk.statsmk.database.converters.ShockConverter
-import fr.harmoniamk.statsmk.database.converters.WarPositionConverter
-import fr.harmoniamk.statsmk.database.converters.WarTrackConverter
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
+import fr.harmoniamk.statsmk.database.converters.*
 import fr.harmoniamk.statsmk.database.dao.TeamDao
 import fr.harmoniamk.statsmk.database.dao.UserDao
 import fr.harmoniamk.statsmk.database.dao.WarDao
@@ -17,8 +16,8 @@ import fr.harmoniamk.statsmk.database.entities.UserEntity
 import fr.harmoniamk.statsmk.database.entities.WarEntity
 import kotlinx.coroutines.FlowPreview
 
-@TypeConverters(value = [WarTrackConverter::class, WarPositionConverter::class, ShockConverter::class, PenaltyConverter::class])
-@Database(entities = [UserEntity::class, TeamEntity::class, WarEntity::class], version = 1)
+@TypeConverters(value = [WarTrackConverter::class, WarPositionConverter::class, ShockConverter::class, PenaltyConverter::class, ListConverter::class])
+@Database(entities = [UserEntity::class, TeamEntity::class, WarEntity::class], version = 2)
 abstract class MKDatabase : RoomDatabase() {
 
     abstract fun userDao(): UserDao
@@ -38,12 +37,16 @@ abstract class MKDatabase : RoomDatabase() {
                     context.applicationContext,
                     MKDatabase::class.java,
                     "mk_db"
-                ).allowMainThreadQueries()
+                )
+                    .allowMainThreadQueries()
+                    .fallbackToDestructiveMigration()
                     .build()
 
                 instance = newInstance
                 newInstance
             }
         }
+
+
     }
 }

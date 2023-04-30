@@ -72,7 +72,7 @@ class ConnectUserViewModel @Inject constructor(
                 }
                 preferencesRepository.firstLaunch = false
                 _sharedLoading.emit("Récupération des données en cours...")
-            }.flatMapLatest { firebaseRepository.getNewWars() }
+            }.flatMapLatest { firebaseRepository.getNewWars(it?.team ?: "-1") }
             .map { it.map { MKWar(it) } }
             .flatMapLatest { it.withName(databaseRepository) }
             .flatMapLatest {  databaseRepository.writeWars(it) }

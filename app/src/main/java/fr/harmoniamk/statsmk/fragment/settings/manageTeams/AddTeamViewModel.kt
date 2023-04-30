@@ -46,7 +46,9 @@ class AddTeamViewModel @Inject constructor(private val firebaseRepository: Fireb
             .shareIn(viewModelScope, SharingStarted.Lazily)
 
         addClick
-            .filterNot { it.map { team -> team.name?.toLowerCase(Locale.getDefault()) }.contains(name?.toLowerCase(Locale.getDefault())) }
+            .filterNot {
+                it.map { team -> team.name?.toLowerCase(Locale.getDefault()) }.contains(name?.toLowerCase(Locale.getDefault()))
+            }
             .filterNot { teamWithLeader }
             .map {
                 val team = Team(

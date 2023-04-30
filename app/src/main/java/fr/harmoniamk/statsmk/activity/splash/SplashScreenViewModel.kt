@@ -53,6 +53,7 @@ class SplashScreenViewModel @Inject constructor(private val preferencesRepositor
             .flatMapLatest { databaseRepository.clearUsers() }
             .flatMapLatest {  firebaseRepository.getUsers() }
             .flatMapLatest { databaseRepository.writeUsers(it) }
+            .flatMapLatest { databaseRepository.clearTeams() }
             .flatMapLatest { firebaseRepository.getTeams() }
             .flatMapLatest { databaseRepository.writeTeams(it) }
             .flatMapLatest { databaseRepository.clearWars() }
@@ -74,13 +75,24 @@ class SplashScreenViewModel @Inject constructor(private val preferencesRepositor
                             else -> preferencesRepository.currentTeam = databaseRepository.getTeam(team).firstOrNull()
                         }
                     }
-                    .onEach { _sharedLoadingVisible.emit("Récupération des statistiques...") }
-                    .flatMapLatest { firebaseRepository.getNewWars() }
-                    .map { list -> list.map { MKWar(it) } }
-                    .flatMapLatest { it.withName(databaseRepository) }
-                    .flatMapLatest { databaseRepository.writeWars(it) }
-                    .onEach { _sharedWelcomeScreen.emit(WelcomeScreen.HOME) }
-                    .launchIn(viewModelScope)
+                    .onEach {
+                        _sharedLoadingVisible.emit("Récupération des statistiques...")
+                        firebaseRepository.getNewWars(preferencesRepository.currentTeam?.mid ?: "-1")
+                            .map { list -> list.map {  MKWar(it) } }
+                            .flatMapLatest { it.withName(databaseRepository) }
+                            .flatMapLatest { databaseRepository.writeWars(it) }
+                            .launchIn(viewModelScope)
+                        it?.formerTeams?.takeIf { it.isNotEmpty() }?.let {
+                            it.forEach {
+                                val wars = firebaseRepository.getNewWars(it)
+                                    .map { list -> list.map {  MKWar(it) } }
+                                    .first()
+                                val finalList = wars.withName(databaseRepository).first()
+                                databaseRepository.writeWars(finalList).first()
+                            }
+                        }
+                        _sharedWelcomeScreen.emit(WelcomeScreen.HOME)
+                    }.launchIn(viewModelScope)
 
                 flowOf(preferencesRepository.firstLaunch)
                     .filter { it }

@@ -12,6 +12,7 @@ data class User(
     var currentWar: String? = null,
     var role: Int? = null,
     var picture: String? = null,
+    var formerTeams: List<String>? = null
 ): Parcelable {
 
     constructor(entity: UserEntity) : this(
@@ -20,11 +21,12 @@ data class User(
         team = entity.team,
         currentWar = entity.currentWar,
         role = entity.role,
-        picture = entity.picture
+        picture = entity.picture,
+        formerTeams = entity.formerTeams
     )
 
     fun toEntity() = UserEntity(
-        mid, currentWar, name, role, team, picture
+        mid, currentWar, name, role, team, picture, formerTeams
     )
 
 }

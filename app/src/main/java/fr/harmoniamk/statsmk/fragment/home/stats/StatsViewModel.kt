@@ -50,6 +50,7 @@ class StatsViewModel @Inject constructor(private val preferencesRepository: Pref
         val periodicClick = onPeriodic.shareIn(viewModelScope, SharingStarted.Lazily)
         val playerClick = onPlayer.shareIn(viewModelScope, SharingStarted.Lazily)
         val opponentClick = onOpponent.shareIn(viewModelScope, SharingStarted.Lazily)
+
         databaseRepository.getWars()
             .onEach {
                 warList.clear()

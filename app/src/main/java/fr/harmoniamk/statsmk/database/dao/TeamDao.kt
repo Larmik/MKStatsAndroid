@@ -22,4 +22,7 @@ interface TeamDao {
 
     @Delete
     suspend fun delete(team: TeamEntity)
+
+    @Query("DELETE FROM TeamEntity")
+    suspend fun clear()
 }
