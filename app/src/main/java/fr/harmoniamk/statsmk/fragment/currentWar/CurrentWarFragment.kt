@@ -16,6 +16,7 @@ import fr.harmoniamk.statsmk.databinding.FragmentCurrentWarBinding
 import fr.harmoniamk.statsmk.extension.backPressedDispatcher
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.extension.isResumed
+import fr.harmoniamk.statsmk.extension.safeSubList
 import fr.harmoniamk.statsmk.fragment.addPenalty.AddPenaltyFragment
 import fr.harmoniamk.statsmk.fragment.popup.PopupFragment
 import fr.harmoniamk.statsmk.fragment.subPlayer.SubPlayerFragment
@@ -119,12 +120,12 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
             .filter { lifecycle.isResumed }
             .onEach {
                 val firstHalfList = when (it.size > 6) {
-                    true -> it.subList(0, 4)
-                    else -> it.subList(0, 3)
+                    true -> it.safeSubList(0, 4)
+                    else -> it.safeSubList(0, 3)
                 }
                 val secondHalfList = when (it.size > 6) {
-                    true -> it.subList(4, it.size)
-                    else -> it.subList(3, it.size)
+                    true -> it.safeSubList(4, it.size)
+                    else -> it.safeSubList(3, it.size)
                 }
                 firstsPlayersAdapter.addPlayers(firstHalfList)
                 lastsPlayersAdapter.addPlayers(secondHalfList)

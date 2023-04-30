@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.extension.bind
+import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
 import fr.harmoniamk.statsmk.model.firebase.Shock
 import fr.harmoniamk.statsmk.model.firebase.User
@@ -127,7 +128,9 @@ class WarTrackResultViewModel @Inject constructor(
                             val new = it.apply { this.currentWar = "-1" }
                             firebaseRepository.writeUser(new).first()
                         }
-                        _sharedGoToWarResume.emit(MKWar(war))
+                        war.withName(databaseRepository)
+                            .filterNotNull()
+                            .bind(_sharedGoToWarResume, viewModelScope)
                     } else _sharedBackToCurrent.emit(Unit)
                     preferencesRepository.currentWarTrack = null
                 }.launchIn(viewModelScope)

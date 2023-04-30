@@ -58,12 +58,15 @@ class CurrentWarViewModel @Inject constructor(
     val sharedLoading = _sharedLoading.asSharedFlow()
 
     fun bind(onBack: Flow<Unit>, onNextTrack: Flow<Unit>, onTrackClick: Flow<Int>, onPopup: Flow<Unit>, onPenalty: Flow<Unit>, onSub: Flow<Unit>, onSubDismiss: Flow<Unit>) {
-           val warFlow =  firebaseRepository.listenToNewWars()
-            .onEach { _sharedLoading.emit(true) }
-            .mapNotNull { it.map { w -> MKWar(w) }.getCurrent(preferencesRepository.currentTeam?.mid) }
+        val currentWar = firebaseRepository.listenToNewWars()
+            .map { it.map { w -> MKWar(w) }.getCurrent(preferencesRepository.currentTeam?.mid) }
+            .shareIn(viewModelScope, SharingStarted.Lazily)
+
+
+        val warFlow = currentWar
+            .filterNotNull()
             .flatMapLatest { listOf(it).withName(databaseRepository) }
             .mapNotNull { it.singleOrNull() }
-            .shareIn(viewModelScope, SharingStarted.Lazily)
 
             warFlow.onEach { war ->
                 val isAdmin = (authenticationRepository.userRole.firstOrNull() ?: 0) >= UserRole.ADMIN.ordinal
@@ -78,7 +81,6 @@ class CurrentWarViewModel @Inject constructor(
             }
             .mapNotNull { it.war?.penalties }
             .flatMapLatest { it.withTeamName(databaseRepository) }
-                .onEach { _sharedLoading.emit(false) }
             .bind(_sharedPenalties, viewModelScope)
 
         val trackPlayersFlow = warFlow
@@ -125,7 +127,7 @@ class CurrentWarViewModel @Inject constructor(
             .flatMapLatest { trackPlayersFlow }
             .launchIn(viewModelScope)
 
-        onBack.bind(_sharedQuit, viewModelScope)
+        flowOf(onBack, currentWar.filter { it == null }.map{ }).flattenMerge().bind(_sharedQuit, viewModelScope)
         onNextTrack.bind(_sharedSelectTrack, viewModelScope)
         onTrackClick.bind(_sharedTrackClick, viewModelScope)
         onPopup

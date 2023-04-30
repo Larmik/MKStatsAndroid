@@ -54,6 +54,7 @@ class SplashScreenViewModel @Inject constructor(private val preferencesRepositor
             .flatMapLatest { databaseRepository.writeUsers(it) }
             .flatMapLatest { firebaseRepository.getTeams() }
             .flatMapLatest { databaseRepository.writeTeams(it) }
+            .flatMapLatest { databaseRepository.clearWars() }
             .onEach {
                 _sharedLoadingVisible.emit("Authentification...")
                 flowOf(preferencesRepository.authEmail)
@@ -67,8 +68,9 @@ class SplashScreenViewModel @Inject constructor(private val preferencesRepositor
                     .mapNotNull { (it as? AuthUserResponse.Success)?.user?.uid }
                     .flatMapLatest { databaseRepository.getUser(it) }
                     .onEach {
-                        it?.team?.takeIf { it != "-1" }?.let { team ->
-                            preferencesRepository.currentTeam = databaseRepository.getTeam(team).firstOrNull()
+                        when (val team = it?.team?.takeIf { it != "-1" }) {
+                            null -> preferencesRepository.currentTeam = null
+                            else -> preferencesRepository.currentTeam = databaseRepository.getTeam(team).firstOrNull()
                         }
                     }
                     .onEach { _sharedLoadingVisible.emit("Récupération des statistiques...") }

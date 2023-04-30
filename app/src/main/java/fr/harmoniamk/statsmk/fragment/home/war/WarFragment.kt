@@ -33,6 +33,12 @@ class WarFragment : Fragment(R.layout.fragment_war) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val lastAdapter = LastWarAdapter()
+        val separators = listOf(
+            binding.separator1,
+            binding.separator2,
+            binding.separator3,
+            binding.separator4
+        )
 
         lifecycleScope.launchWhenResumed {
             binding.lastWarRv.adapter = lastAdapter
@@ -45,14 +51,15 @@ class WarFragment : Fragment(R.layout.fragment_war) {
 
             viewModel.sharedHasTeam
                 .onEach {
-                    binding.progress.isVisible = it
                     binding.noTeamLayout.isVisible = !it
+                    binding.hasTeamLayout.isVisible = it
+                    binding.lastWarsLayout.isVisible = it
+                    separators.forEach { view -> view.isVisible = it }
                 }.launchIn(lifecycleScope)
 
             viewModel.sharedTeamName
                 .onEach {
                     binding.currentTeamTv.text = it
-                    binding.createWarLayout.isVisible = true
                 }
                 .launchIn(lifecycleScope)
 
@@ -63,6 +70,7 @@ class WarFragment : Fragment(R.layout.fragment_war) {
 
             viewModel.sharedCurrentWar
                 .onEach {
+                    binding.progress.isVisible = false
                     binding.createWarLayout.isVisible = false
                     binding.currentWarLayout.isVisible = false
                     binding.createWarLayout.isVisible = it == null

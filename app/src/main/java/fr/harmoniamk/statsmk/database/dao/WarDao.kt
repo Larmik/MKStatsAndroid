@@ -13,6 +13,9 @@ interface WarDao {
     @Query("SELECT * FROM WarEntity WHERE mid=(:id) LIMIT 1")
     fun getById(id: String?): Flow<WarEntity>
 
+    @Query("DELETE FROM WarEntity")
+    suspend fun clear()
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun bulkInsert(wars: List<WarEntity?>)
 

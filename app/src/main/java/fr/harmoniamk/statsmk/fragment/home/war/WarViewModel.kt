@@ -15,7 +15,12 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface, private val networkRepository: NetworkRepositoryInterface) : ViewModel() {
+class WarViewModel @Inject constructor(
+    private val firebaseRepository: FirebaseRepositoryInterface,
+    private val preferencesRepository: PreferencesRepositoryInterface,
+    private val authenticationRepository: AuthenticationRepositoryInterface,
+    private val databaseRepository: DatabaseRepositoryInterface,
+    private val networkRepository: NetworkRepositoryInterface) : ViewModel() {
 
     private val _sharedHasTeam = MutableSharedFlow<Boolean>()
     private val _sharedTeamName = MutableSharedFlow<String>()
@@ -40,6 +45,7 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
     val sharedLoaded = _sharedLoaded.asSharedFlow()
 
     private var firstCall = true
+    private var currentWar: MKWar? = null
 
     fun bind(onCreateWar: Flow<Unit>, onCurrentWarClick: Flow<Unit>, onWarClick: Flow<MKWar>, onCreateTeam: Flow<Unit>) {
         refresh()
@@ -47,25 +53,28 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
         onWarClick.bind(_sharedGoToWar, viewModelScope)
         onCreateWar.bind(_sharedCreateWar, viewModelScope)
         onCurrentWarClick
-            .flatMapLatest { databaseRepository.getWars() }
-            .mapNotNull { it.getCurrent(preferencesRepository.currentTeam?.mid) }
+            .mapNotNull { currentWar }
             .map { networkRepository.networkAvailable }
             .bind(_sharedCurrentWarClick, viewModelScope)
+
+        databaseRepository.getWars()
+            .onEach {
+                _sharedLastWars.emit(it.filter { war -> war.isOver && war.war?.teamHost == preferencesRepository.currentTeam?.mid }.sortedByDescending{ it.war?.createdDate?.formatToDate() }.safeSubList(0, 5))
+            }.launchIn(viewModelScope)
+
 
         firebaseRepository.listenToNewWars()
             .map { it.map { MKWar(it) } }
             .flatMapLatest { it.withName(databaseRepository) }
-            .flatMapLatest { databaseRepository.writeWars(it) }
-            .flatMapLatest { databaseRepository.getWars() }
             .onEach {
-                it.takeIf { networkRepository.networkAvailable && !firstCall }?.let { list ->
-                    when (val current = list.getCurrent(preferencesRepository.currentTeam?.mid)) {
-                        null -> refresh()
-                        else -> _sharedCurrentWar.emit(current)
-                    }
-                }
-                firstCall = false
-            }.launchIn(viewModelScope)
+                currentWar = it.takeIf { networkRepository.networkAvailable }?.getCurrent(preferencesRepository.currentTeam?.mid)
+                _sharedCurrentWar.emit(currentWar)
+                _sharedLoaded.emit(Unit)
+            }
+            .flatMapLatest { databaseRepository.writeWars(it) }
+            .flatMapLatest { firebaseRepository.getUsers() }
+            .flatMapLatest { databaseRepository.writeUsers(it) }
+            .launchIn(viewModelScope)
     }
 
     fun bindAddTeamDialog(onTeamAdded: Flow<Unit>) {
@@ -76,27 +85,13 @@ class WarViewModel @Inject constructor(private val firebaseRepository: FirebaseR
             }.launchIn(viewModelScope)
     }
 
-    fun refresh() {
+    private fun refresh() {
         authenticationRepository.userRole
             .onEach {
                 preferencesRepository.currentTeam?.name?.let { _sharedTeamName.emit(it) }
                 _sharedButtonVisible.emit(it >= UserRole.ADMIN.ordinal && networkRepository.networkAvailable)
                 _sharedHasTeam.emit(preferencesRepository.currentTeam?.mid != null && preferencesRepository.currentTeam?.mid != "-1")
-            }
-            .flatMapLatest { databaseRepository.getWars() }
-            .onEach {
-                _sharedCurrentWar.emit(it.takeIf { networkRepository.networkAvailable }?.getCurrent(preferencesRepository.currentTeam?.mid))
-                _sharedLastWars.emit(it.filter { war -> war.isOver && war.war?.teamHost == preferencesRepository.currentTeam?.mid }.sortedByDescending{ it.war?.createdDate?.formatToDate() }.safeSubList(0, 5))
-                _sharedLoaded.emit(Unit)
-            }
-
-            .launchIn(viewModelScope)
-
-
-
-
-
-
+            }.launchIn(viewModelScope)
     }
 
 }

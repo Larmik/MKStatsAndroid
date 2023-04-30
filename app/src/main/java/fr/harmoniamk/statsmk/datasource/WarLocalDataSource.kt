@@ -25,6 +25,7 @@ interface WarLocalDataSourceInterface {
     fun insert(wars: List<MKWar>): Flow<Unit>
     fun insert(war: MKWar): Flow<Unit>
     fun delete(war: MKWar): Flow<Unit>
+    fun clear(): Flow<Unit>
 }
 
 @FlowPreview
@@ -53,5 +54,7 @@ class WarLocalDataSource @Inject constructor(@ApplicationContext private val con
     override fun insert(war: MKWar): Flow<Unit> = flow { emit(dao.insert(war.war?.toEntity(war.name))) }
 
     override fun delete(war: MKWar): Flow<Unit> = flow { emit(dao.delete(war.war?.toEntity(war.name))) }
+
+    override fun clear(): Flow<Unit> = flow { emit(dao.clear()) }
 
 }

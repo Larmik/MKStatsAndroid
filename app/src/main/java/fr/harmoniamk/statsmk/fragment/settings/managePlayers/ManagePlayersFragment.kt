@@ -14,10 +14,7 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentManagePlayersBinding
-import fr.harmoniamk.statsmk.extension.bind
-import fr.harmoniamk.statsmk.extension.clicks
-import fr.harmoniamk.statsmk.extension.onTextChanged
-import fr.harmoniamk.statsmk.extension.setImageURL
+import fr.harmoniamk.statsmk.extension.*
 import fr.harmoniamk.statsmk.fragment.settings.manageTeams.EditTeamFragment
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -47,6 +44,7 @@ class ManagePlayersFragment : Fragment(R.layout.fragment_manage_players) {
         )
         viewModel.sharedTeamName
             .filterNotNull()
+            .filter { lifecycle.isResumed }
             .onEach { binding.teamName.text = it }
             .launchIn(lifecycleScope)
 
@@ -61,6 +59,7 @@ class ManagePlayersFragment : Fragment(R.layout.fragment_manage_players) {
             .launchIn(lifecycleScope)
 
         viewModel.sharedEditTeamVisibility
+            .filter { lifecycle.isResumed }
             .onEach { binding.editTeamBtn.visibility = it }
             .launchIn(lifecycleScope)
 
@@ -71,6 +70,7 @@ class ManagePlayersFragment : Fragment(R.layout.fragment_manage_players) {
             .launchIn(lifecycleScope)
 
         viewModel.sharedPictureLoaded
+            .filter { lifecycle.isResumed }
             .onEach { binding.teamLogo.setImageURL(it) }
             .launchIn(lifecycleScope)
 
@@ -84,6 +84,7 @@ class ManagePlayersFragment : Fragment(R.layout.fragment_manage_players) {
             }.launchIn(lifecycleScope)
 
         viewModel.sharedManageVisible
+            .filter { lifecycle.isResumed }
             .onEach {
                 binding.manageLayout.isVisible = it
                 if (!it)
