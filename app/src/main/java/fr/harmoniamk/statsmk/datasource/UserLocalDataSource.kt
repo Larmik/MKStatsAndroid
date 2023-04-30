@@ -21,6 +21,8 @@ interface UserLocalDataSourceInterface {
     fun insert(users: List<User>): Flow<Unit>
     fun insert(user: User): Flow<Unit>
     fun delete(user: User): Flow<Unit>
+    fun clear(): Flow<Unit>
+
 }
 
 @FlowPreview
@@ -48,5 +50,8 @@ class UserLocalDataSource @Inject constructor(@ApplicationContext private val co
     override fun insert(user: User): Flow<Unit> = flow { emit(dao.insert(user.toEntity())) }
 
     override fun delete(user: User): Flow<Unit> = flow { emit(dao.delete(user.toEntity())) }
+
+    override fun clear(): Flow<Unit> = flow { emit(dao.clear()) }
+
 
 }

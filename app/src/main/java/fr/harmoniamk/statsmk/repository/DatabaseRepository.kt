@@ -39,6 +39,7 @@ interface DatabaseRepositoryInterface {
     fun deleteWar(war: MKWar): Flow<Unit>
 
     fun clearWars(): Flow<Unit>
+    fun clearUsers(): Flow<Unit>
 }
 
 @FlowPreview
@@ -87,5 +88,7 @@ class DatabaseRepository @Inject constructor(private val userDataSource: UserLoc
     override fun deleteWar(war: MKWar): Flow<Unit> = warDataSource.delete(war)
 
     override fun clearWars(): Flow<Unit> = warDataSource.clear()
+
+    override fun clearUsers(): Flow<Unit> = userDataSource.clear()
 
 }

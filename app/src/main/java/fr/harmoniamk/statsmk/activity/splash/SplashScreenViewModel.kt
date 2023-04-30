@@ -50,6 +50,7 @@ class SplashScreenViewModel @Inject constructor(private val preferencesRepositor
 
         isConnected
             .filter { it }
+            .flatMapLatest { databaseRepository.clearUsers() }
             .flatMapLatest {  firebaseRepository.getUsers() }
             .flatMapLatest { databaseRepository.writeUsers(it) }
             .flatMapLatest { firebaseRepository.getTeams() }

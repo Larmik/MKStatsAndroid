@@ -24,4 +24,7 @@ interface UserDao {
     @Delete
     suspend fun delete(user: UserEntity)
 
+    @Query("DELETE FROM UserEntity")
+    suspend fun clear()
+
 }
