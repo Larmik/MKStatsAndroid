@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.enums.UserRole
+import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
@@ -48,6 +49,7 @@ class AddTeamViewModel @Inject constructor(private val firebaseRepository: Fireb
         addClick
             .filterNot {
                 it.map { team -> team.name?.toLowerCase(Locale.getDefault()) }.contains(name?.toLowerCase(Locale.getDefault()))
+                || it.map { team -> team.shortName?.toLowerCase(Locale.getDefault()) }.contains(shortName?.toLowerCase(Locale.getDefault()))
             }
             .filterNot { teamWithLeader }
             .map {
@@ -65,7 +67,31 @@ class AddTeamViewModel @Inject constructor(private val firebaseRepository: Fireb
             .launchIn(viewModelScope)
 
         addClick
-            .filterNot { it.map { team -> team.name?.toLowerCase(Locale.getDefault()) }.contains(name?.toLowerCase(Locale.getDefault())) }
+            .filter { teamWithLeader }
+            .mapNotNull {
+                it.singleOrNull { team ->
+                    team.name?.toLowerCase(Locale.getDefault())
+                        ?.equals(name?.toLowerCase(Locale.getDefault())).isTrue
+                            || team.shortName?.toLowerCase(Locale.getDefault())
+                        ?.equals(shortName?.toLowerCase(Locale.getDefault())).isTrue
+                }?.takeIf { !it.hasLeader.isTrue }?.apply { this.hasLeader = true }
+            }
+            .onEach { preferencesRepository.currentTeam = it }
+            .flatMapLatest { firebaseRepository.writeTeam(it) }
+            .flatMapLatest { databaseRepository.getUser(authenticationRepository.user?.uid) }
+            .filterNotNull()
+            .flatMapLatest { firebaseRepository.writeUser(it.apply {
+                this.role = UserRole.LEADER.ordinal
+                this.team = preferencesRepository.currentTeam?.mid
+            }) }
+            .onEach { _sharedTeamAdded.emit(Unit) }
+            .launchIn(viewModelScope)
+
+        addClick
+            .filterNot {
+                it.map { team -> team.name?.toLowerCase(Locale.getDefault()) }.contains(name?.toLowerCase(Locale.getDefault()))
+                || it.map { team -> team.shortName?.toLowerCase(Locale.getDefault()) }.contains(shortName?.toLowerCase(Locale.getDefault()))
+            }
             .filter { teamWithLeader }
             .map {
                 val team = Team(

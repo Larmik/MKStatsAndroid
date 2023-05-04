@@ -1,5 +1,6 @@
 package fr.harmoniamk.statsmk.extension
 
+import android.app.Dialog
 import android.graphics.BitmapFactory
 import android.os.Handler
 import android.os.Looper
@@ -21,6 +22,14 @@ import java.util.concurrent.Executors
 @ExperimentalCoroutinesApi
 fun View.clicks(): Flow<Unit> = callbackFlow {
     this@clicks.setOnClickListener {
+        if (isActive) offer(Unit)
+    }
+    awaitClose { }
+}
+
+@ExperimentalCoroutinesApi
+fun Dialog?.dismiss(): Flow<Unit> = callbackFlow {
+    this@dismiss?.setOnDismissListener {
         if (isActive) offer(Unit)
     }
     awaitClose { }

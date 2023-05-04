@@ -34,10 +34,12 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
     private val viewModel: CurrentWarViewModel by viewModels()
     private var war: MKWar? = null
     private var popup = PopupFragment("Êtes-vous sûr de vouloir supprimer le match ?", "Supprimer")
-
+    private var penaltyFragment = AddPenaltyFragment()
     private var subFragment = SubPlayerFragment()
 
     private var popupShowing = false
+    private var penaltyShowing = false
+    private var subShowing = false
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -157,16 +159,30 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
 
         viewModel.sharedAddPenalty
             .onEach {
-                val penaltyFragment = AddPenaltyFragment(it)
-                if (!penaltyFragment.isAdded)
+                if (!penaltyFragment.isAdded && !penaltyShowing) {
+                    penaltyFragment = AddPenaltyFragment(it)
                     penaltyFragment.show(childFragmentManager, null)
+                    penaltyShowing = true
+                    penaltyFragment.onDismiss
+                        .onEach {
+                            penaltyFragment.dismiss()
+                            penaltyShowing = false
+                        }.launchIn(lifecycleScope)
+                }
             }.launchIn(lifecycleScope)
 
         viewModel.sharedSubPlayer
             .onEach {
-                subFragment = SubPlayerFragment()
-                if (!subFragment.isAdded)
+                if (!subFragment.isAdded && !subShowing) {
+                    subFragment = SubPlayerFragment()
                     subFragment.show(childFragmentManager, null)
+                    subShowing = true
+                    subFragment.sharedDismiss
+                        .onEach {
+                            subFragment.dismiss()
+                            subShowing = false
+                        }.launchIn(lifecycleScope)
+                }
             }.launchIn(lifecycleScope)
 
         viewModel.sharedPenalties

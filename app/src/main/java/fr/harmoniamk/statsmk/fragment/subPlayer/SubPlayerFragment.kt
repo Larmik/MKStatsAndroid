@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.databinding.FragmentSubPlayerBinding
+import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.extension.onTextChanged
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -65,11 +66,7 @@ class SubPlayerFragment : BottomSheetDialogFragment() {
                 binding.subPlayersBtn.text = "Remplacer ${it.name}"
             }.launchIn(lifecycleScope)
 
-        viewModel.sharedDismissDialog
-            .onEach {
-                dialog?.dismiss()
-                sharedDismiss.emit(Unit)
-            }.launchIn(lifecycleScope)
+        viewModel.sharedDismissDialog.bind(sharedDismiss, lifecycleScope)
     }
 
 }

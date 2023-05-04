@@ -10,10 +10,16 @@ import androidx.lifecycle.lifecycleScope
 import fr.harmoniamk.statsmk.databinding.FragmentPopupBinding
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.clicks
+import fr.harmoniamk.statsmk.extension.dismiss
 import fr.harmoniamk.statsmk.extension.onTextChanged
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flattenMerge
+import kotlinx.coroutines.flow.flowOf
 
+@FlowPreview
 @ExperimentalCoroutinesApi
 class PopupFragment(val message: String, val positiveText: String? = null, private val negativeText: String = "Retour", val editTextHint: String? = null, val loading: Boolean = false) : DialogFragment() {
 
@@ -35,7 +41,9 @@ class PopupFragment(val message: String, val positiveText: String? = null, priva
         dialog?.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
         binding.popupMessage.text = message
         binding.negativeButton.text = negativeText
-        binding.negativeButton.clicks().bind(onNegativeClick, lifecycleScope)
+        flowOf(binding.negativeButton.clicks(), dialog.dismiss().filter { negativeText == "Retour" })
+            .flattenMerge()
+            .bind(onNegativeClick, lifecycleScope)
         editTextHint?.let {
             binding.popupEt.hint = it
             binding.popupEt.isVisible = true
