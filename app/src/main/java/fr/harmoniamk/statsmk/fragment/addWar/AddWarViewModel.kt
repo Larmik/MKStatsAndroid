@@ -59,7 +59,7 @@ class AddWarViewModel @Inject constructor(
             .onEach { _sharedLoading.emit(true) }
             .flatMapLatest { firebaseRepository.getNewWars(preferencesRepository.currentTeam?.mid ?: "-1") }
             .map { it.map { w -> MKWar(w) }.getCurrent(preferencesRepository.currentTeam?.mid) }
-            .shareIn(viewModelScope, SharingStarted.Eagerly, replay = 1)
+            .shareIn(viewModelScope, SharingStarted.Eagerly)
 
         createWar
             .filter { it == null}

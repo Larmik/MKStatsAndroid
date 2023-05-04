@@ -42,9 +42,9 @@ class SettingsViewModel @Inject constructor(private val preferencesRepository: P
 
 
     fun bind(onManageTeam: Flow<Unit>, onTheme: Flow<Unit>, onManagePlayers: Flow<Unit>, onProfileClick: Flow<Unit>, onPlayersClick: Flow<Unit>, onSimulate: Flow<Unit>) {
-        val teamClick = onManageTeam.flatMapLatest { authenticationRepository.userRole }.shareIn(viewModelScope, SharingStarted.Eagerly, 1)
-        val playersClick = onManagePlayers.flatMapLatest { authenticationRepository.userRole }.shareIn(viewModelScope, SharingStarted.Eagerly, 1)
-        val playerListClick = onPlayersClick.flatMapLatest { authenticationRepository.userRole }.shareIn(viewModelScope, SharingStarted.Eagerly, 1)
+        val teamClick = onManageTeam.flatMapLatest { authenticationRepository.userRole }.shareIn(viewModelScope, SharingStarted.Eagerly)
+        val playersClick = onManagePlayers.flatMapLatest { authenticationRepository.userRole }.shareIn(viewModelScope, SharingStarted.Eagerly)
+        val playerListClick = onPlayersClick.flatMapLatest { authenticationRepository.userRole }.shareIn(viewModelScope, SharingStarted.Eagerly)
         teamClick.filter { it >= UserRole.ADMIN.ordinal && preferencesRepository.currentTeam != null }.map{}.bind(_sharedManageTeam, viewModelScope)
         playersClick.filter { it >= UserRole.ADMIN.ordinal && preferencesRepository.currentTeam != null }.map{}.bind(_sharedManagePlayers, viewModelScope)
         flowOf(teamClick, playersClick, playerListClick)

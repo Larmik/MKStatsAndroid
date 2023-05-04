@@ -8,9 +8,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.extension.bind
+import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.firebase.PictureResponse
 import fr.harmoniamk.statsmk.model.firebase.ResetPasswordResponse
 import fr.harmoniamk.statsmk.model.firebase.UploadPictureResponse
+import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.repository.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -158,8 +160,6 @@ class ProfileViewModel @Inject constructor(private val authenticationRepository:
 
             }
         }
-
-
     }
 
     fun bindLeavePopup(onCancel: Flow<Unit>, onLeave: Flow<Unit>) {
@@ -170,13 +170,22 @@ class ProfileViewModel @Inject constructor(private val authenticationRepository:
                 val formerTeams = mutableListOf<String?>()
                 formerTeams.addAll(it?.formerTeams.orEmpty())
                 formerTeams.add(preferencesRepository.currentTeam?.mid)
-
+                it?.formerTeams?.takeIf { it.isNotEmpty() }?.let {
+                    it.forEach {
+                        val wars = firebaseRepository.getNewWars(it)
+                            .map { list -> list.map {  MKWar(it) } }
+                            .first()
+                        val finalList = wars.withName(databaseRepository).first()
+                        databaseRepository.writeWars(finalList).first()
+                    }
+                }
                 it.apply {
                     this?.team = "-1"
-                    this?.formerTeams = formerTeams.filterNotNull()
+                    this?.formerTeams = formerTeams.distinct().filterNotNull()
                 }
             }
             .flatMapLatest { firebaseRepository.writeUser(it) }
+            .onEach { preferencesRepository.currentTeam = null }
             .bind(_sharedTeamLeft, viewModelScope)
     }
 

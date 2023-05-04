@@ -79,7 +79,7 @@ class PositionViewModel @Inject constructor(
 
 
         preferencesRepository.currentWar?.let { war ->
-            val back = onBack.shareIn(viewModelScope, SharingStarted.Eagerly, 1)
+            val back = onBack.shareIn(viewModelScope, SharingStarted.Eagerly)
             val positions = mutableListOf<NewWarPositions>()
             var currentUser: User? = null
             var currentUsers: List<User> = listOf()

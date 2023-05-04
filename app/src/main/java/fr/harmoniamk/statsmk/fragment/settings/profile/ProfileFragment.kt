@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -155,6 +156,7 @@ class ProfileFragment: Fragment(R.layout.fragment_profile) {
             }.launchIn(lifecycleScope)
 
         viewModel.sharedLeavePopup
+            .filter { lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED) }
             .onEach {
                 val popupFragment = PopupFragment(message = it.first, positiveText = it.second)
                 viewModel.bindLeavePopup(onCancel = popupFragment.onNegativeClick, onLeave = popupFragment.onPositiveClick)
@@ -163,6 +165,7 @@ class ProfileFragment: Fragment(R.layout.fragment_profile) {
                     .onEach { popupFragment.dismiss() }
                     .launchIn(lifecycleScope)
                 viewModel.sharedTeamLeft
+                    .filter { findNavController().currentDestination?.id == R.id.profileFragment }
                     .onEach { findNavController().navigate(ProfileFragmentDirections.backToHome()) }
                     .launchIn(lifecycleScope)
             }.launchIn(lifecycleScope)
