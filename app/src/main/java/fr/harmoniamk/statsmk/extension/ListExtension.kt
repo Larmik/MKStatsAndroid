@@ -3,11 +3,31 @@ package fr.harmoniamk.statsmk.extension
 import android.util.Log
 import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.fragment.stats.opponentRanking.OpponentRankingItemViewModel
-import fr.harmoniamk.statsmk.fragment.stats.playerRanking.PlayerRankingItemViewModel
 import fr.harmoniamk.statsmk.model.firebase.*
 import fr.harmoniamk.statsmk.model.local.*
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.mapNotNull
+import kotlin.collections.List
+import kotlin.collections.Map
+import kotlin.collections.count
+import kotlin.collections.filter
+import kotlin.collections.filterNot
+import kotlin.collections.filterNotNull
+import kotlin.collections.firstOrNull
+import kotlin.collections.forEach
+import kotlin.collections.get
+import kotlin.collections.groupBy
+import kotlin.collections.isNotEmpty
+import kotlin.collections.map
+import kotlin.collections.maxByOrNull
+import kotlin.collections.minByOrNull
+import kotlin.collections.mutableListOf
+import kotlin.collections.singleOrNull
+import kotlin.collections.sortedByDescending
+import kotlin.collections.toList
 
 fun <T> List<T>.safeSubList(from: Int, to: Int): List<T> = when {
     this.size < to -> this
@@ -123,8 +143,8 @@ fun List<MKWar?>.withName(databaseRepository: DatabaseRepositoryInterface) = flo
 }
 fun NewWar?.withName(databaseRepository: DatabaseRepositoryInterface) = flow {
     this@withName?.let {
-        val hostName = databaseRepository.getTeam(it?.teamHost).firstOrNull()?.shortName
-        val opponentName = databaseRepository.getTeam(it?.teamOpponent).firstOrNull()?.shortName
+        val hostName = databaseRepository.getTeam(it.teamHost).firstOrNull()?.shortName
+        val opponentName = databaseRepository.getTeam(it.teamOpponent).firstOrNull()?.shortName
         emit(MKWar(it).apply { this.name = "$hostName - $opponentName" })
     }
 }

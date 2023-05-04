@@ -1,8 +1,6 @@
 package fr.harmoniamk.statsmk.repository
 
-import android.content.Context
 import android.net.Uri
-import android.util.Log
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -10,8 +8,6 @@ import com.google.firebase.auth.UserProfileChangeRequest
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ApplicationComponent
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import fr.harmoniamk.statsmk.model.firebase.AuthUserResponse
 import fr.harmoniamk.statsmk.model.firebase.ResetPasswordResponse

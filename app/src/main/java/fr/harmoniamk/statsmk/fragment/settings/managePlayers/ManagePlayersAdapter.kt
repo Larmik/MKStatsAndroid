@@ -18,12 +18,12 @@ import kotlin.coroutines.CoroutineContext
 @FlowPreview
 @ExperimentalCoroutinesApi
 class ManagePlayersAdapter(private val items: MutableList<ManagePlayersItemViewModel> = mutableListOf(), private val showAlly: Boolean = false) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), CoroutineScope {
-    private val ITEM_CATEGORY = -155
+    private val ITEMCATEGORY = -155
 
     val sharedEdit = MutableSharedFlow<User>()
 
     override fun getItemViewType(position: Int): Int =
-         if (items[position].isCategory) ITEM_CATEGORY
+         if (items[position].isCategory) ITEMCATEGORY
          else position
 
 
@@ -42,7 +42,7 @@ class ManagePlayersAdapter(private val items: MutableList<ManagePlayersItemViewM
     class PlayersCategoryViewHolder(val binding: PlayerCategoryItemBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder = when (viewType) {
-        ITEM_CATEGORY -> PlayersCategoryViewHolder(PlayerCategoryItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        ITEMCATEGORY -> PlayersCategoryViewHolder(PlayerCategoryItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
         else -> ManagePlayersViewHolder(ManagePlayersItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 

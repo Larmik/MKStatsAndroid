@@ -16,12 +16,9 @@ import fr.harmoniamk.statsmk.extension.onTextChanged
 import fr.harmoniamk.statsmk.fragment.playerSelect.PlayerListAdapter
 import fr.harmoniamk.statsmk.fragment.popup.PopupFragment
 import fr.harmoniamk.statsmk.fragment.settings.managePlayers.AddPlayersFragment
-import fr.harmoniamk.statsmk.fragment.settings.managePlayers.EditPlayerFragment
 import fr.harmoniamk.statsmk.fragment.settings.managePlayers.ManagePlayersAdapter
-import fr.harmoniamk.statsmk.fragment.subPlayer.SubPlayerAdapter
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 

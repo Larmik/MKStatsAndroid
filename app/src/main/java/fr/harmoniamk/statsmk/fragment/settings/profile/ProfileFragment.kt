@@ -1,14 +1,8 @@
 package fr.harmoniamk.statsmk.fragment.settings.profile
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
@@ -24,12 +18,10 @@ import fr.harmoniamk.statsmk.databinding.FragmentProfileBinding
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.extension.setImageURL
-import fr.harmoniamk.statsmk.fragment.home.HomeFragmentDirections
 import fr.harmoniamk.statsmk.fragment.popup.PopupFragment
-import kotlinx.coroutines.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
-import java.net.URL
-import java.util.concurrent.Executors
 
 
 @ExperimentalCoroutinesApi

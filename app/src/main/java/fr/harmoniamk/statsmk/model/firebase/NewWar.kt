@@ -2,7 +2,6 @@ package fr.harmoniamk.statsmk.model.firebase
 
 import android.os.Parcelable
 import fr.harmoniamk.statsmk.database.entities.WarEntity
-import fr.harmoniamk.statsmk.model.local.MKWar
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.parcel.RawValue
 import java.io.Serializable
@@ -21,7 +20,7 @@ data class NewWar(
 
 
     fun toEntity(name: String?) = WarEntity(
-        mid = mid ?: "-1",
+        mid = mid,
         entityName = name,
         playerHostId = playerHostId,
         teamHost = teamHost,

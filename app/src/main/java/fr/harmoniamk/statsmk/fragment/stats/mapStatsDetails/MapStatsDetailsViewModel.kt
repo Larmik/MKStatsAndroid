@@ -42,9 +42,12 @@ class MapStatsDetailsViewModel @Inject constructor(private val authenticationRep
                     }
                 }.toMutableList()
                 when {
-                    filters.contains(WarFilterType.WEEK) -> sortedWars.removeAll(mapDetails.filterNot { it.war.isThisWeek })
-                    filters.contains(WarFilterType.OFFICIAL) -> sortedWars.removeAll(mapDetails.filterNot { it.war.war?.isOfficial.isTrue })
-                    filters.contains(WarFilterType.PLAY) -> sortedWars.removeAll(mapDetails.filterNot { it.war.hasPlayer(authenticationRepository.user?.uid) })
+                    filters.contains(WarFilterType.WEEK) -> sortedWars.removeAll(mapDetails.filterNot { it.war.isThisWeek }
+                        .toSet())
+                    filters.contains(WarFilterType.OFFICIAL) -> sortedWars.removeAll(mapDetails.filterNot { it.war.war?.isOfficial.isTrue }
+                        .toSet())
+                    filters.contains(WarFilterType.PLAY) -> sortedWars.removeAll(mapDetails.filterNot { it.war.hasPlayer(authenticationRepository.user?.uid) }
+                        .toSet())
                 }
                 _sharedTracks.emit(sortedWars.filter { it.war.isOver })
                 _sharedSortTypeSelected.emit(it)

@@ -3,12 +3,14 @@ package fr.harmoniamk.statsmk.fragment.stats.mapStats
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.harmoniamk.statsmk.extension.*
+import fr.harmoniamk.statsmk.extension.bind
+import fr.harmoniamk.statsmk.extension.getDefeat
+import fr.harmoniamk.statsmk.extension.getVictory
+import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import fr.harmoniamk.statsmk.model.local.MapDetails
 import fr.harmoniamk.statsmk.model.local.MapStats
-import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface

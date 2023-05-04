@@ -1,13 +1,11 @@
 package fr.harmoniamk.statsmk.fragment.trackDetails
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.isTrue
-import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
 import fr.harmoniamk.statsmk.model.firebase.Shock
@@ -17,11 +15,9 @@ import fr.harmoniamk.statsmk.model.local.MKWarPosition
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
-import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.NetworkRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
@@ -59,7 +55,7 @@ class TrackDetailsViewModel @Inject constructor(
 
     fun bind(war: NewWar, warTrack: NewWarTrack?, index: Int, onEditTrack: Flow<Unit>, onEditPositions: Flow<Unit>, onEditShocks: Flow<Unit>) {
 
-        warId = war.mid ?: ""
+        warId = war.mid
         warTrackId = warTrack?.mid ?: ""
         this.index = index
 
@@ -67,9 +63,8 @@ class TrackDetailsViewModel @Inject constructor(
             .onEach {
                 users.clear()
                 users.addAll(it)
-            }.launchIn(viewModelScope)
-
-        databaseRepository.getWar(warId)
+            }
+            .flatMapLatest {  databaseRepository.getWar(warId) }
             .onEach {
                 _sharedWarName.emit(it?.name)
                 val shocks = mutableListOf<Pair<String?, Shock>>()
@@ -77,16 +72,16 @@ class TrackDetailsViewModel @Inject constructor(
                     shocks.add(Pair(users.singleOrNull { it.mid == shock.playerId }?.name, Shock(shock.playerId, shock.count)))
                 }
                 _sharedShocks.emit(shocks)
-            }.launchIn(viewModelScope)
-        val positionsFlow = when (warTrackId.isEmpty()) {
-            true -> flowOf(war.warTracks?.get(index)?.warPositions).filterNotNull()
-            else -> {
-                databaseRepository.getWar(warId)
-                    .mapNotNull { it?.warTracks?.singleOrNull { track -> track.track?.mid == warTrackId }?.track?.warPositions }
             }
-        }
-
-        positionsFlow
+            .flatMapLatest {
+                when (warTrackId.isEmpty()) {
+                    true -> flowOf(war.warTracks?.get(index)?.warPositions).filterNotNull()
+                    else -> {
+                        databaseRepository.getWar(warId)
+                            .mapNotNull { it?.warTracks?.singleOrNull { track -> track.track?.mid == warTrackId }?.track?.warPositions }
+                    }
+                }
+            }
             .onEach {
                 val role = authenticationRepository.userRole.firstOrNull() ?: 0
                 val isAdmin = role >= UserRole.ADMIN.ordinal
@@ -99,7 +94,9 @@ class TrackDetailsViewModel @Inject constructor(
                 _sharedPositions.emit(positions)
                 _sharedButtonsVisible.emit(networkRepository.networkAvailable && (isAdmin.isTrue && !MKWar(war).isOver
                         || isLeader))
-            }.launchIn(viewModelScope)
+            }
+            .launchIn(viewModelScope)
+
 
         onEditTrack.bind(_sharedEditTrackClick, viewModelScope)
         onEditPositions.bind(_sharedEditPositionsClick, viewModelScope)

@@ -1,21 +1,14 @@
 package fr.harmoniamk.statsmk.repository
 
-import android.annotation.SuppressLint
-import android.content.Context
-import android.provider.Settings.Secure
 import android.util.Log
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.google.gson.GsonBuilder
-import com.google.gson.reflect.TypeToken
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ApplicationComponent
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import fr.harmoniamk.statsmk.extension.parsePenalties
 import fr.harmoniamk.statsmk.extension.parseTracks
@@ -179,7 +172,7 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
 
     override fun deleteNewWar(war: MKWar) = flow {
         war.war?.let {
-            database.child("newWars").child(it.mid).removeValue()
+            database.child("newWars").child(preferencesRepository.currentTeam?.mid ?: "-1").child(it.mid).removeValue()
             emit(Unit)
         }
     }.flatMapLatest { databaseRepository.deleteWar(war) }

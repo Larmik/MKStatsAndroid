@@ -2,7 +2,6 @@ package fr.harmoniamk.statsmk.database.dao
 
 import androidx.room.*
 import fr.harmoniamk.statsmk.database.entities.TeamEntity
-import fr.harmoniamk.statsmk.database.entities.UserEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao

@@ -7,13 +7,14 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.application.MainApplication
 import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.enums.TrackSortType
-import fr.harmoniamk.statsmk.extension.*
+import fr.harmoniamk.statsmk.extension.bind
+import fr.harmoniamk.statsmk.extension.isTrue
+import fr.harmoniamk.statsmk.extension.sum
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import fr.harmoniamk.statsmk.model.local.TrackStats
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
-import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview

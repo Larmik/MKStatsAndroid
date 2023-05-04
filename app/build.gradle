@@ -85,7 +85,7 @@ def makePropertyHashTable(filename) {
     def devProperties = new Properties()
     try {
         devProperties.load(new FileInputStream(file(filename)))
-    } catch (FileNotFoundException e) {
+    } catch (FileNotFoundException ignored) {
         devProperties = null
         System.out.println("devProperties is null")
     }

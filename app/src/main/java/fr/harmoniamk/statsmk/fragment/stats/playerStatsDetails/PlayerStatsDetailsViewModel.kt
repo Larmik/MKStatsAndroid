@@ -72,9 +72,12 @@ class PlayerStatsDetailsViewModel @Inject constructor(private val firebaseReposi
                     WarSortType.SCORE -> wars.sortedByDescending { it.scoreHost }
                 }.toMutableList()
                 when {
-                    filters.contains(WarFilterType.WEEK) -> sortedWars.removeAll(wars.filterNot { it.isThisWeek })
-                    filters.contains(WarFilterType.OFFICIAL) -> sortedWars.removeAll(wars.filterNot { it.war?.isOfficial.isTrue })
-                    filters.contains(WarFilterType.PLAY) -> sortedWars.removeAll(wars.filterNot { it.hasPlayer(authenticationRepository.user?.uid) })
+                    filters.contains(WarFilterType.WEEK) -> sortedWars.removeAll(wars.filterNot { it.isThisWeek }
+                        .toSet())
+                    filters.contains(WarFilterType.OFFICIAL) -> sortedWars.removeAll(wars.filterNot { it.war?.isOfficial.isTrue }
+                        .toSet())
+                    filters.contains(WarFilterType.PLAY) -> sortedWars.removeAll(wars.filterNot { it.hasPlayer(authenticationRepository.user?.uid) }
+                        .toSet())
                 }
                 _sharedWars.emit(sortedWars.filter { it.isOver })
                 _sharedSortTypeSelected.emit(it)

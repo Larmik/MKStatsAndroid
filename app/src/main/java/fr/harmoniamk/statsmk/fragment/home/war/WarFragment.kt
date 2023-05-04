@@ -13,12 +13,14 @@ import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentWarBinding
 import fr.harmoniamk.statsmk.extension.clicks
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 import fr.harmoniamk.statsmk.fragment.home.HomeFragmentDirections
 import fr.harmoniamk.statsmk.fragment.settings.manageTeams.AddTeamFragment
-import fr.harmoniamk.statsmk.model.local.MKWar
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 @FlowPreview
 @ExperimentalCoroutinesApi
@@ -27,8 +29,6 @@ class WarFragment : Fragment(R.layout.fragment_war) {
 
     private val binding: FragmentWarBinding by viewBinding()
     private val viewModel: WarViewModel by viewModels()
-
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -53,14 +53,11 @@ class WarFragment : Fragment(R.layout.fragment_war) {
                 .onEach {
                     binding.noTeamLayout.isVisible = !it
                     binding.hasTeamLayout.isVisible = it
-                    binding.lastWarsLayout.isVisible = it
                     separators.forEach { view -> view.isVisible = it }
                 }.launchIn(lifecycleScope)
 
             viewModel.sharedTeamName
-                .onEach {
-                    binding.currentTeamTv.text = it
-                }
+                .onEach { binding.currentTeamTv.text = it }
                 .launchIn(lifecycleScope)
 
             viewModel.sharedCreateWar
@@ -86,7 +83,7 @@ class WarFragment : Fragment(R.layout.fragment_war) {
                 .onEach {
                     when (it) {
                         true -> findNavController().navigate(HomeFragmentDirections.goToCurrentWar())
-                        else -> Toast.makeText(requireContext(), "Vous ne pouvez pas accéder à la war en cour car vous êtes hors connexion.", Toast.LENGTH_SHORT).show()
+                        else -> Toast.makeText(requireContext(), "Vous ne pouvez pas accéder à la war en cours car vous êtes hors connexion.", Toast.LENGTH_SHORT).show()
                     }
                 }.launchIn(lifecycleScope)
 
@@ -98,6 +95,7 @@ class WarFragment : Fragment(R.layout.fragment_war) {
 
             viewModel.sharedLastWars
                 .onEach {
+                    binding.lastWarsLayout.isVisible = true
                     binding.lastWarRv.isVisible = it.isNotEmpty()
                     binding.emptyWars.isVisible = it.isEmpty()
                     binding.allWarsBtn.isVisible = it.isNotEmpty()
@@ -133,7 +131,5 @@ class WarFragment : Fragment(R.layout.fragment_war) {
         }
 
     }
-
-
 
 }

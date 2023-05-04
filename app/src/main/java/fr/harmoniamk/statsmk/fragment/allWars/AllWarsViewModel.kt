@@ -5,16 +5,17 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.enums.WarFilterType
 import fr.harmoniamk.statsmk.enums.WarSortType
-import fr.harmoniamk.statsmk.extension.*
+import fr.harmoniamk.statsmk.extension.bind
+import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
-import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
+import java.util.*
 import javax.inject.Inject
 
 @FlowPreview
@@ -81,9 +82,11 @@ class AllWarsViewModel @Inject constructor(
                     true -> {
                         filteredWars.addAll(wars)
                         when {
-                            filters.contains(WarFilterType.WEEK) -> filteredWars.removeAll(wars.filterNot { it.isThisWeek })
+                            filters.contains(WarFilterType.WEEK) -> filteredWars.removeAll(wars.filterNot { it.isThisWeek }
+                                .toSet())
                             filters.contains(WarFilterType.OFFICIAL) -> filteredWars.removeAll(wars.filterNot { it.war?.isOfficial.isTrue })
-                            filters.contains(WarFilterType.PLAY) -> filteredWars.removeAll(wars.filterNot { it.hasPlayer(authenticationRepository.user?.uid) })
+                            filters.contains(WarFilterType.PLAY) -> filteredWars.removeAll(wars.filterNot { it.hasPlayer(authenticationRepository.user?.uid) }
+                                .toSet())
                         }
                         when (_sharedSortTypeSelected.value) {
                             WarSortType.DATE -> filteredWars.sortByDescending { it.war?.mid }
@@ -92,12 +95,21 @@ class AllWarsViewModel @Inject constructor(
                         }
                     }
                     else -> {
-                        val filteredTeams = teams.filter { it.name?.toLowerCase()?.contains(searched.toLowerCase()).isTrue || it.shortName?.toLowerCase()?.contains(searched.toLowerCase()).isTrue}
+                        val filteredTeams = teams.filter { it.name?.toLowerCase(Locale.ROOT)?.contains(searched.toLowerCase(
+                            Locale.ROOT)).isTrue || it.shortName?.toLowerCase()?.contains(searched.toLowerCase(
+                            Locale.ROOT)).isTrue}
                         filteredTeams.forEach { team -> filteredWars.addAll(wars.filter { it.war?.teamOpponent?.equals(team.mid).isTrue }) }
                         when {
-                            filters.contains(WarFilterType.WEEK) -> filteredWars.removeAll(filteredWars.filterNot { it.isThisWeek })
-                            filters.contains(WarFilterType.OFFICIAL) -> filteredWars.removeAll(filteredWars.filterNot { it.war?.isOfficial.isTrue })
-                            filters.contains(WarFilterType.PLAY) -> filteredWars.removeAll(filteredWars.filterNot { it.hasPlayer(authenticationRepository.user?.uid) })
+                            filters.contains(WarFilterType.WEEK) -> filteredWars.removeAll(
+                                filteredWars.filterNot { it.isThisWeek }.toSet()
+                            )
+                            filters.contains(WarFilterType.OFFICIAL) -> filteredWars.removeAll(
+                                filteredWars.filterNot { it.war?.isOfficial.isTrue }.toSet()
+                            )
+                            filters.contains(WarFilterType.PLAY) -> filteredWars.removeAll(
+                                filteredWars.filterNot { it.hasPlayer(authenticationRepository.user?.uid) }
+                                    .toSet()
+                            )
                         }
                         when (_sharedSortTypeSelected.value) {
                             WarSortType.DATE -> filteredWars.sortByDescending { it.war?.mid }
@@ -117,9 +129,12 @@ class AllWarsViewModel @Inject constructor(
                     WarSortType.SCORE -> wars.sortedByDescending { it.scoreHost }
                 }.toMutableList()
                 when {
-                    filters.contains(WarFilterType.WEEK) -> sortedWars.removeAll(wars.filterNot { it.isThisWeek })
-                    filters.contains(WarFilterType.OFFICIAL) -> sortedWars.removeAll(wars.filterNot { it.war?.isOfficial.isTrue })
-                    filters.contains(WarFilterType.PLAY) -> sortedWars.removeAll(wars.filterNot { it.hasPlayer(authenticationRepository.user?.uid) })
+                    filters.contains(WarFilterType.WEEK) -> sortedWars.removeAll(wars.filterNot { it.isThisWeek }
+                        .toSet())
+                    filters.contains(WarFilterType.OFFICIAL) -> sortedWars.removeAll(wars.filterNot { it.war?.isOfficial.isTrue }
+                        .toSet())
+                    filters.contains(WarFilterType.PLAY) -> sortedWars.removeAll(wars.filterNot { it.hasPlayer(authenticationRepository.user?.uid) }
+                        .toSet())
                 }
                 _sharedWars.emit(sortedWars.filter { it.isOver })
                 _sharedSortTypeSelected.emit(it)

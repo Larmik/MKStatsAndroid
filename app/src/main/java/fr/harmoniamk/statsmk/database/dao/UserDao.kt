@@ -1,9 +1,7 @@
 package fr.harmoniamk.statsmk.database.dao
 
 import androidx.room.*
-import fr.harmoniamk.statsmk.database.entities.TeamEntity
 import fr.harmoniamk.statsmk.database.entities.UserEntity
-import fr.harmoniamk.statsmk.model.firebase.User
 import kotlinx.coroutines.flow.Flow
 
 @Dao

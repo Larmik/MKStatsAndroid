@@ -9,7 +9,8 @@
         android:label="${appLabel}"
         android:supportsRtl="true"
         android:name=".application.MainApplication"
-        android:theme="@style/AppThemeWaluigi">
+        android:theme="@style/AppThemeWaluigi"
+        android:dataExtractionRules="@xml/data_extraction_rules">
         <activity
             android:name=".activity.MainActivity"
             android:exported="true"/>

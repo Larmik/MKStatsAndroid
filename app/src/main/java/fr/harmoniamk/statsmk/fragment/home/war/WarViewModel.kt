@@ -44,7 +44,6 @@ class WarViewModel @Inject constructor(
     val sharedButtonVisible = _sharedButtonVisible.asSharedFlow()
     val sharedLoaded = _sharedLoaded.asSharedFlow()
 
-    private var firstCall = true
     private var currentWar: MKWar? = null
 
     fun bind(onCreateWar: Flow<Unit>, onCurrentWarClick: Flow<Unit>, onWarClick: Flow<MKWar>, onCreateTeam: Flow<Unit>) {

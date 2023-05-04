@@ -1,14 +1,16 @@
 package fr.harmoniamk.statsmk.fragment.stats.indivStats
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.enums.Maps
-import fr.harmoniamk.statsmk.extension.*
+import fr.harmoniamk.statsmk.extension.bind
+import fr.harmoniamk.statsmk.extension.withFullStats
+import fr.harmoniamk.statsmk.extension.withFullTeamStats
 import fr.harmoniamk.statsmk.fragment.stats.opponentRanking.OpponentRankingItemViewModel
-import fr.harmoniamk.statsmk.model.firebase.Team
-import fr.harmoniamk.statsmk.model.local.*
+import fr.harmoniamk.statsmk.model.local.MKWar
+import fr.harmoniamk.statsmk.model.local.Stats
+import fr.harmoniamk.statsmk.model.local.TrackStats
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface

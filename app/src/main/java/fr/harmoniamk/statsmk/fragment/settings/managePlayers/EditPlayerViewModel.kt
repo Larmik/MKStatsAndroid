@@ -47,7 +47,7 @@ class EditPlayerViewModel @Inject constructor(private val authenticationReposito
 
         authenticationRepository.userRole
             .onEach { userRole ->
-                _sharedPlayerHasAccount.emit(player.mid?.toLongOrNull() == null)
+                _sharedPlayerHasAccount.emit(player.mid.toLongOrNull() == null)
                 _sharedDeleteVisibility.emit(userRole == UserRole.GOD.ordinal)
                 player.role?.let {
                     _sharedLeaveTeamVisibility.emit(player.mid != authenticationRepository.user?.uid && it < UserRole.LEADER.ordinal)

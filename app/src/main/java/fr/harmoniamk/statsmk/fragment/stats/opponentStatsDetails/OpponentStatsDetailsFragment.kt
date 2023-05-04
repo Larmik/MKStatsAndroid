@@ -18,7 +18,6 @@ import fr.harmoniamk.statsmk.enums.WarSortType
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.fragment.allWars.AllWarsAdapter
-import fr.harmoniamk.statsmk.fragment.allWars.AllWarsFragmentDirections
 import fr.harmoniamk.statsmk.model.local.Stats
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview

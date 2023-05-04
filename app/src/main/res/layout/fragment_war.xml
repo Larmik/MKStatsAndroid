@@ -264,6 +264,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:id="@+id/last_wars_layout"
+                    android:visibility="gone"
                     android:orientation="vertical"
                     android:paddingTop="10dp">
 

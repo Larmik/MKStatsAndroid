@@ -17,7 +17,6 @@ import fr.harmoniamk.statsmk.enums.WarFilterType
 import fr.harmoniamk.statsmk.enums.WarSortType
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.fragment.allWars.AllWarsAdapter
-import fr.harmoniamk.statsmk.fragment.stats.opponentStatsDetails.OpponentStatsDetailsFragmentDirections
 import fr.harmoniamk.statsmk.fragment.stats.playerRanking.PlayerRankingItemViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
