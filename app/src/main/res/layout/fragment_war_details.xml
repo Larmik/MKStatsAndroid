@@ -204,7 +204,7 @@
                         android:layout_marginBottom="5dp"
                         android:fontFamily="@font/montserrat_bold"
                         android:textColor="@color/harmonia_dark"
-                        android:text="Pénalités :"/>
+                        android:text="@string/p_nalit_s"/>
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:layout_width="match_parent"
@@ -247,7 +247,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Meilleur circuit :"
+                                android:text="@string/meilleur_circuit"
                                 android:textColor="@color/harmonia_dark"
                                 android:layout_marginBottom="5dp"
                                 android:fontFamily="@font/montserrat_bold"
@@ -272,7 +272,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Pire circuit :"
+                                android:text="@string/pire_circuit"
                                 android:textColor="@color/harmonia_dark"
                                 android:fontFamily="@font/montserrat_bold"
                                 android:layout_marginBottom="5dp"
@@ -308,7 +308,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Tous les circuits :"
+                        android:text="@string/tous_les_circuits"
                         android:textColor="@color/harmonia_dark"
                         android:layout_marginBottom="7dp"
                         android:fontFamily="@font/montserrat_bold"
@@ -335,7 +335,7 @@
                     android:background="@drawable/button_background"
                     tools:targetApi="n_mr1"
                     android:fontFamily="@font/montserrat_bold"
-                    android:text="Supprimer la war"
+                    android:text="@string/supprimer_la_war"
                     android:visibility="gone"
                     android:id="@+id/delete_war_btn"
                     android:textColor="@color/text_color"

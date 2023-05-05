@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dp"
-        android:text="Adversaires"
+        android:text="@string/adversaires"
         android:textSize="20sp"
         android:gravity="center"
         android:fontFamily="@font/montserrat_bold"
@@ -41,7 +41,7 @@
             android:gravity="center"
             android:textSize="14sp"
             android:id="@+id/add_team_btn"
-            android:text="Ajouter une équipe"
+            android:text="@string/ajouter_une_quipe"
             android:background="@drawable/button_background"
             tools:targetApi="n_mr1"/>
 
@@ -54,14 +54,15 @@
     <EditText
         android:layout_width="match_parent"
         android:background="@drawable/rounded_bg"
-        android:hint="Rechercher une équipe..."
+        android:hint="@string/rechercher_une_quipe"
         android:textColor="@color/black"
         android:textColorHint="@color/boo"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/white_alphaed"
         android:padding="15dp"
         android:layout_marginBottom="5dp"
-        android:id="@+id/search_et"/>
+        android:id="@+id/search_et"
+        android:importantForAutofill="no" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"

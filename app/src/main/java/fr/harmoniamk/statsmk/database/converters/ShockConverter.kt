@@ -8,7 +8,7 @@ import fr.harmoniamk.statsmk.model.firebase.Shock
 class ShockConverter {
 
     @TypeConverter
-    fun fromShockList(value: List<Shock>?) = Gson().toJson(value)
+    fun fromShockList(value: List<Shock>?): String = Gson().toJson(value)
 
 
     @TypeConverter

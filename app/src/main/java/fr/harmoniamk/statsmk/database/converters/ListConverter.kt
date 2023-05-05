@@ -7,7 +7,7 @@ import fr.harmoniamk.statsmk.extension.fromJson
 class ListConverter {
 
     @TypeConverter
-    fun fromList(value: List<String>?) = Gson().toJson(value)
+    fun fromList(value: List<String>?): String = Gson().toJson(value)
 
 
     @TypeConverter

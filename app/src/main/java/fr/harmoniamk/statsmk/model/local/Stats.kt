@@ -63,9 +63,9 @@ class TeamStats(val team: Team?, val totalPlayed: Int?): Parcelable {
 @Parcelize
 class WarStats(val list : List<MKWar>): Parcelable {
     val warsPlayed = list.count()
-    val warsWon = list.filter{ war -> war.displayedDiff.contains('+') }.count()
-    val warsTied = list.filter { war -> war.displayedDiff == "0" }.count()
-    val warsLoss = list.filter { war -> war.displayedDiff.contains('-') }.count()
+    val warsWon = list.count { war -> war.displayedDiff.contains('+') }
+    val warsTied = list.count { war -> war.displayedDiff == "0" }
+    val warsLoss = list.count { war -> war.displayedDiff.contains('-') }
     val highestVictory = list.maxByOrNull { war -> war.scoreHost }.takeIf { it?.displayedDiff?.contains("+").isTrue }
     val loudestDefeat = list.minByOrNull { war -> war.scoreHost }.takeIf { it?.displayedDiff?.contains("-").isTrue }
 }
@@ -95,13 +95,17 @@ class MapStats(
         .filter { !isIndiv || (isIndiv && it.war.war?.warTracks?.any { MKWarTrack(it).hasPlayer(userId) }.isTrue) }
         .size
     val trackTie = list
-        .filter { pair -> pair.warTrack.displayedDiff == "0" }
-        .filter { !isIndiv || (isIndiv && it.war.war?.warTracks?.any { MKWarTrack(it).hasPlayer(userId) }.isTrue) }
-        .count()
+        .filter { pair -> pair.warTrack.displayedDiff == "0" }.count {
+            !isIndiv || (isIndiv && it.war.war?.warTracks?.any {
+                MKWarTrack(it).hasPlayer(userId)
+            }.isTrue)
+        }
     val trackLoss = list
-        .filter { pair -> pair.warTrack.displayedDiff.contains('-') }
-        .filter { !isIndiv || (isIndiv && it.war.war?.warTracks?.any { MKWarTrack(it).hasPlayer(userId) }.isTrue) }
-        .count()
+        .filter { pair -> pair.warTrack.displayedDiff.contains('-') }.count {
+            !isIndiv || (isIndiv && it.war.war?.warTracks?.any {
+                MKWarTrack(it).hasPlayer(userId)
+            }.isTrue)
+        }
     val teamScore = list.map { pair -> pair.warTrack }.map { it.teamScore }.sum() / list.size
     val playerScore = playerScoreList.takeIf { it.isNotEmpty() }?.let {  (playerScoreList.sum() / playerScoreList.size).pointsToPosition() } ?: 0
     val highestVictory = list.filter { !isIndiv || (isIndiv && it.war.war?.warTracks?.any { MKWarTrack(it).hasPlayer(userId) }.isTrue) }.getVictory()

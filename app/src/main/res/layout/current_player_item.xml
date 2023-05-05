@@ -12,7 +12,7 @@
         android:layout_height="10dp"
         android:layout_marginEnd="10dp"
         android:src="@drawable/arrow"
-        android:contentDescription="" />
+        android:contentDescription="@string/remplacement" />
 
     <TextView
         android:layout_width="80dp"
@@ -28,6 +28,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="@color/harmonia_dark"
-        android:text="80"/>
+        tools:text="80"/>
 
 </LinearLayout>

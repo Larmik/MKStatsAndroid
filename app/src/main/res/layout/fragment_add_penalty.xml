@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:background="@color/white"
@@ -16,7 +17,7 @@
         android:textColor="@color/harmonia_dark"
         android:gravity="center"
         android:paddingVertical="10dp"
-        android:text="Pénalité"/>
+        android:text="@string/p_nalit"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -33,7 +34,7 @@
             android:layout_marginHorizontal="5dp"
             android:background="@drawable/rounded_bg"
             android:paddingVertical="10dp"
-            android:text="Harmonia"/>
+            tools:text="Harmonia"/>
 
         <TextView
             android:layout_width="0dp"
@@ -44,18 +45,19 @@
             android:background="@drawable/rounded_bg"
             android:textAlignment="center"
             android:paddingVertical="10dp"
-            android:text="Chan-Clan"/>
+            tools:text="Chan-Clan"/>
     </LinearLayout>
 
     <EditText
         android:layout_width="100dp"
         android:layout_height="70dp"
-        android:hint="Valeur"
+        android:hint="@string/valeur"
         android:inputType="number"
         android:textColor="@color/black"
         android:textColorHint="@color/boo"
         android:id="@+id/add_penalty_edit"
-        android:textAlignment="center"/>
+        android:textAlignment="center"
+        android:importantForAutofill="no" />
 
     <TextView
         android:id="@+id/add_penalty_btn"
@@ -66,7 +68,7 @@
         android:background="@drawable/button_background"
         android:textColor="@color/white"
         android:fontFamily="@font/roboto"
-        android:text="Infliger la pénalité"
+        android:text="@string/infliger_la_p_nalit"
         android:layout_margin="15dp"/>
 
 

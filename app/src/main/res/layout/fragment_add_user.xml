@@ -15,7 +15,7 @@
         android:textColor="@color/black"
         android:fontFamily="@font/montserrat_bold"
         android:gravity="center"
-        android:text="Bienvenue !"/>
+        android:text="@string/bienvenue"/>
 
 
         <LinearLayout
@@ -43,7 +43,7 @@
                     android:inputType="textPersonName"
                     android:id="@+id/name_et"
                     android:textCursorDrawable="@null"
-                    android:hint="Entrez votre pseudo:" />
+                    android:hint="@string/entrez_votre_pseudo" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -65,7 +65,7 @@
                     android:textColor="@color/harmonia_dark"
                     android:inputType="textEmailAddress"
                     android:textCursorDrawable="@null"
-                    android:hint="Entrez votre adresse email:" />
+                    android:hint="@string/entrez_votre_adresse_email" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -86,7 +86,7 @@
                     android:background="@color/white"
                     android:textColor="@color/harmonia_dark"
                     android:inputType="textPassword"
-                    android:hint="Entrez votre mot de passe:" />
+                    android:hint="@string/entrez_votre_mot_de_passe" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -107,7 +107,7 @@
         android:id="@+id/next_btn"
         android:enabled="false"
         android:textSize="14sp"
-        android:text="Suivant"
+        android:text="@string/suivant"
         android:gravity="center"
         android:layout_gravity="bottom"/>
 
@@ -120,7 +120,7 @@
         android:id="@+id/connect_btn"
         android:textSize="14sp"
         android:fontFamily="@font/montserrat_regular"
-        android:text="Déjà sur l'appli ?"
+        android:text="@string/d_j_sur_l_appli"
         android:gravity="center"
         android:layout_gravity="bottom"/>
 

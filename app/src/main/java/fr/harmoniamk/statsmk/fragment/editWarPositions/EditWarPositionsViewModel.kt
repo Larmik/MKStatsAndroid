@@ -49,7 +49,7 @@ class EditWarPositionsViewModel @Inject constructor(
 
         val warPositions = war.warTracks?.get(index)?.warPositions
         val positions = mutableListOf<NewWarPositions>()
-        var currentPlayer = warPositions?.get(positions.size)?.playerId
+        var currentPlayer = warPositions?.firstOrNull()?.playerId
         var playerLabel: String?
 
         databaseRepository.getUsers()

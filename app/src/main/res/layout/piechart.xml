@@ -64,7 +64,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/harmonia_dark"
-            android:text="Winrate"
+            android:text="@string/winrate"
             android:fontFamily="@font/orbitron_semibold"
             android:textSize="11sp" />
         <TextView

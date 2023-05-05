@@ -51,7 +51,7 @@ class MapRankingViewModel @Inject constructor(private val preferencesRepository:
                         || it.map {war -> war.war?.teamOpponent}.contains(preferencesRepository.currentTeam?.mid))
                         || onlyIndiv
             }
-            .mapNotNull { list -> list.filter { it.isOver && (!onlyIndiv || (onlyIndiv && it.hasPlayer(authenticationRepository.user?.uid)))} }
+            .mapNotNull { list -> list.filter { it.isOver && ((onlyIndiv && it.hasPlayer(authenticationRepository.user?.uid)) || !onlyIndiv)} }
             .map { list ->
                 val allTracksPlayed = mutableListOf<NewWarTrack>()
                 list.mapNotNull { it.war?.warTracks }.forEach {
@@ -86,7 +86,7 @@ class MapRankingViewModel @Inject constructor(private val preferencesRepository:
                     totalPlayed = it.second.size,
                     winRate = (it.second.filter { MKWarTrack(it).displayedDiff.contains('+') }.size * 100) / it.second.size
                 )
-            }.filter { it.totalPlayed >= 2 && (!onlyIndiv ||(onlyIndiv && indivEnabled))})
+            }.filter { it.totalPlayed >= 2 && ((onlyIndiv && indivEnabled) || !onlyIndiv)})
             _sharedMaps.emit(final)
         }.launchIn(viewModelScope)
 

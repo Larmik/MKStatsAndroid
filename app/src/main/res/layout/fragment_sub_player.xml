@@ -16,13 +16,13 @@
         android:textColor="@color/harmonia_dark"
         android:gravity="center"
         android:paddingVertical="10dp"
-        android:text="Remplacement"/>
+        android:text="@string/remplacement"/>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/sub_label"
-        android:text="Sélectionnez le joueur à remplacer"
+        android:text="@string/s_lectionnez_le_joueur_remplacer"
         android:textAlignment="center"
         android:layout_marginBottom="10dp"/>
 
@@ -78,7 +78,7 @@
                     android:background="@drawable/button_background"
                     android:textColor="@color/white"
                     android:fontFamily="@font/roboto"
-                    android:text="Suivant"/>
+                    android:text="@string/suivant"/>
                 <TextView
                     android:id="@+id/back_btn"
                     android:layout_width="0dp"
@@ -88,7 +88,7 @@
                     android:textAlignment="center"
                     android:textColor="@color/harmonia_dark"
                     android:fontFamily="@font/roboto"
-                    android:text="Retour"/>
+                    android:text="@string/retour"/>
 
             </LinearLayout>
 
@@ -107,7 +107,8 @@
                 android:id="@+id/search_sub_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Rechercher un joueur"/>
+                android:hint="@string/rechercher_un_joueur"
+                android:importantForAutofill="no" />
 
 
                 <LinearLayout
@@ -142,7 +143,7 @@
                     android:background="@drawable/button_background"
                     android:textColor="@color/white"
                     android:fontFamily="@font/roboto"
-                    android:text="Remplacer"/>
+                    android:text="@string/remplacer"/>
                 <TextView
                     android:id="@+id/cancel_btn"
                     android:layout_width="0dp"
@@ -152,7 +153,7 @@
                     android:textAlignment="center"
                     android:textColor="@color/harmonia_dark"
                     android:fontFamily="@font/roboto"
-                    android:text="Annuler"/>
+                    android:text="@string/annuler"/>
 
             </LinearLayout>
 

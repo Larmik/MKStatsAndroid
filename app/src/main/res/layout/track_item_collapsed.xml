@@ -85,7 +85,7 @@
                     android:fontFamily="@font/montserrat_regular"
                     android:gravity="center"
                     android:maxLines="1"
-                    android:text="Score moyen"
+                    android:text="@string/score_moyen"
                     android:textColor="@color/harmonia_dark"
                     android:textSize="14sp"
                     tools:targetApi="o" />

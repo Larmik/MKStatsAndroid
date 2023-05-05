@@ -19,7 +19,7 @@
             android:buttonTint="@color/harmonia_dark"
             android:fontFamily="@font/roboto"
             android:gravity="center"
-            android:text="Membre"
+            android:text="@string/membre"
             android:textColor="@color/harmonia_dark" />
         <RadioButton
             android:id="@+id/admin"
@@ -30,7 +30,7 @@
             android:layout_width="match_parent"
             android:buttonTint="@color/harmonia_dark"
             android:layout_height="wrap_content"
-            android:text="Admin"/>
+            android:text="@string/admin"/>
         <RadioButton
             android:id="@+id/leader"
             android:buttonTint="@color/harmonia_dark"
@@ -40,7 +40,7 @@
             android:fontFamily="@font/roboto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Leader"/>
+            android:text="@string/leader"/>
 
     </RadioGroup>
 

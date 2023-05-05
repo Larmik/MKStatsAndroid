@@ -74,8 +74,8 @@ class WarDetailsViewModel @Inject constructor(
                     val positions = mutableListOf<Pair<User?, Int>>()
                     val players = databaseRepository.getUsers().firstOrNull()
                     _sharedTracks.emit(it)
-                    _sharedBestTrack.emit(it.sortedByDescending { track -> track.teamScore }.first())
-                    _sharedWorstTrack.emit(it.sortedBy { track -> track.teamScore }.first())
+                    _sharedBestTrack.emit(it.maxByOrNull { track -> track.teamScore }!!)
+                    _sharedWorstTrack.emit(it.minByOrNull { track -> track.teamScore }!!)
                     it.forEach {
                         val trackPositions = mutableListOf<MKWarPosition>()
                         it.track?.warPositions?.let { warPositions ->

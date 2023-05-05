@@ -62,7 +62,7 @@
             android:fontFamily="@font/mk_position"
             android:id="@+id/remove_shock"
             android:paddingStart="15dp"
-            android:text="-"
+            android:text="@string/minus"
             android:textColor="@color/black"
             android:paddingEnd="5dp"
             android:textSize="26sp"/>
@@ -73,7 +73,7 @@
             android:layout_height="26dp"
             android:layout_gravity="center"
             android:src="@drawable/shock"
-            android:contentDescription="" />
+            android:contentDescription="@string/shocks_rapport_s" />
 
 
         <TextView
@@ -82,7 +82,7 @@
             android:layout_gravity="center"
             android:fontFamily="@font/mk_position"
             android:id="@+id/add_shock"
-            android:text="+"
+            android:text="@string/plus"
             android:textColor="@color/black"
             android:paddingStart="5dp"
             android:paddingEnd="15dp"

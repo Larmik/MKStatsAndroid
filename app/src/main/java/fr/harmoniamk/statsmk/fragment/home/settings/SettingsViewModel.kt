@@ -66,7 +66,7 @@ class SettingsViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
-    fun simulate() : Flow<Unit> {
+    private fun simulate() : Flow<Unit> {
         val teamPlayerIds = mutableListOf<String>()
         val teamIdList = mutableListOf<String>()
         return firebaseRepository.getUsers()

@@ -73,7 +73,7 @@
                     android:layout_width="wrap_content"
                     android:fontFamily="@font/montserrat_regular"
                     android:layout_height="wrap_content"
-                    android:text="Score: "
+                    android:text="@string/score"
                     android:textSize="13sp"
                     android:textColor="@color/harmonia_dark"
                     android:id="@+id/current_tm_tracks"/>
@@ -81,7 +81,7 @@
                     android:layout_width="wrap_content"
                     android:fontFamily="@font/montserrat_regular"
                     android:layout_height="wrap_content"
-                    android:text="Diff: "
+                    android:text="@string/diff"
                     android:textSize="13sp"
                     android:textColor="@color/harmonia_dark"
                     android:id="@+id/current_tm_top"/>

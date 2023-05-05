@@ -9,7 +9,7 @@ class WarPositionConverter {
 
 
     @TypeConverter
-    fun fromWarPositionList(value: List<NewWarPositions>?) =  Gson().toJson(value)
+    fun fromWarPositionList(value: List<NewWarPositions>?): String =  Gson().toJson(value)
 
 
     @TypeConverter

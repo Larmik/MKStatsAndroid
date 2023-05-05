@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:paddingVertical="10dp"
             android:textColor="@color/harmonia_dark"
-            android:text="Statistiques des joueurs"
+            android:text="@string/statistiques_des_joueurs"
             android:textSize="20sp"
             android:id="@+id/title"
             android:fontFamily="@font/montserrat_bold"
@@ -46,14 +46,15 @@
             <EditText
                 android:layout_width="match_parent"
                 android:background="@drawable/rounded_bg"
-                android:hint="Rechercher un joueur..."
+                android:hint="@string/rechercher_un_joueur"
                 android:textColor="@color/black"
                 android:textColorHint="@color/boo"
                 android:layout_height="wrap_content"
                 android:padding="15dp"
                 android:layout_marginHorizontal="5dp"
                 android:layout_marginBottom="10dp"
-                android:id="@+id/search_et"/>
+                android:id="@+id/search_et"
+                android:importantForAutofill="no" />
 
             <View
                 android:layout_width="match_parent"
@@ -68,7 +69,7 @@
                 android:layout_margin="5dp"
                 android:fontFamily="@font/montserrat_bold"
                 android:textColor="@color/harmonia_dark"
-                android:text="Options de tri" />
+                android:text="@string/options_de_tri" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -96,7 +97,7 @@
                             android:paddingVertical="5dp"
                             android:layout_margin="5dp"
                             android:fontFamily="@font/montserrat_regular"
-                            android:text="Nom"
+                            android:text="@string/nom"
                             android:textAlignment="center" />
 
                         <TextView
@@ -106,7 +107,7 @@
                             android:background="@drawable/rounded_bg"
                             android:layout_margin="5dp"
                             android:paddingVertical="5dp"
-                            android:text="Wars jouées"
+                            android:text="@string/wars_jou_es"
                             android:fontFamily="@font/montserrat_regular"
                             android:textAlignment="center" />
                     </LinearLayout>
@@ -125,7 +126,7 @@
                             android:layout_margin="5dp"
                             android:fontFamily="@font/montserrat_regular"
                             android:paddingVertical="5dp"
-                            android:text="Winrate"
+                            android:text="@string/winrate"
                             android:textAlignment="center" />
 
                         <TextView
@@ -135,7 +136,7 @@
                             android:background="@drawable/rounded_bg"
                             android:paddingVertical="5dp"
                             android:layout_margin="5dp"
-                            android:text="Score moyen"
+                            android:text="@string/score_moyen"
                             android:fontFamily="@font/montserrat_regular"
                             android:textAlignment="center" />
                     </LinearLayout>

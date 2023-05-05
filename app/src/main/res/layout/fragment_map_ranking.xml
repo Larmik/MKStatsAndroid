@@ -14,7 +14,7 @@
             android:layout_height="wrap_content"
             android:paddingVertical="10dp"
             android:textColor="@color/harmonia_dark"
-            android:text="Statistiques des circuits"
+            android:text="@string/statistiques_des_circuits"
             android:textSize="20sp"
             android:fontFamily="@font/montserrat_bold"
             android:gravity="center"/>
@@ -23,14 +23,15 @@
         <EditText
             android:layout_width="match_parent"
             android:background="@drawable/rounded_bg"
-            android:hint="Rechercher un nom ou une abréviation..."
+            android:hint="@string/rechercher_un_nom_ou_une_abr_viation"
             android:textColor="@color/black"
             android:textColorHint="@color/boo"
             android:layout_height="wrap_content"
             android:padding="15dp"
             android:layout_marginHorizontal="5dp"
             android:layout_marginBottom="10dp"
-            android:id="@+id/search_et"/>
+            android:id="@+id/search_et"
+            android:importantForAutofill="no" />
 
 
         <LinearLayout
@@ -48,7 +49,7 @@
                 android:textColor="@color/harmonia_dark"
                 android:fontFamily="@font/roboto"
                 android:textAlignment="center"
-                android:text="Individuel"/>
+                android:text="@string/individuel"/>
 
             <TextView
                 android:layout_width="0dp"
@@ -60,7 +61,7 @@
 
                 android:id="@+id/team_btn"
                 android:textAlignment="center"
-                android:text="Equipe"/>
+                android:text="@string/equipe"/>
 
         </LinearLayout>
 
@@ -80,7 +81,7 @@
             android:layout_margin="5dp"
             android:fontFamily="@font/montserrat_bold"
             android:textColor="@color/harmonia_dark"
-            android:text="Options de tri" />
+            android:text="@string/options_de_tri" />
 
 
             <LinearLayout
@@ -110,7 +111,7 @@
                             android:paddingVertical="5dp"
                             android:layout_margin="5dp"
                             android:fontFamily="@font/montserrat_regular"
-                            android:text="Nb. fois jouées"
+                            android:text="@string/nb_fois_jou_es"
                             android:textAlignment="center" />
 
                         <TextView
@@ -120,7 +121,7 @@
                             android:background="@drawable/rounded_bg"
                             android:layout_margin="5dp"
                             android:paddingVertical="5dp"
-                            android:text="Nb. fois gagnées"
+                            android:text="@string/nb_fois_gagn_es"
                             android:fontFamily="@font/montserrat_regular"
                             android:textAlignment="center" />
                     </LinearLayout>
@@ -139,7 +140,7 @@
                             android:layout_margin="5dp"
                             android:fontFamily="@font/montserrat_regular"
                             android:paddingVertical="5dp"
-                            android:text="Winrate"
+                            android:text="@string/winrate"
                             android:textAlignment="center" />
 
                         <TextView
@@ -149,7 +150,7 @@
                             android:background="@drawable/rounded_bg"
                             android:paddingVertical="5dp"
                             android:layout_margin="5dp"
-                            android:text="Moyenne diff."
+                            android:text="@string/moyenne_diff"
                             android:fontFamily="@font/montserrat_regular"
                             android:textAlignment="center" />
                     </LinearLayout>
@@ -178,7 +179,7 @@
                 android:gravity="center"
                 android:fontFamily="@font/montserrat_regular"
                 android:id="@+id/empty_maps"
-                android:text="Jouez d'abord des circuits afin de les voir apparaître ici."/>
+                android:text="@string/jouez_d_abord_des_circuits_afin_de_les_voir_appara_tre_ici"/>
 
 
             <androidx.recyclerview.widget.RecyclerView

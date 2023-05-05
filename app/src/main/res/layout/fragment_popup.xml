@@ -39,7 +39,8 @@
         android:textColor="@color/black"
         android:gravity="center"
         android:id="@+id/popup_et"
-        android:layout_marginHorizontal="40dp" />
+        android:layout_marginHorizontal="40dp"
+        android:importantForAutofill="no" />
 
 
     <LinearLayout

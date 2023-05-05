@@ -14,7 +14,7 @@
             android:layout_marginVertical="10dp"
             android:fontFamily="@font/montserrat_bold"
             android:gravity="center"
-            android:text="Statistiques hebdomadaires"
+            android:text="@string/statistiques_hebdomadaires"
             android:textColor="@color/harmonia_dark"
             android:textSize="20sp" />
 
@@ -59,7 +59,7 @@
                     android:textColor="@color/harmonia_dark"
                     android:fontFamily="@font/roboto"
                     android:textAlignment="center"
-                    android:text="Hebdo"/>
+                    android:text="@string/hebdo"/>
 
                 <TextView
                     android:layout_width="0dp"
@@ -70,7 +70,7 @@
                     android:textColor="@color/harmonia_dark"
                     android:id="@+id/month_btn"
                     android:textAlignment="center"
-                    android:text="Mensuel"/>
+                    android:text="@string/mensuel"/>
 
             </LinearLayout>
 
@@ -124,7 +124,7 @@
                                     android:textSize="16sp"
                                     android:gravity="center"
                                     android:paddingBottom="5dp"
-                                    android:text="wars jouées"/>
+                                    android:text="@string/wars_jou_es"/>
                             </LinearLayout>
 
                             <LinearLayout
@@ -160,7 +160,7 @@
                                             android:textSize="14sp"
                                             android:gravity="center"
                                             android:paddingTop="5dp"
-                                            android:text="V"/>
+                                            android:text="@string/v"/>
 
                                         <TextView
                                             android:layout_width="0dp"
@@ -171,7 +171,7 @@
                                             android:textSize="14sp"
                                             android:gravity="center"
                                             android:paddingTop="5dp"
-                                            android:text="N"/>
+                                            android:text="@string/n"/>
 
                                         <TextView
                                             android:layout_width="0dp"
@@ -182,7 +182,7 @@
                                             android:textSize="14sp"
                                             android:gravity="center"
                                             android:paddingTop="5dp"
-                                            android:text="D"/>
+                                            android:text="@string/d"/>
 
                                     </LinearLayout>
 
@@ -271,7 +271,7 @@
                                 android:textColor="@color/harmonia_dark"
                                 android:fontFamily="@font/montserrat_bold"
                                 android:textSize="13sp"
-                                android:text="Moyenne war"/>
+                                android:text="@string/moyenne_war"/>
 
                             <TextView
                                 android:layout_width="0dp"
@@ -281,7 +281,7 @@
                                 android:fontFamily="@font/montserrat_bold"
                                 android:textSize="13sp"
                                 android:gravity="center"
-                                android:text="Moyenne map"/>
+                                android:text="@string/moyenne_map"/>
 
                             <TextView
                                 android:layout_width="0dp"
@@ -291,7 +291,7 @@
                                 android:fontFamily="@font/montserrat_bold"
                                 android:textSize="13sp"
                                 android:gravity="center"
-                                android:text="Maps gagnées"/>
+                                android:text="@string/maps_gagn_es"/>
 
                         </LinearLayout>
 
@@ -356,7 +356,7 @@
                             <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Equipe la plus jouée"
+                                android:text="@string/equipe_la_plus_jou_e"
                                 android:gravity="center"
                                 android:fontFamily="@font/montserrat_bold"
                                 android:textColor="@color/harmonia_dark"
@@ -421,7 +421,7 @@
                                 <TextView
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:text="La plus vaincue"
+                                    android:text="@string/la_plus_gagn_e"
                                     android:gravity="center"
                                     android:fontFamily="@font/montserrat_bold"
                                     android:textColor="@color/harmonia_dark"/>
@@ -475,7 +475,7 @@
                                 <TextView
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:text="La moins vaincue"
+                                    android:text="@string/la_plus_perdue"
                                     android:gravity="center"
                                     android:fontFamily="@font/montserrat_bold"
                                     android:textColor="@color/harmonia_dark"/>
@@ -553,7 +553,7 @@
                                 android:gravity="center"
                                 android:fontFamily="@font/montserrat_bold"
                                 android:textSize="14sp"
-                                android:text="Plus large victoire"/>
+                                android:text="@string/plus_large_victoire"/>
 
                             <TextView
                                 android:layout_width="0dp"
@@ -563,7 +563,7 @@
                                 android:fontFamily="@font/montserrat_bold"
                                 android:textSize="14sp"
                                 android:gravity="center"
-                                android:text="Plus lourde défaite"/>
+                                android:text="@string/plus_lourde_d_faite"/>
 
                         </LinearLayout>
 
@@ -619,7 +619,7 @@
                                 android:layout_weight="1"
                                 android:fontFamily="@font/montserrat_bold"
                                 android:gravity="center"
-                                android:text="Circuit le plus joué"
+                                android:text="@string/circuit_le_plus_jou"
                                 android:textColor="@color/harmonia_dark"
                                 android:textSize="14sp" />
 
@@ -653,7 +653,7 @@
                                 android:layout_weight="1"
                                 android:fontFamily="@font/montserrat_bold"
                                 android:gravity="center"
-                                android:text="Meilleur circuit"
+                                android:text="@string/meilleur_circuit"
                                 android:textColor="@color/harmonia_dark"
                                 android:textSize="14sp" />
 
@@ -663,7 +663,7 @@
                                 android:layout_weight="1"
                                 android:fontFamily="@font/montserrat_bold"
                                 android:gravity="center"
-                                android:text="Pire circuit"
+                                android:text="@string/pire_circuit"
                                 android:textColor="@color/harmonia_dark"
                                 android:textSize="14sp" />
 

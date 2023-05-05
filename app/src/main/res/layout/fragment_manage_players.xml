@@ -15,7 +15,7 @@
         android:layout_marginBottom="20dp"
         android:textSize="20sp"
         android:gravity="center"
-        android:text="Mon équipe"
+        android:text="@string/mon_quipe"
         android:fontFamily="@font/montserrat_bold"
         android:textColor="@color/harmonia_dark" />
     <LinearLayout
@@ -45,7 +45,7 @@
                 android:textSize="18sp"
                 android:id="@+id/team_name"
                 android:gravity="center"
-                android:text="Harmonia"
+                tools:text="Harmonia"
                 android:fontFamily="@font/roboto"
                 android:textColor="@color/harmonia_dark" />
         </LinearLayout>
@@ -69,7 +69,7 @@
                 android:textSize="14sp"
                 android:gravity="center"
                 android:id="@+id/edit_team_btn"
-                android:text="Modifier l'équipe"
+                android:text="@string/modifier_l_quipe"
                 tools:targetApi="n_mr1"/>
 
             <View
@@ -87,7 +87,7 @@
                 android:textSize="14sp"
                 android:gravity="center"
                 android:id="@+id/edit_logo_btn"
-                android:text="Modifier le logo"
+                android:text="@string/modifier_le_logo"
                 tools:targetApi="n_mr1"/>
 
             <View
@@ -105,7 +105,7 @@
                 android:textSize="14sp"
                 android:gravity="center"
                 android:id="@+id/add_player_btn"
-                android:text="Ajouter un joueur"
+                android:text="@string/ajouter_un_joueur"
                 tools:targetApi="n_mr1"/>
 
         </LinearLayout>
@@ -124,7 +124,7 @@
     <EditText
         android:layout_width="match_parent"
         android:background="@drawable/rounded_bg"
-        android:hint="Rechercher un joueur..."
+        android:hint="@string/rechercher_un_joueur"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/white_alphaed"
         android:textColor="@color/black"
@@ -132,7 +132,8 @@
         android:padding="15dp"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="5dp"
-        android:id="@+id/search_et"/>
+        android:id="@+id/search_et"
+        android:importantForAutofill="no" />
 
 
     <androidx.recyclerview.widget.RecyclerView

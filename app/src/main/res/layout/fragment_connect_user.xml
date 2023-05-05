@@ -17,7 +17,7 @@
         android:textColor="@color/black"
         android:fontFamily="@font/montserrat_bold"
         android:gravity="center"
-        android:text="Connexion"/>
+        android:text="@string/connexion"/>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -47,7 +47,7 @@
                     android:textColor="@color/harmonia_dark"
                     android:inputType="textEmailAddress"
                     android:textCursorDrawable="@null"
-                    android:hint="Entrez votre adresse email:" />
+                    android:hint="@string/entrez_votre_adresse_email" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -68,7 +68,7 @@
                     android:id="@+id/password_et"
                     android:textColor="@color/harmonia_dark"
                     android:inputType="textPassword"
-                    android:hint="Entrez votre mot de passe:" />
+                    android:hint="@string/entrez_votre_mot_de_passe" />
 
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -89,7 +89,7 @@
         android:fontFamily="@font/montserrat_bold"
         android:layout_marginBottom="10dp"
         android:enabled="false"
-        android:text="Se connecter"
+        android:text="@string/se_connecter"
         android:gravity="center"
         android:layout_gravity="bottom"/>
 
@@ -101,7 +101,7 @@
         android:id="@+id/forgot_password_button"
         android:textSize="14sp"
         android:fontFamily="@font/montserrat_regular"
-        android:text="Mot de passe oublié ?"
+        android:text="@string/mot_de_passe_oubli"
         android:gravity="center"
         android:layout_gravity="bottom"/>
 
@@ -113,7 +113,7 @@
         android:id="@+id/signup_btn"
         android:textSize="14sp"
         android:fontFamily="@font/montserrat_regular"
-        android:text="Nouveau sur l'appli ?"
+        android:text="@string/nouveau_sur_l_appli"
         android:gravity="center"
         android:layout_gravity="bottom"/>
 

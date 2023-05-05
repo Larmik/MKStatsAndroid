@@ -11,7 +11,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Statistiques circuit"
+            android:text="@string/statistiques_circuit"
             android:gravity="center"
             android:textSize="20sp"
             android:layout_marginBottom="10dp"
@@ -49,7 +49,7 @@
                             android:layout_margin="5dp"
                             android:fontFamily="@font/montserrat_bold"
                             android:textColor="@color/harmonia_dark"
-                            android:text="Options de tri" />
+                            android:text="@string/options_de_tri" />
 
                         <TextView
                             android:id="@+id/date_sort_button"
@@ -62,7 +62,7 @@
                             android:paddingVertical="5dp"
                             android:layout_margin="5dp"
                             android:fontFamily="@font/montserrat_regular"
-                            android:text="Date"
+                            android:text="@string/date"
                             android:textAlignment="center" />
 
                         <TextView
@@ -75,7 +75,7 @@
                             android:background="@drawable/rounded_bg"
                             android:layout_margin="5dp"
                             android:paddingVertical="5dp"
-                            android:text="Adversaire"
+                            android:text="@string/adversaire"
                             android:fontFamily="@font/montserrat_regular"
                             android:textAlignment="center" />
 
@@ -90,7 +90,7 @@
                             android:layout_margin="5dp"
                             android:fontFamily="@font/montserrat_regular"
                             android:paddingVertical="5dp"
-                            android:text="Score/Diff"
+                            android:text="@string/score_diff"
                             android:textAlignment="center" />
                 </LinearLayout>
 
@@ -111,7 +111,7 @@
                             android:layout_margin="5dp"
                             android:fontFamily="@font/montserrat_bold"
                             android:textColor="@color/harmonia_dark"
-                            android:text="Filtrer" />
+                            android:text="@string/filtrer" />
 
                         <TextView
                             android:id="@+id/period_filter_button"
@@ -124,7 +124,7 @@
                             android:paddingVertical="5dp"
                             android:layout_margin="5dp"
                             android:fontFamily="@font/montserrat_regular"
-                            android:text="Cette semaine"
+                            android:text="@string/cette_semaine"
                             android:textAlignment="center" />
 
                         <TextView
@@ -137,7 +137,7 @@
                             android:textColor="@color/harmonia_dark"
                             android:layout_margin="5dp"
                             android:paddingVertical="5dp"
-                            android:text="Officielles"
+                            android:text="@string/officielles"
                             android:fontFamily="@font/montserrat_regular"
                             android:textAlignment="center" />
 
@@ -152,7 +152,7 @@
                             android:layout_margin="5dp"
                             android:fontFamily="@font/montserrat_regular"
                             android:paddingVertical="5dp"
-                            android:text="Participation"
+                            android:text="@string/participation"
                             android:textAlignment="center" />
 
                 </LinearLayout>
@@ -170,7 +170,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Détails"
+            android:text="@string/d_tails"
             android:gravity="center"
             android:textSize="14sp"
             android:fontFamily="@font/montserrat_bold"

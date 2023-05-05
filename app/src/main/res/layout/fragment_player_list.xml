@@ -14,7 +14,7 @@
         android:textSize="20sp"
         android:layout_marginBottom="20dp"
         android:gravity="center"
-        android:text="Joueurs"
+        android:text="@string/joueurs"
         android:fontFamily="@font/montserrat_bold"
         android:textColor="@color/harmonia_dark" />
 
@@ -36,7 +36,7 @@
         android:layout_marginBottom="10dp"
         android:gravity="center"
         android:id="@+id/add_player_btn"
-        android:text="Nouveau joueur"
+        android:text="@string/nouveau_joueur"
         android:background="@drawable/button_background"
         tools:targetApi="n_mr1"/>
 
@@ -47,7 +47,7 @@
     <EditText
         android:layout_width="match_parent"
         android:background="@drawable/rounded_bg"
-        android:hint="Rechercher un joueur..."
+        android:hint="@string/rechercher_un_joueur"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/white_alphaed"
         android:textColor="@color/black"
@@ -55,7 +55,8 @@
         android:padding="15dp"
         android:layout_marginTop="10dp"
         android:layout_marginBottom="5dp"
-        android:id="@+id/search_et"/>
+        android:id="@+id/search_et"
+        android:importantForAutofill="no" />
 
 
     <androidx.recyclerview.widget.RecyclerView
@@ -76,7 +77,7 @@
         android:layout_marginBottom="10dp"
         android:gravity="center"
         android:id="@+id/add_player_to_team_btn"
-        android:text="Intégrer à l'équipe"
+        android:text="@string/int_grer_l_quipe"
         android:visibility="gone"
         android:background="@drawable/button_background"
         tools:targetApi="n_mr1"/>

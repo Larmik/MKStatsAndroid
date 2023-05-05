@@ -87,7 +87,7 @@
                 android:fontFamily="@font/montserrat_bold"
                 android:background="@drawable/button_background"
                 tools:targetApi="n_mr1"
-                android:text="Valider"/>
+                android:text="@string/valider"/>
         </LinearLayout>
 
 

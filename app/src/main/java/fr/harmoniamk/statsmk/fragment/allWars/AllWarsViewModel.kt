@@ -84,7 +84,8 @@ class AllWarsViewModel @Inject constructor(
                         when {
                             filters.contains(WarFilterType.WEEK) -> filteredWars.removeAll(wars.filterNot { it.isThisWeek }
                                 .toSet())
-                            filters.contains(WarFilterType.OFFICIAL) -> filteredWars.removeAll(wars.filterNot { it.war?.isOfficial.isTrue })
+                            filters.contains(WarFilterType.OFFICIAL) -> filteredWars.removeAll(wars.filterNot { it.war?.isOfficial.isTrue }
+                                .toSet())
                             filters.contains(WarFilterType.PLAY) -> filteredWars.removeAll(wars.filterNot { it.hasPlayer(authenticationRepository.user?.uid) }
                                 .toSet())
                         }

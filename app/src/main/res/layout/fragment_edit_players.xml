@@ -23,7 +23,7 @@
             android:textColor="?android:colorAccent"
             tools:targetApi="n_mr1"
             android:textSize="16sp"
-            android:text="Modifier le nom :"
+            android:text="@string/modifier_le_nom"
             android:layout_marginBottom="10dp" />
 
         <EditText
@@ -35,7 +35,8 @@
             android:textColor="@color/black"
             android:gravity="center"
             android:id="@+id/playername_et"
-            android:layout_marginHorizontal="40dp" />
+            android:layout_marginHorizontal="40dp"
+            android:importantForAutofill="no" />
 
     </LinearLayout>
 
@@ -61,7 +62,7 @@
             android:layout_marginEnd="5dp"
             android:fontFamily="@font/montserrat_regular"
             android:textColor="@color/harmonia_dark"
-            android:text="Rôle:"/>
+            android:text="@string/r_le"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -98,7 +99,7 @@
         android:fontFamily="@font/roboto"
         android:enabled="false"
         android:textSize="14sp"
-        android:text="Enregistrer"
+        android:text="@string/enregistrer"
         android:gravity="center"
         android:layout_gravity="bottom"/>
 
@@ -113,7 +114,7 @@
             android:layout_marginBottom="5dp"
             android:id="@+id/leave_team_btn"
             android:textSize="14sp"
-            android:text="Retirer ce joueur de l'équipe"
+            android:text="@string/retirer_ce_joueur_de_l_quipe"
             android:gravity="center"
             android:layout_gravity="bottom" />
 
@@ -128,7 +129,7 @@
             android:layout_marginBottom="10dp"
             android:id="@+id/delete_btn"
             android:textSize="14sp"
-            android:text="Supprimer ce joueur"
+            android:text="@string/supprimer_ce_joueur"
             android:gravity="center"
             android:layout_gravity="bottom" />
 

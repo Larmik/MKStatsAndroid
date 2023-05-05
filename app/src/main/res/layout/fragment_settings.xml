@@ -19,7 +19,7 @@
             android:textSize="16sp"
             android:id="@+id/manage_players_btn"
             android:paddingVertical="15dp"
-            android:text="Mon équipe"/>
+            android:text="@string/mon_quipe"/>
 
         <View
             android:layout_width="match_parent"
@@ -34,7 +34,7 @@
             android:textSize="16sp"
             android:id="@+id/manage_team_btn"
             android:paddingVertical="15dp"
-            android:text="Gérer les équipes"/>
+            android:text="@string/g_rer_les_quipes"/>
 
         <View
             android:layout_width="match_parent"
@@ -49,7 +49,7 @@
             android:textSize="16sp"
             android:id="@+id/players_btn"
             android:paddingVertical="15dp"
-            android:text="Joueurs libres"/>
+            android:text="@string/joueurs_libres"/>
 
         <View
             android:layout_width="match_parent"
@@ -64,7 +64,7 @@
             android:textSize="16sp"
             android:id="@+id/profile_btn"
             android:paddingVertical="15dp"
-            android:text="Profil"/>
+            android:text="@string/profil"/>
 
 
         <View
@@ -80,7 +80,7 @@
             android:textSize="16sp"
             android:id="@+id/simulate_btn"
             android:paddingVertical="15dp"
-            android:text="Simuler 100 Wars"/>
+            android:text="@string/simuler_100_wars"/>
 
         <!--
         <View

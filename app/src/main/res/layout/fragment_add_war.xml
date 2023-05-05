@@ -28,7 +28,7 @@
              android:layout_width="match_parent"
              android:layout_height="wrap_content"
              android:paddingVertical="10dp"
-             android:text="Nouvelle war"
+             android:text="@string/nouvelle_war"
              android:gravity="center"
              android:textSize="20sp"
              android:fontFamily="@font/montserrat_bold"

@@ -27,7 +27,7 @@
                 android:layout_marginVertical="15dp"
                 android:textColor="@color/harmonia_dark"
                 android:fontFamily="@font/montserrat_regular"
-                android:text="Bienvenue !"
+                android:text="@string/bienvenue"
                 android:gravity="center"
                 android:layout_gravity="bottom"/>
             <TextView
@@ -37,7 +37,7 @@
                 android:layout_marginVertical="15dp"
                 android:textColor="@color/harmonia_dark"
                 android:fontFamily="@font/montserrat_regular"
-                android:text="Vous n'avez encore aucune équipe. Pour intégrer une équipe, rapprochez-vous du leader de celle-ci. \n \n Vous pouvez aussi créer votre propre équipe."
+                android:text="@string/no_team"
                 android:gravity="center"
                 android:layout_gravity="bottom"/>
 
@@ -47,7 +47,7 @@
                 android:paddingVertical="10dp"
                 android:layout_marginVertical="15dp"
                 android:background="@drawable/button_background"
-                android:text="Créer une équipe"
+                android:text="@string/cr_er_une_quipe"
                 android:textColor="@color/white"
                 android:fontFamily="@font/roboto"
                 android:gravity="center"
@@ -106,7 +106,7 @@
                             android:textColor="@color/harmonia_dark"
                             android:fontFamily="@font/montserrat_bold"
                             android:textSize="16sp"
-                            android:text="War en cours :"/>
+                            android:text="@string/war_en_cours"/>
 
                         <LinearLayout
                             android:id="@+id/current_war_card"
@@ -216,7 +216,7 @@
                             android:layout_height="wrap_content"
                             android:gravity="center"
                             android:layout_marginBottom="10dp"
-                            android:text="Votre équipe ne joue actuellement aucune war."
+                            android:text="@string/votre_quipe_ne_joue_actuellement_aucune_war"
                             android:layout_gravity="center"
                             android:fontFamily="@font/montserrat_regular"
                             android:textSize="14sp"
@@ -226,7 +226,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:text="Soyez l'hôte d'une war en démarrant une session ci-dessous."
+                            android:text="@string/soyez_l_h_te_d_une_war_en_d_marrant_une_session_ci_dessous"
                             android:layout_gravity="center"
                             android:fontFamily="@font/montserrat_regular"
                             android:textSize="14sp"
@@ -242,7 +242,7 @@
                             android:textColor="@color/text_color"
                             android:id="@+id/create_war_btn"
                             android:fontFamily="@font/roboto"
-                            android:text="Créer une war"
+                            android:text="@string/cr_er_une_war"
                             android:layout_marginBottom="10dp"
                             android:gravity="center"/>
 
@@ -273,7 +273,7 @@
                         android:textColor="@color/harmonia_dark"
                         android:fontFamily="@font/montserrat_bold"
                         android:textSize="16sp"
-                        android:text="Dernières wars"/>
+                        android:text="@string/derni_res_wars"/>
 
                     <RelativeLayout
                         android:layout_width="wrap_content"
@@ -286,7 +286,7 @@
                             android:gravity="center"
                             android:fontFamily="@font/montserrat_regular"
                             android:id="@+id/empty_wars"
-                            android:text="Jouez d'abord des wars afin de les voir apparaître ici."/>
+                            android:text="@string/jouez_d_abord_des_wars_afin_de_les_voir_appara_tre_ici"/>
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:id="@+id/last_war_rv"
@@ -311,7 +311,7 @@
                         android:textAlignment="center"
                         android:background="@drawable/button_background"
                         android:fontFamily="@font/roboto"
-                        android:text="Voir toutes les wars"/>
+                        android:text="@string/voir_toutes_les_wars"/>
 
                 </LinearLayout>
 

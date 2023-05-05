@@ -10,13 +10,14 @@
     <EditText
         android:layout_width="match_parent"
         android:background="@drawable/rounded_bg"
-        android:hint="Rechercher un nom ou une abréviation..."
+        android:hint="@string/rechercher_un_nom_ou_une_abr_viation"
         android:textColor="@color/black"
         android:textColorHint="@color/boo"
         android:layout_height="wrap_content"
         android:padding="15dp"
         android:layout_marginBottom="5dp"
-        android:id="@+id/search_et"/>
+        android:id="@+id/search_et"
+        android:importantForAutofill="no" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"

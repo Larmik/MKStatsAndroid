@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:gravity="center"
     android:layout_height="wrap_content">
 
@@ -11,7 +12,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/montserrat_regular"
         android:textColor="@color/harmonia_dark"
-        android:text="Harmonia"/>
+        tools:text="Harmonia"/>
 
     <TextView
         android:id="@+id/amount"
@@ -20,6 +21,6 @@
         android:fontFamily="@font/montserrat_bold"
         android:textColor="@color/harmonia_dark"
         android:paddingHorizontal="20dp"
-        android:text="-20"/>
+        tools:text="-20"/>
 
 </LinearLayout>

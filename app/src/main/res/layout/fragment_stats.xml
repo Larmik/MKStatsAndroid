@@ -21,7 +21,7 @@
                 android:textSize="16sp"
                 android:id="@+id/indiv_stats"
                 android:paddingVertical="15dp"
-                android:text="Statistiques individuelles"/>
+                android:text="@string/statistiques_individuelles"/>
 
             <View
                 android:layout_width="match_parent"
@@ -36,7 +36,7 @@
                 android:textSize="16sp"
                 android:id="@+id/team_stats"
                 android:paddingVertical="15dp"
-                android:text="Statistiques de l'équipe"/>
+                android:text="@string/statistiques_de_l_quipe"/>
 
             <View
                 android:layout_width="match_parent"
@@ -51,7 +51,7 @@
                 android:textSize="16sp"
                 android:id="@+id/player_stats"
                 android:paddingVertical="15dp"
-                android:text="Statistiques des joueurs"/>
+                android:text="@string/statistiques_des_joueurs"/>
 
             <View
                 android:layout_width="match_parent"
@@ -65,7 +65,7 @@
                 android:textSize="16sp"
                 android:id="@+id/opponents_stats"
                 android:paddingVertical="15dp"
-                android:text="Statistiques des adversaires"/>
+                android:text="@string/statistiques_des_adversaires"/>
 
             <View
                 android:layout_width="match_parent"
@@ -80,7 +80,7 @@
                 android:textSize="16sp"
                 android:id="@+id/map_stats"
                 android:paddingVertical="15dp"
-                android:text="Statistiques des circuits"/>
+                android:text="@string/statistiques_des_circuits"/>
 
             <View
                 android:layout_width="match_parent"
@@ -96,7 +96,7 @@
                 android:textSize="16sp"
                 android:id="@+id/periodic_stats"
                 android:paddingVertical="15dp"
-                android:text="Statistiques périodiques"/>
+                android:text="@string/statistiques_p_riodiques"/>
 
             <View
                 android:layout_width="match_parent"

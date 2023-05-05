@@ -16,7 +16,7 @@
             android:layout_marginVertical="10dp"
             android:fontFamily="@font/montserrat_bold"
             android:gravity="center"
-            android:text="Profil"
+            android:text="@string/profil"
             android:textColor="@color/harmonia_dark"
             android:textSize="20sp" />
 
@@ -76,7 +76,7 @@
                     android:orientation="vertical">
                     <TextView
                         android:layout_width="wrap_content"
-                        android:text="Equipe actuelle:"
+                        android:text="@string/equipe_actuelle"
                         android:layout_marginBottom="5dp"
                         android:fontFamily="@font/montserrat_regular"
                         android:textColor="@color/harmonia_dark"
@@ -93,7 +93,7 @@
 
                     <TextView
                         android:layout_width="wrap_content"
-                        android:text="Rôle:"
+                        android:text="@string/r_le"
                         android:layout_marginBottom="5dp"
                         android:fontFamily="@font/montserrat_regular"
                         android:textColor="@color/harmonia_dark"
@@ -114,7 +114,7 @@
 
                 <TextView
                     android:layout_width="wrap_content"
-                    android:text="Adresse mail:"
+                    android:text="@string/adresse_mail"
                     android:layout_marginBottom="5dp"
                     android:fontFamily="@font/montserrat_regular"
                     android:textColor="@color/harmonia_dark"
@@ -152,7 +152,7 @@
                     android:textSize="16sp"
                     android:id="@+id/change_name_btn"
                     android:paddingVertical="10dp"
-                    android:text="Changer mon pseudo"/>
+                    android:text="@string/changer_mon_pseudo"/>
 
 
 
@@ -164,7 +164,7 @@
                     android:textSize="16sp"
                     android:id="@+id/change_email_btn"
                     android:paddingVertical="10dp"
-                    android:text="Changer mon email"/>
+                    android:text="@string/changer_mon_email"/>
 
 
                 <TextView
@@ -175,7 +175,7 @@
                     android:textSize="16sp"
                     android:id="@+id/change_password_btn"
                     android:paddingVertical="10dp"
-                    android:text="Changer mon mot de passe"/>
+                    android:text="@string/changer_mon_mot_de_passe"/>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -185,7 +185,7 @@
                     android:textSize="16sp"
                     android:id="@+id/change_picture_btn"
                     android:paddingVertical="10dp"
-                    android:text="Changer ma photo de profil"/>
+                    android:text="@string/changer_ma_photo_de_profil"/>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -196,7 +196,7 @@
                     android:id="@+id/leave_team_btn"
                     android:visibility="gone"
                     android:paddingVertical="10dp"
-                    android:text="Quitter mon équipe"/>
+                    android:text="@string/quitter_mon_quipe"/>
 
                 <TextView
                     android:layout_width="match_parent"
@@ -206,7 +206,7 @@
                     android:textSize="16sp"
                     android:id="@+id/disconnect_btn"
                     android:paddingVertical="10dp"
-                    android:text="Se déconnecter"/>
+                    android:text="@string/se_d_connecter"/>
 
             </LinearLayout>
 

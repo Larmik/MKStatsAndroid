@@ -79,8 +79,8 @@ class OpponentStatsViewModel @Inject constructor(private val databaseRepository:
                         finalList.add(pair)
                     }
                 }
-                _sharedHighestScore.emit(finalList.sortedByDescending { it.first }.firstOrNull())
-                _sharedLowestScore.emit(finalList.sortedBy { it.first }.firstOrNull())
+                _sharedHighestScore.emit(finalList.maxByOrNull { it.first })
+                _sharedLowestScore.emit(finalList.minByOrNull { it.first })
             }
             .launchIn(viewModelScope)
         onDetailsClick.bind(_sharedDetailsClick, viewModelScope)

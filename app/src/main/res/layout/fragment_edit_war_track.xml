@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="Edition du circuit"
+        android:text="@string/edition_du_circuit"
         android:fontFamily="@font/montserrat_bold"
         android:textSize="20sp"
         android:paddingVertical="10dp"

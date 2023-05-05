@@ -83,7 +83,7 @@ class PeriodicStatsViewModel @Inject constructor(
         }.launchIn(viewModelScope)
     }
 
-    fun refresh(warList: List<MKWar>?, hebdo: Boolean) {
+    private fun refresh(warList: List<MKWar>?, hebdo: Boolean) {
         flowOf(preferencesRepository.currentTeam?.mid)
             .filterNotNull()
             .mapNotNull { warList }

@@ -18,7 +18,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Statistiques circuit"
+            android:text="@string/statistiques_circuit"
             android:gravity="center"
             android:textSize="20sp"
             android:layout_marginBottom="10dp"
@@ -49,7 +49,7 @@
                 android:gravity="center"
                 android:visibility="gone"
                 android:fontFamily="@font/montserrat_regular"
-                android:text="Le circuit n'a jamais été joué. Revenez ici après l'avoir joué au moins une fois pour consulter ses statistiques."
+                android:text="@string/le_circuit_n_a_jamais_t_jou_revenez_ici_apr_s_l_avoir_jou_au_moins_une_fois_pour_consulter_ses_statistiques"
                 android:textColor="@color/text_color"
                 android:textSize="16sp" />
 
@@ -96,7 +96,7 @@
                                 android:textSize="16sp"
                                 android:gravity="center"
                                 android:paddingBottom="5dp"
-                                android:text="maps jouées"/>
+                                android:text="@string/maps_jou_es"/>
                         </LinearLayout>
 
                         <LinearLayout
@@ -132,7 +132,7 @@
                                         android:textSize="14sp"
                                         android:gravity="center"
                                         android:paddingTop="5dp"
-                                        android:text="V"/>
+                                        android:text="@string/v"/>
 
                                     <TextView
                                         android:layout_width="0dp"
@@ -143,7 +143,7 @@
                                         android:textSize="14sp"
                                         android:gravity="center"
                                         android:paddingTop="5dp"
-                                        android:text="N"/>
+                                        android:text="@string/n"/>
 
                                     <TextView
                                         android:layout_width="0dp"
@@ -154,7 +154,7 @@
                                         android:textSize="14sp"
                                         android:gravity="center"
                                         android:paddingTop="5dp"
-                                        android:text="D"/>
+                                        android:text="@string/d"/>
 
                                 </LinearLayout>
 
@@ -244,7 +244,7 @@
                             android:fontFamily="@font/montserrat_bold"
                             android:textSize="12sp"
                             android:paddingTop="5dp"
-                            android:text="Différence équipe"/>
+                            android:text="@string/diff_rence_quipe"/>
 
                         <TextView
                             android:layout_width="0dp"
@@ -255,7 +255,7 @@
                             android:textSize="12sp"
                             android:gravity="center"
                             android:paddingTop="5dp"
-                            android:text="Position joueur"/>
+                            android:text="@string/position_joueur"/>
 
 
                             <TextView
@@ -270,7 +270,7 @@
                                 android:textSize="12sp"
                                 android:gravity="center"
                                 android:paddingTop="5dp"
-                                android:text="Shocks rapportés"/>
+                                android:text="@string/shocks_rapport_s"/>
 
 
                     </LinearLayout>
@@ -362,7 +362,7 @@
                             android:layout_marginBottom="5dp"
                             android:fontFamily="@font/montserrat_bold"
                             android:textSize="14sp"
-                            android:text="Plus large victoire"/>
+                            android:text="@string/plus_large_victoire"/>
 
                         <RelativeLayout
                             android:layout_width="match_parent"
@@ -386,7 +386,7 @@
                                 android:layout_marginHorizontal="5dp"
                                 android:fontFamily="@font/montserrat_regular"
                                 android:gravity="center"
-                                android:text="Aucune"
+                                android:text="@string/aucune"
                                 android:textColor="@color/harmonia_dark"
                                 android:textSize="16sp" />
 
@@ -410,7 +410,7 @@
                             android:layout_marginBottom="5dp"
                             android:fontFamily="@font/montserrat_bold"
                             android:textSize="14sp"
-                            android:text="Plus lourde défaite"/>
+                            android:text="@string/plus_lourde_d_faite"/>
 
                         <RelativeLayout
                             android:layout_width="match_parent"
@@ -434,7 +434,7 @@
                                 android:layout_marginHorizontal="5dp"
                                 android:fontFamily="@font/montserrat_regular"
                                 android:gravity="center"
-                                android:text="Aucune"
+                                android:text="@string/aucune"
                                 android:textColor="@color/harmonia_dark"
                                 android:textSize="16sp" />
 
@@ -448,7 +448,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Voir le détail"
+                    android:text="@string/voir_le_d_tail"
                     android:gravity="center"
                     android:textSize="14sp"
                     android:paddingVertical="10dp"

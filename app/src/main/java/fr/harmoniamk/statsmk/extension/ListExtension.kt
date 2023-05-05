@@ -50,27 +50,24 @@ fun List<MKWar>.withFullStats(databaseRepository: DatabaseRepositoryInterface, u
     }
 
     val mostPlayedTeamId = wars
+        .asSequence()
         .filterNot { it.war?.teamOpponent == "1652270659565" }
         .groupBy { it.war?.teamOpponent }
-        .toList()
-        .sortedByDescending { it.second.size }
-        .firstOrNull()
+        .toList().maxByOrNull { it.second.size }
 
     val mostDefeatedTeamId = wars
+        .asSequence()
         .filterNot { it.displayedDiff.contains('-') }
         .filterNot { it.war?.teamOpponent == "1652270659565" }
         .groupBy { it.war?.teamOpponent }
-        .toList()
-        .sortedByDescending { it.second.size }
-        .firstOrNull()
+        .toList().maxByOrNull { it.second.size }
 
     val lessDefeatedTeamId = wars
+        .asSequence()
         .filter { it.displayedDiff.contains('-') }
         .filterNot { it.war?.teamOpponent == "1652270659565" }
         .groupBy { it.war?.teamOpponent }
-        .toList()
-        .sortedByDescending { it.second.size }
-        .firstOrNull()
+        .toList().maxByOrNull { it.second.size }
 
     wars.map { Pair(it, it.war?.warTracks?.map { MKWarTrack(it) }) }
         .forEach {
@@ -154,8 +151,8 @@ fun List<Team>.withFullTeamStats(wars: List<MKWar>?, databaseRepository: Databas
     Log.d("MKDebugOnly", "ListExtension withFullTeamStats:  wars = ${wars?.map { it.name }}, weekOnly = $weekOnly, monthOnly = $monthOnly, isIndiv= $isIndiv")
     this@withFullTeamStats.forEach { team ->
         wars
-            ?.filter { !weekOnly || (weekOnly && it.isThisWeek) }
-            ?.filter { !monthOnly || (monthOnly && it.isThisMonth) }
+            ?.filter { (weekOnly && it.isThisWeek) || !weekOnly }
+            ?.filter { (monthOnly && it.isThisMonth) || !monthOnly }
             ?.withFullStats(databaseRepository, teamId = team.mid, userId = userId, isIndiv = isIndiv)?.first()
             ?.let {
                 if (it.warStats.list.isNotEmpty())

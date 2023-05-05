@@ -29,9 +29,9 @@
         android:layout_gravity="center"
         android:fontFamily="@font/mk_position"
         android:id="@+id/count"
-        android:text="x1"
+        tools:text="x1"
         android:textColor="@color/black"
-        android:paddingEnd="10dp"
+        android:paddingHorizontal="10dp"
         android:textSize="20sp"/>
 
 </LinearLayout>

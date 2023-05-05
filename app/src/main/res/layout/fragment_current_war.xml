@@ -65,7 +65,7 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/harmonia_dark"
                     android:fontFamily="@font/montserrat_regular"
-                    android:text="Tournoi en cours (8/12)"/>
+                    tools:text="Tournoi en cours (8/12)"/>
 
             </LinearLayout>
 
@@ -86,7 +86,7 @@
                     android:backgroundTint="?android:colorAccent"
                     tools:targetApi="n_mr1"
                     android:textSize="12sp"
-                    android:text="Remplacement"
+                    android:text="@string/remplacement"
                     android:id="@+id/sub_btn"
                     android:fontFamily="@font/roboto"
                     android:textColor="@color/text_color"
@@ -104,7 +104,7 @@
                     android:backgroundTint="?android:colorAccent"
                     tools:targetApi="n_mr1"
                     android:textSize="12sp"
-                    android:text="Pénalité"
+                    android:text="@string/p_nalit"
                     android:id="@+id/penalty_btn"
                     android:fontFamily="@font/roboto"
                     android:textColor="@color/text_color"
@@ -122,7 +122,7 @@
                     android:backgroundTint="?android:colorAccent"
                     tools:targetApi="n_mr1"
                     android:textSize="12sp"
-                    android:text="Annuler le match"
+                    android:text="@string/annuler_le_match"
                     android:id="@+id/delete_war_btn"
                     android:fontFamily="@font/roboto"
                     android:textColor="@color/text_color"
@@ -152,7 +152,7 @@
                     android:layout_marginBottom="5dp"
                     android:fontFamily="@font/montserrat_bold"
                     android:textColor="@color/harmonia_dark"
-                    android:text="Joueurs :"/>
+                    android:text="@string/joueurs"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -243,7 +243,7 @@
                         android:layout_width="30dp"
                         android:layout_height="30dp"
                         android:src="@drawable/shock"
-                        android:contentDescription="" />
+                        android:contentDescription="@string/shocks_rapport_s" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -274,7 +274,7 @@
                     android:layout_marginBottom="5dp"
                     android:fontFamily="@font/montserrat_bold"
                     android:textColor="@color/harmonia_dark"
-                    android:text="Pénalités :"/>
+                    android:text="@string/p_nalit_s"/>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:layout_width="match_parent"
@@ -301,7 +301,7 @@
                 android:fontFamily="@font/roboto"
                 android:gravity="center"
                 android:paddingVertical="10dp"
-                android:text="Prochaine course"
+                android:text="@string/prochaine_course"
                 android:textColor="@color/text_color"
                 android:visibility="gone"
                 tools:targetApi="n_mr1"
@@ -318,7 +318,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Courses jouées"
+                android:text="@string/courses_jou_es"
                 android:id="@+id/played_label"
                 android:textColor="@color/harmonia_dark"
                 android:textSize="16sp"
@@ -337,7 +337,7 @@
                     android:textAlignment="center"
                     android:id="@+id/empty_track"
                     android:visibility="gone"
-                    android:text="Le match est sur le point de commencer. Vous pourrez ajouter une première course dès que le résultat du vote sera connu. \n \n Bonne chance, faites preuve de fair-play et de bienveillance, et surtout n'oubliez pas : le plaisir avant tout !"
+                    android:text="@string/le_match"
                     android:textColor="@color/harmonia_dark"/>
 
                 <androidx.recyclerview.widget.RecyclerView

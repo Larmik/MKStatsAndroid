@@ -8,7 +8,7 @@ import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
 class WarTrackConverter {
 
     @TypeConverter
-    fun fromWarTrackList(value: List<NewWarTrack>?) = Gson().toJson(value)
+    fun fromWarTrackList(value: List<NewWarTrack>?): String = Gson().toJson(value)
 
     @TypeConverter
     fun toWarTrackList(value: String?) =

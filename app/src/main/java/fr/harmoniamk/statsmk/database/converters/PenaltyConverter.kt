@@ -8,7 +8,7 @@ import fr.harmoniamk.statsmk.model.firebase.Penalty
 class PenaltyConverter {
 
     @TypeConverter
-    fun fromPenaltyList(value: List<Penalty>?) = Gson().toJson(value)
+    fun fromPenaltyList(value: List<Penalty>?): String = Gson().toJson(value)
 
 
     @TypeConverter
