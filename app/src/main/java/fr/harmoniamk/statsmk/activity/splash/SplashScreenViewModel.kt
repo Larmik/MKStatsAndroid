@@ -3,6 +3,7 @@ package fr.harmoniamk.statsmk.activity.splash
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import fr.harmoniamk.statsmk.BuildConfig
 import fr.harmoniamk.statsmk.enums.WelcomeScreen
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.withName
@@ -18,21 +19,33 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class SplashScreenViewModel @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val firebaseRepository: FirebaseRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface, private val networkRepository: NetworkRepositoryInterface) : ViewModel() {
+class SplashScreenViewModel @Inject constructor(
+    private val preferencesRepository: PreferencesRepositoryInterface,
+    private val authenticationRepository: AuthenticationRepositoryInterface,
+    private val firebaseRepository: FirebaseRepositoryInterface,
+    private val databaseRepository: DatabaseRepositoryInterface,
+    private val networkRepository: NetworkRepositoryInterface,
+    private val remoteConfigRepository: RemoteConfigRepositoryInterface
+    ) : ViewModel() {
 
     private val _sharedWelcomeScreen = MutableSharedFlow<WelcomeScreen>()
     private val  _sharedShowPopup = MutableSharedFlow<Pair<WelcomeScreen, List<MKWar>>>()
+    private val  _sharedShowUpdatePopup = MutableSharedFlow<Unit>()
     private val _sharedLoadingVisible = MutableSharedFlow<String>()
 
     val sharedWelcomeScreen = _sharedWelcomeScreen.asSharedFlow()
     val sharedShowPopup = _sharedShowPopup.asSharedFlow()
+    val sharedShowUpdatePopup = _sharedShowUpdatePopup.asSharedFlow()
     val sharedLoadingVisible = _sharedLoadingVisible.asSharedFlow()
 
     fun bind() {
 
-        val isConnected = flowOf(networkRepository.networkAvailable)
+        val isConnected = remoteConfigRepository.loadConfig
+            .map { networkRepository.networkAvailable }
             .onEach { delay(100) }
             .shareIn(viewModelScope, SharingStarted.Lazily)
+
+        val isUpToDate = BuildConfig.VERSION_CODE >= remoteConfigRepository.minimumVersion
 
         isConnected
             .filterNot { it }
@@ -48,7 +61,12 @@ class SplashScreenViewModel @Inject constructor(private val preferencesRepositor
             .bind(_sharedShowPopup, viewModelScope)
 
         isConnected
-            .filter { it }
+            .filter { it && !isUpToDate }
+            .onEach { _sharedShowUpdatePopup.emit(Unit) }
+            .launchIn(viewModelScope)
+
+        isConnected
+            .filter { it && isUpToDate}
             .flatMapLatest { databaseRepository.clearUsers() }
             .flatMapLatest {  firebaseRepository.getUsers() }
             .flatMapLatest { databaseRepository.writeUsers(it) }

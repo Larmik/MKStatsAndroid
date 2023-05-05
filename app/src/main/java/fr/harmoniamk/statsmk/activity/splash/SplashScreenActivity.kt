@@ -1,6 +1,7 @@
 package fr.harmoniamk.statsmk.activity.splash
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -43,6 +44,17 @@ class SplashScreenActivity : AppCompatActivity() {
         viewModel.sharedLoadingVisible
             .onEach {
                 binding.loadingLabel.text = it
+            }.launchIn(lifecycleScope)
+
+        viewModel.sharedShowUpdatePopup
+            .onEach {
+                val popup = PopupFragment("L'application nécessite une mise à jour pour fonctionner correctement. \n \n Veuillez mettre à jour l'application pour continuer.", positiveText = "Mettre à jour", negativeText = "Retour")
+                popup.onNegativeClick.onEach { finish() }.launchIn(lifecycleScope)
+                popup.onPositiveClick
+                    .onEach {
+                        startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$packageName")))
+                    }.launchIn(lifecycleScope)
+                popup.takeIf { !it.isAdded }?.show(supportFragmentManager, null)
             }.launchIn(lifecycleScope)
 
 
