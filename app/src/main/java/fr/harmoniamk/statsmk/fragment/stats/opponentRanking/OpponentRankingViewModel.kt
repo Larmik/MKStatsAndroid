@@ -11,7 +11,6 @@ import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
-import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -23,9 +22,9 @@ import javax.inject.Inject
 @ExperimentalCoroutinesApi
 @HiltViewModel
 class OpponentRankingViewModel @Inject constructor(
-    private val firebaseRepository: FirebaseRepositoryInterface,
     private val preferencesRepository: PreferencesRepositoryInterface,
-    private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface
+    private val authenticationRepository: AuthenticationRepositoryInterface,
+    private val databaseRepository: DatabaseRepositoryInterface
 ) : ViewModel()  {
 
     private val _sharedTeamList = MutableSharedFlow<List<OpponentRankingItemViewModel>>()

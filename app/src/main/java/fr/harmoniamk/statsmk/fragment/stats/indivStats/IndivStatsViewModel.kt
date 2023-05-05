@@ -13,7 +13,6 @@ import fr.harmoniamk.statsmk.model.local.Stats
 import fr.harmoniamk.statsmk.model.local.TrackStats
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
-import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
@@ -23,8 +22,8 @@ import javax.inject.Inject
 @ExperimentalCoroutinesApi
 @HiltViewModel
 class IndivStatsViewModel @Inject constructor(
-    private val firebaseRepository: FirebaseRepositoryInterface,
-    private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface
+    private val authenticationRepository: AuthenticationRepositoryInterface,
+    private val databaseRepository: DatabaseRepositoryInterface
 ) : ViewModel() {
 
     private val _sharedTrackClick = MutableSharedFlow<Pair<String?, Int>>()

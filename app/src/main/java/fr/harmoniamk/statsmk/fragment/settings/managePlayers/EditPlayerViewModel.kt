@@ -9,7 +9,6 @@ import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
-import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -19,7 +18,11 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class EditPlayerViewModel @Inject constructor(private val authenticationRepository: AuthenticationRepositoryInterface, private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface): ViewModel() {
+class EditPlayerViewModel @Inject constructor(
+    private val authenticationRepository: AuthenticationRepositoryInterface,
+    private val preferencesRepository: PreferencesRepositoryInterface,
+    private val databaseRepository: DatabaseRepositoryInterface
+): ViewModel() {
 
     private val _sharedPlayerIsMember = MutableSharedFlow<Boolean>()
     private val _sharedPlayerHasAccount = MutableSharedFlow<Boolean>()

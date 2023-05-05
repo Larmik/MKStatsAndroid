@@ -16,7 +16,8 @@
             android:src="@drawable/checkmark"
             android:visibility="invisible"
             android:padding="10dp"
-            android:id="@+id/checkmark"/>
+            android:id="@+id/checkmark"
+            android:contentDescription="" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -59,7 +60,8 @@
                 android:layout_height="50dp"
                 android:src="@drawable/edit"
                 android:padding="10dp"
-                android:id="@+id/edit_btn"/>
+                android:id="@+id/edit_btn"
+                android:contentDescription="" />
 
     </LinearLayout>
 

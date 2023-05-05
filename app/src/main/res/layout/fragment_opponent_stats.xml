@@ -366,7 +366,8 @@
                             android:layout_width="20dp"
                             android:layout_height="20dp"
                             android:src="@drawable/shock"
-                            android:layout_marginEnd="2dp"/>
+                            android:layout_marginEnd="2dp"
+                            android:contentDescription="" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -393,7 +394,8 @@
                 android:id="@+id/player_scores_layout"
                 android:visibility="gone"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:baselineAligned="false">
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -490,7 +492,8 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/rounded_bg"
                 android:backgroundTint="@color/harmonia_dark"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:baselineAligned="false">
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"

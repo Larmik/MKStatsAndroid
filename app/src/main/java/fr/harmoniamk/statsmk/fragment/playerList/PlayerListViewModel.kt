@@ -41,9 +41,7 @@ class PlayerListViewModel @Inject constructor(
     val sharedPlayerList = _sharedPlayerList.asSharedFlow()
     val sharedAddPlayerList = _sharedAddPlayerList.asSharedFlow()
     val sharedAddPlayer = _sharedAddPlayer.asSharedFlow()
-    val sharedEdit = _sharedEdit.asSharedFlow()
     val sharedEditName = _sharedEditName.asSharedFlow()
-    val sharedShowDialog = _sharedShowDialog.asSharedFlow()
     val sharedNewName = _sharedNewName.asSharedFlow()
     val sharedPlayerAdded = _sharedPlayerAdded.asSharedFlow()
     val sharedAddToTeamButtonVisible = _sharedAddToTeamButtonVisible.asSharedFlow()
@@ -112,33 +110,6 @@ class PlayerListViewModel @Inject constructor(
 
     fun bindAddDialog(onPlayedAdded: Flow<Unit>) {
         onPlayedAdded.onEach { refresh() }.launchIn(viewModelScope)
-    }
-
-    fun bindEditDialog(onDelete: Flow<User>, onPlayerEdited: Flow<User>, onTeamIntegrate: Flow<User>) {
-        allPlayers.clear()
-        onDelete
-            .filter { it.mid != authenticationRepository.user?.uid }
-            .flatMapLatest { firebaseRepository.deleteUser(it) }
-            .onEach {
-                _sharedShowDialog.emit(false)
-                refresh()
-            }.launchIn(viewModelScope)
-
-        onPlayerEdited
-            .flatMapLatest { firebaseRepository.writeUser(it) }
-            .onEach {
-                _sharedShowDialog.emit(false)
-                refresh()
-            }.launchIn(viewModelScope)
-
-        onTeamIntegrate
-            .filter { it.mid != authenticationRepository.user?.uid }
-            .map { it.apply { this.team = preferencesRepository.currentTeam?.mid } }
-            .flatMapLatest { firebaseRepository.writeUser(it) }
-            .onEach {
-                _sharedShowDialog.emit(false)
-                refresh()
-            }.launchIn(viewModelScope)
     }
 
     private fun createPlayersList(list: List<User>? = null, modelList: List<ManagePlayersItemViewModel>? = null): List<ManagePlayersItemViewModel> {

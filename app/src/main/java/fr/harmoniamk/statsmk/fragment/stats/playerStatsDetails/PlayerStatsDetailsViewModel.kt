@@ -11,12 +11,14 @@ import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
-import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 @HiltViewModel
-class PlayerStatsDetailsViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface): ViewModel() {
+class PlayerStatsDetailsViewModel @Inject constructor(
+    private val authenticationRepository: AuthenticationRepositoryInterface,
+    private val databaseRepository: DatabaseRepositoryInterface
+): ViewModel() {
 
     private val filters = mutableListOf<WarFilterType>()
 

@@ -11,12 +11,14 @@ import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
-import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 @HiltViewModel
-class OpponentStatsDetailsViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface): ViewModel() {
+class OpponentStatsDetailsViewModel @Inject constructor(
+    private val authenticationRepository: AuthenticationRepositoryInterface,
+    private val databaseRepository: DatabaseRepositoryInterface
+): ViewModel() {
 
     private val filters = mutableListOf<WarFilterType>()
 
@@ -25,14 +27,12 @@ class OpponentStatsDetailsViewModel @Inject constructor(private val firebaseRepo
     private val _sharedSortTypeSelected = MutableStateFlow(WarSortType.DATE)
     private val _sharedFilterList = MutableSharedFlow<List<WarFilterType>>()
     private val _sharedLoaded = MutableSharedFlow<Unit>()
-    private val _sharedTeamName = MutableSharedFlow<String>()
 
     val sharedWars = _sharedWars.asSharedFlow()
     val sharedWarClick = _sharedWarClick.asSharedFlow()
     val sharedSortTypeSelected = _sharedSortTypeSelected.asStateFlow()
     val sharedFilterList = _sharedFilterList.asSharedFlow()
     val sharedLoaded = _sharedLoaded.asSharedFlow()
-    val sharedTeamName = _sharedTeamName.asSharedFlow()
 
     private val wars = mutableListOf<MKWar>()
 

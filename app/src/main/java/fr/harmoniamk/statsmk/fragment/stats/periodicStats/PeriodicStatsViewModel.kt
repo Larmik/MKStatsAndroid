@@ -9,7 +9,6 @@ import fr.harmoniamk.statsmk.fragment.stats.opponentRanking.OpponentRankingItemV
 import fr.harmoniamk.statsmk.model.local.*
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
-import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -19,7 +18,11 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class PeriodicStatsViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
+class PeriodicStatsViewModel @Inject constructor(
+    private val preferencesRepository: PreferencesRepositoryInterface,
+    private val authenticationRepository: AuthenticationRepositoryInterface,
+    private val databaseRepository: DatabaseRepositoryInterface
+) : ViewModel() {
 
     private val _sharedTrackClick = MutableSharedFlow<Pair<String?, Int>>()
     private val _sharedWarClick = MutableSharedFlow<MKWar>()

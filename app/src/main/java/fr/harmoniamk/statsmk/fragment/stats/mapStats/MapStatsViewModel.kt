@@ -11,8 +11,6 @@ import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import fr.harmoniamk.statsmk.model.local.MapDetails
 import fr.harmoniamk.statsmk.model.local.MapStats
-import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
-import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -23,7 +21,9 @@ import javax.inject.Inject
 @HiltViewModel
 @ExperimentalCoroutinesApi
 @FlowPreview
-class MapStatsViewModel @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val firebaseRepository: FirebaseRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
+class MapStatsViewModel @Inject constructor(
+    private val preferencesRepository: PreferencesRepositoryInterface
+) : ViewModel() {
 
     private val _sharedMapClick = MutableSharedFlow<MapDetails>()
     private val _sharedStats = MutableSharedFlow<MapStats>()

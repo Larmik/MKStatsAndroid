@@ -9,7 +9,6 @@ import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
-import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -19,7 +18,11 @@ import javax.inject.Inject
 @HiltViewModel
 @FlowPreview
 @ExperimentalCoroutinesApi
-class StatsViewModel @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val firebaseRepository: FirebaseRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
+class StatsViewModel @Inject constructor(
+    private val preferencesRepository: PreferencesRepositoryInterface,
+    private val authenticationRepository: AuthenticationRepositoryInterface,
+    private val databaseRepository: DatabaseRepositoryInterface
+) : ViewModel() {
 
     private val _sharedToast = MutableSharedFlow<String>()
     private val _sharedIndiv = MutableSharedFlow<List<MKWar>>()

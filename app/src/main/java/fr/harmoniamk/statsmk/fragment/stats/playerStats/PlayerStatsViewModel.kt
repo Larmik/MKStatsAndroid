@@ -10,7 +10,6 @@ import fr.harmoniamk.statsmk.fragment.stats.opponentRanking.OpponentRankingItemV
 import fr.harmoniamk.statsmk.fragment.stats.playerRanking.PlayerRankingItemViewModel
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
-import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
@@ -18,7 +17,7 @@ import javax.inject.Inject
 
 @FlowPreview
 @HiltViewModel
-class PlayerStatsViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
+class PlayerStatsViewModel @Inject constructor(private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
 
     private val _sharedTrackClick = MutableSharedFlow<Pair<String?, Int>>()
     private val _sharedWarClick = MutableSharedFlow<MKWar>()

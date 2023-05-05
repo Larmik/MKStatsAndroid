@@ -103,16 +103,7 @@ class PositionViewModel @Inject constructor(
                     _sharedPlayerLabel.emit(currentUser?.name)
                 }.launchIn(viewModelScope)
 
-                back.filter { positions.isEmpty() }.bind(_sharedQuit, viewModelScope)
 
-                back.filterNot { positions.isEmpty() }
-                    .onEach {
-                        positions.remove(positions.last())
-                        _sharedSelectedPositions.emit(positions.mapNotNull { pos -> pos.position })
-                        currentUser = currentUsers[positions.size]
-                    }
-                    .map { currentUser?.name }
-                    .bind(_sharedPlayerLabel, viewModelScope)
 
                 _sharedPos
                     .map { NewWarPositions(mid = System.currentTimeMillis().toString(), position = it, playerId = currentUser?.mid) }
@@ -136,6 +127,17 @@ class PositionViewModel @Inject constructor(
                             _sharedPlayerLabel.emit(currentUser?.name)
                         }
                     }.launchIn(viewModelScope)
+
+            back.filter { positions.isEmpty() }.bind(_sharedQuit, viewModelScope)
+
+            back.filterNot { positions.isEmpty() }
+                .onEach {
+                    positions.remove(positions.last())
+                    _sharedSelectedPositions.emit(positions.mapNotNull { pos -> pos.position })
+                    currentUser = currentUsers[positions.size]
+                }
+                .map { currentUser?.name }
+                .bind(_sharedPlayerLabel, viewModelScope)
         }
     }
 }
