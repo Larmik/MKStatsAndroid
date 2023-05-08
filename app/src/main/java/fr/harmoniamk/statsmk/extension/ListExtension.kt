@@ -10,24 +10,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.mapNotNull
-import kotlin.collections.List
-import kotlin.collections.Map
 import kotlin.collections.count
-import kotlin.collections.filter
-import kotlin.collections.filterNot
-import kotlin.collections.filterNotNull
-import kotlin.collections.firstOrNull
-import kotlin.collections.forEach
-import kotlin.collections.get
-import kotlin.collections.groupBy
-import kotlin.collections.isNotEmpty
 import kotlin.collections.map
-import kotlin.collections.maxByOrNull
-import kotlin.collections.minByOrNull
-import kotlin.collections.mutableListOf
-import kotlin.collections.singleOrNull
-import kotlin.collections.sortedByDescending
-import kotlin.collections.toList
 
 fun <T> List<T>.safeSubList(from: Int, to: Int): List<T> = when {
     this.size < to -> this
@@ -35,6 +19,7 @@ fun <T> List<T>.safeSubList(from: Int, to: Int): List<T> = when {
 }
 
 fun Any?.toMapList(): List<Map<*,*>>? = this as? List<Map<*,*>>
+fun Any?.toStringList(): List<String>? = this as? List<String>
 
 fun List<MKWar>.getCurrent(teamId: String?) = this.singleOrNull { war -> !war.isOver && war.war?.teamHost == teamId }
 fun List<MKWar>.withFullStats(databaseRepository: DatabaseRepositoryInterface, userId: String? = null, teamId: String? = null, isIndiv: Boolean = false) = flow {

@@ -98,22 +98,22 @@ class IndivStatsFragment : Fragment(R.layout.fragment_indiv_stats) {
             }
             when (it.mostDefeatedTeam?.teamName) {
                 "null" -> {
-                    binding.mostDefeatedTeam.text = "Aucune"
+                    binding.mostDefeatedTeam.text = requireContext().getString(R.string.aucune)
                     binding.mostDefeatedTeamTotal.visibility = View.INVISIBLE
                 }
                 else -> {
                     binding.mostDefeatedTeam.text = it.mostDefeatedTeam?.teamName
-                    binding.mostDefeatedTeamTotal.text = "${it.mostDefeatedTeam?.totalPlayed} victoires"
+                    binding.mostDefeatedTeamTotal.text = String.format(requireContext().getString(R.string.victory_placeholder), it.mostDefeatedTeam?.totalPlayed)
                 }
             }
             when (it.lessDefeatedTeam?.teamName) {
                 "null" -> {
-                    binding.lessDefeatedTeam.text = "Aucune"
+                    binding.lessDefeatedTeam.text = requireContext().getString(R.string.aucune)
                     binding.lessDefeatedTeamTotal.visibility = View.INVISIBLE
                 }
                 else -> {
                     binding.lessDefeatedTeam.text = it.lessDefeatedTeam?.teamName
-                    binding.lessDefeatedTeamTotal.text = "${it.lessDefeatedTeam?.totalPlayed} défaites"
+                    binding.lessDefeatedTeamTotal.text = String.format(requireContext().getString(R.string.defeat_placeholder), it.lessDefeatedTeam?.totalPlayed)
                 }
             }
         }.launchIn(lifecycleScope)

@@ -44,7 +44,7 @@ class AddWarFragment : Fragment(R.layout.fragment_add_war) {
 
         viewModel.sharedTeamSelected.onEach {
             binding.pager.currentItem = 1
-            binding.title.text = "Nouvelle war : $it"
+            binding.title.text = String.format(requireContext().getString(R.string.nouvelle_war_placeholder), it)
         }.launchIn(lifecycleScope)
 
         viewModel.sharedLoading

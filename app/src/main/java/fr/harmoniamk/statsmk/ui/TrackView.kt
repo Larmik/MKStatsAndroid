@@ -68,7 +68,7 @@ class TrackView : LinearLayout {
                     binding.shortname.text = map.name
                     binding.name.setText(map.label)
                 }
-                else -> binding.name.text = "Données corrompues"
+                else -> binding.name.text = context.getString(R.string.donn_es_corrompues)
             }
         }
         (binding as? TrackItemCollapsedBinding)?.let { binding ->
@@ -114,7 +114,7 @@ class TrackView : LinearLayout {
 
                         if (shouldDisplayPosition) {
                             val position = track.playerScore.pointsToPosition()
-                            binding.averageTrackScoreLabel.text = "Position moyenne"
+                            binding.averageTrackScoreLabel.text = context.getString(R.string.position_moyenne)
                             binding.averageTrackScore.text = position.toString()
                             binding.averageTrackScore.setTextSize(TypedValue.COMPLEX_UNIT_SP, 22f)
                             binding.averageTrackScore.setTextColor(
@@ -132,7 +132,7 @@ class TrackView : LinearLayout {
                             }
                             binding.averageTrackScore.setTextColor(ContextCompat.getColor(context, textColor))
                         }
-                        binding.totalPlayed.text = "jouée ${track.totalPlayed} fois"
+                        binding.totalPlayed.text = String.format(context.getString(R.string.track_played_placeholder), track.totalPlayed.toString())
 
                 }
                 else -> {
@@ -150,7 +150,7 @@ class TrackView : LinearLayout {
                             R.color.transparent
                         )
                     )
-                    binding.averageTrackScoreLabel.text = "Aucun"
+                    binding.averageTrackScoreLabel.text = context.getString(R.string.aucun)
                 }
             }
         }

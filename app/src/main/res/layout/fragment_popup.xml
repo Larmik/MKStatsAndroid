@@ -36,6 +36,7 @@
         android:background="@drawable/rounded_bg"
         android:textColorHint="@color/boo"
         android:layout_marginBottom="10dp"
+        android:inputType="text"
         android:textColor="@color/black"
         android:gravity="center"
         android:id="@+id/popup_et"

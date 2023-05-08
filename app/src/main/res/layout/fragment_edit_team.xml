@@ -28,6 +28,7 @@
 
         <EditText
             android:layout_width="match_parent"
+            android:inputType="textPersonName"
             android:layout_height="50dp"
             android:background="@drawable/rounded_bg"
             android:textColor="@color/black"
@@ -60,6 +61,7 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="50dp"
+            android:inputType="text"
             android:background="@drawable/rounded_bg"
             android:layout_marginBottom="10dp"
             android:textColor="@color/black"

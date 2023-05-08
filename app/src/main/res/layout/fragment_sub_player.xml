@@ -107,6 +107,7 @@
                 android:id="@+id/search_sub_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:inputType="textPersonName"
                 android:hint="@string/rechercher_un_joueur"
                 android:importantForAutofill="no" />
 

@@ -45,7 +45,6 @@ class SplashScreenViewModel @Inject constructor(
             .onEach { delay(100) }
             .shareIn(viewModelScope, SharingStarted.Lazily)
 
-        val isUpToDate = BuildConfig.VERSION_CODE >= remoteConfigRepository.minimumVersion
 
         isConnected
             .filterNot { it }
@@ -61,12 +60,7 @@ class SplashScreenViewModel @Inject constructor(
             .bind(_sharedShowPopup, viewModelScope)
 
         isConnected
-            .filter { it && !isUpToDate }
-            .onEach { _sharedShowUpdatePopup.emit(Unit) }
-            .launchIn(viewModelScope)
-
-        isConnected
-            .filter { it && isUpToDate}
+            .filter { it }
             .flatMapLatest { databaseRepository.clearUsers() }
             .flatMapLatest {  firebaseRepository.getUsers() }
             .flatMapLatest { databaseRepository.writeUsers(it) }

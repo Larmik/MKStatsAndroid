@@ -106,22 +106,22 @@ class PlayerStatsFragment : Fragment(R.layout.fragment_player_stats) {
             }
             when (it.stats.mostDefeatedTeam?.teamName) {
                 "null" -> {
-                    binding.mostDefeatedTeam.text = "Aucune"
+                    binding.mostDefeatedTeam.text = requireContext().getString(R.string.aucune)
                     binding.mostDefeatedTeamTotal.visibility = View.INVISIBLE
                 }
                 else -> {
                     binding.mostDefeatedTeam.text = it.stats.mostDefeatedTeam?.teamName
-                    binding.mostDefeatedTeamTotal.text = "${it.stats.mostDefeatedTeam?.totalPlayed} victoires"
+                    binding.mostDefeatedTeamTotal.text = String.format(requireContext().getString(R.string.victory_placeholder), it.stats.mostDefeatedTeam?.totalPlayed)
                 }
             }
             when (it.stats.lessDefeatedTeam?.teamName) {
                 "null" -> {
-                    binding.lessDefeatedTeam.text = "Aucune"
+                    binding.lessDefeatedTeam.text = requireContext().getString(R.string.aucune)
                     binding.lessDefeatedTeamTotal.visibility = View.INVISIBLE
                 }
                 else -> {
                     binding.lessDefeatedTeam.text = it.stats.lessDefeatedTeam?.teamName
-                    binding.lessDefeatedTeamTotal.text = "${it.stats.lessDefeatedTeam?.totalPlayed} défaites"
+                    binding.lessDefeatedTeamTotal.text = String.format(requireContext().getString(R.string.defeat_placeholder), it.stats.lessDefeatedTeam?.totalPlayed)
                 }
             }
         }.launchIn(lifecycleScope)

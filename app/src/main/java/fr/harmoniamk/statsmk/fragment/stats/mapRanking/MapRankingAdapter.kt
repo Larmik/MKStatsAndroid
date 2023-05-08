@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.TrackItemBinding
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.clicks
@@ -32,8 +33,8 @@ class MapRankingAdapter(val items: MutableList<TrackStats> = mutableListOf()) :
                 binding.trackIv.setImageResource(it.picture)
                 binding.shortname.text = it.name
                 binding.name.setText(it.label)
-                binding.totalPlayed.text = "Joué ${track.totalPlayed} fois"
-                binding.winrate.text = "Win rate: ${track.winRate} %"
+                binding.totalPlayed.text = String.format(binding.root.context.getString(R.string.map_played_placeholder), track.totalPlayed.toString())
+                binding.winrate.text = String.format(binding.root.context.getString(R.string.winrate_placeholder), track.winRate.toString())
             }
         }
     }

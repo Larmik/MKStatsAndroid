@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
@@ -103,6 +104,9 @@ class EditPlayerFragment(val user: User? = null) : BottomSheetDialogFragment() {
 
             viewModel.sharedButtonEnabled
                 .onEach { binding.nextBtn.isEnabled = it }
+                .launchIn(lifecycleScope)
+            viewModel.sharedEasterEgg
+                .onEach { Toast.makeText(requireContext(), getString(R.string.easter_egg), Toast.LENGTH_SHORT).show() }
                 .launchIn(lifecycleScope)
 
             viewLifecycleOwner.lifecycleScope.launchWhenStarted {

@@ -105,7 +105,7 @@
     <string name="stats">Statistiques</string>
     <string name="mario_kart">MARIO KART</string>
     <string name="stats_title">Stats</string>
-    <string name="mise_jour_des_donn_es">Mise à jour des données...</string>
+    <string name="mise_jour_des_donn_es">Mise à jour des données…</string>
     <string name="score">Score:</string>
     <string name="diff">Diff:</string>
     <string name="maps">Maps:</string>
@@ -125,7 +125,7 @@
     <string name="d_j_sur_l_appli">Déjà sur l\'appli ?</string>
     <string name="nouvelle_war">Nouvelle war</string>
     <string name="toutes_les_wars_en_quipe">Toutes les wars en équipe</string>
-    <string name="rechercher_un_advsersaire">Rechercher un advsersaire...</string>
+    <string name="rechercher_un_advsersaire">Rechercher un advsersaire…</string>
     <string name="options_de_tri">Options de tri</string>
     <string name="date">Date</string>
     <string name="adversaire">Adversaire</string>
@@ -193,11 +193,11 @@
     <string name="mon_quipe">Mon équipe</string>
     <string name="modifier_l_quipe">Modifier l\'équipe</string>
     <string name="modifier_le_logo">Modifier le logo</string>
-    <string name="rechercher_un_joueur">Rechercher un joueur...</string>
+    <string name="rechercher_un_joueur">Rechercher un joueur…</string>
     <string name="adversaires">Adversaires</string>
-    <string name="rechercher_une_quipe">Rechercher une équipe...</string>
+    <string name="rechercher_une_quipe">Rechercher une équipe…</string>
     <string name="statistiques_des_circuits">Statistiques des circuits</string>
-    <string name="rechercher_un_nom_ou_une_abr_viation">Rechercher un nom ou une abréviation...</string>
+    <string name="rechercher_un_nom_ou_une_abr_viation">Rechercher un nom ou une abréviation…</string>
     <string name="individuel">Individuel</string>
     <string name="equipe">Equipe</string>
     <string name="nb_fois_jou_es">Nb. fois jouées</string>
@@ -264,5 +264,20 @@
     <string name="plus">+</string>
     <string name="minus">-</string>
     <string name="simuler_100_wars">Simuler 100 Wars</string>
+    <string name="donn_es_corrompues">Données corrompues</string>
+    <string name="position_moyenne">Position moyenne</string>
+    <string name="aucun">Aucun</string>
+    <string name="ok">OK</string>
+    <string name="nouvelle_war_placeholder">Nouvelle war : %s</string>
+    <string name="victory_placeholder">%s victoires</string>
+    <string name="defeat_placeholder">%s défaites</string>
+    <string name="map_played_placeholder">Joué %s fois</string>
+    <string name="track_played_placeholder">Jouée %s fois</string>
+    <string name="winrate_placeholder">Winrate : %s </string>
+    <string name="minus_placeholder">-%s</string>
+    <string name="select_pos_placeholder">Sélectionnez la position de %s</string>
+    <string name="track_count_placeholder">Course %s/12</string>
+    <string name="shock_count_placeholder">x%s</string>
+    <string name="easter_egg">Les voies du seigneur sont impénétrables !</string>
 
 </resources>

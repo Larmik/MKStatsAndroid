@@ -94,9 +94,9 @@ class PeriodicStatsFragment : Fragment(R.layout.fragment_periodic_stats) {
                 else ContextCompat.getColor(requireContext(), averageMapColor)
             )
             binding.mostDefeatedTeam.text = it.mostDefeatedTeam?.teamName
-            binding.mostDefeatedTeamTotal.text = "${it.mostDefeatedTeam?.totalPlayed} victoires"
+            binding.mostDefeatedTeamTotal.text = String.format(requireContext().getString(R.string.victory_placeholder), it.mostDefeatedTeam?.totalPlayed)
             binding.lessDefeatedTeam.text = it.lessDefeatedTeam?.teamName
-            binding.lessDefeatedTeamTotal.text = "${it.lessDefeatedTeam?.totalPlayed} défaites"
+            binding.lessDefeatedTeamTotal.text = String.format(requireContext().getString(R.string.defeat_placeholder), it.lessDefeatedTeam?.totalPlayed)
         }.launchIn(lifecycleScope)
 
         viewModel.sharedTrackClick

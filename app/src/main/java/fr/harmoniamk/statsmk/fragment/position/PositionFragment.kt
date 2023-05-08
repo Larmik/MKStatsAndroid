@@ -87,7 +87,7 @@ class PositionFragment : Fragment(R.layout.fragment_position) {
             }.launchIn(lifecycleScope)
 
         viewModel.sharedPlayerLabel
-            .onEach { binding.posTitle.text = "Sélectionnez la position de $it" }
+            .onEach { binding.posTitle.text = String.format(requireContext().getString(R.string.select_pos_placeholder), it) }
             .launchIn(lifecycleScope)
 
         viewModel.sharedScore
@@ -113,7 +113,7 @@ class PositionFragment : Fragment(R.layout.fragment_position) {
             .onEach { binding.warTitleTv.text = it }
             .launchIn(lifecycleScope)
         viewModel.sharedTrackNumber
-            .onEach { binding.currentTrackTv.text = "Course $it/12" }
+            .onEach { binding.currentTrackTv.text = String.format(requireContext().getString(R.string.track_count_placeholder), it.toString()) }
             .launchIn(lifecycleScope)
     }
 

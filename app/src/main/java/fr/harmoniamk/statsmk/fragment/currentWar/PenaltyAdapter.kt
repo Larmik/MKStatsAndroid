@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
+import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.PenaltyItemBinding
 import fr.harmoniamk.statsmk.model.firebase.Penalty
 import kotlinx.coroutines.CoroutineScope
@@ -15,7 +16,7 @@ class PenaltyAdapter(private val list: MutableList<Penalty> = mutableListOf()) :
     class PenaltyViewHolder(val binding: PenaltyItemBinding) : ViewHolder(binding.root) {
         fun bind(item: Penalty) {
             binding.teamName.text = item.teamName
-            binding.amount.text = "-${item.amount}"
+            binding.amount.text = String.format(binding.root.context.getString(R.string.minus_placeholder), item.amount.toString())
         }
     }
 

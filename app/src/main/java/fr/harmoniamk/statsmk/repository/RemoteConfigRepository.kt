@@ -17,6 +17,7 @@ import javax.inject.Singleton
 interface RemoteConfigRepositoryInterface {
     val loadConfig: Flow<Unit>
     val minimumVersion: Int
+    val multiTeamEnabled: Boolean
 }
 
 @Module
@@ -49,4 +50,7 @@ class RemoteConfigRepository @Inject constructor() : RemoteConfigRepositoryInter
 
     override val minimumVersion: Int
         get() = remoteConfig.getString("minimum_version").toIntOrNull() ?: 0
+
+    override val multiTeamEnabled: Boolean
+        get() = remoteConfig.getBoolean("multi_team")
 }

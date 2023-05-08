@@ -13,6 +13,7 @@ import dagger.hilt.components.SingletonComponent
 import fr.harmoniamk.statsmk.extension.parsePenalties
 import fr.harmoniamk.statsmk.extension.parseTracks
 import fr.harmoniamk.statsmk.extension.toMapList
+import fr.harmoniamk.statsmk.extension.toStringList
 import fr.harmoniamk.statsmk.model.firebase.*
 import fr.harmoniamk.statsmk.model.local.MKWar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -56,7 +57,7 @@ interface FirebaseRepositoryModule {
 
 @FlowPreview
 @ExperimentalCoroutinesApi
-class FirebaseRepository @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : FirebaseRepositoryInterface {
+class FirebaseRepository @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface, private val remoteConfigRepository: RemoteConfigRepositoryInterface) : FirebaseRepositoryInterface {
 
     private val database  = Firebase.database.reference
 
@@ -66,10 +67,13 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
     }.flatMapLatest { databaseRepository.writeUser(user) }
 
     override fun writeNewWar(war: NewWar): Flow<Unit> = flow {
-        preferencesRepository.currentTeam?.mid?.let {
-            database.child("newWars").child(it).child(war.mid).setValue(war)
-            emit(Unit)
+        when (remoteConfigRepository.multiTeamEnabled) {
+            true -> preferencesRepository.currentTeam?.mid?.let {
+                database.child("newWars").child(it).child(war.mid).setValue(war)
+            }
+            else -> database.child("newWars").child(war.mid).setValue(war)
         }
+        emit(Unit)
     }
 
     override fun writeTeam(team: Team): Flow<Unit> = flow {
@@ -89,7 +93,7 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
                     team = it["team"].toString(),
                     role = it["role"].toString().toIntOrNull(),
                     picture = it["picture"].toString(),
-                    formerTeams = it["formerTeams"] as List<String>?
+                    formerTeams = it["formerTeams"].toStringList()
                 ) }
             if (isActive) offer(users)
         }
@@ -114,7 +118,10 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
 
     override fun getNewWars(teamId: String): Flow<List<NewWar>> = callbackFlow {
         Log.d("MKDebugOnly", "FirebaseRepository getNewWars")
-        database.child("newWars").child(teamId).get().addOnSuccessListener { snapshot ->
+        when (remoteConfigRepository.multiTeamEnabled) {
+            true -> database.child("newWars").child(teamId)
+            else -> database.child("newWars")
+        }.get().addOnSuccessListener { snapshot ->
             val wars: List<NewWar> = snapshot.children
                 .map { it.value as Map<*, *> }
                 .map {map -> NewWar(
@@ -137,7 +144,10 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
         Log.d("MKDebugOnly", "FirebaseRepository listenNewWars")
         val postListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val wars: List<NewWar> = dataSnapshot.child("newWars").child(preferencesRepository.currentTeam?.mid ?: "-1").children.map { it.value as Map<*, *> }.map {
+                val wars: List<NewWar> =  when (remoteConfigRepository.multiTeamEnabled) {
+                    true -> dataSnapshot.child("newWars").child(preferencesRepository.currentTeam?.mid ?: "-1")
+                    else -> dataSnapshot.child("newWars")
+                }.children.map { it.value as Map<*, *> }.map {
                     NewWar(
                     mid = it["mid"].toString(),
                     playerHostId = it["playerHostId"].toString(),
@@ -172,7 +182,10 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
 
     override fun deleteNewWar(war: MKWar) = flow {
         war.war?.let {
-            database.child("newWars").child(preferencesRepository.currentTeam?.mid ?: "-1").child(it.mid).removeValue()
+            when (remoteConfigRepository.multiTeamEnabled) {
+                true -> database.child("newWars").child(preferencesRepository.currentTeam?.mid ?: "-1")
+                else -> database.child("newWars")
+            }.child(it.mid).removeValue()
             emit(Unit)
         }
     }.flatMapLatest { databaseRepository.deleteWar(war) }

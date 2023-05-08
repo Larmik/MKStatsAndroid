@@ -1,5 +1,7 @@
 package fr.harmoniamk.statsmk.fragment.home.war
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -14,13 +16,12 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentWarBinding
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.fragment.home.HomeFragmentDirections
+import fr.harmoniamk.statsmk.fragment.popup.PopupFragment
 import fr.harmoniamk.statsmk.fragment.settings.manageTeams.AddTeamFragment
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.*
 
 @FlowPreview
 @ExperimentalCoroutinesApi
@@ -34,8 +35,6 @@ class WarFragment : Fragment(R.layout.fragment_war) {
         super.onViewCreated(view, savedInstanceState)
         val lastAdapter = LastWarAdapter()
         val separators = listOf(
-            binding.separator1,
-            binding.separator2,
             binding.separator3,
             binding.separator4
         )
@@ -53,7 +52,7 @@ class WarFragment : Fragment(R.layout.fragment_war) {
                 .onEach {
                     binding.noTeamLayout.isVisible = !it
                     binding.hasTeamLayout.isVisible = it
-                    separators.forEach { view -> view.isVisible = it }
+                    binding.separator1.isVisible = it
                 }.launchIn(lifecycleScope)
 
             viewModel.sharedTeamName
@@ -94,11 +93,12 @@ class WarFragment : Fragment(R.layout.fragment_war) {
                 }.launchIn(lifecycleScope)
 
             viewModel.sharedLastWars
+                .filterNot { it.isEmpty() }
                 .onEach {
                     binding.lastWarsLayout.isVisible = true
                     binding.lastWarRv.isVisible = it.isNotEmpty()
-                    binding.emptyWars.isVisible = it.isEmpty()
                     binding.allWarsBtn.isVisible = it.isNotEmpty()
+                    separators.forEach { view -> view.isVisible = true }
                     lastAdapter.addWars(it)
                 }.launchIn(lifecycleScope)
 
@@ -116,6 +116,17 @@ class WarFragment : Fragment(R.layout.fragment_war) {
                 .onEach {
                     binding.createWarBtn.isVisible = it
                     binding.warHostTv.isVisible = it
+                }.launchIn(lifecycleScope)
+
+            viewModel.sharedShowUpdatePopup
+                .onEach {
+                    val popup = PopupFragment("L'application nécessite une mise à jour pour fonctionner correctement. \n \n Veuillez mettre à jour l'application pour continuer.", positiveText = "Mettre à jour", negativeText = "Retour")
+                    popup.onNegativeClick.onEach { requireActivity().finish() }.launchIn(lifecycleScope)
+                    popup.onPositiveClick
+                        .onEach {
+                            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=${requireContext().packageName}")))
+                        }.launchIn(lifecycleScope)
+                    popup.takeIf { !it.isAdded }?.show(childFragmentManager, null)
                 }.launchIn(lifecycleScope)
         }
 

@@ -33,6 +33,7 @@ class EditPlayerViewModel @Inject constructor(
     private val _sharedRoleSelected = MutableSharedFlow<Int>()
     private val _sharedUserRoleLabel = MutableSharedFlow<String?>()
     private val _sharedButtonEnabled = MutableSharedFlow<Boolean>()
+    private val _sharedEasterEgg = MutableSharedFlow<Unit>()
 
     val sharedButtonEnabled = _sharedButtonEnabled.asSharedFlow()
     val sharedPlayerIsMember = _sharedPlayerIsMember.asSharedFlow()
@@ -42,10 +43,14 @@ class EditPlayerViewModel @Inject constructor(
     val sharedLeaveTeamVisibility = _sharedLeaveTeamVisibility.asSharedFlow()
     val sharedRoleSelected = _sharedRoleSelected.asSharedFlow()
     val sharedShowDialog = _sharedShowDialog.asSharedFlow()
+    val sharedEasterEgg = _sharedEasterEgg.asSharedFlow()
     val sharedUserRoleLabel = _sharedUserRoleLabel.asSharedFlow()
 
     fun bind(player: User, onEditClick: Flow<Unit>, onNameEdited: Flow<String>) {
-        onEditClick.onEach { _sharedShowDialog.emit(true) }.launchIn(viewModelScope)
+        onEditClick.onEach {
+            if (player.role == UserRole.GOD.ordinal) _sharedEasterEgg.emit(Unit)
+            else _sharedShowDialog.emit(true)
+        }.launchIn(viewModelScope)
         onNameEdited.map { it.isNotEmpty() }.bind(_sharedButtonEnabled, viewModelScope)
 
         authenticationRepository.userRole
@@ -64,7 +69,7 @@ class EditPlayerViewModel @Inject constructor(
                     UserRole.MEMBER.ordinal -> "Membre"
                     UserRole.LEADER.ordinal -> "Leader"
                     UserRole.ADMIN.ordinal -> "Admin"
-                    UserRole.GOD.ordinal -> "Leader"
+                    UserRole.GOD.ordinal -> "Dieu"
                     else -> null
                 })
             }.launchIn(viewModelScope)

@@ -24,7 +24,7 @@
             android:layout_height="15dp"
             android:layout_marginStart="15dp"
             tools:src="@drawable/checked"
-            android:contentDescription="OK" />
+            android:contentDescription="@string/ok" />
 
 
 

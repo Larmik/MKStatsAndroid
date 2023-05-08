@@ -3,6 +3,7 @@ package fr.harmoniamk.statsmk.fragment.warTrackResult
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.PlayerShockItemBinding
 import fr.harmoniamk.statsmk.model.firebase.Shock
 import kotlinx.coroutines.CoroutineScope
@@ -26,7 +27,7 @@ class ShockAdapter(val items: MutableList<Pair<String?, Shock>> = mutableListOf(
         val item = items[position]
         (holder as? ShockViewHolder)?.let {
             it.binding.playerName.text = item.first
-            it.binding.count.text = "x${item.second.count}"
+            it.binding.count.text = String.format(it.binding.root.context.getString(R.string.shock_count_placeholder), item.second.count.toString())
         }
     }
 

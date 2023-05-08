@@ -72,9 +72,9 @@ class TeamStatsFragment : Fragment(R.layout.fragment_team_stats) {
             binding.mostPlayedTeam.text = it.mostPlayedTeam?.teamName
             binding.mostPlayedTeamTotal.text = it.mostPlayedTeam?.totalPlayedLabel
             binding.mostDefeatedTeam.text = it.mostDefeatedTeam?.teamName
-            binding.mostDefeatedTeamTotal.text = "${it.mostDefeatedTeam?.totalPlayed} victoires"
+            binding.mostDefeatedTeamTotal.text = String.format(requireContext().getString(R.string.victory_placeholder), it.mostDefeatedTeam?.totalPlayed)
             binding.lessDefeatedTeam.text = it.lessDefeatedTeam?.teamName
-            binding.lessDefeatedTeamTotal.text = "${it.lessDefeatedTeam?.totalPlayed} défaites"
+            binding.lessDefeatedTeamTotal.text = String.format(requireContext().getString(R.string.defeat_placeholder), it.lessDefeatedTeam?.totalPlayed)
             binding.shockCount.text = it.shockCount.toString()
             val averageWarColor = when  {
                 it.averagePointsLabel.contains("-") -> R.color.lose

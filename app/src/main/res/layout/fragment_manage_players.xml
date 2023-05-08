@@ -125,6 +125,7 @@
         android:layout_width="match_parent"
         android:background="@drawable/rounded_bg"
         android:hint="@string/rechercher_un_joueur"
+        android:inputType="textPersonName"
         android:layout_height="wrap_content"
         android:backgroundTint="@color/white_alphaed"
         android:textColor="@color/black"

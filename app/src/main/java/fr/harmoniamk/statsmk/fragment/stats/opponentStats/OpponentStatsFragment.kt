@@ -147,7 +147,7 @@ class OpponentStatsFragment : Fragment(R.layout.fragment_opponent_stats) {
                 binding.playerScoresLayout.isVisible = true
                 binding.mapAverage.typeface = typeface
                 binding.mapAverage.setTextSize(COMPLEX_UNIT_SP, 26f)
-                binding.mapAverageLabel.text = "Position moyenne"
+                binding.mapAverageLabel.text = requireContext().getString(R.string.position_moyenne)
             }
 
             viewModel.sharedTrackClick

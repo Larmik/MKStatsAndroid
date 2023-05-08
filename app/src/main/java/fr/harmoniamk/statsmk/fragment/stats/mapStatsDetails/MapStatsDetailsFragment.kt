@@ -48,7 +48,7 @@ class MapStatsDetailsFragment : Fragment(R.layout.fragment_map_stats_details) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         isIndiv.takeIf { it.isTrue }?.let {
-            binding.scoreSortButton.text = "Position"
+            binding.scoreSortButton.text = requireContext().getString(R.string.position)
             binding.playFilterButton.visibility = View.INVISIBLE
         }
         trackIndex?.let { index ->

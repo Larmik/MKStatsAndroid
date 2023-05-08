@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.FrameLayout
+import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.PiechartBinding
 
 class PieChart : FrameLayout {
@@ -30,7 +31,7 @@ class PieChart : FrameLayout {
         binding?.tieProgressbar?.max = total
         binding?.tieProgressbar?.progress = tie
         total.takeIf { it != 0 }?.let {
-            binding?.winrateText?.text = "${(win*100)/it} %"
+            binding?.winrateText?.text = ((win * 100) / it).toString() + " %"
         }
 
     }
