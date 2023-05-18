@@ -42,9 +42,6 @@ class AddPlayersFragment : BottomSheetDialogFragment() {
             binding.addToTeamCheck.checks()
         )
         viewModel.sharedUserAdded.bind(onUserAdded, lifecycleScope)
-        viewModel.sharedToast
-            .onEach { Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show() }
-            .launchIn(lifecycleScope)
         viewModel.sharedButtonEnabled
             .onEach { binding.nextBtn.isEnabled = it }
             .launchIn(lifecycleScope)

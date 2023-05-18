@@ -182,6 +182,7 @@ class ProfileViewModel @Inject constructor(private val authenticationRepository:
                 it.apply {
                     this?.team = "-1"
                     this?.formerTeams = formerTeams.distinct().filterNotNull()
+                    this?.role = UserRole.MEMBER.ordinal
                 }
             }
             .flatMapLatest { firebaseRepository.writeUser(it) }

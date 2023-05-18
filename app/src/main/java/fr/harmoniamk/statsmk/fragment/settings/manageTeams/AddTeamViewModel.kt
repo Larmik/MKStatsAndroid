@@ -21,11 +21,9 @@ import javax.inject.Inject
 @HiltViewModel
 class AddTeamViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
     private val _sharedTeamAdded = MutableSharedFlow<Unit>()
-    private val _sharedToast = MutableSharedFlow<String>()
     private val _sharedButtonEnabled = MutableSharedFlow<Boolean>()
     val sharedButtonEnabled = _sharedButtonEnabled.asSharedFlow()
     val sharedTeamAdded = _sharedTeamAdded.asSharedFlow()
-    val sharedToast = _sharedToast.asSharedFlow()
 
     fun bind(teamWithLeader: Boolean, onTeamName: Flow<String>, onShortname: Flow<String>, onAddClick: Flow<Unit>) {
         var name: String? = null
@@ -112,16 +110,6 @@ class AddTeamViewModel @Inject constructor(private val firebaseRepository: Fireb
                 this.team = id
             }) }
             .onEach { _sharedTeamAdded.emit(Unit) }
-            .launchIn(viewModelScope)
-
-
-
-        addClick
-            .filterNot { teamWithLeader }
-            .filter {
-                it.map { team -> team.name?.toLowerCase(Locale.getDefault()) }.contains(name?.toLowerCase(Locale.getDefault()))
-            }
-            .onEach { _sharedToast.emit("Cette équipe existe déjà") }
             .launchIn(viewModelScope)
 
     }

@@ -46,9 +46,6 @@ class StatsFragment() : Fragment(R.layout.fragment_stats) {
             .filter { findNavController().currentDestination?.id == R.id.homeFragment }
             .onEach { findNavController().navigate(HomeFragmentDirections.toMapRanking(it.toTypedArray())) }
             .launchIn(lifecycleScope)
-        viewModel.sharedToast
-            .onEach { Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show() }
-            .launchIn(lifecycleScope)
         viewModel.sharedPlayers
             .filter { findNavController().currentDestination?.id == R.id.homeFragment }
             .onEach { findNavController().navigate(HomeFragmentDirections.toPlayerRanking(it.first.toTypedArray(), it.second.toTypedArray())) }

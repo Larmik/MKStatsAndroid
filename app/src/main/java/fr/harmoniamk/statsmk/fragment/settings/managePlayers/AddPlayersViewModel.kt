@@ -20,10 +20,8 @@ import javax.inject.Inject
 class AddPlayersViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
 
     private val _sharedUserAdded = MutableSharedFlow<Unit>()
-    private val _sharedToast = MutableSharedFlow<String>()
     private val _sharedButtonEnabled = MutableSharedFlow<Boolean>()
     val sharedButtonEnabled = _sharedButtonEnabled.asSharedFlow()
-    val sharedToast = _sharedToast.asSharedFlow()
     val sharedUserAdded = _sharedUserAdded.asSharedFlow()
 
     fun bind(onName: Flow<String>, onPlayerAdded: Flow<Unit>, onTeamChecked: Flow<Boolean>) {
@@ -49,16 +47,14 @@ class AddPlayersViewModel @Inject constructor(private val firebaseRepository: Fi
                     mid = System.currentTimeMillis().toString(),
                     name = it,
                     team = if (teamChecked) preferencesRepository.currentTeam?.mid else "-1",
-                    picture = "https://firebasestorage.googleapis.com/v0/b/stats-mk.appspot.com/o/mk_stats_logo.png?alt=media&token=930c6fdb-9e42-4b23-a9de-3c069d2f982b"
+                    picture = "https://firebasestorage.googleapis.com/v0/b/stats-mk.appspot.com/o/mk_stats_logo.png?alt=media&token=930c6fdb-9e42-4b23-a9de-3c069d2f982b",
+                    currentWar = "-1"
                 )
             }
             .flatMapLatest { firebaseRepository.writeUser(it) }
             .bind(_sharedUserAdded, viewModelScope)
 
-        playerAdded
-            .filter { it.map { player -> player.name?.toLowerCase(Locale.getDefault()) }.contains(name?.toLowerCase(Locale.getDefault())) }
-            .onEach { _sharedToast.emit("Ce joueur existe déjà") }
-            .launchIn(viewModelScope)
+
     }
 
 }
