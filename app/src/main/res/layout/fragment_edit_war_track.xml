@@ -16,6 +16,16 @@
         android:paddingVertical="10dp"
         android:textColor="@color/harmonia_dark"/>
 
+
+    <EditText
+        android:id="@+id/search_map_et"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:hint="@string/rechercher_un_nom_ou_une_abr_viation"
+        android:importantForAutofill="no" />
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

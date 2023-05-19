@@ -10,12 +10,15 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.databinding.FragmentEditWarTrackBinding
 import fr.harmoniamk.statsmk.extension.bind
+import fr.harmoniamk.statsmk.extension.onTextChanged
 import fr.harmoniamk.statsmk.fragment.trackList.TrackListAdapter
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlin.coroutines.CoroutineContext
 
 @ExperimentalCoroutinesApi
@@ -37,8 +40,11 @@ class EditWarTrackFragment(val newWar: NewWar? = null, val index: Int = 0) : Bot
         val adapter = TrackListAdapter()
         binding.editTrackRv.adapter = adapter
         newWar?.let { war ->
-            viewModel.bind(war, index, adapter.sharedClick)
+            viewModel.bind(war, index, adapter.sharedClick, binding.searchMapEt.onTextChanged())
             viewModel.sharedDismiss.bind(onDismiss, lifecycleScope)
+            viewModel.sharedSearchedItems
+                .onEach { adapter.addTracks(it) }
+                .launchIn(lifecycleScope)
         }
     }
 
