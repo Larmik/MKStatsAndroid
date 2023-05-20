@@ -26,7 +26,10 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class MapRankingViewModel @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface) : ViewModel() {
+class MapRankingViewModel @Inject constructor(
+    private val preferencesRepository: PreferencesRepositoryInterface,
+    private val authenticationRepository: AuthenticationRepositoryInterface
+) : ViewModel() {
 
 
     private val _sharedMaps = MutableSharedFlow<List<TrackStats>>()
@@ -35,40 +38,24 @@ class MapRankingViewModel @Inject constructor(private val preferencesRepository:
     private val _sharedIndivStatsEnabled = MutableStateFlow(true)
     private val onlyIndiv = preferencesRepository.currentTeam?.mid == null
 
-    val sharedMaps = _sharedMaps.asSharedFlow()
     val sharedGoToStats = _sharedGoToStats.asSharedFlow()
+    val sharedMaps = _sharedMaps.asSharedFlow()
     val sharedSortTypeSelected = _sharedSortTypeSelected.asStateFlow()
     val sharedIndivStatsEnabled = _sharedIndivStatsEnabled.asStateFlow()
+
     private val temp = mutableListOf<NewWarTrack>()
-    val final = mutableListOf<TrackStats>()
+    val itemsVM = mutableListOf<TrackStats>()
 
     fun bind(warList: List<MKWar>, onTrackClick: Flow<Int>, onSortClick: Flow<TrackSortType>, onSearch: Flow<String>, onIndivStatsSelected: Flow<Boolean>) {
         refresh(warList, true)
         onTrackClick
-            .onEach { _sharedGoToStats.emit(Pair(authenticationRepository.user?.uid, it)) }
-            .launchIn(viewModelScope)
-
-        onIndivStatsSelected
-            .onEach { indivEnabled ->
-                _sharedIndivStatsEnabled.emit(indivEnabled)
-                refresh(warList, indivEnabled)
-            }.launchIn(viewModelScope)
-
-        onSearch
-            .map { searched ->
-                final
-                    .filter {
-                    it.map?.name?.toLowerCase(Locale.ROOT)?.contains(searched.toLowerCase(Locale.ROOT)).isTrue
-                            || MainApplication.instance?.applicationContext?.getString(it.map?.label ?: R.string.app_name)?.toLowerCase(Locale.ROOT)?.contains(searched.toLowerCase(Locale.ROOT)) ?: true
-                }
-            }
-            .bind(_sharedMaps, viewModelScope)
+            .map { Pair(authenticationRepository.user?.uid, it) }
+            .bind(_sharedGoToStats, viewModelScope)
 
         onSortClick
             .onEach {
-                _sharedSortTypeSelected.emit(it)
-                final.clear()
-                final.addAll(sortTracks(it).map {
+                itemsVM.clear()
+                itemsVM.addAll(sortTracks(it).map {
                     TrackStats(
                         map = Maps.values()[it.first ?: -1],
                         totalPlayed = it.second.size,
@@ -79,8 +66,27 @@ class MapRankingViewModel @Inject constructor(private val preferencesRepository:
                         }.size * 100) / it.second.size
                     )
                 }.filter { it.totalPlayed >= 2 })
-                _sharedMaps.emit(final)
+                _sharedMaps.emit(itemsVM)
+                _sharedSortTypeSelected.emit(it)
             }.launchIn(viewModelScope)
+
+        onIndivStatsSelected
+            .onEach { indivEnabled ->
+                _sharedIndivStatsEnabled.emit(indivEnabled)
+                refresh(warList, indivEnabled)
+            }.launchIn(viewModelScope)
+
+        onSearch
+            .map { searched ->
+                itemsVM
+                    .filter {
+                    it.map?.name?.toLowerCase(Locale.ROOT)?.contains(searched.toLowerCase(Locale.ROOT)).isTrue
+                            || MainApplication.instance?.applicationContext?.getString(it.map?.label ?: R.string.app_name)?.toLowerCase(Locale.ROOT)?.contains(searched.toLowerCase(Locale.ROOT)) ?: true
+                }
+            }
+            .bind(_sharedMaps, viewModelScope)
+
+
     }
 
     private fun sortTracks(type: TrackSortType) =
@@ -122,15 +128,15 @@ class MapRankingViewModel @Inject constructor(private val preferencesRepository:
             .map { list ->
                 temp.clear()
                 temp.addAll(list)
-                final.clear()
-                final.addAll(sortTracks(_sharedSortTypeSelected.value).map {
+                itemsVM.clear()
+                itemsVM.addAll(sortTracks(_sharedSortTypeSelected.value).map {
                     TrackStats(
                         map = Maps.values()[it.first ?: -1],
                         totalPlayed = it.second.size,
                         winRate = (it.second.filter { MKWarTrack(it).displayedDiff.contains('+') }.size * 100) / it.second.size
                     )
                 }.filter { it.totalPlayed >= 2 && ((onlyIndiv && indivEnabled) || !onlyIndiv)})
-                final
+                itemsVM
             }
             .bind(_sharedMaps, viewModelScope)
     }

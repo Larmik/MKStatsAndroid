@@ -41,26 +41,11 @@ class OpponentRankingViewModel @Inject constructor(
 
     private val itemsVM = mutableListOf<OpponentRankingItemViewModel>()
 
-
     fun bind(list: List<Team>, warList: List<MKWar>, onTeamClick: Flow<OpponentRankingItemViewModel>, onSortClick: Flow<PlayerSortType>, onSearch: Flow<String>,  onIndivStatsSelected: Flow<Boolean>) {
-        flowOf(list)
-            .filterNotNull()
-            .map { it.sortedBy { it.name }.filterNot { it.mid == preferencesRepository.currentTeam?.mid } }
-            .flatMapLatest { it.withFullTeamStats(warList, databaseRepository, authenticationRepository.user?.uid, isIndiv = _sharedIndivStatsEnabled.value) }
-            .onEach {
-                itemsVM.clear()
-                itemsVM.addAll(it.filter { vm -> vm.stats.warStats.warsPlayed > 1 })
-                when (_sharedSortTypeSelected.value) {
-                    PlayerSortType.NAME -> itemsVM.sortBy { it.teamName }
-                    PlayerSortType.WINRATE -> itemsVM.sortByDescending { (it.stats.warStats.warsWon*100)/it.stats.warStats.warsPlayed}
-                    PlayerSortType.TOTAL_WIN -> itemsVM.sortByDescending { it.stats.warStats.warsPlayed }
-                    PlayerSortType.AVERAGE -> itemsVM.sortByDescending { it.stats.averagePoints }
-                }
-                _sharedLoading.emit(false)
-                _sharedTeamList.emit(itemsVM)
-            }.launchIn(viewModelScope)
-
-        onTeamClick.map { Pair(authenticationRepository.user?.uid, it) }.bind(_sharedGoToStats, viewModelScope)
+        refresh(list, warList)
+        onTeamClick
+            .map { Pair(authenticationRepository.user?.uid, it) }
+            .bind(_sharedGoToStats, viewModelScope)
 
         onSortClick
             .onEach {
@@ -81,24 +66,30 @@ class OpponentRankingViewModel @Inject constructor(
 
         onIndivStatsSelected.onEach { indivEnabled ->
             _sharedIndivStatsEnabled.emit(indivEnabled)
-            itemsVM.clear()
-            itemsVM.addAll(list
-                .sortedBy { it.name }
-                .filterNot { it.mid == preferencesRepository.currentTeam?.mid }
-                .withFullTeamStats(warList, databaseRepository, authenticationRepository.user?.uid, isIndiv = indivEnabled)
-                .map { it.filter { vm -> vm.stats.warStats.warsPlayed > 1 } }
-                .first()
-            )
-            when (_sharedSortTypeSelected.value) {
-                PlayerSortType.NAME -> itemsVM.sortBy { it.teamName }
-                PlayerSortType.WINRATE -> itemsVM.sortByDescending { (it.stats.warStats.warsWon*100)/it.stats.warStats.warsPlayed}
-                PlayerSortType.TOTAL_WIN -> itemsVM.sortByDescending { it.stats.warStats.warsPlayed }
-                PlayerSortType.AVERAGE -> itemsVM.sortByDescending { it.stats.averagePoints }
-            }
-            _sharedTeamList.emit(itemsVM)
+            refresh(list, warList)
         }.launchIn(viewModelScope)
 
 
+    }
+
+    private fun refresh(list: List<Team>, warList: List<MKWar>) {
+        flowOf(list)
+            .filterNotNull()
+            .map { it.sortedBy { it.name }.filterNot { it.mid == preferencesRepository.currentTeam?.mid } }
+            .flatMapLatest { it.withFullTeamStats(warList, databaseRepository, authenticationRepository.user?.uid, isIndiv = _sharedIndivStatsEnabled.value) }
+            .mapNotNull { it.filter { vm -> (!vm.isIndiv && vm.stats.warStats.list.any { war -> war.hasTeam(preferencesRepository.currentTeam?.mid) }) || vm.isIndiv } }
+            .onEach {
+                itemsVM.clear()
+                itemsVM.addAll(it.filter { vm -> vm.stats.warStats.warsPlayed > 1 })
+                when (_sharedSortTypeSelected.value) {
+                    PlayerSortType.NAME -> itemsVM.sortBy { it.teamName }
+                    PlayerSortType.WINRATE -> itemsVM.sortByDescending { (it.stats.warStats.warsWon*100)/it.stats.warStats.warsPlayed}
+                    PlayerSortType.TOTAL_WIN -> itemsVM.sortByDescending { it.stats.warStats.warsPlayed }
+                    PlayerSortType.AVERAGE -> itemsVM.sortByDescending { it.stats.averagePoints }
+                }
+                _sharedLoading.emit(false)
+                _sharedTeamList.emit(itemsVM)
+            }.launchIn(viewModelScope)
     }
 
 
