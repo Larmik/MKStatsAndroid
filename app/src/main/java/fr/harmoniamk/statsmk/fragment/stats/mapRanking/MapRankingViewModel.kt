@@ -33,7 +33,7 @@ class MapRankingViewModel @Inject constructor(private val preferencesRepository:
     private val _sharedGoToStats = MutableSharedFlow<Pair<String?, Int>>()
     private val _sharedSortTypeSelected = MutableStateFlow(TrackSortType.TOTAL_PLAYED)
     private val _sharedIndivStatsEnabled = MutableStateFlow(true)
-
+    private val onlyIndiv = preferencesRepository.currentTeam?.mid == null
 
     val sharedMaps = _sharedMaps.asSharedFlow()
     val sharedGoToStats = _sharedGoToStats.asSharedFlow()
@@ -43,52 +43,16 @@ class MapRankingViewModel @Inject constructor(private val preferencesRepository:
     val final = mutableListOf<TrackStats>()
 
     fun bind(warList: List<MKWar>, onTrackClick: Flow<Int>, onSortClick: Flow<TrackSortType>, onSearch: Flow<String>, onIndivStatsSelected: Flow<Boolean>) {
-        val onlyIndiv = preferencesRepository.currentTeam?.mid == null
-        flowOf(warList)
-            .onEach { delay(100) }
-            .filter {
-                (!onlyIndiv && it.mapNotNull { war -> war.war?.teamHost}.contains(preferencesRepository.currentTeam?.mid)
-                        || it.map {war -> war.war?.teamOpponent}.contains(preferencesRepository.currentTeam?.mid))
-                        || onlyIndiv
-            }
-            .mapNotNull { list -> list.filter { it.isOver && ((onlyIndiv && it.hasPlayer(authenticationRepository.user?.uid)) || !onlyIndiv)} }
-            .map { list ->
-                val allTracksPlayed = mutableListOf<NewWarTrack>()
-                list.mapNotNull { it.war?.warTracks }.forEach {
-                    allTracksPlayed.addAll(it)
-                }
-                allTracksPlayed
-            }
-            .map { list ->
-                temp.clear()
-                temp.addAll(list)
-                final.clear()
-                final.addAll(sortTracks(_sharedSortTypeSelected.value).map {
-                    TrackStats(
-                        map = Maps.values()[it.first ?: -1],
-                        totalPlayed = it.second.size,
-                        winRate = (it.second.filter { MKWarTrack(it).displayedDiff.contains('+') }.size * 100) / it.second.size
-                    )
-                }.filter { it.totalPlayed >= 2 })
-                final
-            }
-            .bind(_sharedMaps, viewModelScope)
+        refresh(warList, true)
+        onTrackClick
+            .onEach { _sharedGoToStats.emit(Pair(authenticationRepository.user?.uid, it)) }
+            .launchIn(viewModelScope)
 
-        onTrackClick.onEach {
-            _sharedGoToStats.emit(Pair(authenticationRepository.user?.uid, it))
-        }.launchIn(viewModelScope)
-        onIndivStatsSelected.onEach { indivEnabled ->
-            _sharedIndivStatsEnabled.emit(indivEnabled)
-            final.clear()
-            final.addAll(sortTracks(_sharedSortTypeSelected.value).map {
-                TrackStats(
-                    map = Maps.values()[it.first ?: -1],
-                    totalPlayed = it.second.size,
-                    winRate = (it.second.filter { MKWarTrack(it).displayedDiff.contains('+') }.size * 100) / it.second.size
-                )
-            }.filter { it.totalPlayed >= 2 && ((onlyIndiv && indivEnabled) || !onlyIndiv)})
-            _sharedMaps.emit(final)
-        }.launchIn(viewModelScope)
+        onIndivStatsSelected
+            .onEach { indivEnabled ->
+                _sharedIndivStatsEnabled.emit(indivEnabled)
+                refresh(warList, indivEnabled)
+            }.launchIn(viewModelScope)
 
         onSearch
             .map { searched ->
@@ -101,7 +65,7 @@ class MapRankingViewModel @Inject constructor(private val preferencesRepository:
             .bind(_sharedMaps, viewModelScope)
 
         onSortClick
-            .map {
+            .onEach {
                 _sharedSortTypeSelected.emit(it)
                 final.clear()
                 final.addAll(sortTracks(it).map {
@@ -115,10 +79,8 @@ class MapRankingViewModel @Inject constructor(private val preferencesRepository:
                         }.size * 100) / it.second.size
                     )
                 }.filter { it.totalPlayed >= 2 })
-                        final
-
-
-            }.bind(_sharedMaps, viewModelScope)
+                _sharedMaps.emit(final)
+            }.launchIn(viewModelScope)
     }
 
     private fun sortTracks(type: TrackSortType) =
@@ -139,13 +101,38 @@ class MapRankingViewModel @Inject constructor(private val preferencesRepository:
                 .filter { !_sharedIndivStatsEnabled.value || (_sharedIndivStatsEnabled.value && MKWarTrack(it).hasPlayer(authenticationRepository.user?.uid)) }
                 .groupBy { it.trackIndex }.toList()
                 .sortedByDescending { it.second.map { MKWarTrack(it).diffScore }.sum() / it.second.size }
+    }
 
-
-
-
-
-
-
+    private fun refresh(warList: List<MKWar>, indivEnabled: Boolean) {
+        flowOf(warList)
+            .onEach { delay(100) }
+            .filter {
+                (!onlyIndiv && it.mapNotNull { war -> war.war?.teamHost}.contains(preferencesRepository.currentTeam?.mid)
+                        || it.map {war -> war.war?.teamOpponent}.contains(preferencesRepository.currentTeam?.mid))
+                        || onlyIndiv
+            }
+            .mapNotNull { list -> list.filter { it.isOver && ((onlyIndiv && it.hasPlayer(authenticationRepository.user?.uid)) || !onlyIndiv) && ((!indivEnabled && it.hasTeam(preferencesRepository.currentTeam?.mid)) || indivEnabled)} }
+            .map { list ->
+                val allTracksPlayed = mutableListOf<NewWarTrack>()
+                list.mapNotNull { it.war?.warTracks }.forEach {
+                    allTracksPlayed.addAll(it)
+                }
+                allTracksPlayed
+            }
+            .map { list ->
+                temp.clear()
+                temp.addAll(list)
+                final.clear()
+                final.addAll(sortTracks(_sharedSortTypeSelected.value).map {
+                    TrackStats(
+                        map = Maps.values()[it.first ?: -1],
+                        totalPlayed = it.second.size,
+                        winRate = (it.second.filter { MKWarTrack(it).displayedDiff.contains('+') }.size * 100) / it.second.size
+                    )
+                }.filter { it.totalPlayed >= 2 && ((onlyIndiv && indivEnabled) || !onlyIndiv)})
+                final
+            }
+            .bind(_sharedMaps, viewModelScope)
     }
 
 

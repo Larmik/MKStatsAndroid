@@ -47,10 +47,9 @@ class OpponentRankingViewModel @Inject constructor(
             .filterNotNull()
             .map { it.sortedBy { it.name }.filterNot { it.mid == preferencesRepository.currentTeam?.mid } }
             .flatMapLatest { it.withFullTeamStats(warList, databaseRepository, authenticationRepository.user?.uid, isIndiv = _sharedIndivStatsEnabled.value) }
-            .map { it.filter { vm -> vm.stats.warStats.warsPlayed > 1 } }
             .onEach {
                 itemsVM.clear()
-                itemsVM.addAll(it)
+                itemsVM.addAll(it.filter { vm -> vm.stats.warStats.warsPlayed > 1 })
                 when (_sharedSortTypeSelected.value) {
                     PlayerSortType.NAME -> itemsVM.sortBy { it.teamName }
                     PlayerSortType.WINRATE -> itemsVM.sortByDescending { (it.stats.warStats.warsWon*100)/it.stats.warStats.warsPlayed}

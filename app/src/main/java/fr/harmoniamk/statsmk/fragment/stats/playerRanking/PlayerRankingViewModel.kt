@@ -44,7 +44,7 @@ class PlayerRankingViewModel @Inject constructor(
                     temp.add(PlayerRankingItemViewModel(user, stats))
                 }
                 itemsVM.clear()
-                itemsVM.addAll(temp)
+                itemsVM.addAll(temp.filter { it.stats.warStats.warsPlayed > 0 })
                 when (_sharedSortTypeSelected.value) {
                     PlayerSortType.NAME -> itemsVM.sortBy { it.user.name }
                     PlayerSortType.WINRATE -> itemsVM.sortByDescending { (it.stats.warStats.warsWon*100)/it.stats.warStats.warsPlayed}
