@@ -63,9 +63,9 @@ class WarDetailsFragment : Fragment(R.layout.fragment_war_details) {
             )
             viewModel.bind(war, adapter.sharedClick, binding.deleteWarBtn.clicks())
             viewModel.sharedWarName
-                .onEach {
-                    binding.warTitleTv.text = it
-                }.launchIn(lifecycleScope)
+                .filter { lifecycle.isResumed }
+                .onEach { binding.warTitleTv.text = it }
+                .launchIn(lifecycleScope)
             viewModel.sharedBestTrack.onEach { track ->
                 binding.bestTrack.bind(track)
                 binding.bestTrack
@@ -110,13 +110,16 @@ class WarDetailsFragment : Fragment(R.layout.fragment_war_details) {
                 .onEach { findNavController().popBackStack() }
                 .launchIn(lifecycleScope)
             viewModel.sharedDeleteWarVisible
+                .filter { lifecycle.isResumed }
                 .onEach { binding.deleteWarBtn.isVisible = it }
                 .launchIn(lifecycleScope)
             viewModel.sharedPlayerHost
+                .filter { lifecycle.isResumed }
                 .onEach { binding.playerHostTv.text = it }
                 .launchIn(lifecycleScope)
             viewModel.sharedPenalties
                 .filterNotNull()
+                .filter { lifecycle.isResumed }
                 .onEach {
                     binding.penaltiesLayout.isVisible = true
                     penaltiesAdapter.addPenalties(it)
@@ -124,6 +127,7 @@ class WarDetailsFragment : Fragment(R.layout.fragment_war_details) {
                 .launchIn(lifecycleScope)
             viewModel.sharedShockCount
                 .filterNotNull()
+                .filter { lifecycle.isResumed }
                 .onEach {
                     binding.shockLayout.isVisible = true
                     binding.shockCount.text = it

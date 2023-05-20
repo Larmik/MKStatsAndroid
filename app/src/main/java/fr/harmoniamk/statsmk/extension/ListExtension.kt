@@ -15,6 +15,7 @@ import kotlin.collections.map
 
 fun <T> List<T>.safeSubList(from: Int, to: Int): List<T> = when {
     this.size < to -> this
+    to < from -> listOf()
     else -> this.subList(from, to)
 }
 
