@@ -279,5 +279,5 @@
     <string name="track_count_placeholder">Course %s/12</string>
     <string name="shock_count_placeholder">x%s</string>
     <string name="easter_egg">Les voies du seigneur sont impénétrables !</string>
-
+    <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
 </resources>

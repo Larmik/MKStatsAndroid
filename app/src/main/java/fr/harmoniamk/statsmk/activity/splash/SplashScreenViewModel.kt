@@ -25,7 +25,8 @@ class SplashScreenViewModel @Inject constructor(
     private val firebaseRepository: FirebaseRepositoryInterface,
     private val databaseRepository: DatabaseRepositoryInterface,
     private val networkRepository: NetworkRepositoryInterface,
-    private val remoteConfigRepository: RemoteConfigRepositoryInterface
+    private val remoteConfigRepository: RemoteConfigRepositoryInterface,
+    private val notificationsRepository: NotificationsRepositoryInterface
     ) : ViewModel() {
 
     private val _sharedWelcomeScreen = MutableSharedFlow<WelcomeScreen>()
@@ -61,6 +62,7 @@ class SplashScreenViewModel @Inject constructor(
 
         isConnected
             .filter { it }
+            .flatMapLatest { notificationsRepository.register }
             .flatMapLatest { databaseRepository.clearUsers() }
             .flatMapLatest {  firebaseRepository.getUsers() }
             .flatMapLatest { databaseRepository.writeUsers(it) }
