@@ -10,10 +10,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import fr.harmoniamk.statsmk.extension.parsePenalties
-import fr.harmoniamk.statsmk.extension.parseTracks
-import fr.harmoniamk.statsmk.extension.toMapList
-import fr.harmoniamk.statsmk.extension.toStringList
+import fr.harmoniamk.statsmk.extension.*
 import fr.harmoniamk.statsmk.model.firebase.*
 import fr.harmoniamk.statsmk.model.local.MKWar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -29,11 +26,13 @@ interface FirebaseRepositoryInterface{
     fun writeUser(user: User): Flow<Unit>
     fun writeNewWar(war: NewWar): Flow<Unit>
     fun writeTeam(team: Team): Flow<Unit>
+    fun writeDispo(dispo: List<WarDispo>): Flow<Unit>
 
     //Get lists methods
     fun getUsers(): Flow<List<User>>
     fun getTeams(): Flow<List<Team>>
     fun getNewWars(teamId: String): Flow<List<NewWar>>
+    fun getDispos(): Flow<List<WarDispo>>
 
     //Firebase event listeners methods
     fun listenToNewWars(): Flow<List<NewWar>>
@@ -80,6 +79,11 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
         database.child("teams").child(team.mid).setValue(team)
         emit(Unit)
     }.flatMapLatest { databaseRepository.writeTeam(team) }
+
+    override fun writeDispo(dispo: List<WarDispo>) = flow {
+        database.child("dispos").child(preferencesRepository.currentTeam?.mid ?: "").setValue(dispo)
+        emit(Unit)
+    }
 
     override fun getUsers(): Flow<List<User>> = callbackFlow {
         Log.d("MKDebugOnly", "FirebaseRepository getUsers")
@@ -137,6 +141,26 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
                 }
             if (isActive) offer(wars)
         }
+        awaitClose {  }
+    }
+
+    override fun getDispos(): Flow<List<WarDispo>> = callbackFlow {
+        val postListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val wars: List<WarDispo> = dataSnapshot.child("dispos").child(preferencesRepository.currentTeam?.mid ?: "").children
+                    .map { it.value as Map<*, *> }
+                    .map {map -> WarDispo(
+                        dispoHour = map["dispoHour"].toString().toInt(),
+                        dispoPlayers = map["dispoPlayers"].toMapList().parsePlayerDispos().orEmpty(),
+                    )
+                    }
+                if (isActive) offer(wars)
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+            }
+        }
+        database.addValueEventListener(postListener)
         awaitClose {  }
     }
 

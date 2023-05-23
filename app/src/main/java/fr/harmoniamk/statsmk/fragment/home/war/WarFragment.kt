@@ -107,6 +107,11 @@ class WarFragment : Fragment(R.layout.fragment_war) {
                 .onEach { findNavController().navigate(HomeFragmentDirections.goToWarDetails(it)) }
                 .launchIn(lifecycleScope)
 
+            binding.disposBtn.clicks()
+                .filter { findNavController().currentDestination?.id == R.id.homeFragment }
+                .onEach { findNavController().navigate(HomeFragmentDirections.goToDispos()) }
+                .launchIn(lifecycleScope)
+
             binding.allWarsBtn.clicks()
                 .filter { findNavController().currentDestination?.id == R.id.homeFragment }
                 .onEach { findNavController().navigate(HomeFragmentDirections.goToAllWars()) }

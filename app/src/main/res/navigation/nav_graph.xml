@@ -6,6 +6,12 @@
     android:id="@+id/nav_graph">
 
     <fragment
+        android:id="@+id/dispoFragment"
+        android:name="fr.harmoniamk.statsmk.fragment.dispos.DispoFragment"
+        tools:layout="@layout/fragment_dispo"
+        android:label="DispoFragment"/>
+
+    <fragment
         android:id="@+id/homeFragment"
         android:name="fr.harmoniamk.statsmk.fragment.home.HomeFragment"
         tools:layout="@layout/fragment_home"
@@ -14,6 +20,15 @@
         <action
             android:id="@+id/create_war"
             app:destination="@id/addWarFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right"/>
+
+
+        <action
+            android:id="@+id/go_to_dispos"
+            app:destination="@id/dispoFragment"
             app:enterAnim="@anim/enter_from_right"
             app:exitAnim="@anim/exit_to_left"
             app:popEnterAnim="@anim/enter_from_left"

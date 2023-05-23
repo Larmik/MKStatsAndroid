@@ -5,16 +5,18 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class WarDispo(
-    val dispoHour: String,
-    val dispoPlayers: List<PlayerDispo>
+    val dispoHour: Int,
+    var dispoPlayers: List<PlayerDispo>
 ): Parcelable
 
 @Parcelize
 data class PlayerDispo(
-    val playerId: String,
-    val dispo: Dispo
-): Parcelable
+    var players: List<String>?,
+    val dispo: Int
+): Parcelable {
+    var playerNames: List<String>? = null
+}
 
 enum class Dispo {
-    CAN, CAN_SUB, NOT_SURE, CANT, NONE
+    CAN, CAN_SUB, NOT_SURE, CANT
 }

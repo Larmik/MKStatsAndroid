@@ -194,6 +194,13 @@ fun List<Map<*,*>>?.parsePenalties() : List<Penalty>? =
             amount = item["amount"].toString().toInt()
         )
 }
+fun List<Map<*,*>>?.parsePlayerDispos() : List<PlayerDispo>? =
+    this?.map { item ->
+        PlayerDispo(
+            players = item["players"].toStringList(),
+            dispo =item["dispo"].toString().toInt()
+        )
+}
 
 fun List<MapDetails>.getVictory() = this.maxByOrNull { it.warTrack.teamScore }?.takeIf { it.warTrack.displayedDiff.contains('+') }
 fun List<MapDetails>.getDefeat() = this.minByOrNull { it.warTrack.teamScore }?.takeIf { it.warTrack.displayedDiff.contains('-') }
