@@ -279,5 +279,17 @@
     <string name="track_count_placeholder">Course %s/12</string>
     <string name="shock_count_placeholder">x%s</string>
     <string name="easter_egg">Les voies du seigneur sont impénétrables !</string>
+    <string name="notif_dispo_create_title">Ça war ce soir ?</string>
+    <string name="notif_dispo_create_message">La %s veut en découdre ! Renseigne tes dispos pour rejoindre la bataille !</string>
+    <string name="notif_lu_amost_ok_title">Line Up à venir ?</string>
+    <string name="notif_lu_amost_ok_message">La LU de %s h est presque complète. Renseigne tes dispos si tu ne l\'as pas fait !</string>
+    <string name="notif_lu_ok_title">Dispos complètes !</string>
+    <string name="notif_lu_ok_message">Les dispos pour %s sont complètes. Il est temps de rechercher un adversaire !</string>
+    <string name="notif_war_ok_title">War confirmée !</string>
+    <string name="notif_war_ok_message">Tu es sélectionné pour jouer à %s contre la %s !</string>
+    <string name="notif_war_reminder_title">War de %s vs %s</string>
+    <string name="notif_war_reminder_message">Le match contre la %s va bientôt commencer. Good luck, have fun and go win !</string>
+    <string name="notif_dispo_reminder_title">N\'oublie pas tes dispos pour %s !</string>
+    <string name="notif_dispo_reminder_message">Tu n\'as pas encore indiqué si tu étais disponible pour jouer.</string>
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
 </resources>

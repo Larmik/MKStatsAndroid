@@ -8,6 +8,7 @@ import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.model.firebase.Dispo
 import fr.harmoniamk.statsmk.model.firebase.WarDispo
+import fr.harmoniamk.statsmk.model.local.ScheduledWar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -20,6 +21,7 @@ import kotlin.coroutines.CoroutineContext
 class DispoAdapter(val list: MutableList<WarDispo> = mutableListOf()) : RecyclerView.Adapter<DispoAdapter.DispoViewHolder>(), CoroutineScope {
 
     val sharedDispoSelected = MutableSharedFlow<Pair<WarDispo, Dispo>>()
+    val onClickWarSchedule = MutableSharedFlow<ScheduledWar>()
 
     @FlowPreview
     @ExperimentalCoroutinesApi
@@ -34,6 +36,14 @@ class DispoAdapter(val list: MutableList<WarDispo> = mutableListOf()) : Recycler
             binding.canSubList.adapter = canSubAdapter
             binding.notSureList.adapter = notSureAdapter
             binding.cantList.adapter = cantAdapter
+            binding.btnSchedule.clicks()
+                .map {
+                    ScheduledWar(
+                        hour = item.dispoHour,
+                        lineUp = item.dispoPlayers.singleOrNull { it.dispo == 0 }?.players.orEmpty(),
+                        opponentId = "123"
+                    )
+                }.bind(onClickWarSchedule, this@DispoAdapter)
             flowOf(
                 binding.canBtn.clicks().map { Dispo.CAN },
                 binding.canSubBtn.clicks().map { Dispo.CAN_SUB },

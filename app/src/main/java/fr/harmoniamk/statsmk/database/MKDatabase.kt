@@ -7,20 +7,23 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import fr.harmoniamk.statsmk.database.converters.*
 import fr.harmoniamk.statsmk.database.dao.TeamDao
+import fr.harmoniamk.statsmk.database.dao.TopicDao
 import fr.harmoniamk.statsmk.database.dao.UserDao
 import fr.harmoniamk.statsmk.database.dao.WarDao
 import fr.harmoniamk.statsmk.database.entities.TeamEntity
+import fr.harmoniamk.statsmk.database.entities.TopicEntity
 import fr.harmoniamk.statsmk.database.entities.UserEntity
 import fr.harmoniamk.statsmk.database.entities.WarEntity
 import kotlinx.coroutines.FlowPreview
 
 @TypeConverters(value = [WarTrackConverter::class, WarPositionConverter::class, ShockConverter::class, PenaltyConverter::class, ListConverter::class])
-@Database(entities = [UserEntity::class, TeamEntity::class, WarEntity::class], version = 2)
+@Database(entities = [UserEntity::class, TeamEntity::class, WarEntity::class, TopicEntity::class], version = 3)
 abstract class MKDatabase : RoomDatabase() {
 
     abstract fun userDao(): UserDao
     abstract fun teamDao(): TeamDao
     abstract fun warDao(): WarDao
+    abstract fun topicDao(): TopicDao
 
     @FlowPreview
     companion object {

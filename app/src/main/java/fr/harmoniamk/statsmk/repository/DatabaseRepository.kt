@@ -4,7 +4,9 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import fr.harmoniamk.statsmk.database.entities.TopicEntity
 import fr.harmoniamk.statsmk.datasource.TeamLocalDataSourceInterface
+import fr.harmoniamk.statsmk.datasource.TopicLocalDataSourceInterface
 import fr.harmoniamk.statsmk.datasource.UserLocalDataSourceInterface
 import fr.harmoniamk.statsmk.datasource.WarLocalDataSourceInterface
 import fr.harmoniamk.statsmk.model.firebase.*
@@ -20,6 +22,7 @@ interface DatabaseRepositoryInterface {
     fun getUsers(): Flow<List<User>>
     fun getTeams(): Flow<List<Team>>
     fun getWars(): Flow<List<MKWar>>
+    fun getTopics(): Flow<List<TopicEntity>>
 
     fun getUser(id: String?): Flow<User?>
     fun getTeam(id: String?): Flow<Team?>
@@ -32,10 +35,12 @@ interface DatabaseRepositoryInterface {
     fun writeUser(user: User): Flow<Unit>
     fun writeTeam(team: Team): Flow<Unit>
     fun writeWar(war: MKWar): Flow<Unit>
+    fun writeTopic(topic: TopicEntity): Flow<Unit>
 
     fun deleteUser(user: User): Flow<Unit>
     fun deleteTeam(team: Team): Flow<Unit>
     fun deleteWar(war: MKWar): Flow<Unit>
+    fun deleteTopic(topic: String): Flow<Unit>
 
     fun clearWars(): Flow<Unit>
     fun clearUsers(): Flow<Unit>
@@ -54,7 +59,7 @@ interface DatabaseRepositoryModule {
 
 @FlowPreview
 @ExperimentalCoroutinesApi
-class DatabaseRepository @Inject constructor(private val userDataSource: UserLocalDataSourceInterface, private val teamDataSource: TeamLocalDataSourceInterface, private val warDataSource: WarLocalDataSourceInterface) : DatabaseRepositoryInterface {
+class DatabaseRepository @Inject constructor(private val userDataSource: UserLocalDataSourceInterface, private val teamDataSource: TeamLocalDataSourceInterface, private val warDataSource: WarLocalDataSourceInterface, private val topicDataSource: TopicLocalDataSourceInterface) : DatabaseRepositoryInterface {
 
 
     override fun getUsers(): Flow<List<User>> = userDataSource.getAll()
@@ -62,6 +67,8 @@ class DatabaseRepository @Inject constructor(private val userDataSource: UserLoc
     override fun getTeams(): Flow<List<Team>> = teamDataSource.getAll()
 
     override fun getWars(): Flow<List<MKWar>>  = warDataSource.getAll()
+
+    override fun getTopics(): Flow<List<TopicEntity>> = topicDataSource.getAll()
 
     override fun getUser(id: String?): Flow<User?> = id?.let { userDataSource.getById(it) } ?: flowOf(null)
 
@@ -81,11 +88,15 @@ class DatabaseRepository @Inject constructor(private val userDataSource: UserLoc
 
     override fun writeWar(war: MKWar): Flow<Unit> = warDataSource.insert(war)
 
+    override fun writeTopic(topic: TopicEntity): Flow<Unit> = topicDataSource.insert(topic)
+
     override fun deleteUser(user: User): Flow<Unit> = userDataSource.delete(user)
 
     override fun deleteTeam(team: Team): Flow<Unit> = teamDataSource.delete(team)
 
     override fun deleteWar(war: MKWar): Flow<Unit> = warDataSource.delete(war)
+
+    override fun deleteTopic(topic: String): Flow<Unit> = topicDataSource.delete(topic)
 
     override fun clearWars(): Flow<Unit> = warDataSource.clear()
 

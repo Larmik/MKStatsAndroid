@@ -8,6 +8,7 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import fr.harmoniamk.statsmk.database.entities.TopicEntity
 import fr.harmoniamk.statsmk.service.AlertNotificationService
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.*
@@ -15,6 +16,7 @@ import javax.inject.Inject
 
 interface NotificationsRepositoryInterface {
     val register: Flow<Unit>
+    fun switchNotification (topic: String, subscribed: Boolean): Flow<Unit>
 }
 
 @FlowPreview
@@ -28,13 +30,18 @@ interface NotificationsRepositoryModule {
 
 @FlowPreview
 @ExperimentalCoroutinesApi
-class NotificationsRepository @Inject constructor(@ApplicationContext var context: Context, private val preferencesRepository: PreferencesRepositoryInterface) : NotificationsRepositoryInterface  {
+class NotificationsRepository @Inject constructor(@ApplicationContext var context: Context, private val preferencesRepository: PreferencesRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : NotificationsRepositoryInterface  {
 
     override val register = AlertNotificationService().token
         .onEach { FirebaseMessaging.getInstance().subscribeToTopic(preferencesRepository.currentTeam?.mid ?: "-1") }
-        .map {
-            Log.d("FCMTokenMK", it)
-            preferencesRepository.fcmToken = it
-        }
+        .map { preferencesRepository.fcmToken = it }
+
+    override fun switchNotification(topic: String, subscribed: Boolean) =
+        AlertNotificationService().switchNotification(topic, subscribed)
+            .filterNotNull()
+            .flatMapLatest {
+                if (subscribed) databaseRepository.writeTopic(TopicEntity(topic))
+                else databaseRepository.deleteTopic(topic)
+            }
 
 }

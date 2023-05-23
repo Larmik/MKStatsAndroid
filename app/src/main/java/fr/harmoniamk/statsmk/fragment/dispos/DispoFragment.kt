@@ -11,6 +11,7 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentDispoBinding
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -26,7 +27,7 @@ class DispoFragment : Fragment(R.layout.fragment_dispo) {
         super.onViewCreated(view, savedInstanceState)
         val adapter = DispoAdapter()
         binding.dispoList.adapter = adapter
-        viewModel.bind(adapter.sharedDispoSelected)
+        viewModel.bind(adapter.sharedDispoSelected, flowOf(), adapter.onClickWarSchedule)
         viewModel.sharedDispo
             .onEach {
                 adapter.addData(it)

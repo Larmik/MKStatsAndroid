@@ -57,7 +57,7 @@ android {
         release {
             minifyEnabled false
             buildConfigField "String", "FLAVOR_NAME", '" "'
-            debuggable false
+            debuggable true
             testCoverageEnabled = false
             manifestPlaceholders = [appLabel: "Mario Kart Stats"]
             buildConfigField "boolean", "IS_DEBUG", "false"

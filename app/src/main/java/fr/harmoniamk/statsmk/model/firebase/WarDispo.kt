@@ -6,7 +6,8 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class WarDispo(
     val dispoHour: Int,
-    var dispoPlayers: List<PlayerDispo>
+    var dispoPlayers: List<PlayerDispo>,
+    var opponentId: String? = null
 ): Parcelable
 
 @Parcelize
