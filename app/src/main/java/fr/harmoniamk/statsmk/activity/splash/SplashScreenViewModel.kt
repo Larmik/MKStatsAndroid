@@ -62,7 +62,6 @@ class SplashScreenViewModel @Inject constructor(
 
         isConnected
             .filter { it }
-            .flatMapLatest { notificationsRepository.register }
             .flatMapLatest { databaseRepository.clearUsers() }
             .flatMapLatest {  firebaseRepository.getUsers() }
             .flatMapLatest { databaseRepository.writeUsers(it) }
@@ -105,7 +104,9 @@ class SplashScreenViewModel @Inject constructor(
                             }
                         }
                         _sharedWelcomeScreen.emit(WelcomeScreen.HOME)
-                    }.launchIn(viewModelScope)
+                    }
+                    .flatMapLatest { notificationsRepository.register(preferencesRepository.currentTeam?.mid ?: "") }
+                    .launchIn(viewModelScope)
 
                 flowOf(preferencesRepository.firstLaunch)
                     .filter { it }

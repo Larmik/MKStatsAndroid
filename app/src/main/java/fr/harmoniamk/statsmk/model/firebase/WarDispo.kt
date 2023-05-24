@@ -7,8 +7,12 @@ import kotlinx.android.parcel.Parcelize
 data class WarDispo(
     val dispoHour: Int,
     var dispoPlayers: List<PlayerDispo>,
-    var opponentId: String? = null
-): Parcelable
+    var opponentId: String? = null,
+    var lineUp: List<String>? = null
+): Parcelable {
+    var lineupNames: List<String>? = null
+    var opponentName: String? = null
+}
 
 @Parcelize
 data class PlayerDispo(

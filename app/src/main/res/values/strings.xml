@@ -275,6 +275,7 @@
     <string name="track_played_placeholder">Jouée %s fois</string>
     <string name="winrate_placeholder">Winrate : %s </string>
     <string name="minus_placeholder">-%s</string>
+    <string name="hour_placeholder">%sh</string>
     <string name="select_pos_placeholder">Sélectionnez la position de %s</string>
     <string name="track_count_placeholder">Course %s/12</string>
     <string name="shock_count_placeholder">x%s</string>
@@ -292,4 +293,17 @@
     <string name="notif_dispo_reminder_title">N\'oublie pas tes dispos pour %s !</string>
     <string name="notif_dispo_reminder_message">Tu n\'as pas encore indiqué si tu étais disponible pour jouer.</string>
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
+    <string name="can">Can !</string>
+    <string name="can_sub">Can sub !</string>
+    <string name="not_sure">Not sure…</string>
+    <string name="can_t">Can\'t !</string>
+    <string name="ajouter_l_adversaire">Ajouter l\'adversaire</string>
+    <string name="pr_paration_de_la_war">Préparation de la war</string>
+    <string name="line_up">Line-up :</string>
+    <string name="s_lectionnez_un_adversaire">Sélectionnez un adversaire :</string>
+    <string name="valider_la_lu">Valider la LU</string>
+    <string name="le_coin_dispos">Le coin dispos</string>
+    <string name="indique_ton_quipe_si_tu_peux_jouer_les_wars">Indique à ton équipe si tu peux jouer les wars et jette un oeil aux LU de la soirée.</string>
+    <string name="ajouter_les_dispos">Ajouter les dispos</string>
+    <string name="dispos_war">Dispos war</string>
 </resources>

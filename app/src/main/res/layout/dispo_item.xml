@@ -21,125 +21,165 @@
         android:id="@+id/hour"
         tools:text="18h"/>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:textAlignment="center"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:visibility="gone"
+        android:textSize="20sp"
+        android:fontFamily="@font/orbitron_semibold"
+        android:id="@+id/war_name"
+        tools:text="18h"/>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_margin="5dp"
         android:background="@color/black"/>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content">
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:paddingVertical="5dp"
-            android:fontFamily="@font/roboto"
-            android:layout_margin="5dp"
-            android:textAlignment="center"
-            android:id="@+id/can_btn"
-            android:background="@drawable/rounded_bg"
-            android:backgroundTint="@color/win"
-            android:textColor="@color/black"
-            android:textSize="12sp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Can !"/>
+            android:orientation="vertical"
+            android:id="@+id/dispo_list_layout">
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:paddingVertical="5dp"
-            android:fontFamily="@font/roboto"
-            android:layout_margin="5dp"
-            android:textAlignment="center"
-            android:background="@drawable/rounded_bg"
-            android:id="@+id/can_sub_btn"
-            android:textSize="12sp"
-            android:backgroundTint="@color/logo_hr_blue"
-            android:textColor="@color/black"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:paddingVertical="5dp"
+                    android:fontFamily="@font/roboto"
+                    android:layout_margin="5dp"
+                    android:textAlignment="center"
+                    android:id="@+id/can_btn"
+                    android:background="@drawable/rounded_bg"
+                    android:backgroundTint="@color/win"
+                    android:textColor="@color/black"
+                    android:textSize="12sp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/can"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:paddingVertical="5dp"
+                    android:fontFamily="@font/roboto"
+                    android:layout_margin="5dp"
+                    android:textAlignment="center"
+                    android:background="@drawable/rounded_bg"
+                    android:id="@+id/can_sub_btn"
+                    android:textSize="12sp"
+                    android:backgroundTint="@color/logo_hr_blue"
+                    android:textColor="@color/black"
+                    android:layout_height="wrap_content"
+                    android:text="@string/can_sub"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:paddingVertical="5dp"
+                    android:layout_margin="5dp"
+                    android:textAlignment="center"
+                    android:background="@drawable/rounded_bg"
+                    android:backgroundTint="@color/boo"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/not_sure_btn"
+                    android:fontFamily="@font/roboto"
+                    android:text="@string/not_sure"/>
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:paddingVertical="5dp"
+                    android:layout_margin="5dp"
+                    android:textAlignment="center"
+                    android:background="@drawable/rounded_bg"
+                    android:backgroundTint="@color/lose"
+                    android:fontFamily="@font/roboto"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/cant_btn"
+                    android:text="@string/can_t"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_marginHorizontal="5dp"
+                    android:id="@+id/can_list"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="5dp"
+                    android:id="@+id/can_sub_list"
+                    android:layout_weight="1"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/not_sure_list"
+                    android:layout_marginHorizontal="5dp"
+                    android:layout_weight="1"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="5dp"
+                    android:id="@+id/cant_list"
+                    android:layout_weight="1"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Can sub !"/>
+            android:id="@+id/lineup_layout">
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/first_half_lu"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:orientation="vertical"
+                android:layout_weight="1"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/second_half_lu"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                android:orientation="vertical"
+                android:layout_weight="1"/>
+        </LinearLayout>
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:paddingVertical="5dp"
-            android:layout_margin="5dp"
-            android:textAlignment="center"
-            android:background="@drawable/rounded_bg"
-            android:backgroundTint="@color/boo"
-            android:textColor="@color/white"
-            android:textSize="12sp"
-            android:layout_height="wrap_content"
-            android:id="@+id/not_sure_btn"
-            android:fontFamily="@font/roboto"
-            android:text="Not sure..."/>
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:paddingVertical="5dp"
-            android:layout_margin="5dp"
-            android:textAlignment="center"
-            android:background="@drawable/rounded_bg"
-            android:backgroundTint="@color/lose"
-            android:fontFamily="@font/roboto"
-            android:textColor="@color/white"
-            android:textSize="12sp"
-            android:layout_height="wrap_content"
-            android:id="@+id/cant_btn"
-            android:text="Can't !"/>
+    </RelativeLayout>
 
-    </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="0dp"
-            android:layout_height="100dp"
-            android:layout_weight="1"
-            android:layout_marginHorizontal="5dp"
-            android:background="@drawable/rounded_bg"
-            android:backgroundTint="@color/white_alphaed"
-            android:id="@+id/can_list"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="0dp"
-            android:layout_height="100dp"
-            android:background="@drawable/rounded_bg"
-            android:layout_marginHorizontal="5dp"
-            android:backgroundTint="@color/white_alphaed"
-            android:id="@+id/can_sub_list"
-            android:layout_weight="1"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="0dp"
-            android:layout_height="100dp"
-            android:id="@+id/not_sure_list"
-            android:background="@drawable/rounded_bg"
-            android:backgroundTint="@color/white_alphaed"
-            android:layout_marginHorizontal="5dp"
-            android:layout_weight="1"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="0dp"
-            android:layout_height="100dp"
-            android:background="@drawable/rounded_bg"
-            android:layout_marginHorizontal="5dp"
-            android:backgroundTint="@color/white_alphaed"
-            android:id="@+id/cant_list"
-            android:layout_weight="1"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
-
-    </LinearLayout>
 
     <TextView
         android:layout_marginVertical="5dp"
@@ -152,6 +192,6 @@
         android:backgroundTint="@color/harmonia_dark"
         android:textColor="@color/white"
         android:id="@+id/btn_schedule"
-        android:text="Programmer"/>
+        android:text="@string/ajouter_l_adversaire"/>
 
 </LinearLayout>

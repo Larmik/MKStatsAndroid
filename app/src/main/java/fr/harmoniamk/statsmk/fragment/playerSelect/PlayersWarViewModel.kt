@@ -45,7 +45,6 @@ class PlayersWarViewModel@Inject constructor(
                     .sortedBy { it.name?.toLowerCase(Locale.ROOT) }
                     .map { UserSelector(it, false) })
                 temp
-
             }.bind(_sharedPlayers, viewModelScope)
 
         onUserSelected

@@ -2,21 +2,16 @@ package fr.harmoniamk.statsmk.fragment.dispos
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.messaging.FirebaseMessaging
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.database.entities.TopicEntity
 import fr.harmoniamk.statsmk.extension.bind
-import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.model.firebase.Dispo
 import fr.harmoniamk.statsmk.model.firebase.PlayerDispo
 import fr.harmoniamk.statsmk.model.firebase.WarDispo
-import fr.harmoniamk.statsmk.model.local.ScheduledWar
 import fr.harmoniamk.statsmk.repository.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @FlowPreview
@@ -28,8 +23,10 @@ class DispoViewModel @Inject constructor(private val firebaseRepository: Firebas
     val sharedDispo = _sharedDispos.asSharedFlow()
     private val dispos = mutableListOf<WarDispo>()
     val teamId = preferencesRepository.currentTeam?.mid ?: ""
+    private val _sharedGoToScheduleWar = MutableSharedFlow<WarDispo>()
+    val sharedGoToScheduleWar = _sharedGoToScheduleWar.asSharedFlow()
 
-    fun bind(onDispoSelected: Flow<Pair<WarDispo, Dispo>>, onClickWarSchedule: Flow<Unit>, onWarScheduled: Flow<ScheduledWar>) {
+    fun bind(onDispoSelected: Flow<Pair<WarDispo, Dispo>>, onClickWarSchedule: Flow<WarDispo>) {
         firebaseRepository.getDispos()
             .map {
                 val finalDispos = mutableListOf<WarDispo>()
@@ -42,7 +39,22 @@ class DispoViewModel @Inject constructor(private val firebaseRepository: Firebas
                         }
                         playerDispoList.add(it.apply { this.playerNames = listName.filterNotNull() })
                     }
-                    finalDispos.add(dispo.apply { this.dispoPlayers = playerDispoList })
+                    val luNames = mutableListOf<String?>()
+                    var opId: String? = null
+                    dispo.lineUp?.let {
+                        it.forEach {
+                            val name = databaseRepository.getUser(it).firstOrNull()?.name
+                            luNames.add(name)
+                        }
+                    }
+                    dispo.opponentId?.takeIf{ it != "null" }.let {
+                        opId = databaseRepository.getTeam(it).firstOrNull()?.name
+                    }
+                    finalDispos.add(dispo.apply {
+                        this.dispoPlayers = playerDispoList
+                        this.lineupNames = luNames.takeIf { it.isNotEmpty() }?.filterNotNull()?.toList()
+                        this.opponentName = opId
+                    })
                 }
                 finalDispos
             }
@@ -96,20 +108,19 @@ class DispoViewModel @Inject constructor(private val firebaseRepository: Firebas
                             this.playerNames = null
                         })
                     }
-                    finalDispos.add(warDispo.apply { this.dispoPlayers = finalDispo })
+                    finalDispos.add(warDispo.apply {
+                        this.dispoPlayers = finalDispo
+                        this.lineupNames = null
+                        this.opponentName = null
+                    })
                 }
                 finalDispos
             }
             .flatMapLatest { firebaseRepository.writeDispo(it) }
             .launchIn(viewModelScope)
 
-        onWarScheduled
-            .onEach {
-                if (it.lineUp.contains(authenticationRepository.user?.uid)) {
-                    switchTopic(teamId + "_lu_infos_" + it.hour.toString(), false)
-                    switchTopic(teamId + "_war_reminder_" + it.hour.toString(), true)
-                }
-            }.launchIn(viewModelScope)
+        onClickWarSchedule
+            .bind(_sharedGoToScheduleWar, viewModelScope)
     }
 
     private fun switchTopic(topic: String, subscribed: Boolean) = flow {

@@ -25,6 +25,7 @@ android:backgroundTint="@color/white_alphaed"
         <View
             android:layout_width="1dp"
             android:layout_height="match_parent"
+            android:id="@+id/separator"
             android:background="?android:colorAccent"
             tools:targetApi="n_mr1"/>
 

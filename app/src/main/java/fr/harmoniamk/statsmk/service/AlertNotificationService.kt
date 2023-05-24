@@ -16,7 +16,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.activity.MainActivity
 import fr.harmoniamk.statsmk.database.entities.TopicEntity
-import fr.harmoniamk.statsmk.repository.DatabaseRepository
+import fr.harmoniamk.statsmk.repository.*
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
@@ -42,7 +42,11 @@ class AlertNotificationService : FirebaseMessagingService() {
 
     @Inject
     lateinit var databaseRepository: DatabaseRepository
-    val job = SupervisorJob()
+    @Inject
+    lateinit var preferencesRepository: PreferencesRepository
+    @Inject
+    lateinit var authenticationRepository: AuthenticationRepository
+    private val job = SupervisorJob()
 
     override fun onDestroy() {
         job.cancel()
@@ -51,13 +55,13 @@ class AlertNotificationService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         CoroutineScope(job).launch {
-            val teamId = remoteMessage.data["topic"] ?: ""
-            val scheduledHour = remoteMessage.data["hour"] ?: ""
-
+            val scheduledHour = remoteMessage.data["hour"]
+            val opponentId = remoteMessage.data["opponent"]
+            val lineUp = remoteMessage.data["lu"] ?: ""
+            val teamId = preferencesRepository.currentTeam?.mid
+            val userId = authenticationRepository.user?.uid ?: ""
             val teamTag = databaseRepository.getTeam(teamId).firstOrNull()?.shortName ?: ""
-            val opponentTag = databaseRepository.getTeam(remoteMessage.data["opponent"]).firstOrNull()?.shortName ?: ""
-
-
+            val opponentTag = databaseRepository.getTeam(opponentId).firstOrNull()?.shortName ?: ""
             remoteMessage.data["type"]?.let {
                 val type = NotifType.valueOf(it)
                 when (type) {
@@ -86,21 +90,20 @@ class AlertNotificationService : FirebaseMessagingService() {
                         switchTopic(teamId + "_lu_infos_23", false)
                     }
                     NotifType.war_ok -> {
-                        switchTopic(teamId + "_war_reminder_" + scheduledHour, true)
+                        if (lineUp.contains(userId))
+                            switchTopic(teamId + "_war_reminder_" + scheduledHour, true)
                         switchTopic(teamId + "_lu_infos_" + scheduledHour, false)
                     }
                     else -> {
 
                     }
                 }
-
                 type.takeIf { it != NotifType.dispo_delete }?.let { notifType ->
-                    sendNotification(notifType, "${scheduledHour}h", opponentTag, teamTag)
+                    if ((notifType == NotifType.war_ok && lineUp.contains(userId)) || notifType != NotifType.war_ok)
+                        sendNotification(notifType, "${scheduledHour}h", opponentTag, teamTag)
                 }
-
             }
         }
-
     }
 
     private suspend fun switchTopic(topic: String, subscribed: Boolean) {

@@ -34,6 +34,7 @@ class WarViewModel @Inject constructor(
     private val _sharedLastWars = MutableSharedFlow<List<MKWar>>()
     private val _sharedGoToWar = MutableSharedFlow<MKWar>()
     private val _sharedButtonVisible = MutableSharedFlow<Boolean>()
+    private val _sharedDispoVisible = MutableSharedFlow<Boolean>()
     private val _sharedLoaded = MutableSharedFlow<Unit>()
     private val  _sharedShowUpdatePopup = MutableSharedFlow<Unit>()
 
@@ -46,6 +47,7 @@ class WarViewModel @Inject constructor(
     val sharedLastWars = _sharedLastWars.asSharedFlow()
     val sharedGoToWar = _sharedGoToWar.asSharedFlow()
     val sharedButtonVisible = _sharedButtonVisible.asSharedFlow()
+    val sharedDispoVisible = _sharedDispoVisible.asSharedFlow()
     val sharedLoaded = _sharedLoaded.asSharedFlow()
     val sharedShowUpdatePopup = _sharedShowUpdatePopup.asSharedFlow()
 
@@ -87,6 +89,12 @@ class WarViewModel @Inject constructor(
             .flatMapLatest { firebaseRepository.getUsers() }
             .flatMapLatest { databaseRepository.writeUsers(it) }
             .launchIn(viewModelScope)
+
+        firebaseRepository.getDispos()
+            .onEach {
+                    _sharedDispoVisible.emit(it.isNotEmpty())
+
+            }.launchIn(viewModelScope)
     }
 
     fun bindAddTeamDialog(onTeamAdded: Flow<Unit>) {

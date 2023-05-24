@@ -39,8 +39,8 @@ android {
         applicationId "fr.harmoniamk.statsmk"
         minSdk 21
         targetSdk 31
-        versionCode 19
-        versionName "1.8.1"
+        versionCode 20
+        versionName "1.8.5"
         multiDexEnabled true
         // read file from project root folder
         javaCompileOptions {
@@ -57,7 +57,7 @@ android {
         release {
             minifyEnabled false
             buildConfigField "String", "FLAVOR_NAME", '" "'
-            debuggable true
+            debuggable false
             testCoverageEnabled = false
             manifestPlaceholders = [appLabel: "Mario Kart Stats"]
             buildConfigField "boolean", "IS_DEBUG", "false"

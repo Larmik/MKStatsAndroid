@@ -1,0 +1,24 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:gravity="center_vertical"
+    android:padding="2dp"
+    android:orientation="horizontal"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:textColor="@color/harmonia_dark"
+        android:textAlignment="center"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:id="@+id/name"
+        android:fontFamily="@font/montserrat_regular"/>
+
+    <ImageView
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:id="@+id/delete_btn"
+        android:src="@drawable/close"/>
+
+</LinearLayout>

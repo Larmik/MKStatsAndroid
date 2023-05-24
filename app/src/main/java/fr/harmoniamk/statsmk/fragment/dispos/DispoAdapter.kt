@@ -2,13 +2,16 @@ package fr.harmoniamk.statsmk.fragment.dispos
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.DispoItemBinding
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.clicks
+import fr.harmoniamk.statsmk.extension.safeSubList
+import fr.harmoniamk.statsmk.fragment.scheduleWar.ScheduleLineUpAdapter
 import fr.harmoniamk.statsmk.model.firebase.Dispo
 import fr.harmoniamk.statsmk.model.firebase.WarDispo
-import fr.harmoniamk.statsmk.model.local.ScheduledWar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -21,29 +24,40 @@ import kotlin.coroutines.CoroutineContext
 class DispoAdapter(val list: MutableList<WarDispo> = mutableListOf()) : RecyclerView.Adapter<DispoAdapter.DispoViewHolder>(), CoroutineScope {
 
     val sharedDispoSelected = MutableSharedFlow<Pair<WarDispo, Dispo>>()
-    val onClickWarSchedule = MutableSharedFlow<ScheduledWar>()
+    val onClickWarSchedule = MutableSharedFlow<WarDispo>()
 
     @FlowPreview
     @ExperimentalCoroutinesApi
     inner class DispoViewHolder(val binding: DispoItemBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(item: WarDispo) {
-            val canAdapter = PlayerDispoAdapter(item.dispoPlayers.singleOrNull { it.dispo == Dispo.CAN.ordinal }?.playerNames.orEmpty())
-            val canSubAdapter = PlayerDispoAdapter(item.dispoPlayers.singleOrNull { it.dispo == Dispo.CAN_SUB.ordinal }?.playerNames.orEmpty())
+            val playersCan = item.dispoPlayers.singleOrNull { it.dispo == Dispo.CAN.ordinal }?.playerNames.orEmpty()
+            val playersCanSub = item.dispoPlayers.singleOrNull { it.dispo == Dispo.CAN_SUB.ordinal }?.playerNames.orEmpty()
+            val canAdapter = PlayerDispoAdapter(playersCan)
+            val canSubAdapter = PlayerDispoAdapter(playersCanSub)
             val notSureAdapter = PlayerDispoAdapter(item.dispoPlayers.singleOrNull { it.dispo == Dispo.NOT_SURE.ordinal }?.playerNames.orEmpty())
             val cantAdapter = PlayerDispoAdapter(item.dispoPlayers.singleOrNull { it.dispo == Dispo.CANT.ordinal }?.playerNames.orEmpty())
-            binding.hour.text = "${item.dispoHour}h"
+            val firstHalfLuAdapter = ScheduleLineUpAdapter(nameList = item.lineupNames?.safeSubList(0, 3))
+            val secondHalfLuAdapter = ScheduleLineUpAdapter(nameList = item.lineupNames?.safeSubList(3, 6))
+            binding.hour.text = String.format(binding.root.context.getString(R.string.hour_placeholder), item.dispoHour.toString())
             binding.canList.adapter = canAdapter
             binding.canSubList.adapter = canSubAdapter
             binding.notSureList.adapter = notSureAdapter
             binding.cantList.adapter = cantAdapter
+            binding.firstHalfLu.adapter = firstHalfLuAdapter
+            binding.secondHalfLu.adapter = secondHalfLuAdapter
+            binding.btnSchedule.isVisible = playersCan.size + playersCanSub.size >= 6
+            item.lineUp?.let {
+                binding.dispoListLayout.isVisible = false
+                binding.lineupLayout.isVisible = true
+                binding.btnSchedule.isVisible = false
+            }
+            item.opponentName?.let {
+                binding.warName.isVisible = true
+                binding.warName.text = it
+            }
             binding.btnSchedule.clicks()
-                .map {
-                    ScheduledWar(
-                        hour = item.dispoHour,
-                        lineUp = item.dispoPlayers.singleOrNull { it.dispo == 0 }?.players.orEmpty(),
-                        opponentId = "123"
-                    )
-                }.bind(onClickWarSchedule, this@DispoAdapter)
+                .map { item }
+                .bind(onClickWarSchedule, this@DispoAdapter)
             flowOf(
                 binding.canBtn.clicks().map { Dispo.CAN },
                 binding.canSubBtn.clicks().map { Dispo.CAN_SUB },

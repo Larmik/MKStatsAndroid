@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 interface NotificationsRepositoryInterface {
-    val register: Flow<Unit>
+    fun register(teamTopic: String): Flow<Unit>
     fun switchNotification (topic: String, subscribed: Boolean): Flow<Unit>
 }
 
@@ -32,8 +32,15 @@ interface NotificationsRepositoryModule {
 @ExperimentalCoroutinesApi
 class NotificationsRepository @Inject constructor(@ApplicationContext var context: Context, private val preferencesRepository: PreferencesRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : NotificationsRepositoryInterface  {
 
-    override val register = AlertNotificationService().token
-        .onEach { FirebaseMessaging.getInstance().subscribeToTopic(preferencesRepository.currentTeam?.mid ?: "-1") }
+    override fun register(teamTopic: String) = AlertNotificationService().token
+        .onEach {
+            databaseRepository.getTeams().firstOrNull()?.let {
+                it.map { it.mid }.forEach { teamId ->
+                    FirebaseMessaging.getInstance().unsubscribeFromTopic(teamId)
+                }
+            }
+            FirebaseMessaging.getInstance().subscribeToTopic(teamTopic)
+        }
         .map { preferencesRepository.fcmToken = it }
 
     override fun switchNotification(topic: String, subscribed: Boolean) =

@@ -133,6 +133,10 @@ class WarFragment : Fragment(R.layout.fragment_war) {
                         }.launchIn(lifecycleScope)
                     popup.takeIf { !it.isAdded }?.show(childFragmentManager, null)
                 }.launchIn(lifecycleScope)
+
+            viewModel.sharedDispoVisible
+                .onEach { binding.dispoLayout.isVisible = it }
+                .launchIn(lifecycleScope)
         }
 
         lifecycleScope.launchWhenStarted {

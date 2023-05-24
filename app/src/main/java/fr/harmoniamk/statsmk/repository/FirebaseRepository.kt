@@ -152,7 +152,8 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
                     .map {map -> WarDispo(
                         dispoHour = map["dispoHour"].toString().toInt(),
                         dispoPlayers = map["dispoPlayers"].toMapList().parsePlayerDispos().orEmpty(),
-                        opponentId = map["opponentId"].toString()
+                        opponentId = map["opponentId"].toString(),
+                        lineUp = map["lineUp"].toStringList()
                     )
                     }
                 if (isActive) offer(wars)

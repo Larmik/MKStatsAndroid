@@ -9,9 +9,9 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentDispoBinding
+import fr.harmoniamk.statsmk.fragment.scheduleWar.ScheduleWarFragment
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -27,10 +27,15 @@ class DispoFragment : Fragment(R.layout.fragment_dispo) {
         super.onViewCreated(view, savedInstanceState)
         val adapter = DispoAdapter()
         binding.dispoList.adapter = adapter
-        viewModel.bind(adapter.sharedDispoSelected, flowOf(), adapter.onClickWarSchedule)
+        viewModel.bind(adapter.sharedDispoSelected, adapter.onClickWarSchedule)
         viewModel.sharedDispo
             .onEach {
                 adapter.addData(it)
+            }.launchIn(lifecycleScope)
+        viewModel.sharedGoToScheduleWar
+            .onEach {
+                val fragment = ScheduleWarFragment(dispo = it)
+                if (!fragment.isAdded) fragment.show(childFragmentManager, null)
             }.launchIn(lifecycleScope)
     }
 
