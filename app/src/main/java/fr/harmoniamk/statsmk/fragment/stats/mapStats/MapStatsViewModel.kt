@@ -57,7 +57,7 @@ class MapStatsViewModel @Inject constructor(
              }
              .mapNotNull { list -> list
                  .filter { it.isOver }
-                 .filter {  (onlyIndiv && it.hasPlayer(userId)) || !onlyIndiv }
+                 .filter {  (onlyIndiv && it.hasPlayer(userId)) || !onlyIndiv && it.hasTeam(preferencesRepository.currentTeam?.mid) }
                  .filter {  !isWeek.isTrue || (isWeek.isTrue && it.isThisWeek) }
                  .filter {  !isMonth.isTrue || (isMonth.isTrue && it.isThisMonth) }
               }

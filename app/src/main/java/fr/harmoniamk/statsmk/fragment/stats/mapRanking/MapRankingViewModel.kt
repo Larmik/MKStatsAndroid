@@ -47,7 +47,7 @@ class MapRankingViewModel @Inject constructor(
     val itemsVM = mutableListOf<TrackStats>()
 
     fun bind(warList: List<MKWar>, onTrackClick: Flow<Int>, onSortClick: Flow<TrackSortType>, onSearch: Flow<String>, onIndivStatsSelected: Flow<Boolean>) {
-        refresh(warList, true)
+        refresh(warList, preferencesRepository.indivEnabled ?: true)
         onTrackClick
             .map { Pair(authenticationRepository.user?.uid, it) }
             .bind(_sharedGoToStats, viewModelScope)
@@ -74,6 +74,7 @@ class MapRankingViewModel @Inject constructor(
             .onEach { indivEnabled ->
                 _sharedIndivStatsEnabled.emit(indivEnabled)
                 refresh(warList, indivEnabled)
+                preferencesRepository.indivEnabled = indivEnabled
             }.launchIn(viewModelScope)
 
         onSearch

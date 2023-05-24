@@ -71,6 +71,15 @@ class ConnectUserViewModel @Inject constructor(
                 }
                 preferencesRepository.firstLaunch = false
                 _sharedLoading.emit("Récupération des données en cours...")
+                it?.formerTeams?.takeIf { it.isNotEmpty() }?.let {
+                    it.forEach {
+                        val wars = firebaseRepository.getNewWars(it)
+                            .map { list -> list.map {  MKWar(it) } }
+                            .first()
+                        val finalList = wars.withName(databaseRepository).first()
+                        databaseRepository.writeWars(finalList).first()
+                    }
+                }
             }.flatMapLatest { firebaseRepository.getNewWars(it?.team ?: "-1") }
             .map { it.map { MKWar(it) } }
             .flatMapLatest { it.withName(databaseRepository) }

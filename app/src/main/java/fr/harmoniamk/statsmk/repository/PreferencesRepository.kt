@@ -29,6 +29,7 @@ interface PreferencesRepositoryInterface {
     var authEmail: String?
     var authPassword: String?
     var firstLaunch: Boolean
+    var indivEnabled: Boolean
     var fcmToken: String?
 }
 
@@ -77,6 +78,9 @@ class PreferencesRepository @Inject constructor(
     override var firstLaunch: Boolean
         get() = preferences.getBoolean("firstLaunch", true)
         set(value) = preferences.edit().putBoolean("firstLaunch", value).apply()
+    override var indivEnabled: Boolean
+        get() = preferences.getBoolean("indivEnabled", true)
+        set(value) = preferences.edit().putBoolean("indivEnabled", value).apply()
     override var fcmToken: String?
         get() = preferences.getString("fcmToken", null)
         set(value) {preferences.edit().putString("fcmToken", value).apply()}
