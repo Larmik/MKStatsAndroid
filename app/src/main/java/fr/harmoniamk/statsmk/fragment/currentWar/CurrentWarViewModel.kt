@@ -127,7 +127,7 @@ class CurrentWarViewModel @Inject constructor(
             .flatMapLatest { trackPlayersFlow }
             .launchIn(viewModelScope)
 
-        flowOf(onBack, currentWar.filter { it == null }.map{ }).flattenMerge().bind(_sharedQuit, viewModelScope)
+        onBack.bind(_sharedQuit, viewModelScope)
         onNextTrack.bind(_sharedSelectTrack, viewModelScope)
         onTrackClick.bind(_sharedTrackClick, viewModelScope)
         onPopup

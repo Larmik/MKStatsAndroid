@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.database.entities.TopicEntity
 import fr.harmoniamk.statsmk.extension.bind
+import fr.harmoniamk.statsmk.extension.withLineUpAndOpponent
 import fr.harmoniamk.statsmk.model.firebase.Dispo
 import fr.harmoniamk.statsmk.model.firebase.PlayerDispo
 import fr.harmoniamk.statsmk.model.firebase.WarDispo
@@ -20,13 +21,21 @@ import javax.inject.Inject
 class DispoViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val notificationsRepository: NotificationsRepositoryInterface) : ViewModel() {
 
     private val _sharedDispos = MutableSharedFlow<List<WarDispo>>()
+    private val _sharedPopupShowing = MutableSharedFlow<Boolean>()
+    private val _sharedShowOtherPlayers = MutableSharedFlow<WarDispo>()
+    private val _sharedGoToScheduleWar = MutableSharedFlow<WarDispo>()
+
     val sharedDispo = _sharedDispos.asSharedFlow()
+    val sharedGoToScheduleWar = _sharedGoToScheduleWar.asSharedFlow()
+    val sharedShowOtherPlayers = _sharedShowOtherPlayers.asSharedFlow()
+    val sharedPopupShowing = _sharedPopupShowing.asSharedFlow()
+
     private val dispos = mutableListOf<WarDispo>()
     val teamId = preferencesRepository.currentTeam?.mid ?: ""
-    private val _sharedGoToScheduleWar = MutableSharedFlow<WarDispo>()
-    val sharedGoToScheduleWar = _sharedGoToScheduleWar.asSharedFlow()
 
-    fun bind(onDispoSelected: Flow<Pair<WarDispo, Dispo>>, onClickWarSchedule: Flow<WarDispo>) {
+    var dispoDetails: String? = null
+
+    fun bind(onDispoSelected: Flow<Pair<WarDispo, Dispo>>, onClickWarSchedule: Flow<WarDispo>, onClickOtherPlayer: Flow<WarDispo>, onPopup: Flow<Unit>) {
         firebaseRepository.getDispos()
             .map {
                 val finalDispos = mutableListOf<WarDispo>()
@@ -39,22 +48,12 @@ class DispoViewModel @Inject constructor(private val firebaseRepository: Firebas
                         }
                         playerDispoList.add(it.apply { this.playerNames = listName.filterNotNull() })
                     }
-                    val luNames = mutableListOf<String?>()
-                    var opId: String? = null
-                    dispo.lineUp?.let {
-                        it.forEach {
-                            val name = databaseRepository.getUser(it).firstOrNull()?.name
-                            luNames.add(name)
-                        }
+                    dispo.withLineUpAndOpponent(databaseRepository).firstOrNull()?.let {
+                        finalDispos.add(it.apply {
+                            this.dispoPlayers = playerDispoList
+                        })
                     }
-                    dispo.opponentId?.takeIf{ it != "null" }.let {
-                        opId = databaseRepository.getTeam(it).firstOrNull()?.name
-                    }
-                    finalDispos.add(dispo.apply {
-                        this.dispoPlayers = playerDispoList
-                        this.lineupNames = luNames.takeIf { it.isNotEmpty() }?.filterNotNull()?.toList()
-                        this.opponentName = opId
-                    })
+
                 }
                 finalDispos
             }
@@ -121,6 +120,34 @@ class DispoViewModel @Inject constructor(private val firebaseRepository: Firebas
 
         onClickWarSchedule
             .bind(_sharedGoToScheduleWar, viewModelScope)
+        onClickOtherPlayer
+            .bind(_sharedShowOtherPlayers, viewModelScope)
+        onPopup.onEach { _sharedPopupShowing.emit(true) }.launchIn(viewModelScope)
+    }
+
+    fun bindPopup(onDetailsValidated: Flow<Unit>, onDismiss: Flow<Unit>,  onDetailsAdded: Flow<String>) {
+        onDetailsAdded
+            .onEach { dispoDetails = it }
+            .launchIn(viewModelScope)
+
+        onDismiss
+            .onEach { _sharedPopupShowing.emit(false) }
+            .launchIn(viewModelScope)
+
+        onDetailsValidated
+            .flatMapLatest { firebaseRepository.getDispos() }
+            .map {
+                val finalList = mutableListOf<WarDispo>()
+                it.forEachIndexed { index, warDispo ->
+                    when (index == it.size-1) {
+                        true -> finalList.add(warDispo.apply { this.details = dispoDetails })
+                        else -> finalList.add(warDispo)
+                    }
+                }
+                finalList
+            }.flatMapLatest { firebaseRepository.writeDispo(it) }
+            .onEach { _sharedPopupShowing.emit(false) }
+            .launchIn(viewModelScope)
     }
 
     private fun switchTopic(topic: String, subscribed: Boolean) = flow {

@@ -249,8 +249,8 @@
     <string name="editer_shocks">Editer shocks</string>
     <string name="no_team">Vous n\'avez encore aucune équipe. Pour intégrer une équipe, rapprochez-vous du leader de celle-ci. \n \n Vous pouvez aussi créer votre propre équipe.</string>
     <string name="cr_er_une_quipe">Créer une équipe</string>
-    <string name="war_en_cours">War en cours :</string>
-    <string name="votre_quipe_ne_joue_actuellement_aucune_war">Votre équipe ne joue actuellement aucune war.</string>
+    <string name="war_en_cours">War en cours</string>
+    <string name="votre_quipe_ne_joue_actuellement_aucune_war">Aucune war en cours.</string>
     <string name="soyez_l_h_te_d_une_war_en_d_marrant_une_session_ci_dessous">Soyez l\'hôte d\'une war en démarrant une session ci-dessous.</string>
     <string name="cr_er_une_war">Créer une war</string>
     <string name="derni_res_wars">Dernières wars</string>
@@ -306,4 +306,7 @@
     <string name="indique_ton_quipe_si_tu_peux_jouer_les_wars">Indique à ton équipe si tu peux jouer les wars et jette un oeil aux LU de la soirée.</string>
     <string name="ajouter_les_dispos">Ajouter les dispos</string>
     <string name="dispos_war">Dispos war</string>
+    <string name="_1_joueur">+1 joueur</string>
+    <string name="ajouter_une_pr_cision">Ajouter une précision...</string>
+    <string name="war_programm_e">War programmée</string>
 </resources>

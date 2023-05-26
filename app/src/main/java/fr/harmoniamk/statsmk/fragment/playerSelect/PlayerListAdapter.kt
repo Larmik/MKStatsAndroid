@@ -22,10 +22,13 @@ import kotlin.coroutines.CoroutineContext
 
 @FlowPreview
 @ExperimentalCoroutinesApi
-class PlayerListAdapter(val items: MutableList<UserSelector> = mutableListOf()) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), CoroutineScope {
+class PlayerListAdapter(val items: MutableList<UserSelector> = mutableListOf(), val singleSelection: Boolean = false) : RecyclerView.Adapter<RecyclerView.ViewHolder>(), CoroutineScope {
 
     private val _sharedUserSelected = MutableSharedFlow<UserSelector>()
     val sharedUserSelected = _sharedUserSelected.asSharedFlow()
+
+    private var selectedItemPos = -1
+    private var lastItemSelectedPos = -1
 
     class PlayerViewHolder(val binding: PlayerItemBinding) : RecyclerView.ViewHolder(binding.root)
 
@@ -47,15 +50,37 @@ class PlayerListAdapter(val items: MutableList<UserSelector> = mutableListOf()) 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = items[position]
         (holder as? PlayerViewHolder)?.let {
-            holder.binding.playerPos.isVisible = false
-            holder.binding.root.background.mutate().setTint(ContextCompat.getColor(holder.binding.root.context, if (item.isSelected.isTrue) R.color.harmonia_dark else R.color.transparent_white))
-            holder.binding.name.setTextColor(ContextCompat.getColor(holder.binding.root.context, if (item.isSelected.isTrue) R.color.white else R.color.harmonia_dark))
-            holder.binding.name.text = items[position].user?.name
-            holder.binding.root.clicks()
+            it.binding.playerPos.isVisible = false
+            it.binding.name.text = item.user?.name
+            when (singleSelection) {
+                false -> {
+                    it.binding.root.background.mutate().setTint(ContextCompat.getColor(it.binding.root.context, if (item.isSelected.isTrue) R.color.harmonia_dark else R.color.transparent_white))
+                    it.binding.name.setTextColor(ContextCompat.getColor(it.binding.root.context, if (item.isSelected.isTrue) R.color.white else R.color.harmonia_dark))
+                }
+                else -> {
+                    it.binding.root.background.mutate().setTint(ContextCompat.getColor(it.binding.root.context, if (position == selectedItemPos) R.color.harmonia_dark else R.color.transparent_white))
+                    it.binding.name.setTextColor(ContextCompat.getColor(it.binding.root.context, if (position == selectedItemPos) R.color.white else R.color.harmonia_dark))
+                }
+            }
+            it.binding.root.clicks()
                 .onEach {
-                    item.isSelected = !item.isSelected.isTrue
-                    holder.binding.root.background.mutate().setTint(ContextCompat.getColor(holder.binding.root.context, if (item.isSelected.isTrue) R.color.harmonia_dark else R.color.transparent_white))
-                    holder.binding.name.setTextColor(ContextCompat.getColor(holder.binding.root.context, if (item.isSelected.isTrue) R.color.white else R.color.harmonia_dark))
+                    when (singleSelection) {
+                        false -> {
+                            item.isSelected = !item.isSelected.isTrue
+                            holder.binding.root.background.mutate().setTint(ContextCompat.getColor(holder.binding.root.context, if (item.isSelected.isTrue) R.color.harmonia_dark else R.color.transparent_white))
+                            holder.binding.name.setTextColor(ContextCompat.getColor(holder.binding.root.context, if (item.isSelected.isTrue) R.color.white else R.color.harmonia_dark))
+                        }
+                        else -> {
+                            selectedItemPos = position
+                            if(lastItemSelectedPos == -1)
+                                lastItemSelectedPos = selectedItemPos
+                            else {
+                                notifyItemChanged(lastItemSelectedPos)
+                                lastItemSelectedPos = selectedItemPos
+                            }
+                            notifyItemChanged(selectedItemPos)
+                        }
+                    }
                     _sharedUserSelected.emit(item)
                 }.launchIn(this)
         }

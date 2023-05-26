@@ -15,12 +15,13 @@ import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentWarBinding
 import fr.harmoniamk.statsmk.extension.clicks
+import fr.harmoniamk.statsmk.extension.safeSubList
 import fr.harmoniamk.statsmk.fragment.home.HomeFragmentDirections
 import fr.harmoniamk.statsmk.fragment.popup.PopupFragment
+import fr.harmoniamk.statsmk.fragment.scheduleWar.ScheduleLineUpAdapter
 import fr.harmoniamk.statsmk.fragment.settings.manageTeams.AddTeamFragment
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 
 @FlowPreview
@@ -30,29 +31,25 @@ class WarFragment : Fragment(R.layout.fragment_war) {
 
     private val binding: FragmentWarBinding by viewBinding()
     private val viewModel: WarViewModel by viewModels()
+    private val popup by lazy { PopupFragment("Création de la war en cours, veuillez patienter", loading = true) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val lastAdapter = LastWarAdapter()
-        val separators = listOf(
-            binding.separator3,
-            binding.separator4
-        )
-
         lifecycleScope.launchWhenResumed {
             binding.lastWarRv.adapter = lastAdapter
             viewModel.bind(
                 onCreateWar = binding.createWarBtn.clicks(),
                 onCurrentWarClick = binding.currentWarCard.clicks(),
                 onWarClick = lastAdapter.sharedItemClick,
-                onCreateTeam = binding.createTeamBtn.clicks()
+                onCreateTeam = binding.createTeamBtn.clicks(),
+                onCreateScheduledWar = binding.startScheduleWarBtn.clicks()
             )
 
             viewModel.sharedHasTeam
                 .onEach {
                     binding.noTeamLayout.isVisible = !it
                     binding.hasTeamLayout.isVisible = it
-                    binding.separator1.isVisible = it
                 }.launchIn(lifecycleScope)
 
             viewModel.sharedTeamName
@@ -68,13 +65,14 @@ class WarFragment : Fragment(R.layout.fragment_war) {
                 .onEach {
                     binding.progress.isVisible = false
                     binding.createWarLayout.isVisible = false
-                    binding.currentWarLayout.isVisible = false
+                    binding.currentWarCard.isVisible = false
                     binding.createWarLayout.isVisible = it == null
-                    binding.currentWarLayout.isVisible = it != null
+                    binding.currentWarCard.isVisible = it != null
                     binding.nameTv.text = it?.name
                     binding.timeTv.text = it?.war?.createdDate
                     binding.currentWarRemaining.text = it?.displayedState
                     binding.currentWarScore.text = it?.scoreLabel
+                    binding.startScheduleWarBtn.isEnabled = it == null
                 }.launchIn(lifecycleScope)
 
             viewModel.sharedCurrentWarClick
@@ -86,19 +84,12 @@ class WarFragment : Fragment(R.layout.fragment_war) {
                     }
                 }.launchIn(lifecycleScope)
 
-            viewModel.sharedLoaded
-                .onEach {
-                    binding.progress.isVisible = false
-                    binding.mainWarLayout.isVisible = true
-                }.launchIn(lifecycleScope)
-
             viewModel.sharedLastWars
                 .filterNot { it.isEmpty() }
                 .onEach {
                     binding.lastWarsLayout.isVisible = true
                     binding.lastWarRv.isVisible = it.isNotEmpty()
                     binding.allWarsBtn.isVisible = it.isNotEmpty()
-                    separators.forEach { view -> view.isVisible = true }
                     lastAdapter.addWars(it)
                 }.launchIn(lifecycleScope)
 
@@ -118,10 +109,8 @@ class WarFragment : Fragment(R.layout.fragment_war) {
                 .launchIn(lifecycleScope)
 
             viewModel.sharedButtonVisible
-                .onEach {
-                    binding.createWarBtn.isVisible = it
-                    binding.warHostTv.isVisible = it
-                }.launchIn(lifecycleScope)
+                .onEach { binding.createWarBtn.isVisible = it }
+                .launchIn(lifecycleScope)
 
             viewModel.sharedShowUpdatePopup
                 .onEach {
@@ -137,6 +126,33 @@ class WarFragment : Fragment(R.layout.fragment_war) {
             viewModel.sharedDispoVisible
                 .onEach { binding.dispoLayout.isVisible = it }
                 .launchIn(lifecycleScope)
+
+            viewModel.sharedNextScheduledWar
+                .onEach {
+                    binding.scheduleWarLayout.isVisible = true
+                    binding.warName.text = it.opponentName
+                    val firstHalfLuAdapter = ScheduleLineUpAdapter(nameList = it.lineupNames?.safeSubList(0, 3))
+                    val secondHalfLuAdapter = ScheduleLineUpAdapter(nameList = it.lineupNames?.safeSubList(3, 6))
+                    binding.firstHalfLu.adapter = firstHalfLuAdapter
+                    binding.secondHalfLu.adapter = secondHalfLuAdapter
+                    binding.hour.text = String.format(binding.root.context.getString(R.string.hour_placeholder), it.dispoHour.toString())
+                }.launchIn(lifecycleScope)
+
+            viewModel.sharedLoading
+                .onEach {
+                    popup.takeIf { !it.isAdded }?.show(childFragmentManager, null)
+                }
+                .launchIn(lifecycleScope)
+
+            viewModel.sharedStarted
+                .filter { findNavController().currentDestination?.id == R.id.homeFragment }
+                .onEach {
+                    popup.dismiss()
+                    binding.scheduleWarLayout.isVisible = false
+                    findNavController().navigate(HomeFragmentDirections.goToCurrentWar())
+                }
+                .launchIn(lifecycleScope)
+
         }
 
         lifecycleScope.launchWhenStarted {

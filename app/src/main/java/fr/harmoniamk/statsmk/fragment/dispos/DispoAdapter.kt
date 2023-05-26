@@ -25,6 +25,7 @@ class DispoAdapter(val list: MutableList<WarDispo> = mutableListOf()) : Recycler
 
     val sharedDispoSelected = MutableSharedFlow<Pair<WarDispo, Dispo>>()
     val onClickWarSchedule = MutableSharedFlow<WarDispo>()
+    val onClickOtherPlayer = MutableSharedFlow<WarDispo>()
 
     @FlowPreview
     @ExperimentalCoroutinesApi
@@ -46,6 +47,7 @@ class DispoAdapter(val list: MutableList<WarDispo> = mutableListOf()) : Recycler
             binding.firstHalfLu.adapter = firstHalfLuAdapter
             binding.secondHalfLu.adapter = secondHalfLuAdapter
             binding.btnSchedule.isVisible = playersCan.size + playersCanSub.size >= 6
+            binding.addOtherPlayerBtn.isVisible = playersCan.size + playersCanSub.size < 6
             item.lineUp?.let {
                 binding.dispoListLayout.isVisible = false
                 binding.lineupLayout.isVisible = true
@@ -58,6 +60,10 @@ class DispoAdapter(val list: MutableList<WarDispo> = mutableListOf()) : Recycler
             binding.btnSchedule.clicks()
                 .map { item }
                 .bind(onClickWarSchedule, this@DispoAdapter)
+
+            binding.addOtherPlayerBtn.clicks()
+                .map { item }
+                .bind(onClickOtherPlayer, this@DispoAdapter)
             flowOf(
                 binding.canBtn.clicks().map { Dispo.CAN },
                 binding.canSubBtn.clicks().map { Dispo.CAN_SUB },

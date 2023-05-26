@@ -3,7 +3,6 @@ package fr.harmoniamk.statsmk.activity.splash
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.harmoniamk.statsmk.BuildConfig
 import fr.harmoniamk.statsmk.enums.WelcomeScreen
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.withName
@@ -89,11 +88,13 @@ class SplashScreenViewModel @Inject constructor(
                     }
                     .onEach {
                         _sharedLoadingVisible.emit("Récupération des statistiques...")
-                        firebaseRepository.getNewWars(preferencesRepository.currentTeam?.mid ?: "-1")
-                            .map { list -> list.map {  MKWar(it) } }
-                            .flatMapLatest { it.withName(databaseRepository) }
-                            .flatMapLatest { databaseRepository.writeWars(it) }
-                            .launchIn(viewModelScope)
+                        preferencesRepository.currentTeam?.mid?.let {
+                            val wars = firebaseRepository.getNewWars(it)
+                                .map { list -> list.map {  MKWar(it) } }
+                                .first()
+                            val finalList = wars.withName(databaseRepository).first()
+                            databaseRepository.writeWars(finalList).first()
+                        }
                         it?.formerTeams?.takeIf { it.isNotEmpty() }?.let {
                             it.forEach {
                                 val wars = firebaseRepository.getNewWars(it)

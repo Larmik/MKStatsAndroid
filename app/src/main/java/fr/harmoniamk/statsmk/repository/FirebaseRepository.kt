@@ -13,13 +13,12 @@ import dagger.hilt.components.SingletonComponent
 import fr.harmoniamk.statsmk.extension.*
 import fr.harmoniamk.statsmk.model.firebase.*
 import fr.harmoniamk.statsmk.model.local.MKWar
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.isActive
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.coroutines.CoroutineContext
 
 interface FirebaseRepositoryInterface{
     //Write and edit methods
@@ -56,7 +55,7 @@ interface FirebaseRepositoryModule {
 
 @FlowPreview
 @ExperimentalCoroutinesApi
-class FirebaseRepository @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface, private val remoteConfigRepository: RemoteConfigRepositoryInterface) : FirebaseRepositoryInterface {
+class FirebaseRepository @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface, private val remoteConfigRepository: RemoteConfigRepositoryInterface) : FirebaseRepositoryInterface, CoroutineScope {
 
     private val database  = Firebase.database.reference
 
@@ -153,6 +152,7 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
                         dispoHour = map["dispoHour"].toString().toInt(),
                         dispoPlayers = map["dispoPlayers"].toMapList().parsePlayerDispos().orEmpty(),
                         opponentId = map["opponentId"].toString(),
+                        details = map["details"]?.toString(),
                         lineUp = map["lineUp"].toStringList()
                     )
                     }
@@ -170,22 +170,24 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
         Log.d("MKDebugOnly", "FirebaseRepository listenNewWars")
         val postListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val wars: List<NewWar> =  when (remoteConfigRepository.multiTeamEnabled) {
-                    true -> dataSnapshot.child("newWars").child(preferencesRepository.currentTeam?.mid ?: "-1")
-                    else -> dataSnapshot.child("newWars")
-                }.children.map { it.value as Map<*, *> }.map {
-                    NewWar(
-                    mid = it["mid"].toString(),
-                    playerHostId = it["playerHostId"].toString(),
-                    teamOpponent = it["teamOpponent"].toString(),
-                    teamHost = it["teamHost"].toString(),
-                    createdDate = it["createdDate"].toString(),
-                    warTracks = it["warTracks"].toMapList().parseTracks(),
-                        penalties = it["penalties"].toMapList().parsePenalties(),
-                        isOfficial = it["official"].toString().toBoolean()
-                    )
-                  }
-                if (isActive) offer(wars)
+                launch {
+                    val wars: List<NewWar> =  when (remoteConfigRepository.multiTeamEnabled) {
+                        true -> dataSnapshot.child("newWars").child(preferencesRepository.currentTeam?.mid ?: "-1")
+                        else -> dataSnapshot.child("newWars")
+                    }.children.map { it.value as Map<*, *> }.map {
+                        NewWar(
+                            mid = it["mid"].toString(),
+                            playerHostId = it["playerHostId"].toString(),
+                            teamOpponent = it["teamOpponent"].toString(),
+                            teamHost = it["teamHost"].toString(),
+                            createdDate = it["createdDate"].toString(),
+                            warTracks = it["warTracks"].toMapList().parseTracks(),
+                            penalties = it["penalties"].toMapList().parsePenalties(),
+                            isOfficial = it["official"].toString().toBoolean()
+                        )
+                    }
+                    if (isActive) offer(wars)
+                }
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
@@ -215,4 +217,7 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
             emit(Unit)
         }
     }.flatMapLatest { databaseRepository.deleteWar(war) }
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.IO
 }

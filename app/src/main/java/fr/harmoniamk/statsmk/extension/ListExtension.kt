@@ -124,6 +124,21 @@ fun List<MKWar?>.withName(databaseRepository: DatabaseRepositoryInterface) = flo
     }
     emit(temp)
 }
+
+fun WarDispo.withLineUpAndOpponent(databaseRepository: DatabaseRepositoryInterface) = flow {
+    this@withLineUpAndOpponent.opponentId?.takeIf { it != "null" }.let { id ->
+        val opponentName = databaseRepository.getTeam(id).firstOrNull()?.name
+        val lineupNames = mutableListOf<String?>()
+        this@withLineUpAndOpponent.lineUp?.forEach {
+            val playerName = databaseRepository.getUser(it).firstOrNull()?.name
+            lineupNames.add(playerName)
+        }
+        emit(this@withLineUpAndOpponent.apply {
+            this.lineupNames = lineupNames.filterNotNull()
+            this.opponentName = opponentName
+        })
+    }
+}
 fun NewWar?.withName(databaseRepository: DatabaseRepositoryInterface) = flow {
     this@withName?.let {
         val hostName = databaseRepository.getTeam(it.teamHost).firstOrNull()?.shortName

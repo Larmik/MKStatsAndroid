@@ -58,6 +58,7 @@ class AddWarFragment : Fragment(R.layout.fragment_add_war) {
 
         viewModel.sharedAlreadyCreated
             .onEach {
+                popup.dismiss()
                 Toast.makeText(requireContext(), "Une war a déjà été créée, retournez sur l'écran précédent pour y accéder.", Toast.LENGTH_SHORT).show()
             }.launchIn(lifecycleScope)
     }

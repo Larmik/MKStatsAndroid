@@ -8,7 +8,8 @@ data class WarDispo(
     val dispoHour: Int,
     var dispoPlayers: List<PlayerDispo>,
     var opponentId: String? = null,
-    var lineUp: List<String>? = null
+    var lineUp: List<String>? = null,
+    var details: String? = null
 ): Parcelable {
     var lineupNames: List<String>? = null
     var opponentName: String? = null
