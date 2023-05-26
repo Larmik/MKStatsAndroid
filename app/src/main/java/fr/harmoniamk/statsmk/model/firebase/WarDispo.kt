@@ -9,10 +9,12 @@ data class WarDispo(
     var dispoPlayers: List<PlayerDispo>,
     var opponentId: String? = null,
     var lineUp: List<String>? = null,
-    var details: String? = null
+    var details: String? = null,
+    var host: String? = null
 ): Parcelable {
     var lineupNames: List<String>? = null
     var opponentName: String? = null
+    var hostName: String? = null
 }
 
 @Parcelize

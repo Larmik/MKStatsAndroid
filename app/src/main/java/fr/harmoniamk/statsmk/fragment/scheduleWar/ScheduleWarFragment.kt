@@ -15,6 +15,7 @@ import fr.harmoniamk.statsmk.databinding.FragmentScheduleWarBinding
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.extension.onTextChanged
 import fr.harmoniamk.statsmk.extension.safeSubList
+import fr.harmoniamk.statsmk.fragment.popup.PopupFragment
 import fr.harmoniamk.statsmk.fragment.teamSelect.TeamListAdapter
 import fr.harmoniamk.statsmk.model.firebase.WarDispo
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -31,6 +32,11 @@ class ScheduleWarFragment(val dispo: WarDispo): BottomSheetDialogFragment() {
     private val viewModel: ScheduleWarViewModel by viewModels()
     val onDismiss = MutableSharedFlow<Unit>()
     var dialog: BottomSheetDialog? = null
+    var teamHostPopup = PopupFragment(positiveText ="Valider")
+    var opponentHostPopuup = PopupFragment(positiveText= "Valider", editTextHint = "Code ami")
+
+    var teamPopupShowing = false
+    var opponentPopupShowing = false
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
@@ -61,7 +67,9 @@ class ScheduleWarFragment(val dispo: WarDispo): BottomSheetDialogFragment() {
             onSearch = binding.searchEt.onTextChanged(),
             onTeamClick = teamAdapter.onTeamClick,
             onPlayerDelete = flowOf(luFirstHalfAdapter.onPlayerDelete, luSecondtHalfAdapter.onPlayerDelete).flattenMerge(),
-            onWarScheduled = binding.confirmLuBtn.clicks()
+            onWarScheduled = binding.confirmLuBtn.clicks(),
+            onOpponentHostClick = binding.opponentHostBtn.clicks(),
+            onTeamHostClick = binding.teamHostBtn.clicks()
         )
         viewModel.sharedChosenLU
             .onEach {
@@ -75,5 +83,48 @@ class ScheduleWarFragment(val dispo: WarDispo): BottomSheetDialogFragment() {
         viewModel.sharedDismiss
             .onEach { dismiss() }
             .launchIn(lifecycleScope)
+
+        viewModel.sharedShowTeamHostPopup
+            .onEach {
+                when (it != null) {
+                    true -> {
+                        if (!teamHostPopup.isAdded && !teamPopupShowing) {
+                            teamHostPopup = PopupFragment(positiveText ="Valider", playerList = it)
+                            viewModel.bindTeamPopup(onPlayerSelected = teamHostPopup.onPlayerSelected, onValidate = teamHostPopup.onPositiveClick, onDismiss = teamHostPopup.onNegativeClick)
+                            teamHostPopup.show(childFragmentManager, null)
+                            teamPopupShowing = true
+                        }
+                    }
+                    else -> {
+                        teamHostPopup.dismiss()
+                        teamPopupShowing = false
+                    }
+                }
+            }
+            .launchIn(lifecycleScope)
+
+        viewModel.sharedShowOpponentHostPopup
+            .onEach {
+                when (it) {
+                    true -> {
+                        if (!opponentHostPopuup.isAdded && !opponentPopupShowing) {
+                            opponentHostPopuup = PopupFragment(positiveText= "Valider", editTextHint = "Code ami", isFcCode = true)
+                            viewModel.bindOpponentPopup(onCodeAdded = opponentHostPopuup.onTextChange, onValidate = opponentHostPopuup.onPositiveClick, onDismiss = opponentHostPopuup.onNegativeClick)
+                            opponentHostPopuup.show(childFragmentManager, null)
+                            opponentPopupShowing = true
+                        }
+                    }
+                    else -> {
+                        opponentHostPopuup.dismiss()
+                        opponentPopupShowing = false
+                    }
+                }
+            }
+            .launchIn(lifecycleScope)
+
+        viewModel.sharedChosenHost
+            .onEach {
+                binding.hostName.text = it
+            }.launchIn(lifecycleScope)
     }
 }

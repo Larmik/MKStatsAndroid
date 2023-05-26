@@ -136,6 +136,10 @@ class WarFragment : Fragment(R.layout.fragment_war) {
                     binding.firstHalfLu.adapter = firstHalfLuAdapter
                     binding.secondHalfLu.adapter = secondHalfLuAdapter
                     binding.hour.text = String.format(binding.root.context.getString(R.string.hour_placeholder), it.dispoHour.toString())
+                    it.hostName?.let {
+                        binding.hostLayout.isVisible = true
+                        binding.hostName.text = it
+                    }
                 }.launchIn(lifecycleScope)
 
             viewModel.sharedLoading

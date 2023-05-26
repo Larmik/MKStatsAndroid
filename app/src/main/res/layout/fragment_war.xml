@@ -380,6 +380,35 @@
 
                     </LinearLayout>
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:id="@+id/host_layout"
+                        android:visibility="gone"
+                        android:layout_marginVertical="10dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/harmonia_dark"
+                            android:fontFamily="@font/montserrat_bold"
+                            android:textSize="16sp"
+                            android:layout_marginEnd="5dp"
+                            android:text="@string/host"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/harmonia_dark"
+                            android:id="@+id/host_name"
+                            android:textAlignment="center"
+                            android:textSize="16sp"
+                            android:fontFamily="@font/montserrat_regular"/>
+
+                    </LinearLayout>
+
                     <TextView
                         android:id="@+id/start_schedule_war_btn"
                         android:layout_width="match_parent"

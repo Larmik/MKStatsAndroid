@@ -13,8 +13,7 @@
         android:orientation="vertical"
         android:paddingHorizontal="10dp"
         android:translationY="-5dp"
-        android:background="@drawable/rounded_bg"
-        android:backgroundTint="@color/harmonia_clear">
+        android:background="@color/harmonia_clear">
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -56,15 +55,74 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/harmonia_dark"
+                android:fontFamily="@font/montserrat_bold"
+                android:textSize="16sp"
+                android:layout_marginEnd="5dp"
+                android:text="@string/host"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/harmonia_dark"
+                android:id="@+id/host_name"
+                android:textSize="16sp"
+                android:textAlignment="center"
+                android:fontFamily="@font/montserrat_regular"
+                android:text="@string/non_renseign"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_marginVertical="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:background="@drawable/rounded_bg"
+                android:id="@+id/team_host_btn"
+                android:backgroundTint="@color/harmonia_dark"
+                android:paddingVertical="5dp"
+                android:layout_marginHorizontal="20dp"
+                android:text="@string/equipe"/>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textAlignment="center"
+                android:textColor="@color/white"
+                android:background="@drawable/rounded_bg"
+                android:id="@+id/opponent_host_btn"
+                android:backgroundTint="@color/harmonia_dark"
+                android:paddingVertical="5dp"
+                android:layout_marginHorizontal="20dp"
+                android:text="@string/adversaire"/>
+
+        </LinearLayout>
 
     </LinearLayout>
-
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingHorizontal="10dp"
-android:orientation="vertical">
+        android:translationY="-5dp"
+         android:orientation="vertical">
 
         <TextView  android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -88,7 +146,6 @@ android:orientation="vertical">
             android:id="@+id/search_et"
             android:importantForAutofill="no" />
 
-
         <androidx.recyclerview.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -97,7 +154,6 @@ android:orientation="vertical">
             android:layout_marginBottom="10dp"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
             android:orientation="vertical"/>
-
 
         <TextView
             android:layout_width="match_parent"
@@ -111,12 +167,7 @@ android:orientation="vertical">
             android:text="@string/valider_la_lu"
             android:layout_marginBottom="10dp"
             android:gravity="center"/>
+
     </LinearLayout>
-
-
-
-
-
-
 
 </LinearLayout>

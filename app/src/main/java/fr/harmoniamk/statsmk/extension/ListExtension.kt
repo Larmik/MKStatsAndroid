@@ -129,13 +129,21 @@ fun WarDispo.withLineUpAndOpponent(databaseRepository: DatabaseRepositoryInterfa
     this@withLineUpAndOpponent.opponentId?.takeIf { it != "null" }.let { id ->
         val opponentName = databaseRepository.getTeam(id).firstOrNull()?.name
         val lineupNames = mutableListOf<String?>()
+        var hostName: String? = null
         this@withLineUpAndOpponent.lineUp?.forEach {
             val playerName = databaseRepository.getUser(it).firstOrNull()?.name
             lineupNames.add(playerName)
         }
+        this@withLineUpAndOpponent.host?.takeIf { it != "null" }?.let {
+             hostName = when (this@withLineUpAndOpponent.host?.contains("-")) {
+                true -> this@withLineUpAndOpponent.host
+                else -> databaseRepository.getUser(this@withLineUpAndOpponent.host).firstOrNull()?.name
+            }
+        }
         emit(this@withLineUpAndOpponent.apply {
             this.lineupNames = lineupNames.filterNotNull()
             this.opponentName = opponentName
+            this.hostName = hostName
         })
     }
 }

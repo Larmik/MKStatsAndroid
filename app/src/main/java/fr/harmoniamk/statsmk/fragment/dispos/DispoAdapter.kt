@@ -57,6 +57,10 @@ class DispoAdapter(val list: MutableList<WarDispo> = mutableListOf()) : Recycler
                 binding.warName.isVisible = true
                 binding.warName.text = it
             }
+            item.hostName?.let {
+                binding.hostLayout.isVisible = true
+                binding.hostName.text = it
+            }
             binding.btnSchedule.clicks()
                 .map { item }
                 .bind(onClickWarSchedule, this@DispoAdapter)

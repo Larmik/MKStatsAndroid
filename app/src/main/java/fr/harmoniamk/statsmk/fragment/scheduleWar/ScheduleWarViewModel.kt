@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.isTrue
+import fr.harmoniamk.statsmk.fragment.playerSelect.UserSelector
 import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.firebase.WarDispo
@@ -26,19 +27,33 @@ class ScheduleWarViewModel @Inject constructor(private val databaseRepository: D
     private val _sharedTeams = MutableSharedFlow<List<Team>>()
     private val _sharedDismiss = MutableSharedFlow<Unit>()
     private val _sharedButtonVisible = MutableSharedFlow<Boolean>()
+    private val _sharedShowTeamHostPopup = MutableSharedFlow<List<UserSelector>?>()
+    private val _sharedShowOpponentHostPopup = MutableSharedFlow<Boolean>()
+    private val _sharedChosenHost = MutableSharedFlow<String>()
 
 
     val sharedChosenLU = _sharedChosenLU.asSharedFlow()
     val sharedTeams = _sharedTeams.asSharedFlow()
     val sharedButtonVisible = _sharedButtonVisible.asSharedFlow()
     val sharedDismiss = _sharedDismiss.asSharedFlow()
+    val sharedShowTeamHostPopup = _sharedShowTeamHostPopup.asSharedFlow()
+    val sharedShowOpponentHostPopup = _sharedShowOpponentHostPopup.asSharedFlow()
+    val sharedChosenHost = _sharedChosenHost.asSharedFlow()
 
 
     private val teams = mutableListOf<Team>()
     private val players = mutableListOf<LineUpSelector>()
     private var teamSelected: String? = null
+    private var chosenHost: String? = null
 
-    fun bind(dispo: WarDispo, onSearch: Flow<String>, onTeamClick: Flow<Team>, onPlayerDelete: Flow<LineUpSelector>, onWarScheduled: Flow<Unit>) {
+    fun bind(dispo: WarDispo, onSearch: Flow<String>, onTeamClick: Flow<Team>, onPlayerDelete: Flow<LineUpSelector>, onWarScheduled: Flow<Unit>, onTeamHostClick: Flow<Unit>, onOpponentHostClick: Flow<Unit>) {
+
+        onOpponentHostClick.map { true }.bind(_sharedShowOpponentHostPopup, viewModelScope)
+        onTeamHostClick
+            .mapNotNull {
+                players.map { UserSelector(it.user, false) }
+            }
+            .bind(_sharedShowTeamHostPopup, viewModelScope)
 
         onTeamClick
             .onEach { teamSelected = it.mid }
@@ -56,6 +71,7 @@ class ScheduleWarViewModel @Inject constructor(private val databaseRepository: D
                             final.add(it.apply {
                                 this.opponentId = teamSelected
                                 this.lineUp = players.map { it.user?.mid ?: "" }
+                                this.host = chosenHost
                             })
                         }
                         else -> final.add(it)
@@ -117,4 +133,34 @@ class ScheduleWarViewModel @Inject constructor(private val databaseRepository: D
             }.launchIn(viewModelScope)
 
     }
+
+    fun bindTeamPopup(onPlayerSelected: Flow<String>, onValidate: Flow<Unit>, onDismiss: Flow<Unit> ) {
+        onDismiss.onEach { _sharedShowTeamHostPopup.emit(null) }.launchIn(viewModelScope)
+        onPlayerSelected
+            .onEach {
+                this.chosenHost = it
+            }
+            .launchIn(viewModelScope)
+
+        onValidate
+            .mapNotNull { chosenHost }
+            .flatMapLatest { databaseRepository.getUser(it) }
+            .mapNotNull { it?.name }
+            .onEach {
+                _sharedChosenHost.emit(it)
+                _sharedShowTeamHostPopup.emit(null)
+            }.launchIn(viewModelScope)
+    }
+
+    fun bindOpponentPopup(onCodeAdded: Flow<String>, onValidate: Flow<Unit>, onDismiss: Flow<Unit> ) {
+        onDismiss.onEach { _sharedShowOpponentHostPopup.emit(false) }.launchIn(viewModelScope)
+        onCodeAdded.onEach { this.chosenHost = it }.launchIn(viewModelScope)
+        onValidate
+            .mapNotNull { chosenHost }
+            .onEach {
+                _sharedChosenHost.emit(it)
+                _sharedShowOpponentHostPopup.emit(false)
+            }.launchIn(viewModelScope)
+    }
+
 }
