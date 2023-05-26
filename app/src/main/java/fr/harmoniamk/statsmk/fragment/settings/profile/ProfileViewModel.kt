@@ -32,6 +32,7 @@ class ProfileViewModel @Inject constructor(private val authenticationRepository:
     private val _showResetPopup = MutableSharedFlow<String>()
     private val _sharedDisconnect = MutableSharedFlow<Unit>()
     private val _sharedTeam = MutableSharedFlow<String?>()
+    private val _sharedFriendCode = MutableSharedFlow<String?>()
     private val _sharedNewName = MutableSharedFlow<String>()
     private val _sharedEditName = MutableSharedFlow<Unit>()
     private val _sharedEditEmail = MutableSharedFlow<Unit>()
@@ -48,6 +49,7 @@ class ProfileViewModel @Inject constructor(private val authenticationRepository:
     val sharedDisconnect =_sharedDisconnect.asSharedFlow()
     val sharedDisconnectPopup = _sharedDisconnectPopup.asSharedFlow()
     val sharedTeam = _sharedTeam.asSharedFlow()
+    val sharedFriendCode = _sharedFriendCode.asSharedFlow()
     val sharedNewName = _sharedNewName.asSharedFlow()
     val sharedRole = _sharedRole.asSharedFlow()
     val sharedEditName = _sharedEditName.asSharedFlow()
@@ -67,6 +69,7 @@ class ProfileViewModel @Inject constructor(private val authenticationRepository:
                 _sharedProfile.emit(it)
             }
             .flatMapLatest { databaseRepository.getUser(it.uid) }
+            .onEach { _sharedFriendCode.emit(it?.friendCode) }
             .mapNotNull { it?.role  }
             .onEach {
                 _sharedRole.emit(when (it){

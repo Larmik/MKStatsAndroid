@@ -59,6 +59,11 @@ class ProfileFragment: Fragment(R.layout.fragment_profile) {
             }
             .launchIn(lifecycleScope)
 
+        viewModel.sharedFriendCode
+            .filterNotNull()
+            .onEach { binding.friendCode.text = it }
+            .launchIn(lifecycleScope)
+
         viewModel.sharedRole
             .filterNotNull()
             .onEach { binding.roleTv.text = it }

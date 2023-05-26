@@ -96,7 +96,8 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
                     team = it["team"].toString(),
                     role = it["role"].toString().toIntOrNull(),
                     picture = it["picture"].toString(),
-                    formerTeams = it["formerTeams"].toStringList()
+                    formerTeams = it["formerTeams"].toStringList(),
+                    friendCode = it["friendCode"].toString()
                 ) }
             if (isActive) offer(users)
         }
