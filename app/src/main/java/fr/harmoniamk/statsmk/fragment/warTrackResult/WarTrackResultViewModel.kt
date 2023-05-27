@@ -123,6 +123,8 @@ class WarTrackResultViewModel @Inject constructor(
                 .onEach { war ->
                     _sharedLoading.emit(true)
                     firebaseRepository.writeNewWar(war).first()
+                    val mkWar = listOf(MKWar(war)).withName(databaseRepository).first()
+                    mkWar.singleOrNull()?.let { databaseRepository.writeWar(it).first() }
                     if (MKWar(war).isOver) {
                         databaseRepository.getUsers().first().filter { it.currentWar == war.mid }.forEach {
                             val new = it.apply { this.currentWar = "-1" }

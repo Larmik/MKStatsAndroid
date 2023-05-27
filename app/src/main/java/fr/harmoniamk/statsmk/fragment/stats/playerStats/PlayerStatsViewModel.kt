@@ -55,7 +55,7 @@ class PlayerStatsViewModel @Inject constructor(private val databaseRepository: D
 
         flowOf(userStats)
             .onEach { itemVM ->
-                delay(500)
+                delay(50)
                 item = itemVM
                 val teamStats = listOfNotNull(
                     itemVM.stats.mostPlayedTeam?.team,

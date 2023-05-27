@@ -34,7 +34,6 @@ class PlayerRankingViewModel @Inject constructor(
 
 
     fun bind(list: List<User>, warList: List<MKWar>, onPlayerClick: Flow<PlayerRankingItemViewModel>, onSortClick: Flow<PlayerSortType>, onSearch: Flow<String>) {
-        flowOf(true).bind(_sharedLoading, viewModelScope)
         flowOf(list)
             .map { it.sortedBy { it.name } }
             .onEach {

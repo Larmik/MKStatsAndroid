@@ -148,7 +148,7 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
         val postListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val wars: List<WarDispo> = dataSnapshot.child("dispos").child(preferencesRepository.currentTeam?.mid ?: "").children
-                    .map { it.value as Map<*, *> }
+                    .mapNotNull { it.value as? Map<*, *> }
                     .map {map -> WarDispo(
                         dispoHour = map["dispoHour"].toString().toInt(),
                         dispoPlayers = map["dispoPlayers"].toMapList().parsePlayerDispos().orEmpty(),

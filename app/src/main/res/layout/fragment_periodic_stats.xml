@@ -570,24 +570,59 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal">
+                            android:orientation="horizontal"
+                            android:baselineAligned="false">
 
-                            <fr.harmoniamk.statsmk.ui.WarItemView
-                                android:id="@+id/highest_victory"
+                            <RelativeLayout
                                 android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_marginHorizontal="5dp"
                                 android:layout_weight="1"
-                                app:win="true"
-                                app:vertical="true"/>
+                                android:layout_height="match_parent">
 
-                            <fr.harmoniamk.statsmk.ui.WarItemView
-                                android:id="@+id/highest_defeat"
+                                <TextView
+                                    android:id="@+id/no_victory"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_centerInParent="true"
+                                    android:fontFamily="@font/montserrat_regular"
+                                    android:gravity="center"
+                                    android:text="@string/aucune"
+                                    android:textColor="@color/text_color"
+                                    android:textSize="16sp" />
+
+                                <fr.harmoniamk.statsmk.ui.WarItemView
+                                    android:id="@+id/highest_victory"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginHorizontal="5dp"
+                                    app:win="true"
+                                    app:vertical="true"/>
+
+                            </RelativeLayout>
+
+                            <RelativeLayout
                                 android:layout_width="0dp"
-                                android:layout_marginHorizontal="5dp"
-                                android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                app:vertical="true"/>
+                                android:layout_height="match_parent">
+
+                                <TextView
+                                    android:id="@+id/no_defeat"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_centerInParent="true"
+                                    android:fontFamily="@font/montserrat_regular"
+                                    android:gravity="center"
+                                    android:text="@string/aucune"
+                                    android:textColor="@color/text_color"
+                                    android:textSize="16sp" />
+
+                                <fr.harmoniamk.statsmk.ui.WarItemView
+                                    android:id="@+id/highest_defeat"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginHorizontal="5dp"
+                                    app:vertical="true" />
+
+                            </RelativeLayout>
 
                         </LinearLayout>
 

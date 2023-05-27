@@ -53,6 +53,8 @@ class PeriodicStatsFragment : Fragment(R.layout.fragment_periodic_stats) {
         )
         binding.highestDefeat.clipToOutline = true
         binding.highestVictory.clipToOutline = true
+        binding.highestDefeat.isVisible = false
+        binding.highestVictory.isVisible = false
 
         viewModel.sharedStats.onEach {
             binding.progress.isVisible = false
@@ -72,6 +74,16 @@ class PeriodicStatsFragment : Fragment(R.layout.fragment_periodic_stats) {
             binding.mostPlayedTeam.text = it.mostPlayedTeam?.teamName
             binding.mostPlayedTeamTotal.text = it.mostPlayedTeam?.totalPlayedLabel
             binding.mapsWon.text = it.mapsWon
+            it.warStats.highestVictory?.let {
+                binding.noVictory.isVisible = false
+                binding.highestVictory.isVisible = true
+                binding.highestVictory.bind(it)
+            }
+            it.warStats.loudestDefeat?.let {
+                binding.noDefeat.isVisible = false
+                binding.highestDefeat.isVisible = true
+                binding.highestDefeat.bind(it)
+            }
 
             val averageWarColor = when  {
                 it.averagePointsLabel.contains("-") -> R.color.lose

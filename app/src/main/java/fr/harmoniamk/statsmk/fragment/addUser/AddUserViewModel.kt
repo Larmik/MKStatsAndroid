@@ -5,7 +5,9 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.extension.bind
+import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.firebase.*
+import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
@@ -77,46 +79,38 @@ class AddUserViewModel @Inject constructor(
                         ?.trim() == name?.toLowerCase(Locale.getDefault())?.trim()
                 }?.let {
                     finalUser = it
+                    preferencesRepository.currentTeam = databaseRepository.getTeam(it.team.takeIf { it != "-1" }).firstOrNull()
                     firebaseRepository.deleteUser(it).first()
                     firebaseRepository.getNewWars(it.team ?: "-1").firstOrNull()?.let {
-                        it.forEach { war ->
-                        val newWarTrack = mutableListOf<NewWarTrack>()
-                        war.warTracks?.forEach {
-                            val newWarPosition = mutableListOf<NewWarPositions>()
-                            val newShocks = mutableListOf<Shock>()
-                            it.warPositions?.forEach { pos ->
-                                if (pos.playerId == finalUser?.mid)
-                                    newWarPosition.add(
-                                        NewWarPositions(
-                                            pos.mid,
-                                            fbUser.uid,
-                                            pos.position
-                                        )
-                                    )
-                                else
-                                    newWarPosition.add(pos)
+                        val hasPlayerWars = it.filter { MKWar(it).hasPlayer(finalUser?.mid) }
+                        hasPlayerWars.forEach { war ->
+                            val newWarTrack = mutableListOf<NewWarTrack>()
+                            war.warTracks?.forEach { warTrack ->
+                                val newPositions = mutableListOf<NewWarPositions>()
+                                val newShocks = mutableListOf<Shock>()
+                                warTrack.warPositions?.forEach { pos ->
+                                    val newPosition = when (pos.playerId == finalUser?.mid) {
+                                        true -> pos.apply { this.playerId = fbUser.uid }
+                                        else -> pos
+                                    }
+                                    newPositions.add(newPosition)
+                                }
+                                warTrack.shocks?.forEach {
+                                    val newShock = when (it.playerId == finalUser?.mid) {
+                                        true -> it.apply { this.playerId = fbUser.uid }
+                                        else -> it
+                                    }
+                                  newShocks.add(newShock)
+                                }
+                                newWarTrack.add(warTrack.apply {
+                                    this.warPositions = newPositions
+                                    this.shocks = newShocks
+                                })
                             }
-                            it.shocks?.forEach {
-                                if (it.playerId == finalUser?.mid) {
-                                    newShocks.add(Shock(
-                                        fbUser.uid,
-                                        it.count
-                                    ))
-                                } else newShocks.add(it)
-                            }
-                            newWarTrack.add(NewWarTrack(it.mid, it.trackIndex, newWarPosition, newShocks))
+                            firebaseRepository.writeNewWar(war.apply { this.warTracks = newWarTrack }).first()
+                            val mkWar = listOf(MKWar(war)).withName(databaseRepository).first()
+                            mkWar.singleOrNull()?.let { databaseRepository.writeWar(it).first() }
                         }
-                        firebaseRepository.writeNewWar(NewWar(
-                            war.mid,
-                            war.playerHostId,
-                            war.teamHost,
-                            war.teamOpponent,
-                            war.createdDate,
-                            newWarTrack,
-                            war.penalties,
-                            war.isOfficial
-                        )).first()
-                    }
                     }
                 }
 
