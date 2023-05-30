@@ -8,6 +8,7 @@
     <color name="logo_hr_blue">#89E2D8</color>
     <color name="boo">#BB95A4AE</color>
     <color name="harmonia_dark">#051C3F</color>
+    <color name="harmonia_dark_alphaed">#BB051C3F</color>
     <color name="white_alphaed">#BBFFFFFF</color>
     <color name="transparent_white">#88FFFFFF</color>
     <color name="transparent">#00FFFFFF</color>
