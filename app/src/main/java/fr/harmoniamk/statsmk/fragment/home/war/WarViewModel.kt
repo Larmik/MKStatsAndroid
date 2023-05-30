@@ -114,8 +114,6 @@ class WarViewModel @Inject constructor(
 
         onCreateScheduledWar
             .onEach { _sharedLoading.emit(true) }
-            .onEach { dispoList.removeAt(0) }
-            .flatMapLatest { firebaseRepository.writeDispo(dispoList) }
             .mapNotNull { scheduledWar }
             .mapNotNull {
                 val war = NewWar(

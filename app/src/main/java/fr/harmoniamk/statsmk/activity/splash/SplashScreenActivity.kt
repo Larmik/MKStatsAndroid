@@ -12,10 +12,12 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.activity.MainActivity
 import fr.harmoniamk.statsmk.databinding.ActivitySplashBinding
 import fr.harmoniamk.statsmk.enums.WelcomeScreen
+import fr.harmoniamk.statsmk.extension.isResumed
 import fr.harmoniamk.statsmk.fragment.popup.PopupFragment
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -47,6 +49,7 @@ class SplashScreenActivity : AppCompatActivity() {
             }.launchIn(lifecycleScope)
 
         viewModel.sharedShowUpdatePopup
+            .filter { lifecycle.isResumed }
             .onEach {
                 val popup = PopupFragment("L'application nécessite une mise à jour pour fonctionner correctement. \n \n Veuillez mettre à jour l'application pour continuer.", positiveText = "Mettre à jour", negativeText = "Retour")
                 popup.onNegativeClick.onEach { finish() }.launchIn(lifecycleScope)
@@ -59,6 +62,7 @@ class SplashScreenActivity : AppCompatActivity() {
 
 
         viewModel.sharedShowPopup
+            .filter { lifecycle.isResumed }
             .onEach { pair ->
                 val popup = when (pair.second.isEmpty()) {
                     true -> PopupFragment("Vous êtes hors connexion. \n \n Veuillez redémarrer l’application en étant connecté à Internet pour continuer")
@@ -76,7 +80,7 @@ class SplashScreenActivity : AppCompatActivity() {
                         startActivity(intent)
                         finish()
                     }
-                    else -> popup.takeIf { !it.isAdded }?.show(supportFragmentManager, null)
+                    else -> popup.takeIf { lifecycle.isResumed && !it.isAdded }?.show(supportFragmentManager, null)
                 }
             }.launchIn(lifecycleScope)
 

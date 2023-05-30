@@ -46,7 +46,28 @@
 
     </LinearLayout>
 
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:orientation="horizontal">
 
+        <RadioButton
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:checked="true"
+            android:text="Dispos seulement"
+            android:id="@+id/radio_dispos_only"/>
+
+        <RadioButton
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Dispos + LUs"
+            android:id="@+id/radio_dispos_lu"/>
+
+    </RadioGroup>
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"

@@ -2,6 +2,7 @@ package fr.harmoniamk.statsmk.fragment.dispos
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -9,13 +10,13 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentDispoBinding
+import fr.harmoniamk.statsmk.extension.checks
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.fragment.popup.PopupFragment
 import fr.harmoniamk.statsmk.fragment.scheduleWar.ScheduleWarFragment
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.*
 
 @AndroidEntryPoint
 @FlowPreview
@@ -41,7 +42,7 @@ class DispoFragment : Fragment(R.layout.fragment_dispo) {
         viewModel.sharedDispo
             .onEach {
                 adapter.addData(it)
-                it.lastOrNull()?.details?.let {
+                it.lastOrNull()?.first?.details?.let {
                     binding.dispoDetails.text = it
                 }
             }.launchIn(lifecycleScope)
@@ -56,6 +57,15 @@ class DispoFragment : Fragment(R.layout.fragment_dispo) {
                 val fragment = OtherPlayersFragment(dispo = it)
                 if (!fragment.isAdded) fragment.show(childFragmentManager, null)
             }.launchIn(lifecycleScope)
+
+        flowOf(binding.radioDisposOnly.checks().map { true }, binding.radioDisposLu.checks().map { false })
+            .flattenMerge()
+            .onEach { adapter.switchView(it) }
+            .launchIn(lifecycleScope)
+
+        viewModel.sharedEditVisible
+            .onEach { binding.detailsBtn.isVisible = it }
+            .launchIn(lifecycleScope)
 
         viewModel.sharedPopupShowing
             .onEach {

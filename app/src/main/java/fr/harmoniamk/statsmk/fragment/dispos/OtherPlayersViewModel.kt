@@ -51,31 +51,20 @@ class OtherPlayersViewModel @Inject constructor(private val firebaseRepository: 
             .onEach { this.dispo = it }
             .mapNotNull { playerSelected }
             .onEach { _sharedLoading.emit(Unit) }
-            .flatMapLatest { firebaseRepository.getDispos() }
-            .map { list ->
-                val finalList = mutableListOf<WarDispo>()
-                list.forEach {
-                    when (dispo.dispoHour != it.dispoHour) {
-                        true -> finalList.add(it)
-                        else -> {
-                            val playersDispo = mutableListOf<PlayerDispo>()
-                            it.dispoPlayers.forEach { playerDispo ->
-                                when (playerDispo.dispo == this.dispo) {
-                                    true -> {
-                                        val players = mutableListOf<String?>()
-                                        players.addAll(playerDispo.players.orEmpty())
-                                        players.add(playerSelected)
-                                        playersDispo.add(playerDispo.apply { this.players = players.distinct().filterNotNull() })
-                                    }
-                                    else -> playersDispo.add(playerDispo)
-                                }
-
-                            }
-                            finalList.add(it.apply { this.dispoPlayers = playersDispo })
+            .map {
+                val playersDispo = mutableListOf<PlayerDispo>()
+                dispo.dispoPlayers.forEach { playerDispo ->
+                    when (playerDispo.dispo == this.dispo) {
+                        true -> {
+                            val players = mutableListOf<String?>()
+                            players.addAll(playerDispo.players.orEmpty())
+                            players.add(playerSelected)
+                            playersDispo.add(playerDispo.apply { this.players = players.distinct().filterNotNull() })
                         }
+                        else -> playersDispo.add(playerDispo)
                     }
                 }
-                finalList
+                dispo.apply { this.dispoPlayers = playersDispo }
             }.flatMapLatest { firebaseRepository.writeDispo(it) }
             .bind(_sharedDismiss, viewModelScope)
     }

@@ -64,20 +64,11 @@ class ScheduleWarViewModel @Inject constructor(private val databaseRepository: D
         onWarScheduled
             .flatMapLatest { firebaseRepository.getDispos() }
             .map {
-                val final = mutableListOf<WarDispo>()
-                it.forEach {
-                    when (it.dispoHour == dispo.dispoHour) {
-                        true -> {
-                            final.add(it.apply {
-                                this.opponentId = teamSelected
-                                this.lineUp = players.map { it.user?.mid ?: "" }
-                                this.host = chosenHost
-                            })
-                        }
-                        else -> final.add(it)
-                    }
+                dispo.apply {
+                    this.opponentId = teamSelected
+                    this.lineUp = players.map { it.user?.mid ?: "" }
+                    this.host = chosenHost
                 }
-                final
             }
             .flatMapLatest { firebaseRepository.writeDispo(it) }
             .onEach { _sharedDismiss.emit(Unit) }

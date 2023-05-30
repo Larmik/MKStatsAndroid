@@ -10,9 +10,7 @@ import fr.harmoniamk.statsmk.database.MKDatabase
 import fr.harmoniamk.statsmk.model.firebase.Team
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 interface TeamLocalDataSourceInterface {

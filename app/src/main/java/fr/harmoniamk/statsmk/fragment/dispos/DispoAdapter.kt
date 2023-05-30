@@ -21,52 +21,58 @@ import kotlin.coroutines.CoroutineContext
 
 @FlowPreview
 @ExperimentalCoroutinesApi
-class DispoAdapter(val list: MutableList<WarDispo> = mutableListOf()) : RecyclerView.Adapter<DispoAdapter.DispoViewHolder>(), CoroutineScope {
+class DispoAdapter(val list: MutableList<Pair<WarDispo, Boolean>> = mutableListOf()) : RecyclerView.Adapter<DispoAdapter.DispoViewHolder>(), CoroutineScope {
 
     val sharedDispoSelected = MutableSharedFlow<Pair<WarDispo, Dispo>>()
     val onClickWarSchedule = MutableSharedFlow<WarDispo>()
     val onClickOtherPlayer = MutableSharedFlow<WarDispo>()
 
+    private var dispoOnly = false
+
     @FlowPreview
     @ExperimentalCoroutinesApi
     inner class DispoViewHolder(val binding: DispoItemBinding): RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: WarDispo) {
-            val playersCan = item.dispoPlayers.singleOrNull { it.dispo == Dispo.CAN.ordinal }?.playerNames.orEmpty()
-            val playersCanSub = item.dispoPlayers.singleOrNull { it.dispo == Dispo.CAN_SUB.ordinal }?.playerNames.orEmpty()
+        fun bind(item: Pair<WarDispo, Boolean>) {
+            val playersCan = item.first.dispoPlayers.singleOrNull { it.dispo == Dispo.CAN.ordinal }?.playerNames.orEmpty()
+            val playersCanSub = item.first.dispoPlayers.singleOrNull { it.dispo == Dispo.CAN_SUB.ordinal }?.playerNames.orEmpty()
             val canAdapter = PlayerDispoAdapter(playersCan)
             val canSubAdapter = PlayerDispoAdapter(playersCanSub)
-            val notSureAdapter = PlayerDispoAdapter(item.dispoPlayers.singleOrNull { it.dispo == Dispo.NOT_SURE.ordinal }?.playerNames.orEmpty())
-            val cantAdapter = PlayerDispoAdapter(item.dispoPlayers.singleOrNull { it.dispo == Dispo.CANT.ordinal }?.playerNames.orEmpty())
-            val firstHalfLuAdapter = ScheduleLineUpAdapter(nameList = item.lineupNames?.safeSubList(0, 3))
-            val secondHalfLuAdapter = ScheduleLineUpAdapter(nameList = item.lineupNames?.safeSubList(3, 6))
-            binding.hour.text = String.format(binding.root.context.getString(R.string.hour_placeholder), item.dispoHour.toString())
+            val notSureAdapter = PlayerDispoAdapter(item.first.dispoPlayers.singleOrNull { it.dispo == Dispo.NOT_SURE.ordinal }?.playerNames.orEmpty())
+            val cantAdapter = PlayerDispoAdapter(item.first.dispoPlayers.singleOrNull { it.dispo == Dispo.CANT.ordinal }?.playerNames.orEmpty())
+            val firstHalfLuAdapter = ScheduleLineUpAdapter(nameList = item.first.lineupNames?.safeSubList(0, 3))
+            val secondHalfLuAdapter = ScheduleLineUpAdapter(nameList = item.first.lineupNames?.safeSubList(3, 6))
+            binding.hour.text = String.format(binding.root.context.getString(R.string.hour_placeholder), item.first.dispoHour.toString())
             binding.canList.adapter = canAdapter
             binding.canSubList.adapter = canSubAdapter
             binding.notSureList.adapter = notSureAdapter
             binding.cantList.adapter = cantAdapter
             binding.firstHalfLu.adapter = firstHalfLuAdapter
             binding.secondHalfLu.adapter = secondHalfLuAdapter
-            binding.btnSchedule.isVisible = playersCan.size + playersCanSub.size >= 6
-            binding.addOtherPlayerBtn.isVisible = playersCan.size + playersCanSub.size < 6
-            item.lineUp?.let {
-                binding.dispoListLayout.isVisible = false
-                binding.lineupLayout.isVisible = true
-                binding.btnSchedule.isVisible = false
+            binding.btnSchedule.isVisible = (playersCan.size + playersCanSub.size >= 6 && item.second)
+            binding.addOtherPlayerBtn.isVisible = (playersCan.size + playersCanSub.size < 6 && item.second)
+            binding.dispoListLayout.isVisible = true
+            binding.lineupLayout.isVisible = false
+            binding.hostLayout.isVisible = false
+            item.first.lineUp?.takeIf { it.toString() != "null" }?.let {
+                binding.dispoListLayout.isVisible = !dispoOnly
+                binding.lineupLayout.isVisible = dispoOnly
+                binding.btnSchedule.isVisible = !dispoOnly && item.second
+                item.first.hostName?.let {
+                    binding.hostLayout.isVisible = dispoOnly
+                    binding.hostName.text = it
+                }
+                item.first.opponentName?.let {
+                    binding.warName.isVisible = dispoOnly
+                    binding.warName.text = it
+                }
             }
-            item.opponentName?.let {
-                binding.warName.isVisible = true
-                binding.warName.text = it
-            }
-            item.hostName?.let {
-                binding.hostLayout.isVisible = true
-                binding.hostName.text = it
-            }
+
             binding.btnSchedule.clicks()
-                .map { item }
+                .map { item.first }
                 .bind(onClickWarSchedule, this@DispoAdapter)
 
             binding.addOtherPlayerBtn.clicks()
-                .map { item }
+                .map { item.first }
                 .bind(onClickOtherPlayer, this@DispoAdapter)
             flowOf(
                 binding.canBtn.clicks().map { Dispo.CAN },
@@ -74,12 +80,12 @@ class DispoAdapter(val list: MutableList<WarDispo> = mutableListOf()) : Recycler
                 binding.notSureBtn.clicks().map { Dispo.NOT_SURE },
                 binding.cantBtn.clicks().map { Dispo.CANT },
             ).flattenMerge()
-                .map { Pair(item, it) }
+                .map { Pair(item.first, it) }
                 .bind(sharedDispoSelected, this@DispoAdapter)
         }
     }
 
-    fun addData(dispos: List<WarDispo>) {
+    fun addData(dispos: List<Pair<WarDispo, Boolean>>) {
         when (dispos.size != list.size) {
             true -> {
                 notifyItemRangeRemoved(0, itemCount)
@@ -94,6 +100,11 @@ class DispoAdapter(val list: MutableList<WarDispo> = mutableListOf()) : Recycler
             }
         }
 
+    }
+
+    fun switchView(dispoOnly: Boolean) {
+        this.dispoOnly = dispoOnly
+        notifyItemRangeChanged(0, itemCount)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DispoViewHolder = DispoViewHolder(

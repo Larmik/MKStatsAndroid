@@ -25,7 +25,7 @@ interface FirebaseRepositoryInterface{
     fun writeUser(user: User): Flow<Unit>
     fun writeNewWar(war: NewWar): Flow<Unit>
     fun writeTeam(team: Team): Flow<Unit>
-    fun writeDispo(dispo: List<WarDispo>): Flow<Unit>
+    fun writeDispo(dispo: WarDispo): Flow<Unit>
 
     //Get lists methods
     fun getUsers(): Flow<List<User>>
@@ -79,8 +79,16 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
         emit(Unit)
     }.flatMapLatest { databaseRepository.writeTeam(team) }
 
-    override fun writeDispo(dispo: List<WarDispo>) = flow {
-        database.child("dispos").child(preferencesRepository.currentTeam?.mid ?: "").setValue(dispo)
+    override fun writeDispo(dispo: WarDispo) = flow {
+        val index = when (dispo.dispoHour) {
+            18 -> 0
+            20 -> 1
+            21 -> 2
+            22 -> 3
+            23 -> 4
+            else -> -1
+        }
+        database.child("dispos").child(preferencesRepository.currentTeam?.mid ?: "").child(index.toString()).setValue(dispo)
         emit(Unit)
     }
 
