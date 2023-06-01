@@ -15,6 +15,10 @@ data class WarDispo(
     var lineupNames: List<String>? = null
     var opponentName: String? = null
     var hostName: String? = null
+
+    override fun toString(): String {
+        return "WarDispo($dispoHour, $dispoPlayers, $opponentName, $opponentId, $lineUp, $details, $host)"
+    }
 }
 
 @Parcelize

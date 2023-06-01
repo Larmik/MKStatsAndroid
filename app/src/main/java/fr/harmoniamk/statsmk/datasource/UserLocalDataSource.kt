@@ -41,7 +41,7 @@ class UserLocalDataSource @Inject constructor(@ApplicationContext private val co
 
     override fun getAll(): Flow<List<User>> = dao.getAll().map { list -> list.map { User(it) } }
 
-    override fun getById(id: String): Flow<User> = dao.getById(id).map {  User(it)  }
+    override fun getById(id: String): Flow<User> = dao.getById(id).filterNotNull().map {  User(it)  }
 
     override fun insert(users: List<User>): Flow<Unit> = flow { emit(dao.bulkInsert(users.map { it.toEntity() })) }
 

@@ -92,8 +92,7 @@ class TrackDetailsViewModel @Inject constructor(
 
                 }
                 _sharedPositions.emit(positions)
-                _sharedButtonsVisible.emit(networkRepository.networkAvailable && (isAdmin.isTrue && !MKWar(war).isOver
-                        || isLeader))
+                _sharedButtonsVisible.emit(networkRepository.networkAvailable && (isAdmin.isTrue || isLeader))
             }
             .launchIn(viewModelScope)
 

@@ -97,7 +97,7 @@ class EditWarShocksViewModel  @Inject constructor(
                 }
                 _sharedDismiss.emit(newWarTrack)
                 NewWar(war.mid, war.playerHostId, war.teamHost, war.teamOpponent, war.createdDate, newTrackList, war.penalties, war.isOfficial)
-            }.flatMapLatest { firebaseRepository.writeNewWar(it) }
+            }.flatMapLatest { firebaseRepository.writeCurrentWar(it) }
             .launchIn(viewModelScope)
 
 

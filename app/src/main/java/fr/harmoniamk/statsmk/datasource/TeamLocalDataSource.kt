@@ -40,7 +40,7 @@ class TeamLocalDataSource @Inject constructor(@ApplicationContext private val co
 
     override fun getAll(): Flow<List<Team>> = dao.getAll().map { list -> list.map { Team(it) } }
 
-    override fun getById(id: String): Flow<Team> = dao.getById(id).map {  Team(it)  }
+    override fun getById(id: String): Flow<Team> = dao.getById(id).filterNotNull().map {  Team(it)  }
 
     override fun insert(teams: List<Team>): Flow<Unit> = flow { emit(dao.bulkInsert(teams.map { it.toEntity() })) }
 

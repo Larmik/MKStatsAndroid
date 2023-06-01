@@ -11,6 +11,7 @@ import fr.harmoniamk.statsmk.model.local.MKWar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -44,7 +45,7 @@ class WarLocalDataSource @Inject constructor(@ApplicationContext private val con
 
     override fun getAll(): Flow<List<MKWar>> = dao.getAll().map { list -> list.map { it.toMKWar() } }
 
-    override fun getById(id: String): Flow<MKWar> = dao.getById(id).map { it.toMKWar() }
+    override fun getById(id: String): Flow<MKWar> = dao.getById(id).filterNotNull().map { it.toMKWar() }
 
     override fun insert(wars: List<MKWar>): Flow<Unit> = flow { emit(dao.bulkInsert(wars.map { it.war?.toEntity(it.name) })) }
 

@@ -4,12 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.extension.bind
-import fr.harmoniamk.statsmk.extension.getCurrent
+import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.model.firebase.User
-import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
+import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -24,6 +24,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AddWarViewModel @Inject constructor(
     private val firebaseRepository: FirebaseRepositoryInterface,
+    private val databaseRepository: DatabaseRepositoryInterface,
     private val preferencesRepository: PreferencesRepositoryInterface,
     private val authenticationRepository: AuthenticationRepositoryInterface): ViewModel() {
 
@@ -53,14 +54,9 @@ class AddWarViewModel @Inject constructor(
 
         onOfficialCheck.onEach { official = it }.launchIn(viewModelScope)
 
-        val createWar = onCreateWar
-            .onEach { _sharedLoading.emit(true) }
-            .flatMapLatest { firebaseRepository.getNewWars(preferencesRepository.currentTeam?.mid ?: "-1") }
-            .map { it.map { w -> MKWar(w) }.getCurrent(preferencesRepository.currentTeam?.mid) }
-            .shareIn(viewModelScope, SharingStarted.Eagerly)
 
-        createWar
-            .filter { it == null}
+        onCreateWar
+            .onEach { _sharedLoading.emit(true) }
             .mapNotNull { chosenOpponent?.mid }
             .mapNotNull {
                 war = NewWar(
@@ -80,14 +76,8 @@ class AddWarViewModel @Inject constructor(
                 }
                 preferencesRepository.currentWar = it
             }
-            .flatMapLatest { firebaseRepository.writeNewWar(it) }
+            .flatMapLatest { firebaseRepository.writeCurrentWar(it) }
             .bind(_sharedStarted, viewModelScope)
-
-        createWar
-            .filter { it != null }
-            .onEach { _sharedLoading.emit(false) }
-            .map {  }
-            .bind(_sharedAlreadyCreated, viewModelScope)
 
         onUserSelected.onEach {
             usersSelected.clear()

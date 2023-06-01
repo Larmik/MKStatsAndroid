@@ -37,7 +37,7 @@ class DispoFragment : Fragment(R.layout.fragment_dispo) {
             onDispoSelected = adapter.sharedDispoSelected,
             onClickWarSchedule = adapter.onClickWarSchedule,
             onClickOtherPlayer = adapter.onClickOtherPlayer,
-            onPopup = binding.detailsBtn.clicks()
+            onPopup = binding.dispoDetails.clicks()
         )
         viewModel.sharedDispo
             .onEach {
@@ -45,6 +45,7 @@ class DispoFragment : Fragment(R.layout.fragment_dispo) {
                 it.lastOrNull()?.first?.details?.let {
                     binding.dispoDetails.text = it
                 }
+                binding.dispoRadiogroup.isVisible = it.any { !it.first.lineUp.isNullOrEmpty() }
             }.launchIn(lifecycleScope)
         viewModel.sharedGoToScheduleWar
             .onEach {
@@ -61,10 +62,6 @@ class DispoFragment : Fragment(R.layout.fragment_dispo) {
         flowOf(binding.radioDisposOnly.checks().map { true }, binding.radioDisposLu.checks().map { false })
             .flattenMerge()
             .onEach { adapter.switchView(it) }
-            .launchIn(lifecycleScope)
-
-        viewModel.sharedEditVisible
-            .onEach { binding.detailsBtn.isVisible = it }
             .launchIn(lifecycleScope)
 
         viewModel.sharedPopupShowing

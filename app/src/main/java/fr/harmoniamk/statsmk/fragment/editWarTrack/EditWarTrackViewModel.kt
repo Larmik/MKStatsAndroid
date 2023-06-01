@@ -36,7 +36,7 @@ class EditWarTrackViewModel @Inject constructor(private val firebaseRepository: 
                     newTrackList?.add(index, track.apply { this.trackIndex = it })
                     war.apply { this.warTracks = newTrackList }
                 }
-            }.flatMapLatest { firebaseRepository.writeNewWar(it) }
+            }.flatMapLatest { firebaseRepository.writeCurrentWar(it) }
             .onEach { _sharedDismiss.emit(trackIndex) }
             .launchIn(viewModelScope)
 

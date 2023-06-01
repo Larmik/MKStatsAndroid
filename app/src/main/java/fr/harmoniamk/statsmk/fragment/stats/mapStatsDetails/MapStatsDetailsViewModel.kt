@@ -49,7 +49,7 @@ class MapStatsDetailsViewModel @Inject constructor(private val authenticationRep
                     filters.contains(WarFilterType.PLAY) -> sortedWars.removeAll(mapDetails.filterNot { it.war.hasPlayer(authenticationRepository.user?.uid) }
                         .toSet())
                 }
-                _sharedTracks.emit(sortedWars.filter { it.war.isOver })
+                _sharedTracks.emit(sortedWars)
                 _sharedSortTypeSelected.emit(it)
             }.launchIn(viewModelScope)
 
@@ -80,7 +80,7 @@ class MapStatsDetailsViewModel @Inject constructor(private val authenticationRep
                     WarSortType.TEAM -> filteredWars.sortBy { it.war.name }
                     WarSortType.SCORE -> filteredWars.sortByDescending { it.war.scoreHost }
                 }
-                _sharedTracks.emit(filteredWars.filter { it.war.isOver })
+                _sharedTracks.emit(filteredWars)
                 _sharedFilterList.emit(filters)
             }.launchIn(viewModelScope)
 

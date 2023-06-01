@@ -85,7 +85,7 @@ class EditWarPositionsViewModel @Inject constructor(
                         val newTrackList: MutableList<NewWarTrack>? = war.warTracks?.toMutableList()
                         newTrackList?.remove(track)
                         newTrackList?.add(index, track.apply { this.warPositions = positions })
-                        firebaseRepository.writeNewWar(war.apply { this.warTracks = newTrackList }).first()
+                        firebaseRepository.writeCurrentWar(war.apply { this.warTracks = newTrackList }).first()
                         _sharedDismiss.emit(track.apply { this.warPositions = positions })
                     }
                 }

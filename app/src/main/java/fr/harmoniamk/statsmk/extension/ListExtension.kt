@@ -22,7 +22,6 @@ fun <T> List<T>.safeSubList(from: Int, to: Int): List<T> = when {
 fun Any?.toMapList(): List<Map<*,*>>? = this as? List<Map<*,*>>
 fun Any?.toStringList(): List<String>? = this as? List<String>
 
-fun List<MKWar>.getCurrent(teamId: String?) = this.singleOrNull { war -> !war.isOver && war.war?.teamHost == teamId }
 fun List<MKWar>.withFullStats(databaseRepository: DatabaseRepositoryInterface, userId: String? = null, teamId: String? = null, isIndiv: Boolean = false) = flow {
     Log.d("MKDebugOnly", "ListExtension withFullStats: userId = $userId, teamId = $teamId, isIndiv= $isIndiv")
     val maps = mutableListOf<TrackStats>()

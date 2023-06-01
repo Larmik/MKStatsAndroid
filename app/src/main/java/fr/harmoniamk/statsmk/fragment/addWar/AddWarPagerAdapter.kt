@@ -19,14 +19,11 @@ class AddWarPagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
     val onOfficialCheck = MutableSharedFlow<Boolean>()
     val onUsersSelected = MutableSharedFlow<List<User>>()
 
-    private val warTeamFragment by lazy { WarTeamFragment(onTeamSelected) }
-    private val playersWarFragment by lazy { PlayersWarFragment(onWarCreated, onUsersSelected, onOfficialCheck) }
-
     override fun getItemCount() = 2
 
     override fun createFragment(position: Int) = when (position) {
-        0 -> warTeamFragment
-        else -> playersWarFragment
+        0 -> WarTeamFragment(onTeamSelected)
+        else -> PlayersWarFragment(onWarCreated, onUsersSelected, onOfficialCheck)
     }
 
 }

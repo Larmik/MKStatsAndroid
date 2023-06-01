@@ -11,6 +11,7 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentAddWarBinding
+import fr.harmoniamk.statsmk.extension.isResumed
 import fr.harmoniamk.statsmk.fragment.popup.PopupFragment
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -57,6 +58,7 @@ class AddWarFragment : Fragment(R.layout.fragment_add_war) {
             .launchIn(lifecycleScope)
 
         viewModel.sharedAlreadyCreated
+            .filter { lifecycle.isResumed }
             .onEach {
                 popup.dismiss()
                 Toast.makeText(requireContext(), "Une war a déjà été créée, retournez sur l'écran précédent pour y accéder.", Toast.LENGTH_SHORT).show()

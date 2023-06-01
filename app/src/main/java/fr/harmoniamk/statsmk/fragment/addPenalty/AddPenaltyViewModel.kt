@@ -56,7 +56,7 @@ class AddPenaltyViewModel @Inject constructor(
                 val penalties = war.penalties?.toMutableList() ?: mutableListOf()
                 penalties.add(it)
                 val newWar = war.apply { this.penalties = penalties }
-                firebaseRepository.writeNewWar(newWar)
+                firebaseRepository.writeCurrentWar(newWar)
             }
             .onEach { _sharedDismiss.emit(Unit) }
             .launchIn(viewModelScope)

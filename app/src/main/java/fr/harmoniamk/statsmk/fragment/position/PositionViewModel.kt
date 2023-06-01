@@ -99,7 +99,7 @@ class PositionViewModel @Inject constructor(
             databaseRepository.getUsers()
                 .onEach {
                     currentUsers = it.filter { user -> user.currentWar == war.mid }.sortedBy { it.name }
-                    currentUser = currentUsers[0]
+                    currentUser = currentUsers.getOrNull(0)
                     _sharedPlayerLabel.emit(currentUser?.name)
                 }.launchIn(viewModelScope)
 
@@ -123,7 +123,7 @@ class PositionViewModel @Inject constructor(
                             }
                         }
                         else {
-                            currentUser = currentUsers[positions.indexOf(it)+1]
+                            currentUser = currentUsers.getOrNull(positions.indexOf(it)+1)
                             _sharedPlayerLabel.emit(currentUser?.name)
                         }
                     }.launchIn(viewModelScope)

@@ -57,9 +57,9 @@ class OpponentStatsDetailsViewModel @Inject constructor(
                     else -> filteredWars.addAll(wars)
                 }
                 _sharedWars.emit(when (_sharedSortTypeSelected.value) {
-                    WarSortType.DATE -> filteredWars.sortedByDescending { it.war?.mid }.filter { it.isOver }
-                    WarSortType.SCORE -> filteredWars.sortedByDescending { it.scoreHost }.filter { it.isOver }
-                    WarSortType.TEAM -> filteredWars.sortedBy { it.name }.filter { it.isOver }
+                    WarSortType.DATE -> filteredWars.sortedByDescending { it.war?.mid }
+                    WarSortType.SCORE -> filteredWars.sortedByDescending { it.scoreHost }
+                    WarSortType.TEAM -> filteredWars.sortedBy { it.name }
                 })
                 _sharedFilterList.emit(filters)
                 _sharedLoaded.emit(Unit)
@@ -81,7 +81,7 @@ class OpponentStatsDetailsViewModel @Inject constructor(
                     filters.contains(WarFilterType.PLAY) -> sortedWars.removeAll(wars.filterNot { it.hasPlayer(authenticationRepository.user?.uid) }
                         .toSet())
                 }
-                _sharedWars.emit(sortedWars.filter { it.isOver })
+                _sharedWars.emit(sortedWars)
                 _sharedSortTypeSelected.emit(it)
             }.launchIn(viewModelScope)
 
@@ -112,7 +112,7 @@ class OpponentStatsDetailsViewModel @Inject constructor(
                     WarSortType.TEAM -> filteredWars.sortBy { it.name }
                     WarSortType.SCORE -> filteredWars.sortByDescending { it.scoreHost }
                 }
-                _sharedWars.emit(filteredWars.filter { it.isOver })
+                _sharedWars.emit(filteredWars)
                 _sharedFilterList.emit(filters)
             }.launchIn(viewModelScope)
 

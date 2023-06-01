@@ -36,7 +36,6 @@ class MKWidgetProvider : AppWidgetProvider(), CoroutineScope {
 
     private val viewModel by lazy {
         MKWidgetViewModel(
-            preferencesRepository = PreferencesRepository(context),
             firebaseRepository = FirebaseRepository(
                 preferencesRepository = PreferencesRepository(context),
                 databaseRepository = DatabaseRepository(
@@ -46,12 +45,6 @@ class MKWidgetProvider : AppWidgetProvider(), CoroutineScope {
                     topicDataSource = TopicLocalDataSource(context)
                 ),
                 remoteConfigRepository = RemoteConfigRepository()
-            ),
-            databaseRepository = DatabaseRepository(
-                userDataSource = UserLocalDataSource(context),
-                teamDataSource = TeamLocalDataSource(context),
-                warDataSource = WarLocalDataSource(context),
-                topicDataSource = TopicLocalDataSource(context)
             )
         )
     }

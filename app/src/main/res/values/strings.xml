@@ -307,7 +307,7 @@
     <string name="ajouter_les_dispos">Ajouter les dispos</string>
     <string name="dispos_war">Dispos war</string>
     <string name="_1_joueur">+1 joueur</string>
-    <string name="ajouter_une_pr_cision">Ajouter une précision...</string>
+    <string name="ajouter_une_pr_cision">Aucune précision pour le moment.</string>
     <string name="war_programm_e">War programmée</string>
     <string name="host">Host :</string>
     <string name="non_renseign">Non renseigné</string>

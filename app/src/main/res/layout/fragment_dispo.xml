@@ -16,40 +16,25 @@
         android:textColor="@color/harmonia_dark"
         android:fontFamily="@font/montserrat_bold"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_vertical|top"
-        android:orientation="horizontal">
-
-        <View
-            android:layout_width="30dp"
-            android:layout_height="0.1dp"/>
 
         <TextView
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:id="@+id/dispo_details"
             android:text="@string/ajouter_une_pr_cision"
             android:textAlignment="center"
             android:textColor="@color/harmonia_dark"
+            android:paddingBottom="20dp"
             android:fontFamily="@font/montserrat_regular"
             android:textSize="16sp"/>
 
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:padding="10dp"
-            android:id="@+id/details_btn"
-            android:src="@drawable/edit"/>
 
-    </LinearLayout>
 
     <RadioGroup
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
+        android:id="@+id/dispo_radiogroup"
         android:orientation="horizontal">
 
         <RadioButton

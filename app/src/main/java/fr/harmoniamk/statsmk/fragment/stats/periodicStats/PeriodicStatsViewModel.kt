@@ -89,7 +89,7 @@ class PeriodicStatsViewModel @Inject constructor(
             .mapNotNull { warList }
             .filter { it.mapNotNull { war -> war.war?.teamHost}.contains(preferencesRepository.currentTeam?.mid)
                     || it.map {war -> war.war?.teamOpponent}.contains(preferencesRepository.currentTeam?.mid) }
-            .mapNotNull { wars -> wars.filter { it.isOver }.filter {
+            .mapNotNull { wars -> wars.filter {
                 when (hebdo) {
                     true -> it.isThisWeek
                     else -> it.isThisMonth

@@ -24,6 +24,7 @@ interface FirebaseRepositoryInterface{
     //Write and edit methods
     fun writeUser(user: User): Flow<Unit>
     fun writeNewWar(war: NewWar): Flow<Unit>
+    fun writeCurrentWar(war: NewWar): Flow<Unit>
     fun writeTeam(team: Team): Flow<Unit>
     fun writeDispo(dispo: WarDispo): Flow<Unit>
 
@@ -34,12 +35,13 @@ interface FirebaseRepositoryInterface{
     fun getDispos(): Flow<List<WarDispo>>
 
     //Firebase event listeners methods
-    fun listenToNewWars(): Flow<List<NewWar>>
+    fun listenToCurrentWar(): Flow<MKWar?>
 
     //delete methods
     fun deleteUser(user: User): Flow<Unit>
     fun deleteTeam(team: Team): Flow<Unit>
     fun deleteNewWar(war: MKWar): Flow<Unit>
+    fun deleteCurrentWar(war: MKWar): Flow<Unit>
 
 }
 
@@ -72,6 +74,13 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
             else -> database.child("newWars").child(war.mid).setValue(war)
         }
         emit(Unit)
+    }
+
+    override fun writeCurrentWar(war: NewWar): Flow<Unit> = flow {
+        preferencesRepository.currentTeam?.mid?.let {
+            database.child("currentWars").child(it).setValue(war)
+            emit(Unit)
+        }
     }
 
     override fun writeTeam(team: Team): Flow<Unit> = flow {
@@ -173,30 +182,28 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
             }
         }
         database.addValueEventListener(postListener)
-        awaitClose {  }
+        awaitClose { database.removeEventListener(postListener) }
     }
 
-    override fun listenToNewWars(): Flow<List<NewWar>> = callbackFlow {
-        Log.d("MKDebugOnly", "FirebaseRepository listenNewWars")
+    override fun listenToCurrentWar(): Flow<MKWar?> = callbackFlow {
         val postListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 launch {
-                    val wars: List<NewWar> =  when (remoteConfigRepository.multiTeamEnabled) {
-                        true -> dataSnapshot.child("newWars").child(preferencesRepository.currentTeam?.mid ?: "-1")
-                        else -> dataSnapshot.child("newWars")
-                    }.children.map { it.value as Map<*, *> }.map {
-                        NewWar(
-                            mid = it["mid"].toString(),
-                            playerHostId = it["playerHostId"].toString(),
-                            teamOpponent = it["teamOpponent"].toString(),
-                            teamHost = it["teamHost"].toString(),
-                            createdDate = it["createdDate"].toString(),
-                            warTracks = it["warTracks"].toMapList().parseTracks(),
-                            penalties = it["penalties"].toMapList().parsePenalties(),
-                            isOfficial = it["official"].toString().toBoolean()
-                        )
+                    val value = dataSnapshot.child("currentWars").child(preferencesRepository.currentTeam?.mid ?: "-1").value as? Map<*,*>
+                    val war = when (value) {
+                        null -> null
+                        else -> NewWar(
+                            mid = value["mid"].toString(),
+                            playerHostId = value["playerHostId"].toString(),
+                            teamOpponent = value["teamOpponent"].toString(),
+                            teamHost = value["teamHost"].toString(),
+                            createdDate = value["createdDate"].toString(),
+                            warTracks = value["warTracks"].toMapList().parseTracks(),
+                            penalties = value["penalties"].toMapList().parsePenalties(),
+                            isOfficial = value["official"].toString().toBoolean()
+                        ).withName(databaseRepository).firstOrNull()
                     }
-                    if (isActive) offer(wars)
+                    if (isActive) offer(war)
                 }
             }
 
@@ -204,7 +211,7 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
             }
         }
         database.addValueEventListener(postListener)
-        awaitClose {  }
+        awaitClose { database.removeEventListener(postListener) }
     }
 
 
@@ -227,6 +234,11 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
             emit(Unit)
         }
     }.flatMapLatest { databaseRepository.deleteWar(war) }
+
+    override fun deleteCurrentWar(war: MKWar) = flow {
+        database.child("currentWars").child(preferencesRepository.currentTeam?.mid ?: "-1").removeValue()
+        emit(Unit)
+    }
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.IO

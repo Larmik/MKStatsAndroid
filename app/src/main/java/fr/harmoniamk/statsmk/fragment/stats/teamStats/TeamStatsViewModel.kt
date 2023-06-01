@@ -60,7 +60,6 @@ class TeamStatsViewModel @Inject constructor(private val preferencesRepository: 
             .mapNotNull { list }
             .filter { it.mapNotNull { war -> war.war?.teamHost}.contains(preferencesRepository.currentTeam?.mid)
                         || it.map {war -> war.war?.teamOpponent}.contains(preferencesRepository.currentTeam?.mid) }
-            .mapNotNull { wars -> wars.filter { it.isOver } }
             .flatMapLatest { it.withFullStats(databaseRepository) }
             .onEach { stats ->
                 bestMap = stats.bestMap

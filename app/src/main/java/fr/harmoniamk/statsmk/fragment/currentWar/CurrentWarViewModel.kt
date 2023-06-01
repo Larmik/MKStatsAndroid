@@ -58,8 +58,7 @@ class CurrentWarViewModel @Inject constructor(
     val sharedLoading = _sharedLoading.asSharedFlow()
 
     fun bind(onBack: Flow<Unit>, onNextTrack: Flow<Unit>, onTrackClick: Flow<Int>, onPopup: Flow<Unit>, onPenalty: Flow<Unit>, onSub: Flow<Unit>, onSubDismiss: Flow<Unit>) {
-        val currentWar = firebaseRepository.listenToNewWars()
-            .map { it.map { w -> MKWar(w) }.getCurrent(preferencesRepository.currentTeam?.mid) }
+        val currentWar = firebaseRepository.listenToCurrentWar()
             .shareIn(viewModelScope, SharingStarted.Lazily)
 
 
@@ -72,7 +71,7 @@ class CurrentWarViewModel @Inject constructor(
                 val isAdmin = (authenticationRepository.userRole.firstOrNull() ?: 0) >= UserRole.ADMIN.ordinal
                 preferencesRepository.currentWar = war.war
                 _sharedCurrentWar.emit(war)
-                _sharedButtonVisible.emit(isAdmin.isTrue && !war.isOver)
+                _sharedButtonVisible.emit(isAdmin.isTrue)
                 _sharedTracks.emit(war.war?.warTracks.orEmpty().map { MKWarTrack(it) })
                 val players = databaseRepository.getUsers().first().filter { it.currentWar == preferencesRepository.currentWar?.mid }
                     .sortedBy { it.name?.toLowerCase(Locale.ROOT) }
@@ -155,7 +154,7 @@ class CurrentWarViewModel @Inject constructor(
             }.mapNotNull {
                 MKWar(preferencesRepository.currentWar)
             }
-            .flatMapLatest { firebaseRepository.deleteNewWar(it) }
+            .flatMapLatest { firebaseRepository.deleteCurrentWar(it) }
             .bind(_sharedBackToWars, viewModelScope)
 
         onDismiss

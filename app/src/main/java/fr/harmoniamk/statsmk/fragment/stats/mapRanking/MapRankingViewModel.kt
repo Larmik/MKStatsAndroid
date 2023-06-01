@@ -118,7 +118,7 @@ class MapRankingViewModel @Inject constructor(
                         || it.map {war -> war.war?.teamOpponent}.contains(preferencesRepository.currentTeam?.mid))
                         || onlyIndiv
             }
-            .mapNotNull { list -> list.filter { it.isOver && ((onlyIndiv && it.hasPlayer(authenticationRepository.user?.uid)) || !onlyIndiv) && ((!indivEnabled && it.hasTeam(preferencesRepository.currentTeam?.mid)) || indivEnabled)} }
+            .mapNotNull { list -> list.filter { ((onlyIndiv && it.hasPlayer(authenticationRepository.user?.uid)) || !onlyIndiv) && ((!indivEnabled && it.hasTeam(preferencesRepository.currentTeam?.mid)) || indivEnabled)} }
             .map { list ->
                 val allTracksPlayed = mutableListOf<NewWarTrack>()
                 list.mapNotNull { it.war?.warTracks }.forEach {

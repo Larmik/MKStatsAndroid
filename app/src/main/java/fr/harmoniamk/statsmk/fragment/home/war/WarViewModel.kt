@@ -88,7 +88,7 @@ class WarViewModel @Inject constructor(
                 dispoList.addAll(it)
                 val hour = Date().get(Calendar.HOUR_OF_DAY)
                 val lastWars = databaseRepository.getWars().firstOrNull()
-                    ?.filter { war -> war.isOver && war.war?.teamHost == preferencesRepository.currentTeam?.mid }
+                    ?.filter { war -> war.war?.teamHost == preferencesRepository.currentTeam?.mid }
                     ?.sortedByDescending { it.war?.createdDate?.formatToDate() }
                     ?.safeSubList(0, 5).orEmpty()
                 dispoList.forEach {
@@ -104,11 +104,9 @@ class WarViewModel @Inject constructor(
                 _sharedLastWars.emit(lastWars)
             }.launchIn(viewModelScope)
 
-        firebaseRepository.listenToNewWars()
-            .map { it.map { MKWar(it) } }
-            .flatMapLatest { it.withName(databaseRepository) }
+        firebaseRepository.listenToCurrentWar()
             .onEach {
-                currentWar = it.takeIf { networkRepository.networkAvailable }?.getCurrent(preferencesRepository.currentTeam?.mid)
+                currentWar = it.takeIf { networkRepository.networkAvailable }
                 _sharedCurrentWar.emit(currentWar)
             }.launchIn(viewModelScope)
 
@@ -133,7 +131,7 @@ class WarViewModel @Inject constructor(
                 preferencesRepository.currentWar = war
                 war
             }
-            .flatMapLatest { firebaseRepository.writeNewWar(it) }
+            .flatMapLatest { firebaseRepository.writeCurrentWar(it) }
             .bind(_sharedStarted, viewModelScope)
     }
 

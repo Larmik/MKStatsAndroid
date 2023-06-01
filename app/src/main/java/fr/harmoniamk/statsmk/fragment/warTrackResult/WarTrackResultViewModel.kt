@@ -122,10 +122,11 @@ class WarTrackResultViewModel @Inject constructor(
                 .mapNotNull { preferencesRepository.currentWar }
                 .onEach { war ->
                     _sharedLoading.emit(true)
-                    firebaseRepository.writeNewWar(war).first()
-                    val mkWar = listOf(MKWar(war)).withName(databaseRepository).first()
-                    mkWar.singleOrNull()?.let { databaseRepository.writeWar(it).first() }
+
                     if (MKWar(war).isOver) {
+                        firebaseRepository.writeNewWar(war).first()
+                        val mkWar = listOf(MKWar(war)).withName(databaseRepository).first()
+                        mkWar.singleOrNull()?.let { databaseRepository.writeWar(it).first() }
                         databaseRepository.getUsers().first().filter { it.currentWar == war.mid }.forEach {
                             val new = it.apply { this.currentWar = "-1" }
                             firebaseRepository.writeUser(new).first()
@@ -133,7 +134,10 @@ class WarTrackResultViewModel @Inject constructor(
                         war.withName(databaseRepository)
                             .filterNotNull()
                             .bind(_sharedGoToWarResume, viewModelScope)
-                    } else _sharedBackToCurrent.emit(Unit)
+                    } else {
+                        firebaseRepository.writeCurrentWar(war).first()
+                        _sharedBackToCurrent.emit(Unit)
+                    }
                     preferencesRepository.currentWarTrack = null
                 }.launchIn(viewModelScope)
         }

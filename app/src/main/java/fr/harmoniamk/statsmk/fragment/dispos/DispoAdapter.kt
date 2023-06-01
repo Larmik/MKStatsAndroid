@@ -53,6 +53,7 @@ class DispoAdapter(val list: MutableList<Pair<WarDispo, Boolean>> = mutableListO
             binding.dispoListLayout.isVisible = true
             binding.lineupLayout.isVisible = false
             binding.hostLayout.isVisible = false
+            binding.warName.isVisible = false
             item.first.lineUp?.takeIf { it.toString() != "null" }?.let {
                 binding.dispoListLayout.isVisible = !dispoOnly
                 binding.lineupLayout.isVisible = dispoOnly
@@ -94,9 +95,14 @@ class DispoAdapter(val list: MutableList<Pair<WarDispo, Boolean>> = mutableListO
                 notifyItemRangeInserted(0, itemCount)
             }
             else -> {
-                list.clear()
-                list.addAll(dispos)
-                notifyItemRangeChanged(0, itemCount)
+                dispos.map { it.first }.forEachIndexed { index, warDispo ->
+                    val oldDispo = list[index]
+                    if (warDispo.toString() != oldDispo.first.toString()) {
+                        list.removeAt(index)
+                        list.add(index, Pair(warDispo, oldDispo.second))
+                        notifyItemChanged(index)
+                    }
+                }
             }
         }
 
