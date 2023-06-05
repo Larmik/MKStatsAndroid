@@ -47,7 +47,6 @@ class PositionViewModel @Inject constructor(
     val sharedTrackNumber = _sharedTrackNumber.asSharedFlow()
 
     fun bind(
-        tournamentId: Int? = null, warTrackId: String? = null, chosenTrack: Int,
         onPos1: Flow<Unit>,
         onPos2: Flow<Unit>,
         onPos3: Flow<Unit>,
@@ -103,8 +102,6 @@ class PositionViewModel @Inject constructor(
                     _sharedPlayerLabel.emit(currentUser?.name)
                 }.launchIn(viewModelScope)
 
-
-
                 _sharedPos
                     .map { NewWarPositions(mid = System.currentTimeMillis().toString(), position = it, playerId = currentUser?.mid) }
                     .onEach {
@@ -134,7 +131,7 @@ class PositionViewModel @Inject constructor(
                 .onEach {
                     positions.remove(positions.last())
                     _sharedSelectedPositions.emit(positions.mapNotNull { pos -> pos.position })
-                    currentUser = currentUsers[positions.size]
+                    currentUser = currentUsers.getOrNull(positions.size)
                 }
                 .map { currentUser?.name }
                 .bind(_sharedPlayerLabel, viewModelScope)

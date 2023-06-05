@@ -6,6 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.isTrue
+import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
 import fr.harmoniamk.statsmk.model.firebase.Shock
@@ -64,11 +65,11 @@ class TrackDetailsViewModel @Inject constructor(
                 users.clear()
                 users.addAll(it)
             }
-            .flatMapLatest {  databaseRepository.getWar(warId) }
+            .flatMapLatest { war.withName(databaseRepository) }
             .onEach {
-                _sharedWarName.emit(it?.name)
+                _sharedWarName.emit(it.name)
                 val shocks = mutableListOf<Pair<String?, Shock>>()
-                it?.war?.warTracks?.singleOrNull {it.mid == warTrackId}?.shocks?.forEach { shock ->
+                it.war?.warTracks?.singleOrNull {it.mid == warTrackId}?.shocks?.forEach { shock ->
                     shocks.add(Pair(users.singleOrNull { it.mid == shock.playerId }?.name, Shock(shock.playerId, shock.count)))
                 }
                 _sharedShocks.emit(shocks)
@@ -76,10 +77,8 @@ class TrackDetailsViewModel @Inject constructor(
             .flatMapLatest {
                 when (warTrackId.isEmpty()) {
                     true -> flowOf(war.warTracks?.get(index)?.warPositions).filterNotNull()
-                    else -> {
-                        databaseRepository.getWar(warId)
-                            .mapNotNull { it?.warTracks?.singleOrNull { track -> track.track?.mid == warTrackId }?.track?.warPositions }
-                    }
+                    else -> flowOf(MKWar(war).warTracks?.singleOrNull { track -> track.track?.mid == warTrackId }?.track?.warPositions).filterNotNull()
+
                 }
             }
             .onEach {

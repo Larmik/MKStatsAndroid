@@ -23,10 +23,19 @@ import kotlinx.coroutines.flow.onEach
 @FlowPreview
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
-class WarTeamFragment(private val onSelectedTeam: MutableSharedFlow<Team>) : Fragment(R.layout.fragment_war_team) {
+class WarTeamFragment : Fragment(R.layout.fragment_war_team) {
 
     private val binding: FragmentWarTeamBinding by viewBinding()
     private val viewModel: WarTeamViewModel by viewModels()
+    var onSelectedTeam: MutableSharedFlow<Team>? = null
+
+    companion object{
+        fun instance(onSelectedTeam: MutableSharedFlow<Team>): WarTeamFragment {
+            val fragment = WarTeamFragment()
+            fragment.onSelectedTeam = onSelectedTeam
+            return fragment
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -34,7 +43,7 @@ class WarTeamFragment(private val onSelectedTeam: MutableSharedFlow<Team>) : Fra
         binding.teamRv.adapter = adapter
         viewModel.bind(adapter.onTeamClick, binding.searchEt.onTextChanged(), binding.addTeamBtn.clicks())
         viewModel.sharedTeams.onEach { adapter.addTeams(it) }.launchIn(lifecycleScope)
-        viewModel.sharedTeamSelected.bind(onSelectedTeam, lifecycleScope)
+        onSelectedTeam?.let { viewModel.sharedTeamSelected.bind(it, lifecycleScope) }
         viewModel.sharedAddTeam
             .onEach {
                 val addTeamFragment = AddTeamFragment()

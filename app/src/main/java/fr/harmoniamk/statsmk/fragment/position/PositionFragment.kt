@@ -44,9 +44,6 @@ class PositionFragment : Fragment(R.layout.fragment_position) {
         super.onViewCreated(view, savedInstanceState)
         binding.trackView.bind(track)
         viewModel.bind(
-            tournamentId = tmId,
-            warTrackId = warTrackId,
-            chosenTrack = track ?: -1,
             onPos1 = binding.pos1.clicks(),
             onPos2 = binding.pos2.clicks(),
             onPos3 = binding.pos3.clicks(),

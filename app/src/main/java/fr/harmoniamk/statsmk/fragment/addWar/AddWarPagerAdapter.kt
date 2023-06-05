@@ -22,8 +22,8 @@ class AddWarPagerAdapter(fa: FragmentActivity) : FragmentStateAdapter(fa) {
     override fun getItemCount() = 2
 
     override fun createFragment(position: Int) = when (position) {
-        0 -> WarTeamFragment(onTeamSelected)
-        else -> PlayersWarFragment(onWarCreated, onUsersSelected, onOfficialCheck)
+        0 -> WarTeamFragment.instance(onTeamSelected)
+        else -> PlayersWarFragment.instance(onWarCreated, onUsersSelected, onOfficialCheck)
     }
 
 }
