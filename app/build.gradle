@@ -55,11 +55,12 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             buildConfigField "String", "FLAVOR_NAME", '" "'
             debuggable false
             testCoverageEnabled = false
             manifestPlaceholders = [appLabel: "Mario Kart Stats"]
+            proguardFile "proguard-rules.pro"
             buildConfigField "boolean", "IS_DEBUG", "false"
             signingConfig signingConfigs.release
             buildConfigField 'java.util.Hashtable<String, String>', 'PropertyPairs', makePropertyHashTable(getRootDir().getPath() + File.separator + 'constants_release.properties')
