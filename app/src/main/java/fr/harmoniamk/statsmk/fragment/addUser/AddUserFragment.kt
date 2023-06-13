@@ -28,7 +28,7 @@ class AddUserFragment : Fragment(R.layout.fragment_add_user) {
 
     private val binding: FragmentAddUserBinding by viewBinding()
     private val viewModel: AddUserViewModel by viewModels()
-    private val loadingPopup = PopupFragment("Création du joueur en cours...", loading = true)
+    private val loadingPopup = PopupFragment(R.string.creating_player, loading = true)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

@@ -1,7 +1,6 @@
 package fr.harmoniamk.statsmk.repository
 
 import android.content.Context
-import android.util.Log
 import com.google.firebase.messaging.FirebaseMessaging
 import dagger.Binds
 import dagger.Module

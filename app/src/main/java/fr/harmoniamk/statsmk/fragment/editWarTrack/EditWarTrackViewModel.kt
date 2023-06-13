@@ -6,7 +6,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.application.MainApplication
 import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.extension.bind
-import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface

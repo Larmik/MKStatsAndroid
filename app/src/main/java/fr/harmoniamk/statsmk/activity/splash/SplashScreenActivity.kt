@@ -45,13 +45,13 @@ class SplashScreenActivity : AppCompatActivity() {
             }.launchIn(lifecycleScope)
         viewModel.sharedLoadingVisible
             .onEach {
-                binding.loadingLabel.text = it
+                binding.loadingLabel.text = getString(it)
             }.launchIn(lifecycleScope)
 
         viewModel.sharedShowUpdatePopup
             .filter { lifecycle.isResumed }
             .onEach {
-                val popup = PopupFragment("L'application nécessite une mise à jour pour fonctionner correctement. \n \n Veuillez mettre à jour l'application pour continuer.", positiveText = "Mettre à jour", negativeText = "Retour")
+                val popup = PopupFragment(R.string.need_update, positiveText = R.string.update, negativeText = R.string.back)
                 popup.onNegativeClick.onEach { finish() }.launchIn(lifecycleScope)
                 popup.onPositiveClick
                     .onEach {
@@ -65,8 +65,8 @@ class SplashScreenActivity : AppCompatActivity() {
             .filter { lifecycle.isResumed }
             .onEach { pair ->
                 val popup = when (pair.second.isEmpty()) {
-                    true -> PopupFragment("Vous êtes hors connexion. \n \n Veuillez redémarrer l’application en étant connecté à Internet pour continuer")
-                    else -> PopupFragment("Vous êtes hors connexion. \n \n Vous pourrez toujours consulter les wars et statistiques mais vous n'aurez pas accès à la war en cours ni à l'édition des joueurs et équipes.", negativeText = "Continuer")
+                    true -> PopupFragment(R.string.no_internet)
+                    else -> PopupFragment(R.string.offline_mode, negativeText = R.string.continuer)
                 }
                 binding.loadingLayout.isVisible = false
                 intent.putExtra("screen", pair.first.name)

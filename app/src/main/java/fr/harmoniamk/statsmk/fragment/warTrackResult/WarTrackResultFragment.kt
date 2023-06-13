@@ -30,7 +30,7 @@ class WarTrackResultFragment : Fragment(R.layout.fragment_result_war_track) {
     private val binding : FragmentResultWarTrackBinding by viewBinding()
     private val viewModel: WarTrackResultViewModel by viewModels()
     private var track: Int? = null
-    private val popup by lazy { PopupFragment("Création de la war en cours, veuillez patienter", loading = true) }
+    private val popup by lazy { PopupFragment(R.string.creating_war, loading = true) }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

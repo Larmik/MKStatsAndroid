@@ -28,12 +28,12 @@ class OtherPlayersViewModel @Inject constructor(private val firebaseRepository: 
     val sharedDismiss = _sharedDismiss.asSharedFlow()
     val sharedLoading = _sharedLoading.asSharedFlow()
 
-    var playerSelected: String? = null
+    private var playerSelected: String? = null
     var dispo: Int? = null
 
     fun bind(dispo: WarDispo, onPlayerSelected: Flow<UserSelector>, onButtonClick: Flow<Int>) {
         val alreadyDispoUsers = mutableListOf<String>()
-        dispo.dispoPlayers.forEach { dispos ->
+        dispo.dispoPlayers?.forEach { dispos ->
             alreadyDispoUsers.addAll(dispos.players.orEmpty())
         }
 
@@ -53,7 +53,7 @@ class OtherPlayersViewModel @Inject constructor(private val firebaseRepository: 
             .onEach { _sharedLoading.emit(Unit) }
             .map {
                 val playersDispo = mutableListOf<PlayerDispo>()
-                dispo.dispoPlayers.forEach { playerDispo ->
+                dispo.dispoPlayers?.forEach { playerDispo ->
                     when (playerDispo.dispo == this.dispo) {
                         true -> {
                             val players = mutableListOf<String?>()

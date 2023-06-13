@@ -41,7 +41,7 @@ interface FirebaseRepositoryInterface{
     fun deleteUser(user: User): Flow<Unit>
     fun deleteTeam(team: Team): Flow<Unit>
     fun deleteNewWar(war: MKWar): Flow<Unit>
-    fun deleteCurrentWar(war: MKWar): Flow<Unit>
+    fun deleteCurrentWar(): Flow<Unit>
 
 }
 
@@ -168,11 +168,11 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
                     .mapNotNull { it.value as? Map<*, *> }
                     .map {map -> WarDispo(
                         dispoHour = map["dispoHour"].toString().toInt(),
-                        dispoPlayers = map["dispoPlayers"].toMapList().parsePlayerDispos().orEmpty(),
-                        opponentId = map["opponentId"].toString(),
+                        dispoPlayers = map["dispoPlayers"]?.toMapList().parsePlayerDispos(),
+                        opponentId = map["opponentId"]?.toString(),
                         details = map["details"]?.toString(),
-                        lineUp = map["lineUp"].toStringList(),
-                        host = map["host"].toString()
+                        lineUp = map["lineUp"]?.toStringList(),
+                        host = map["host"]?.toString()
                     )
                     }
                 if (isActive) offer(wars)
@@ -189,8 +189,7 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
         val postListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 launch {
-                    val value = dataSnapshot.child("currentWars").child(preferencesRepository.currentTeam?.mid ?: "-1").value as? Map<*,*>
-                    val war = when (value) {
+                    val war = when (val value = dataSnapshot.child("currentWars").child(preferencesRepository.currentTeam?.mid ?: "-1").value as? Map<*,*>) {
                         null -> null
                         else -> NewWar(
                             mid = value["mid"].toString(),
@@ -235,7 +234,7 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
         }
     }.flatMapLatest { databaseRepository.deleteWar(war) }
 
-    override fun deleteCurrentWar(war: MKWar) = flow {
+    override fun deleteCurrentWar() = flow {
         database.child("currentWars").child(preferencesRepository.currentTeam?.mid ?: "-1").removeValue()
         emit(Unit)
     }

@@ -12,6 +12,7 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.lifecycleScope
+import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentPopupBinding
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.clicks
@@ -28,7 +29,7 @@ import kotlin.coroutines.CoroutineContext
 
 @FlowPreview
 @ExperimentalCoroutinesApi
-class PopupFragment(val message: String? = null, val positiveText: String? = null, private val negativeText: String = "Retour", val editTextHint: String? = null, val loading: Boolean = false, val playerList: List<UserSelector>? = null, val isFcCode: Boolean = false) : DialogFragment(), CoroutineScope {
+class PopupFragment(val message: Int? = null, val positiveText: Int? = null, private val negativeText: Int = R.string.back, val editTextHint: Any? = null, val loading: Boolean = false, val playerList: List<UserSelector>? = null, val isFcCode: Boolean = false) : DialogFragment(), CoroutineScope {
 
     lateinit var binding: FragmentPopupBinding
 
@@ -50,7 +51,7 @@ class PopupFragment(val message: String? = null, val positiveText: String? = nul
         dialog?.setCancelable(false)
         message?.let {
             binding.popupMessage.isVisible = true
-            binding.popupMessage.text = message
+            binding.popupMessage.text = requireContext().getString(message)
         }
         if (isFcCode) {
             binding.popupEt.addTextChangedListener(FourDigitCardFormatWatcher())
@@ -58,12 +59,15 @@ class PopupFragment(val message: String? = null, val positiveText: String? = nul
             binding.popupEt.filters = arrayOf(InputFilter.LengthFilter(14))
         }
 
-        binding.negativeButton.text = negativeText
-        flowOf(binding.negativeButton.clicks(), dialog.dismiss().filter { negativeText == "Retour" })
+        binding.negativeButton.text = requireContext().getString(negativeText)
+        flowOf(binding.negativeButton.clicks(), dialog.dismiss().filter { negativeText == R.string.back })
             .flattenMerge()
             .bind(onNegativeClick, lifecycleScope)
         editTextHint?.let {
-            binding.popupEt.hint = it
+            when (it) {
+                is Int ->  binding.popupEt.hint = requireContext().getString(it)
+                is String -> binding.popupEt.hint = it
+            }
             binding.popupEt.isVisible = true
             binding.popupEt.requestFocus()
             binding.popupEt.onTextChanged().bind(onTextChange, lifecycleScope)
@@ -76,7 +80,7 @@ class PopupFragment(val message: String? = null, val positiveText: String? = nul
         }
         positiveText?.let {
             binding.positiveButton.isVisible = true
-            binding.positiveButton.text = positiveText
+            binding.positiveButton.text = requireContext().getString(positiveText)
             binding.positiveButton.clicks().bind(onPositiveClick, lifecycleScope)
         }
         if (loading){
@@ -85,9 +89,9 @@ class PopupFragment(val message: String? = null, val positiveText: String? = nul
         }
     }
 
-    fun setLoading(text: String) {
+    fun setLoading(text: Int) {
         binding.progress.isVisible = true
-        binding.popupMessage.text = text
+        binding.popupMessage.text = requireContext().getString(text)
         binding.buttonsLayout.isVisible = false
     }
 
@@ -98,13 +102,13 @@ class PopupFragment(val message: String? = null, val positiveText: String? = nul
         override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
         override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
         override fun afterTextChanged(s: Editable) {
-            if (s.length > 0 && s.length % 5 == 0) {
+            if (s.isNotEmpty() && s.length % 5 == 0) {
                 val c = s[s.length - 1]
                 if (space == c) {
                     s.delete(s.length - 1, s.length)
                 }
             }
-            if (s.length > 0 && s.length % 5 == 0) {
+            if (s.isNotEmpty() && s.length % 5 == 0) {
                 val c = s[s.length - 1]
                 // Only if its a digit where there should be a space we insert a space
                 if (Character.isDigit(c) && TextUtils.split(

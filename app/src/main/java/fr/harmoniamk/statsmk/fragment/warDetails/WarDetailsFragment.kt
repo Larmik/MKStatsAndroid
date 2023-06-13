@@ -115,7 +115,10 @@ class WarDetailsFragment : Fragment(R.layout.fragment_war_details) {
                 .launchIn(lifecycleScope)
             viewModel.sharedPlayerHost
                 .filter { lifecycle.isResumed }
-                .onEach { binding.playerHostTv.text = it }
+                .onEach { binding.playerHostTv.text = String.format(
+                    requireContext().getString(R.string.created_by),
+                    it
+                ) }
                 .launchIn(lifecycleScope)
             viewModel.sharedPenalties
                 .filterNotNull()

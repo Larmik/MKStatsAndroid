@@ -29,7 +29,7 @@ class ProfileViewModel @Inject constructor(private val authenticationRepository:
     private val _sharedEditPicture = MutableSharedFlow<Unit>()
     private val _sharedDisconnectPopup = MutableSharedFlow<Boolean>()
     private val _sharedPictureLoaded = MutableSharedFlow<String?>()
-    private val _showResetPopup = MutableSharedFlow<String>()
+    private val _showResetPopup = MutableSharedFlow<Int>()
     private val _sharedDisconnect = MutableSharedFlow<Unit>()
     private val _sharedTeam = MutableSharedFlow<String?>()
     private val _sharedFriendCode = MutableSharedFlow<String?>()
@@ -37,7 +37,7 @@ class ProfileViewModel @Inject constructor(private val authenticationRepository:
     private val _sharedEditName = MutableSharedFlow<Unit>()
     private val _sharedEditEmail = MutableSharedFlow<Unit>()
     private val _sharedRole = MutableSharedFlow<String?>()
-    private val _sharedLeavePopup = MutableSharedFlow<Pair<String, String?>>()
+    private val _sharedLeavePopup = MutableSharedFlow<Pair<Int, Int?>>()
     private val _sharedCancelLeavePopup = MutableSharedFlow<Unit>()
     private val _sharedTeamLeft = MutableSharedFlow<Unit>()
     private val _sharedLocalPicture = MutableSharedFlow<Int>()
@@ -105,8 +105,8 @@ class ProfileViewModel @Inject constructor(private val authenticationRepository:
             .flatMapLatest { authenticationRepository.resetPassword(authenticationRepository.user?.email.toString()) }
             .map {
                 when (it) {
-                    is ResetPasswordResponse.Success -> "Un email contenant un lien a été envoyé. Une fois changé, le mot de passe prendra effet lors de la prochaine reconnexion."
-                    is ResetPasswordResponse.Error -> "Une erreur est survenue durant l'envoi du mail. Vérifier l'adresse mail et la connexion ou réessayer plus tard"
+                    is ResetPasswordResponse.Success -> R.string.reset_pwd_success
+                    is ResetPasswordResponse.Error -> R.string.reset_pwd_error
                 }
             }.bind(_showResetPopup, viewModelScope)
 
@@ -129,8 +129,8 @@ class ProfileViewModel @Inject constructor(private val authenticationRepository:
             .onEach {
                 val role = authenticationRepository.userRole.firstOrNull() ?: 0
                 when ((it && role >= UserRole.LEADER.ordinal) || role < UserRole.LEADER.ordinal) {
-                    true -> _sharedLeavePopup.emit(Pair("Êtres-vous sûr de voiloir quitter l'équipe ?", "Confirmer"))
-                    else -> _sharedLeavePopup.emit(Pair("Vous ne pouvez pas quitter une équipe dont vous êtes le seul leader. \n \n Vous devez d'abord nommer un autre leader avant de renouveler l'opération.", null))
+                    true -> _sharedLeavePopup.emit(Pair(R.string.leave_team_confirm, R.string.confirm))
+                    else -> _sharedLeavePopup.emit(Pair(R.string.cannot_leave_team, null))
                 }
             }.launchIn(viewModelScope)
     }

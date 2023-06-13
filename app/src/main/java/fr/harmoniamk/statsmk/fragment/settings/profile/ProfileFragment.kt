@@ -32,7 +32,7 @@ class ProfileFragment: Fragment(R.layout.fragment_profile) {
     private val binding: FragmentProfileBinding by viewBinding()
     private val viewModel: ProfileViewModel by viewModels()
     private val _onPictureSave = MutableSharedFlow<String>()
-    private val disconnectPopup by lazy { PopupFragment("Êtes-vous sûr de vouloir vous déconnecter ?", "Se déconnecter") }
+    private val disconnectPopup by lazy { PopupFragment(R.string.logout_confirm, R.string.se_d_connecter) }
     private var isPicking = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -95,6 +95,9 @@ class ProfileFragment: Fragment(R.layout.fragment_profile) {
         viewModel.showResetPopup
             .onEach { text ->
                 val popup = PopupFragment(message = text)
+                popup.onNegativeClick
+                    .onEach { popup.dismiss() }
+                    .launchIn(lifecycleScope)
                 popup.takeIf { !it.isAdded }?.show(childFragmentManager, null)
             }.launchIn(lifecycleScope)
 
@@ -123,8 +126,8 @@ class ProfileFragment: Fragment(R.layout.fragment_profile) {
         viewModel.sharedEditName
             .onEach {
                 val changeNamePopup = PopupFragment(
-                    message = "Modifier le pseudo",
-                    positiveText = "Enregistrer",
+                    message = R.string.edit_nickname,
+                    positiveText = R.string.enregistrer,
                     editTextHint = binding.username.text.toString()
                 )
                 viewModel.bindDialog(false, changeNamePopup.onTextChange, changeNamePopup.onPositiveClick, changeNamePopup.onNegativeClick)
@@ -139,8 +142,8 @@ class ProfileFragment: Fragment(R.layout.fragment_profile) {
         viewModel.sharedEditEmail
             .onEach {
                 val changeEmailPopup = PopupFragment(
-                    message = "Modifier l'adresse mail",
-                    positiveText = "Enregistrer",
+                    message = R.string.edit_mail,
+                    positiveText = R.string.enregistrer,
                     editTextHint = binding.email.text.toString()
                 )
                 viewModel.bindDialog(true, changeEmailPopup.onTextChange, changeEmailPopup.onPositiveClick, changeEmailPopup.onNegativeClick)

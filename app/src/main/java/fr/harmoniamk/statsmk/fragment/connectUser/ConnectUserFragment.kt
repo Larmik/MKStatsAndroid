@@ -30,7 +30,7 @@ class ConnectUserFragment: Fragment(R.layout.fragment_connect_user) {
 
     private val binding: FragmentConnectUserBinding by viewBinding()
     private val viewModel: ConnectUserViewModel by viewModels()
-    private val loadingPopup = PopupFragment("Connexion en cours...", loading = true)
+    private val loadingPopup = PopupFragment(R.string.login_in_progress, loading = true)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

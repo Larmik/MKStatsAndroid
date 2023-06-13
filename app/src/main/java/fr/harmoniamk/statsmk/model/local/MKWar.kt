@@ -13,7 +13,7 @@ import java.util.*
 data class MKWar(val war: NewWar?) : Serializable, Parcelable {
 
     val warTracks = war?.warTracks?.map { MKWarTrack(it) }
-    private val trackPlayed = warTracks?.size ?: 0
+    val trackPlayed = warTracks?.size ?: 0
     val scoreHost = warTracks?.map { it.teamScore }.sum()
     private val scoreHostWithPenalties = scoreHost - war?.penalties?.filter { it.teamId == war.teamHost }?.map { it.amount }.sum()
     private val scoreOpponent = (TOTAL_TRACK_SCORE * trackPlayed) - scoreHost

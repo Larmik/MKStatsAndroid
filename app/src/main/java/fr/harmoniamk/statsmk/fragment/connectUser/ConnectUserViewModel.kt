@@ -3,6 +3,7 @@ package fr.harmoniamk.statsmk.fragment.connectUser
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.firebase.AuthUserResponse
@@ -30,7 +31,7 @@ class ConnectUserViewModel @Inject constructor(
     private val _sharedToast = MutableSharedFlow<String>()
     private val _sharedGoToReset = MutableSharedFlow<Unit>()
     private val _sharedButtonEnabled = MutableSharedFlow<Boolean>()
-    private val _sharedLoading = MutableSharedFlow<String?>()
+    private val _sharedLoading = MutableSharedFlow<Int?>()
 
     val sharedNext = _sharedNext.asSharedFlow()
     val sharedToast = _sharedToast.asSharedFlow()
@@ -70,7 +71,7 @@ class ConnectUserViewModel @Inject constructor(
                         databaseRepository.getTeam(team).firstOrNull()
                 }
                 preferencesRepository.firstLaunch = false
-                _sharedLoading.emit("Récupération des données en cours...")
+                _sharedLoading.emit(R.string.fetch_data)
                 it?.formerTeams?.takeIf { it.isNotEmpty() }?.let {
                     it.forEach {
                         val wars = firebaseRepository.getNewWars(it)

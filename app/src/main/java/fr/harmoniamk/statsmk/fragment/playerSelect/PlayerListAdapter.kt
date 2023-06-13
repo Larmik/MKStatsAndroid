@@ -50,16 +50,17 @@ class PlayerListAdapter(val items: MutableList<UserSelector> = mutableListOf(), 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val item = items[position]
         (holder as? PlayerViewHolder)?.let {
+            val context = it.binding.root.context
             it.binding.playerPos.isVisible = false
             it.binding.name.text = item.user?.name
             when (singleSelection) {
                 false -> {
-                    it.binding.root.background.mutate().setTint(ContextCompat.getColor(it.binding.root.context, if (item.isSelected.isTrue) R.color.harmonia_dark else R.color.transparent_white))
-                    it.binding.name.setTextColor(ContextCompat.getColor(it.binding.root.context, if (item.isSelected.isTrue) R.color.white else R.color.harmonia_dark))
+                    it.binding.root.background.mutate().setTint(ContextCompat.getColor(context, if (item.isSelected.isTrue) R.color.harmonia_dark else R.color.transparent_white))
+                    it.binding.name.setTextColor(ContextCompat.getColor(context, if (item.isSelected.isTrue) R.color.white else R.color.harmonia_dark))
                 }
                 else -> {
-                    it.binding.root.background.mutate().setTint(ContextCompat.getColor(it.binding.root.context, if (position == selectedItemPos) R.color.harmonia_dark else R.color.transparent_white))
-                    it.binding.name.setTextColor(ContextCompat.getColor(it.binding.root.context, if (position == selectedItemPos) R.color.white else R.color.harmonia_dark))
+                    it.binding.root.background.mutate().setTint(ContextCompat.getColor(context, if (position == selectedItemPos) R.color.harmonia_dark else R.color.transparent_white))
+                    it.binding.name.setTextColor(ContextCompat.getColor(context, if (position == selectedItemPos) R.color.white else R.color.harmonia_dark))
                 }
             }
             it.binding.root.clicks()
@@ -67,16 +68,16 @@ class PlayerListAdapter(val items: MutableList<UserSelector> = mutableListOf(), 
                     when (singleSelection) {
                         false -> {
                             item.isSelected = !item.isSelected.isTrue
-                            holder.binding.root.background.mutate().setTint(ContextCompat.getColor(holder.binding.root.context, if (item.isSelected.isTrue) R.color.harmonia_dark else R.color.transparent_white))
-                            holder.binding.name.setTextColor(ContextCompat.getColor(holder.binding.root.context, if (item.isSelected.isTrue) R.color.white else R.color.harmonia_dark))
+                            holder.binding.root.background.mutate().setTint(ContextCompat.getColor(context, if (item.isSelected.isTrue) R.color.harmonia_dark else R.color.transparent_white))
+                            holder.binding.name.setTextColor(ContextCompat.getColor(context, if (item.isSelected.isTrue) R.color.white else R.color.harmonia_dark))
                         }
                         else -> {
                             selectedItemPos = position
-                            if(lastItemSelectedPos == -1)
-                                lastItemSelectedPos = selectedItemPos
+                            lastItemSelectedPos = if(lastItemSelectedPos == -1)
+                                selectedItemPos
                             else {
                                 notifyItemChanged(lastItemSelectedPos)
-                                lastItemSelectedPos = selectedItemPos
+                                selectedItemPos
                             }
                             notifyItemChanged(selectedItemPos)
                         }
@@ -85,9 +86,10 @@ class PlayerListAdapter(val items: MutableList<UserSelector> = mutableListOf(), 
                 }.launchIn(this)
         }
         (holder as? PlayersCategoryViewHolder)?.let {
+            val context = it.binding.root.context
             it.binding.categoryName.text = when (position == 0) {
-                true -> "Equipe"
-                else -> "Allys"
+                true -> context.getString(R.string.equipe)
+                else -> context.getString(R.string.allys)
             }
         }
 

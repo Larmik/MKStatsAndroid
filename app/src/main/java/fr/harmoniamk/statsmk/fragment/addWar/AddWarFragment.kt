@@ -26,7 +26,7 @@ class AddWarFragment : Fragment(R.layout.fragment_add_war) {
 
     private val binding: FragmentAddWarBinding by viewBinding()
     private val viewModel: AddWarViewModel by viewModels()
-    private val popup by lazy { PopupFragment("Création de la war en cours, veuillez patienter", loading = true) }
+    private val popup by lazy { PopupFragment(R.string.creating_war, loading = true) }
 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

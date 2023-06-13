@@ -84,7 +84,10 @@ class IndivStatsFragment : Fragment(R.layout.fragment_indiv_stats) {
             binding.worstTrackview.bind(it.worstPlayerMap, shouldDisplayPosition = true)
             binding.mostPlayedTrackview.bind(it.mostPlayedMap, shouldDisplayPosition = true)
             binding.mostPlayedTeam.text = it.mostPlayedTeam?.teamName
-            binding.mostPlayedTeamTotal.text = it.mostPlayedTeam?.totalPlayedLabel
+            binding.mostPlayedTeamTotal.text = String.format(
+                requireContext().getString(R.string.matchs_played),
+                it.mostPlayedTeam?.totalPlayed?.toString()
+            )
             binding.shockCount.text = it.shockCount.toString()
             it.warStats.highestVictory?.let {
                 binding.noVictory.isVisible = false

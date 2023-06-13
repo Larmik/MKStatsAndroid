@@ -151,10 +151,8 @@ class CurrentWarViewModel @Inject constructor(
                     val newUser = it.apply { this.currentWar = "-1" }
                     firebaseRepository.writeUser(newUser).first()
                 }
-            }.mapNotNull {
-                MKWar(preferencesRepository.currentWar)
             }
-            .flatMapLatest { firebaseRepository.deleteCurrentWar(it) }
+            .flatMapLatest { firebaseRepository.deleteCurrentWar() }
             .bind(_sharedBackToWars, viewModelScope)
 
         onDismiss

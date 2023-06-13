@@ -20,6 +20,7 @@ import fr.harmoniamk.statsmk.extension.safeSubList
 import fr.harmoniamk.statsmk.fragment.addPenalty.AddPenaltyFragment
 import fr.harmoniamk.statsmk.fragment.popup.PopupFragment
 import fr.harmoniamk.statsmk.fragment.subPlayer.SubPlayerFragment
+import fr.harmoniamk.statsmk.model.firebase.TOTAL_TRACKS
 import fr.harmoniamk.statsmk.model.local.MKWar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -33,7 +34,7 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
     private val binding : FragmentCurrentWarBinding by viewBinding()
     private val viewModel: CurrentWarViewModel by viewModels()
     private var war: MKWar? = null
-    private var popup = PopupFragment("Êtes-vous sûr de vouloir supprimer le match ?", "Supprimer")
+    private var popup = PopupFragment(R.string.delete_war_confirm, R.string.delete)
     private var penaltyFragment = AddPenaltyFragment()
     private var subFragment = SubPlayerFragment()
 
@@ -70,7 +71,14 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
                 binding.mainLayout.isVisible = true
                 binding.warTitleTv.text = it.name
                 binding.warDateTv.text = it.war?.createdDate
-                binding.currentWarTv.text = it.displayedState
+                binding.currentWarTv.text = when (it.isOver) {
+                    true -> requireContext().getString(R.string.war_over)
+                    else -> String.format(
+                        requireContext().getString(R.string.war_in_progress),
+                        it.trackPlayed.toString(),
+                        TOTAL_TRACKS.toString()
+                    )
+                }
                 binding.scoreTv.text = it.displayedScore
                 binding.diffScoreTv.text = it.displayedDiff
                 val textColor = when  {
@@ -143,8 +151,8 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
                when (it) {
                     true -> {
                         if (!popup.isAdded && !popupShowing) {
-                            popup = PopupFragment("Êtes-vous sûr de vouloir supprimer le match ?", "Supprimer")
-                            viewModel.bindPopup(onDelete = popup.onPositiveClick.onEach { popup.setLoading("Suppression de la war en cours, veuillez patienter") }, onDismiss = popup.onNegativeClick)
+                            popup = PopupFragment(R.string.delete_war_confirm, R.string.delete)
+                            viewModel.bindPopup(onDelete = popup.onPositiveClick.onEach { popup.setLoading(R.string.delete_war_in_progress) }, onDismiss = popup.onNegativeClick)
                             popup.show(childFragmentManager, null)
                             popupShowing = true
                         }

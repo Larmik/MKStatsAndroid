@@ -31,7 +31,7 @@ class WarFragment : Fragment(R.layout.fragment_war) {
 
     private val binding: FragmentWarBinding by viewBinding()
     private val viewModel: WarViewModel by viewModels()
-    private val popup by lazy { PopupFragment("Création de la war en cours, veuillez patienter", loading = true) }
+    private val popup by lazy { PopupFragment(R.string.creating_war, loading = true) }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -114,7 +114,7 @@ class WarFragment : Fragment(R.layout.fragment_war) {
 
             viewModel.sharedShowUpdatePopup
                 .onEach {
-                    val popup = PopupFragment("L'application nécessite une mise à jour pour fonctionner correctement. \n \n Veuillez mettre à jour l'application pour continuer.", positiveText = "Mettre à jour", negativeText = "Retour")
+                    val popup = PopupFragment(R.string.need_update, positiveText = R.string.update, negativeText = R.string.back)
                     popup.onNegativeClick.onEach { requireActivity().finish() }.launchIn(lifecycleScope)
                     popup.onPositiveClick
                         .onEach {

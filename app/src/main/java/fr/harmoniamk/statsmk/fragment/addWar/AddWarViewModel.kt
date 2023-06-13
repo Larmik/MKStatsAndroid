@@ -4,12 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.extension.bind
-import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
-import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -24,9 +22,9 @@ import javax.inject.Inject
 @HiltViewModel
 class AddWarViewModel @Inject constructor(
     private val firebaseRepository: FirebaseRepositoryInterface,
-    private val databaseRepository: DatabaseRepositoryInterface,
     private val preferencesRepository: PreferencesRepositoryInterface,
-    private val authenticationRepository: AuthenticationRepositoryInterface): ViewModel() {
+    private val authenticationRepository: AuthenticationRepositoryInterface
+): ViewModel() {
 
     private val _sharedStarted = MutableSharedFlow<Unit>()
     private val _sharedTeamSelected = MutableSharedFlow<String?>()

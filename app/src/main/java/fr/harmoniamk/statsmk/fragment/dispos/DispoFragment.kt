@@ -25,7 +25,7 @@ class DispoFragment : Fragment(R.layout.fragment_dispo) {
 
     private val binding: FragmentDispoBinding by viewBinding()
     private val viewModel: DispoViewModel by viewModels()
-    private var popup = PopupFragment(message = "", positiveText = "Valider", editTextHint = "Ajouter une précision...")
+    private var popup = PopupFragment(message = R.string.add_details_dispo_title, positiveText = R.string.valider, editTextHint = R.string.add_details)
     private var popupShowing = false
 
 
@@ -69,7 +69,7 @@ class DispoFragment : Fragment(R.layout.fragment_dispo) {
                 when (it) {
                     true -> {
                         if (!popup.isAdded && !popupShowing) {
-                            popup = PopupFragment(message = "Ajoute un message pour ton équipe !", positiveText = "Valider", editTextHint = "Ajouter une précision...")
+                            popup = PopupFragment(message = R.string.add_details_dispo_title, positiveText = R.string.valider, editTextHint = R.string.add_details)
                             viewModel.bindPopup(onDetailsValidated = popup.onPositiveClick, onDetailsAdded = popup.onTextChange, onDismiss = popup.onNegativeClick)
                             popup.show(childFragmentManager, null)
                             popupShowing = true

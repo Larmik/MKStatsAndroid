@@ -106,6 +106,17 @@ class WarViewModel @Inject constructor(
 
         firebaseRepository.listenToCurrentWar()
             .onEach {
+                if (it == null) {
+                    firebaseRepository.getNewWars(preferencesRepository.currentTeam?.mid ?: "")
+                        .flatMapLatest { it.map { MKWar(it) }.withName(databaseRepository) }
+                        .onEach { databaseRepository.writeWars(it) }
+                        .firstOrNull()
+                        ?.filter { war -> war.war?.teamHost == preferencesRepository.currentTeam?.mid }
+                        ?.sortedByDescending { it.war?.createdDate?.formatToDate() }
+                        ?.safeSubList(0, 5)?.let {
+                            _sharedLastWars.emit(it)
+                        }
+                }
                 currentWar = it.takeIf { networkRepository.networkAvailable }
                 _sharedCurrentWar.emit(currentWar)
             }.launchIn(viewModelScope)

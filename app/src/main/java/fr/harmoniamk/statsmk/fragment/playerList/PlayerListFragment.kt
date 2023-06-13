@@ -87,8 +87,8 @@ class PlayerListFragment : Fragment(R.layout.fragment_player_list) {
         viewModel.sharedEditName
             .onEach { user ->
                 val changeNamePopup = PopupFragment(
-                    message = "Modifier le pseudo",
-                    positiveText = "Enregistrer",
+                    message = R.string.edit_nickname,
+                    positiveText = R.string.enregistrer,
                     editTextHint = user.name
                 )
                 viewModel.bindDialog(user, changeNamePopup.onTextChange, changeNamePopup.onPositiveClick, changeNamePopup.onNegativeClick)

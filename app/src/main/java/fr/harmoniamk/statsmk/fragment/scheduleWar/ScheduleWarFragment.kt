@@ -11,6 +11,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
+import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentScheduleWarBinding
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.extension.onTextChanged
@@ -32,11 +33,11 @@ class ScheduleWarFragment(val dispo: WarDispo): BottomSheetDialogFragment() {
     private val viewModel: ScheduleWarViewModel by viewModels()
     val onDismiss = MutableSharedFlow<Unit>()
     var dialog: BottomSheetDialog? = null
-    var teamHostPopup = PopupFragment(positiveText ="Valider")
-    var opponentHostPopuup = PopupFragment(positiveText= "Valider", editTextHint = "Code ami")
+    private var teamHostPopup = PopupFragment(positiveText = R.string.valider)
+    private var opponentHostPopuup = PopupFragment(positiveText= R.string.valider, editTextHint = R.string.code_ami)
 
-    var teamPopupShowing = false
-    var opponentPopupShowing = false
+    private var teamPopupShowing = false
+    private var opponentPopupShowing = false
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         dialog = super.onCreateDialog(savedInstanceState) as BottomSheetDialog
@@ -89,7 +90,7 @@ class ScheduleWarFragment(val dispo: WarDispo): BottomSheetDialogFragment() {
                 when (it != null) {
                     true -> {
                         if (!teamHostPopup.isAdded && !teamPopupShowing) {
-                            teamHostPopup = PopupFragment(positiveText ="Valider", playerList = it)
+                            teamHostPopup = PopupFragment(positiveText = R.string.valider, playerList = it)
                             viewModel.bindTeamPopup(onPlayerSelected = teamHostPopup.onPlayerSelected, onValidate = teamHostPopup.onPositiveClick, onDismiss = teamHostPopup.onNegativeClick)
                             teamHostPopup.show(childFragmentManager, null)
                             teamPopupShowing = true
@@ -108,7 +109,7 @@ class ScheduleWarFragment(val dispo: WarDispo): BottomSheetDialogFragment() {
                 when (it) {
                     true -> {
                         if (!opponentHostPopuup.isAdded && !opponentPopupShowing) {
-                            opponentHostPopuup = PopupFragment(positiveText= "Valider", editTextHint = "Code ami", isFcCode = true)
+                            opponentHostPopuup = PopupFragment(positiveText= R.string.valider, editTextHint = R.string.code_ami, isFcCode = true)
                             viewModel.bindOpponentPopup(onCodeAdded = opponentHostPopuup.onTextChange, onValidate = opponentHostPopuup.onPositiveClick, onDismiss = opponentHostPopuup.onNegativeClick)
                             opponentHostPopuup.show(childFragmentManager, null)
                             opponentPopupShowing = true

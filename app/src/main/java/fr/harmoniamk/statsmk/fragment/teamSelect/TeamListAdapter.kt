@@ -67,11 +67,11 @@ class TeamListAdapter(val items: MutableList<Team> = mutableListOf()) : Recycler
         holder.binding.root.clicks()
             .onEach {
                 selectedItemPos = position
-                if(lastItemSelectedPos == -1)
-                    lastItemSelectedPos = selectedItemPos
+                lastItemSelectedPos = if(lastItemSelectedPos == -1)
+                    selectedItemPos
                 else {
                     notifyItemChanged(lastItemSelectedPos)
-                    lastItemSelectedPos = selectedItemPos
+                    selectedItemPos
                 }
                 notifyItemChanged(selectedItemPos)
                 _onTeamClick.emit(item)

@@ -31,7 +31,7 @@
     <string name="rddd">Désert Sec-Sec</string>
     <string name="rdp3">Plaine Donut 3</string>
     <string name="rrry">Autodrome Royal</string>
-    <string name="rdkj">Jungle DK</string>
+    <string name="rdkj">Forêt tropicale DK</string>
     <string name="rws">Stade Wario</string>
     <string name="rsl">Royaume Sorbet</string>
     <string name="rmp">Piste Musicale</string>
@@ -73,7 +73,7 @@
     <string name="bmm">Mont festif</string>
     <string name="brr">Route Arc-en-ciel 3DS</string>
     <string name="bad">Virée à Amsterdam</string>
-    <string name="brp">Riverside Park</string>
+    <string name="brp">Riverside Parc</string>
     <string name="bdksc">Pic DK</string>
     <string name="byi">Île de Yoshi</string>
     <string name="bbr">Bousculade à Bangkok</string>
@@ -103,8 +103,8 @@
     <string name="team_war">War en équipe</string>
     <string name="settings">Paramètres</string>
     <string name="stats">Statistiques</string>
-    <string name="mario_kart">MARIO KART</string>
-    <string name="stats_title">Stats</string>
+    <string name="mario_kart" translatable="false">MARIO KART</string>
+    <string name="stats_title" translatable="false">Stats</string>
     <string name="mise_jour_des_donn_es">Mise à jour des données…</string>
     <string name="score">Score:</string>
     <string name="diff">Diff:</string>
@@ -157,18 +157,18 @@
     <string name="modifier_le_tag">Modifier le tag :</string>
     <string name="supprimer_l_quipe">Supprimer l\'équipe</string>
     <string name="position">Position</string>
-    <string name="_1">1.</string>
-    <string name="_2">2.</string>
-    <string name="_3">3.</string>
-    <string name="_4">4.</string>
-    <string name="_5">5.</string>
-    <string name="_6">6.</string>
-    <string name="_7">7.</string>
-    <string name="_8">8.</string>
-    <string name="_9">9.</string>
-    <string name="_10">10.</string>
-    <string name="_11">11.</string>
-    <string name="_12">12.</string>
+    <string name="_1" translatable="false">1.</string>
+    <string name="_2" translatable="false">2.</string>
+    <string name="_3" translatable="false">3.</string>
+    <string name="_4" translatable="false">4.</string>
+    <string name="_5" translatable="false">5.</string>
+    <string name="_6" translatable="false">6.</string>
+    <string name="_7" translatable="false">7.</string>
+    <string name="_8" translatable="false">8.</string>
+    <string name="_9" translatable="false">9.</string>
+    <string name="_10" translatable="false">10.</string>
+    <string name="_11" translatable="false">11.</string>
+    <string name="_12" translatable="false">12.</string>
     <string name="valider">Valider</string>
     <string name="edition_du_circuit">Edition du circuit</string>
     <string name="statistiques_individuelles">Statistiques individuelles</string>
@@ -200,6 +200,7 @@
     <string name="rechercher_un_nom_ou_une_abr_viation">Rechercher un nom ou une abréviation…</string>
     <string name="individuel">Individuel</string>
     <string name="equipe">Equipe</string>
+    <string name="allys">Allys</string>
     <string name="nb_fois_jou_es">Nb. fois jouées</string>
     <string name="nb_fois_gagn_es">Nb. fois gagnées</string>
     <string name="winrate">Winrate</string>
@@ -261,8 +262,8 @@
     <string name="s_lectionnez_les_six_joueurs_de_votre_quipe">Sélectionnez les six joueurs de votre équipe.</string>
     <string name="war_officielle">War officielle</string>
     <string name="d_marrer_la_war">Démarrer la war</string>
-    <string name="plus">+</string>
-    <string name="minus">-</string>
+    <string name="plus" translatable="false">+</string>
+    <string name="minus" translatable="false">-</string>
     <string name="simuler_100_wars">Simuler 100 Wars</string>
     <string name="donn_es_corrompues">Données corrompues</string>
     <string name="position_moyenne">Position moyenne</string>
@@ -274,16 +275,16 @@
     <string name="map_played_placeholder">Joué %s fois</string>
     <string name="track_played_placeholder">Jouée %s fois</string>
     <string name="winrate_placeholder">Winrate : %s </string>
-    <string name="minus_placeholder">-%s</string>
+    <string name="minus_placeholder" translatable="false">-%s</string>
     <string name="hour_placeholder">%sh</string>
     <string name="select_pos_placeholder">Sélectionnez la position de %s</string>
     <string name="track_count_placeholder">Course %s/12</string>
-    <string name="shock_count_placeholder">x%s</string>
+    <string name="shock_count_placeholder" translatable="false">x%s</string>
     <string name="easter_egg">Les voies du seigneur sont impénétrables !</string>
     <string name="notif_dispo_create_title">Ça war ce soir ?</string>
     <string name="notif_dispo_create_message">La %s veut en découdre ! Renseigne tes dispos pour rejoindre la bataille !</string>
     <string name="notif_lu_amost_ok_title">Line Up à venir ?</string>
-    <string name="notif_lu_amost_ok_message">La LU de %s h est presque complète. Renseigne tes dispos si tu ne l\'as pas fait !</string>
+    <string name="notif_lu_amost_ok_message">La LU de %s est presque complète. Renseigne tes dispos si tu ne l\'as pas fait !</string>
     <string name="notif_lu_ok_title">Dispos complètes !</string>
     <string name="notif_lu_ok_message">Les dispos pour %s sont complètes. Il est temps de rechercher un adversaire !</string>
     <string name="notif_war_ok_title">War confirmée !</string>
@@ -293,13 +294,13 @@
     <string name="notif_dispo_reminder_title">N\'oublie pas tes dispos pour %s !</string>
     <string name="notif_dispo_reminder_message">Tu n\'as pas encore indiqué si tu étais disponible pour jouer.</string>
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
-    <string name="can">Can !</string>
-    <string name="can_sub">Can sub !</string>
-    <string name="not_sure">Not sure…</string>
-    <string name="can_t">Can\'t !</string>
+    <string name="can" translatable="false">Can !</string>
+    <string name="can_sub" translatable="false">Can sub !</string>
+    <string name="not_sure" translatable="false">Not sure…</string>
+    <string name="can_t" translatable="false">Can\'t !</string>
     <string name="ajouter_l_adversaire">Ajouter l\'adversaire</string>
     <string name="pr_paration_de_la_war">Préparation de la war</string>
-    <string name="line_up">Line-up :</string>
+    <string name="line_up" translatable="false">Line-up :</string>
     <string name="s_lectionnez_un_adversaire">Sélectionnez un adversaire :</string>
     <string name="valider_la_lu">Valider la LU</string>
     <string name="le_coin_dispos">Le coin dispos</string>
@@ -311,4 +312,42 @@
     <string name="war_programm_e">War programmée</string>
     <string name="host">Host :</string>
     <string name="non_renseign">Non renseigné</string>
+    <string name="dispos_seulement">Dispos seulement</string>
+    <string name="dispos_lus">Dispos + LUs</string>
+    <string name="code_ami">Code ami</string>
+    <string name="maps_restantes">Maps restantes:</string>
+    <string name="auth">Authentification…</string>
+    <string name="retrieving_stats">Récupération des statistiques…</string>
+    <string name="back">Retour</string>
+    <string name="reset_pwd_error">Une erreur est survenue durant l\'envoi du mail. Vérifier l\'adresse mail et la connexion ou réessayer plus tard</string>
+    <string name="reset_pwd_success">Un email contenant un lien a été envoyé. Une fois changé, le mot de passe prendra effet lors de la prochaine reconnexion.</string>
+    <string name="add_details_dispo_title">Ajoute un message pour ton équipe !</string>
+    <string name="continuer">Continuer</string>
+    <string name="war_over">War terminée</string>
+    <string name="war_in_progress">War en cours (%s/%s)</string>
+    <string name="delete">Supprimer</string>
+    <string name="edit_nickname">Modifier le pseudo</string>
+    <string name="edit_mail">Modifier l\'adresse email</string>
+    <string name="confirm">Confirmer</string>
+    <string name="matchs_played">%s matchs joués</string>
+    <string name="fetch_data">Récupération des données…</string>
+    <string name="week_stats">Statiqtiques hebdomadaires</string>
+    <string name="month_stats">Statistiques mensuelles</string>
+    <string name="kick_player">Retirer ce joueur de l\'équipe</string>
+    <string name="created_by">Créée par %s</string>
+    <string name="select_sub">Sélectionnez le joueur entrant</string>
+    <string name="sub_confirm">Remplacer %s</string>
+    <string name="leave_team_confirm">Êtes-vous sûr de vouloir quitter l\'équipe ?</string>
+    <string name="cannot_leave_team">Vous ne pouvez pas quitter une équipe dont vous êtes le seul leader. \n \n Vous devez d\'abord nommer un autre leader avant de renouveler l\'opération.</string>
+    <string name="logout_confirm">Êtes-vous sûr de vouloir vous déconnecter ?</string>
+    <string name="add_details">Ajouter une précision…</string>
+    <string name="delete_war_in_progress">Suppression de la war en cours, veuillez patienter…</string>
+    <string name="delete_war_confirm">Êtes-vous sûr de vouloir supprimer le match ?</string>
+    <string name="login_in_progress">Connexion en cours…</string>
+    <string name="creating_war">Création de la war en cours, veuillez patienter…</string>
+    <string name="creating_player">Création du joueur en cours…</string>
+    <string name="offline_mode">Vous êtes hors connexion. \n \n Vous pourrez toujours consulter les wars et statistiques mais vous n\'aurez pas accès à la war en cours ni à l\'édition des joueurs et équipes.</string>
+    <string name="no_internet">Vous êtes hors connexion. \n \n Veuillez redémarrer l\'application en étant connecté à Internet pour continuer.</string>
+    <string name="update">Mettre à jour</string>
+    <string name="need_update">L\'application nécessite une mise à jour pour fonctionner correctement. \n \n Veuillez mettre à jour l\'application pour continuer.</string>
 </resources>

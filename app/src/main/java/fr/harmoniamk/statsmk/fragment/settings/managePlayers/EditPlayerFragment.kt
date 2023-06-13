@@ -49,11 +49,11 @@ class EditPlayerFragment(val user: User? = null) : BottomSheetDialogFragment() {
                 .onEach {
                     when (it) {
                         true -> {
-                            binding.leaveTeamBtn.text = "Retirer ce joueur de l'équipe"
+                            binding.leaveTeamBtn.text = requireContext().getString(R.string.kick_player)
                             binding.leaveTeamBtn.setTextColor(ContextCompat.getColor(requireContext(), R.color.mario))
                         }
                         else ->  {
-                            binding.leaveTeamBtn.text = "Intégrer ce joueur à l'équipe"
+                            binding.leaveTeamBtn.text = requireContext().getString(R.string.int_grer_ce_joueur_l_quipe)
                             binding.leaveTeamBtn.setTextColor(ContextCompat.getColor(requireContext(), R.color.luigi))
                         }
                     }

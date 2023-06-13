@@ -6,7 +6,7 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class WarDispo(
     val dispoHour: Int,
-    var dispoPlayers: List<PlayerDispo>,
+    var dispoPlayers: List<PlayerDispo>? = null,
     var opponentId: String? = null,
     var lineUp: List<String>? = null,
     var details: String? = null,
@@ -17,7 +17,7 @@ data class WarDispo(
     var hostName: String? = null
 
     override fun toString(): String {
-        return "WarDispo($dispoHour, $dispoPlayers, $opponentName, $opponentId, $lineUp, $details, $host)"
+        return "WarDispo($dispoHour, $dispoPlayers,$opponentId, $lineUp, $details, $host)"
     }
 }
 
@@ -27,6 +27,9 @@ data class PlayerDispo(
     val dispo: Int
 ): Parcelable {
     var playerNames: List<String>? = null
+    override fun toString(): String {
+        return "PlayerDispo($players, $dispo)"
+    }
 }
 
 enum class Dispo {

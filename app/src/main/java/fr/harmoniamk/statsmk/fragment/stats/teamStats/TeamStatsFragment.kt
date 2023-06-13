@@ -70,7 +70,10 @@ class TeamStatsFragment : Fragment(R.layout.fragment_team_stats) {
             binding.highestVictory.bind(it.warStats.highestVictory)
             binding.highestDefeat.bind(it.warStats.loudestDefeat)
             binding.mostPlayedTeam.text = it.mostPlayedTeam?.teamName
-            binding.mostPlayedTeamTotal.text = it.mostPlayedTeam?.totalPlayedLabel
+            binding.mostPlayedTeamTotal.text = String.format(
+                requireContext().getString(R.string.matchs_played),
+                it.mostPlayedTeam?.totalPlayed?.toString()
+            )
             binding.mostDefeatedTeam.text = it.mostDefeatedTeam?.teamName
             binding.mostDefeatedTeamTotal.text = String.format(requireContext().getString(R.string.victory_placeholder), it.mostDefeatedTeam?.totalPlayed)
             binding.lessDefeatedTeam.text = it.lessDefeatedTeam?.teamName

@@ -57,7 +57,6 @@ data class TrackStats(
 @Parcelize
 class TeamStats(val team: Team?, val totalPlayed: Int?): Parcelable {
     val teamName = team?.name
-    val totalPlayedLabel = "$totalPlayed matchs joués"
 }
 
 @Parcelize

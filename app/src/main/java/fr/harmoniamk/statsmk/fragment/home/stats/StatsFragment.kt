@@ -2,7 +2,6 @@ package fr.harmoniamk.statsmk.fragment.home.stats
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -22,7 +21,7 @@ import kotlinx.coroutines.flow.onEach
 @FlowPreview
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
-class StatsFragment() : Fragment(R.layout.fragment_stats) {
+class StatsFragment : Fragment(R.layout.fragment_stats) {
 
     private val binding: FragmentStatsBinding by viewBinding()
     private val viewModel: StatsViewModel by viewModels()

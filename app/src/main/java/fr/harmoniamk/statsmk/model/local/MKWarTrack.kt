@@ -18,9 +18,6 @@ data class MKWarTrack(val track: NewWarTrack?): Parcelable {
     val teamScore: Int
         get() = track?.warPositions?.map { it.position.positionToPoints() }.sum()
 
-    val isOver: Boolean
-        get() = track?.warPositions?.size == 6
-
     fun hasPlayer(playerId: String?) = track?.warPositions?.any { pos -> pos.playerId == playerId }.isTrue
 
     private val opponentScore: Int

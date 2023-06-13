@@ -77,7 +77,7 @@ class ScheduleWarViewModel @Inject constructor(private val databaseRepository: D
         flowOf(dispo)
             .map {
                 val list = mutableListOf<Pair<String, Int>>()
-                it.dispoPlayers.forEach {
+                it.dispoPlayers?.forEach {
                     when  {
                         it.dispo == 0 -> list.addAll(it.players?.map { Pair(it, 0) }.orEmpty())
                         it.dispo == 1 && list.size < 6 -> list.addAll(it.players?.map { Pair(it, 1) }.orEmpty())

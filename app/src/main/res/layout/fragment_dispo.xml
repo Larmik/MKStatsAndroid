@@ -42,14 +42,14 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:checked="true"
-            android:text="Dispos seulement"
+            android:text="@string/dispos_seulement"
             android:id="@+id/radio_dispos_only"/>
 
         <RadioButton
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="Dispos + LUs"
+            android:text="@string/dispos_lus"
             android:id="@+id/radio_dispos_lu"/>
 
     </RadioGroup>

@@ -125,7 +125,7 @@ class WarTrackResultViewModel @Inject constructor(
 
                     if (MKWar(war).isOver) {
                         firebaseRepository.writeNewWar(war).first()
-                        firebaseRepository.deleteCurrentWar(MKWar(war)).first()
+                        firebaseRepository.deleteCurrentWar().first()
                         val mkWar = listOf(MKWar(war)).withName(databaseRepository).first()
                         mkWar.singleOrNull()?.let { databaseRepository.writeWar(it).first() }
                         databaseRepository.getUsers().first().filter { it.currentWar == war.mid }.forEach {

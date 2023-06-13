@@ -3,6 +3,7 @@ package fr.harmoniamk.statsmk.fragment.addUser
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.withName
@@ -32,7 +33,7 @@ class AddUserViewModel @Inject constructor(
     private val _sharedGoToConnect = MutableSharedFlow<Unit>()
     private val _sharedButtonEnabled = MutableSharedFlow<Boolean>()
     private val _sharedLoading = MutableSharedFlow<Boolean>()
-    private val _sharedLoadingMessage = MutableSharedFlow<String>()
+    private val _sharedLoadingMessage = MutableSharedFlow<Int>()
     val sharedButtonEnabled = _sharedButtonEnabled.asSharedFlow()
     val sharedNext = _sharedNext.asSharedFlow()
     val sharedLoading = _sharedLoading.asSharedFlow()
@@ -72,7 +73,7 @@ class AddUserViewModel @Inject constructor(
             .flatMapLatest { authenticationRepository.updateProfile(it, "https://firebasestorage.googleapis.com/v0/b/stats-mk.appspot.com/o/mk_stats_logo.png?alt=media&token=930c6fdb-9e42-4b23-a9de-3c069d2f982b") }
             .mapNotNull { authenticationRepository.user }
             .map { fbUser ->
-                _sharedLoadingMessage.emit("Récupération des données...")
+                _sharedLoadingMessage.emit(R.string.fetch_data)
                 var finalUser: User? = null
                 databaseRepository.getUsers().firstOrNull()?.singleOrNull { user ->
                     user.name?.toLowerCase(Locale.getDefault())

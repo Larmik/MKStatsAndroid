@@ -1,3 +1,5 @@
+@file:Suppress("EnumEntryName")
+
 package fr.harmoniamk.statsmk.enums
 
 import fr.harmoniamk.statsmk.R

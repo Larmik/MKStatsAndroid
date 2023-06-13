@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
+import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentEditWarPositionsBinding
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.clicks
@@ -65,7 +66,10 @@ class EditWarPositionsFragment(val newWar: NewWar, val index: Int = 0) : BottomS
             }.launchIn(lifecycleScope)
 
         viewModel.sharedPlayerLabel
-            .onEach { binding.posTitle.text = "Sélectionnez la position de $it" }
+            .onEach { binding.posTitle.text = String.format(
+                requireContext().getString(R.string.select_pos_placeholder),
+                it
+            ) }
             .launchIn(lifecycleScope)
     }
 

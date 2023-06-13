@@ -33,12 +33,12 @@ class DispoAdapter(val list: MutableList<Pair<WarDispo, Boolean>> = mutableListO
     @ExperimentalCoroutinesApi
     inner class DispoViewHolder(val binding: DispoItemBinding): RecyclerView.ViewHolder(binding.root) {
         fun bind(item: Pair<WarDispo, Boolean>) {
-            val playersCan = item.first.dispoPlayers.singleOrNull { it.dispo == Dispo.CAN.ordinal }?.playerNames.orEmpty()
-            val playersCanSub = item.first.dispoPlayers.singleOrNull { it.dispo == Dispo.CAN_SUB.ordinal }?.playerNames.orEmpty()
+            val playersCan = item.first.dispoPlayers?.singleOrNull { it.dispo == Dispo.CAN.ordinal }?.playerNames.orEmpty()
+            val playersCanSub = item.first.dispoPlayers?.singleOrNull { it.dispo == Dispo.CAN_SUB.ordinal }?.playerNames.orEmpty()
             val canAdapter = PlayerDispoAdapter(playersCan)
             val canSubAdapter = PlayerDispoAdapter(playersCanSub)
-            val notSureAdapter = PlayerDispoAdapter(item.first.dispoPlayers.singleOrNull { it.dispo == Dispo.NOT_SURE.ordinal }?.playerNames.orEmpty())
-            val cantAdapter = PlayerDispoAdapter(item.first.dispoPlayers.singleOrNull { it.dispo == Dispo.CANT.ordinal }?.playerNames.orEmpty())
+            val notSureAdapter = PlayerDispoAdapter(item.first.dispoPlayers?.singleOrNull { it.dispo == Dispo.NOT_SURE.ordinal }?.playerNames.orEmpty())
+            val cantAdapter = PlayerDispoAdapter(item.first.dispoPlayers?.singleOrNull { it.dispo == Dispo.CANT.ordinal }?.playerNames.orEmpty())
             val firstHalfLuAdapter = ScheduleLineUpAdapter(nameList = item.first.lineupNames?.safeSubList(0, 3))
             val secondHalfLuAdapter = ScheduleLineUpAdapter(nameList = item.first.lineupNames?.safeSubList(3, 6))
             binding.hour.text = String.format(binding.root.context.getString(R.string.hour_placeholder), item.first.dispoHour.toString())

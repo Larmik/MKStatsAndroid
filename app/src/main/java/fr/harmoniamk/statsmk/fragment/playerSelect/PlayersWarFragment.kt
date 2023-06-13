@@ -8,16 +8,16 @@ import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
-import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.databinding.FragmentWarPlayersBinding
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.checks
 import fr.harmoniamk.statsmk.extension.clicks
-import fr.harmoniamk.statsmk.fragment.teamSelect.WarTeamFragment
-import fr.harmoniamk.statsmk.model.firebase.Team
+import fr.harmoniamk.statsmk.model.firebase.User
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 @FlowPreview
 @ExperimentalCoroutinesApi

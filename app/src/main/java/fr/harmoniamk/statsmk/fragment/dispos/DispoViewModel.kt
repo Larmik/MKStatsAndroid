@@ -19,7 +19,7 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class DispoViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val notificationsRepository: NotificationsRepositoryInterface) : ViewModel() {
+class DispoViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, preferencesRepository: PreferencesRepositoryInterface, private val notificationsRepository: NotificationsRepositoryInterface) : ViewModel() {
 
     private val _sharedDispos = MutableSharedFlow<List<Pair<WarDispo, Boolean>>>()
     private val _sharedPopupShowing = MutableSharedFlow<Boolean>()
@@ -34,10 +34,38 @@ class DispoViewModel @Inject constructor(private val firebaseRepository: Firebas
     private val dispos = mutableListOf<WarDispo>()
     val teamId = preferencesRepository.currentTeam?.mid ?: ""
 
-    var dispoDetails: String? = null
+    private var dispoDetails: String? = null
 
     fun bind(onDispoSelected: Flow<Pair<WarDispo, Dispo>>, onClickWarSchedule: Flow<WarDispo>, onClickOtherPlayer: Flow<WarDispo>, onPopup: Flow<Unit>) {
-       refresh()
+        firebaseRepository.getDispos()
+            .map {
+                val finalDispos = mutableListOf<WarDispo>()
+                it.forEach { dispo ->
+                    val playerDispoList = mutableListOf<PlayerDispo>()
+                    dispo.dispoPlayers?.forEach {
+                        val listName = mutableListOf<String?>()
+                        it.players?.forEach {
+                            listName.add(databaseRepository.getUser(it.takeIf{it != "-1"}).firstOrNull()?.name)
+                        }
+                        playerDispoList.add(it.apply { this.playerNames = listName.filterNotNull() })
+                    }
+                    dispo.withLineUpAndOpponent(databaseRepository).firstOrNull()?.let {
+                        finalDispos.add(it.apply {
+                            this.dispoPlayers = playerDispoList
+                        })
+                    }
+                }
+                finalDispos
+            }
+            .onEach {
+                dispos.clear()
+                dispos.addAll(it)
+            }
+            .map {
+                val role = authenticationRepository.userRole.firstOrNull() ?: 0
+                it.map { Pair(it, role >= UserRole.ADMIN.ordinal) }
+            }
+            .bind(_sharedDispos, viewModelScope)
 
         onPopup
             .flatMapLatest {  authenticationRepository.userRole }
@@ -76,7 +104,7 @@ class DispoViewModel @Inject constructor(private val firebaseRepository: Firebas
             .map { pair ->
                 val warDispo = pair.first
                 val playerDispos = mutableListOf<PlayerDispo>()
-                warDispo.dispoPlayers.forEach { playerDispo ->
+                warDispo.dispoPlayers?.forEach { playerDispo ->
                     val finalPlayers = mutableListOf<String?>()
                     finalPlayers.addAll(playerDispo.players?.filter { it != authenticationRepository.user?.uid || warDispo.dispoHour != pair.first.dispoHour}.orEmpty())
                     if (warDispo.dispoHour == pair.first.dispoHour) {
@@ -128,36 +156,4 @@ class DispoViewModel @Inject constructor(private val firebaseRepository: Firebas
         emit(Unit)
     }
 
-    private fun refresh() {
-        firebaseRepository.getDispos()
-            .map {
-                val finalDispos = mutableListOf<WarDispo>()
-                it.forEach { dispo ->
-                    val playerDispoList = mutableListOf<PlayerDispo>()
-                    dispo.dispoPlayers.forEach {
-                        val listName = mutableListOf<String?>()
-                        it.players?.forEach {
-                            listName.add(databaseRepository.getUser(it.takeIf{it != "-1"}).firstOrNull()?.name)
-                        }
-                        playerDispoList.add(it.apply { this.playerNames = listName.filterNotNull() })
-                    }
-                    dispo.withLineUpAndOpponent(databaseRepository).firstOrNull()?.let {
-                        finalDispos.add(it.apply {
-                            this.dispoPlayers = playerDispoList
-                        })
-                    }
-
-                }
-                finalDispos
-            }
-            .onEach {
-                dispos.clear()
-                dispos.addAll(it)
-            }
-            .map {
-                val role = authenticationRepository.userRole.firstOrNull() ?: 0
-                it.map { Pair(it, role >= UserRole.ADMIN.ordinal) }
-            }
-            .bind(_sharedDispos, viewModelScope)
-    }
 }

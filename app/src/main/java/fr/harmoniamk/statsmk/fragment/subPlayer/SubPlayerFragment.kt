@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
+import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentSubPlayerBinding
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.clicks
@@ -62,8 +63,11 @@ class SubPlayerFragment : BottomSheetDialogFragment() {
             .onEach {
                 binding.currentPlayerLayout.isVisible = false
                 binding.newPlayerLayout.isVisible = true
-                binding.subLabel.text = "Sélectionnez le joueur entrant"
-                binding.subPlayersBtn.text = "Remplacer ${it.name}"
+                binding.subLabel.text = requireContext().getString(R.string.select_sub)
+                binding.subPlayersBtn.text = String.format(
+                    requireContext().getString(R.string.sub_confirm),
+                    it.name
+                )
             }.launchIn(lifecycleScope)
 
         viewModel.sharedDismissDialog.bind(sharedDismiss, lifecycleScope)

@@ -3,6 +3,7 @@ package fr.harmoniamk.statsmk.activity.splash
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.enums.WelcomeScreen
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.withName
@@ -31,7 +32,7 @@ class SplashScreenViewModel @Inject constructor(
     private val _sharedWelcomeScreen = MutableSharedFlow<WelcomeScreen>()
     private val  _sharedShowPopup = MutableSharedFlow<Pair<WelcomeScreen, List<MKWar>>>()
     private val  _sharedShowUpdatePopup = MutableSharedFlow<Unit>()
-    private val _sharedLoadingVisible = MutableSharedFlow<String>()
+    private val _sharedLoadingVisible = MutableSharedFlow<Int>()
 
     val sharedWelcomeScreen = _sharedWelcomeScreen.asSharedFlow()
     val sharedShowPopup = _sharedShowPopup.asSharedFlow()
@@ -69,7 +70,7 @@ class SplashScreenViewModel @Inject constructor(
             .flatMapLatest { databaseRepository.writeTeams(it) }
             .flatMapLatest { databaseRepository.clearWars() }
             .onEach {
-                _sharedLoadingVisible.emit("Authentification...")
+                _sharedLoadingVisible.emit(R.string.auth)
                 flowOf(preferencesRepository.authEmail)
                     .filterNotNull()
                     .flatMapLatest {
@@ -87,7 +88,7 @@ class SplashScreenViewModel @Inject constructor(
                         }
                     }
                     .onEach {
-                        _sharedLoadingVisible.emit("Récupération des statistiques...")
+                        _sharedLoadingVisible.emit(R.string.retrieving_stats)
                         preferencesRepository.currentTeam?.mid?.let {
                             val wars = firebaseRepository.getNewWars(it)
                                 .map { list -> list.map {  MKWar(it) } }

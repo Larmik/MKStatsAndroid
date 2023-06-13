@@ -72,7 +72,10 @@ class PeriodicStatsFragment : Fragment(R.layout.fragment_periodic_stats) {
             binding.highestVictory.bind(it.warStats.highestVictory)
             binding.highestDefeat.bind(it.warStats.loudestDefeat)
             binding.mostPlayedTeam.text = it.mostPlayedTeam?.teamName
-            binding.mostPlayedTeamTotal.text = it.mostPlayedTeam?.totalPlayedLabel
+            binding.mostPlayedTeamTotal.text = String.format(
+                requireContext().getString(R.string.matchs_played),
+                it.mostPlayedTeam?.totalPlayed?.toString()
+            )
             binding.mapsWon.text = it.mapsWon
             it.warStats.highestVictory?.let {
                 binding.noVictory.isVisible = false
@@ -123,8 +126,8 @@ class PeriodicStatsFragment : Fragment(R.layout.fragment_periodic_stats) {
             .onEach {
                 isWeek = it
                 binding.title.text = when (it) {
-                    true -> "Statistiques hebdomadaires"
-                    else -> "Statistiques mensuelles"
+                    true -> requireContext().getString(R.string.week_stats)
+                    else -> requireContext().getString(R.string.month_stats)
                 }
                 binding.weekBtn.setBackgroundColor(ContextCompat.getColor(requireContext(),
                     when (it) {
