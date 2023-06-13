@@ -10,15 +10,19 @@ import fr.harmoniamk.statsmk.extension.withFullStats
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
+import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import java.util.*
 import javax.inject.Inject
 
+@FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
 class PlayerRankingViewModel @Inject constructor(
-    private val databaseRepository: DatabaseRepositoryInterface
+    private val databaseRepository: DatabaseRepositoryInterface,
+    private val preferencesRepository: PreferencesRepositoryInterface
 ) : ViewModel()  {
 
     private val _sharedUserList = MutableSharedFlow<List<PlayerRankingItemViewModel>>()
@@ -34,10 +38,12 @@ class PlayerRankingViewModel @Inject constructor(
     private val warList = mutableListOf<MKWar>()
 
 
-    fun bind(list: List<User>, onPlayerClick: Flow<PlayerRankingItemViewModel>, onSortClick: Flow<PlayerSortType>, onSearch: Flow<String>) {
+    fun bind(onPlayerClick: Flow<PlayerRankingItemViewModel>, onSortClick: Flow<PlayerSortType>, onSearch: Flow<String>) {
         databaseRepository.getWars()
             .onEach { warList.addAll(it) }
-            .mapNotNull { list.sortedBy { it.name } }
+            .flatMapLatest { databaseRepository.getUsers() }
+            .map { it.filter { user -> user.team == preferencesRepository.currentTeam?.mid } }
+            .mapNotNull { it.sortedBy { it.name } }
             .onEach {
                 val temp = mutableListOf<PlayerRankingItemViewModel>()
                 it.forEach { user ->

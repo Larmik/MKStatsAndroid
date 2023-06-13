@@ -47,11 +47,11 @@ class StatsFragment : Fragment(R.layout.fragment_stats) {
             .launchIn(lifecycleScope)
         viewModel.sharedPlayers
             .filter { findNavController().currentDestination?.id == R.id.homeFragment }
-            .onEach { findNavController().navigate(HomeFragmentDirections.toPlayerRanking(it.first.toTypedArray())) }
+            .onEach { findNavController().navigate(HomeFragmentDirections.toPlayerRanking()) }
             .launchIn(lifecycleScope)
         viewModel.sharedOpponents
             .filter { findNavController().currentDestination?.id == R.id.homeFragment }
-            .onEach { findNavController().navigate(HomeFragmentDirections.toOpponentRanking(it.first.toTypedArray())) }
+            .onEach { findNavController().navigate(HomeFragmentDirections.toOpponentRanking()) }
             .launchIn(lifecycleScope)
     }
 

@@ -30,16 +30,9 @@ class OpponentRankingFragment : Fragment(R.layout.fragment_opponent_ranking) {
 
     private val binding: FragmentOpponentRankingBinding by viewBinding()
     private val viewModel: OpponentRankingViewModel by viewModels()
-    private val teams = mutableListOf<Team>()
-    private val wars = mutableListOf<MKWar>()
+
     private var isIndiv = true
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        (arguments?.get("teams") as? Array<out Team>)?.let {
-            teams.addAll(it)
-        }
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -50,7 +43,6 @@ class OpponentRankingFragment : Fragment(R.layout.fragment_opponent_ranking) {
         }
         binding.mostPlayedRv.adapter = adapter
         viewModel.bind(
-            list = teams,
             onTeamClick = adapter.sharedTeamSelected,
             onSortClick = flowOf(
                 binding.nameSortButton.clicks().map { PlayerSortType.NAME },

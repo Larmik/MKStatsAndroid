@@ -110,13 +110,7 @@
             app:enterAnim="@anim/enter_from_right"
             app:exitAnim="@anim/exit_to_left"
             app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right">
-
-            <argument
-                android:name="players"
-                app:argType="fr.harmoniamk.statsmk.model.firebase.User[]"/>
-
-        </action>
+            app:popExitAnim="@anim/exit_to_right"/>
 
         <action
             android:id="@+id/to_opponent_ranking"
@@ -124,13 +118,7 @@
             app:enterAnim="@anim/enter_from_right"
             app:exitAnim="@anim/exit_to_left"
             app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right">
-
-            <argument
-                android:name="teams"
-                app:argType="fr.harmoniamk.statsmk.model.firebase.Team[]"/>
-
-        </action>
+            app:popExitAnim="@anim/exit_to_right"/>
 
         <action
             android:id="@+id/to_map_ranking"

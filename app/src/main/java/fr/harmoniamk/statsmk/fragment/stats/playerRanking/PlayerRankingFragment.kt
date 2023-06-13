@@ -29,21 +29,13 @@ class PlayerRankingFragment : Fragment(R.layout.fragment_player_ranking) {
 
     private val binding: FragmentPlayerRankingBinding by viewBinding()
     private val viewModel: PlayerRankingViewModel by viewModels()
-    private val players = mutableListOf<User>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        (arguments?.get("players") as? Array<out User>)?.let {
-            players.addAll(it)
-        }
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val adapter = PlayerRankingAdapter()
         binding.mostPlayedRv.adapter = adapter
         viewModel.bind(
-            list = players,
             onPlayerClick = adapter.sharedUserSelected,
             onSortClick = flowOf(
                 binding.nameSortButton.clicks().map { PlayerSortType.NAME },
