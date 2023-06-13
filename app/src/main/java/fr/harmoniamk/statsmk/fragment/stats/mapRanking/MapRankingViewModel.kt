@@ -15,6 +15,7 @@ import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import fr.harmoniamk.statsmk.model.local.TrackStats
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
+import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -28,7 +29,8 @@ import javax.inject.Inject
 @HiltViewModel
 class MapRankingViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepositoryInterface,
-    private val authenticationRepository: AuthenticationRepositoryInterface
+    private val authenticationRepository: AuthenticationRepositoryInterface,
+    private val databaseRepository: DatabaseRepositoryInterface
 ) : ViewModel() {
 
 
@@ -46,8 +48,8 @@ class MapRankingViewModel @Inject constructor(
     private val temp = mutableListOf<NewWarTrack>()
     private val itemsVM = mutableListOf<TrackStats>()
 
-    fun bind(warList: List<MKWar>, onTrackClick: Flow<Int>, onSortClick: Flow<TrackSortType>, onSearch: Flow<String>, onIndivStatsSelected: Flow<Boolean>) {
-        refresh(warList, preferencesRepository.indivEnabled)
+    fun bind(onTrackClick: Flow<Int>, onSortClick: Flow<TrackSortType>, onSearch: Flow<String>, onIndivStatsSelected: Flow<Boolean>) {
+        refresh(preferencesRepository.indivEnabled)
         onTrackClick
             .map { Pair(authenticationRepository.user?.uid, it) }
             .bind(_sharedGoToStats, viewModelScope)
@@ -73,7 +75,7 @@ class MapRankingViewModel @Inject constructor(
         onIndivStatsSelected
             .onEach { indivEnabled ->
                 _sharedIndivStatsEnabled.emit(indivEnabled)
-                refresh(warList, indivEnabled)
+                refresh(indivEnabled)
                 preferencesRepository.indivEnabled = indivEnabled
             }.launchIn(viewModelScope)
 
@@ -110,9 +112,8 @@ class MapRankingViewModel @Inject constructor(
                 .sortedByDescending { it.second.map { MKWarTrack(it).diffScore }.sum() / it.second.size }
     }
 
-    private fun refresh(warList: List<MKWar>, indivEnabled: Boolean) {
-        flowOf(warList)
-            .onEach { delay(100) }
+    private fun refresh(indivEnabled: Boolean) {
+        databaseRepository.getWars()
             .filter {
                 (!onlyIndiv && it.mapNotNull { war -> war.war?.teamHost}.contains(preferencesRepository.currentTeam?.mid)
                         || it.map {war -> war.war?.teamOpponent}.contains(preferencesRepository.currentTeam?.mid))

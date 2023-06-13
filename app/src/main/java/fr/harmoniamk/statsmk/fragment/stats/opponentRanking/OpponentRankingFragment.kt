@@ -39,9 +39,6 @@ class OpponentRankingFragment : Fragment(R.layout.fragment_opponent_ranking) {
         (arguments?.get("teams") as? Array<out Team>)?.let {
             teams.addAll(it)
         }
-        (arguments?.get("wars") as? Array<out MKWar>)?.let {
-            wars.addAll(it)
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -54,7 +51,6 @@ class OpponentRankingFragment : Fragment(R.layout.fragment_opponent_ranking) {
         binding.mostPlayedRv.adapter = adapter
         viewModel.bind(
             list = teams,
-            warList = wars,
             onTeamClick = adapter.sharedTeamSelected,
             onSortClick = flowOf(
                 binding.nameSortButton.clicks().map { PlayerSortType.NAME },

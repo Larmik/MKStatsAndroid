@@ -30,15 +30,11 @@ class PlayerRankingFragment : Fragment(R.layout.fragment_player_ranking) {
     private val binding: FragmentPlayerRankingBinding by viewBinding()
     private val viewModel: PlayerRankingViewModel by viewModels()
     private val players = mutableListOf<User>()
-    private val wars = mutableListOf<MKWar>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         (arguments?.get("players") as? Array<out User>)?.let {
             players.addAll(it)
-        }
-        (arguments?.get("wars") as? Array<out MKWar>)?.let {
-            wars.addAll(it)
         }
     }
 
@@ -48,7 +44,6 @@ class PlayerRankingFragment : Fragment(R.layout.fragment_player_ranking) {
         binding.mostPlayedRv.adapter = adapter
         viewModel.bind(
             list = players,
-            warList = wars,
             onPlayerClick = adapter.sharedUserSelected,
             onSortClick = flowOf(
                 binding.nameSortButton.clicks().map { PlayerSortType.NAME },
@@ -64,7 +59,7 @@ class PlayerRankingFragment : Fragment(R.layout.fragment_player_ranking) {
 
         viewModel.sharedGoToStats
             .filter { findNavController().currentDestination?.id == R.id.playerRankingFragment }
-            .onEach { findNavController().navigate(PlayerRankingFragmentDirections.toPlayerStats(it.first, it.second.toTypedArray())) }
+            .onEach { findNavController().navigate(PlayerRankingFragmentDirections.toPlayerStats(it.first)) }
             .launchIn(lifecycleScope)
         viewModel.sharedSortTypeSelected
             .onEach {

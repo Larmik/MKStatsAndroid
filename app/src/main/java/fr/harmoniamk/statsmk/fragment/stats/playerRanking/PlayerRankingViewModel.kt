@@ -31,15 +31,17 @@ class PlayerRankingViewModel @Inject constructor(
     val sharedSortTypeSelected = _sharedSortTypeSelected.asSharedFlow()
     val sharedLoading = _sharedLoading.asSharedFlow()
     private val itemsVM = mutableListOf<PlayerRankingItemViewModel>()
+    private val warList = mutableListOf<MKWar>()
 
 
-    fun bind(list: List<User>, warList: List<MKWar>, onPlayerClick: Flow<PlayerRankingItemViewModel>, onSortClick: Flow<PlayerSortType>, onSearch: Flow<String>) {
-        flowOf(list)
-            .map { it.sortedBy { it.name } }
+    fun bind(list: List<User>, onPlayerClick: Flow<PlayerRankingItemViewModel>, onSortClick: Flow<PlayerSortType>, onSearch: Flow<String>) {
+        databaseRepository.getWars()
+            .onEach { warList.addAll(it) }
+            .mapNotNull { list.sortedBy { it.name } }
             .onEach {
                 val temp = mutableListOf<PlayerRankingItemViewModel>()
                 it.forEach { user ->
-                    val stats = warList.withFullStats(databaseRepository, userId = user.mid, isIndiv = true).first()
+                    val stats = warList.filter { war -> war.hasPlayer(user.mid) }.withFullStats(databaseRepository, userId = user.mid, isIndiv = true).first()
                     temp.add(PlayerRankingItemViewModel(user, stats))
                 }
                 itemsVM.clear()

@@ -46,7 +46,6 @@ class PeriodicStatsViewModel @Inject constructor(
     private var lessDefeatedTeam: OpponentRankingItemViewModel? = null
 
     fun bind(
-        list: List<MKWar>?,
         onBestClick: Flow<Unit>,
         onWorstClick: Flow<Unit>,
         onMostPlayedClick: Flow<Unit>,
@@ -58,7 +57,7 @@ class PeriodicStatsViewModel @Inject constructor(
         onLessDefeatedTeamClick: Flow<Unit>
     ) {
 
-        refresh(list, hebdo = _sharedWeekStatsEnabled.value)
+        refresh(hebdo = _sharedWeekStatsEnabled.value)
         flowOf(
             onBestClick.mapNotNull { bestMap },
             onWorstClick.mapNotNull { worstMap },
@@ -79,22 +78,22 @@ class PeriodicStatsViewModel @Inject constructor(
 
         onWeekStatsSelected.onEach { weekEnabled ->
             _sharedWeekStatsEnabled.emit(weekEnabled)
-            refresh(list, weekEnabled)
+            refresh(weekEnabled)
         }.launchIn(viewModelScope)
     }
 
-    private fun refresh(warList: List<MKWar>?, hebdo: Boolean) {
-        flowOf(preferencesRepository.currentTeam?.mid)
-            .filterNotNull()
-            .mapNotNull { warList }
-            .filter { it.mapNotNull { war -> war.war?.teamHost}.contains(preferencesRepository.currentTeam?.mid)
-                    || it.map {war -> war.war?.teamOpponent}.contains(preferencesRepository.currentTeam?.mid) }
+    private fun refresh(hebdo: Boolean) {
+        val warList = mutableListOf<MKWar>()
+        databaseRepository.getWars()
+            .map { it.filter { war -> war.hasTeam(preferencesRepository.currentTeam?.mid) } }
+            .filterNot { it.isEmpty() }
             .mapNotNull { wars -> wars.filter {
                 when (hebdo) {
                     true -> it.isThisWeek
                     else -> it.isThisMonth
                 }
             } }
+            .onEach { warList.addAll(it) }
             .flatMapLatest { it.withName(databaseRepository) }
             .flatMapLatest { it.withFullStats(databaseRepository) }
             .onEach { stats ->

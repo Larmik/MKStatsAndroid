@@ -45,7 +45,6 @@ class TeamStatsViewModel @Inject constructor(private val preferencesRepository: 
     private var lessDefeatedTeam: OpponentRankingItemViewModel? = null
 
     fun bind(
-        list: List<MKWar>?,
         onBestClick: Flow<Unit>,
         onWorstClick: Flow<Unit>,
         onMostPlayedClick: Flow<Unit>,
@@ -54,12 +53,12 @@ class TeamStatsViewModel @Inject constructor(private val preferencesRepository: 
         onMostPlayedTeamClick: Flow<Unit>,
         onMostDefeatedTeamClick: Flow<Unit>,
         onLessDefeatedTeamClick: Flow<Unit>) {
+        val list = mutableListOf<MKWar>()
 
-        flowOf(preferencesRepository.currentTeam?.mid)
-            .filterNotNull()
-            .mapNotNull { list }
-            .filter { it.mapNotNull { war -> war.war?.teamHost}.contains(preferencesRepository.currentTeam?.mid)
-                        || it.map {war -> war.war?.teamOpponent}.contains(preferencesRepository.currentTeam?.mid) }
+        databaseRepository.getWars()
+            .map { it.filter { war -> war.hasTeam(preferencesRepository.currentTeam?.mid) } }
+            .filterNot { it.isEmpty() }
+            .onEach { list.addAll(it) }
             .flatMapLatest { it.withFullStats(databaseRepository) }
             .onEach { stats ->
                 bestMap = stats.bestMap

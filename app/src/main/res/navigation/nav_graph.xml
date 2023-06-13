@@ -25,7 +25,6 @@
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right"/>
 
-
         <action
             android:id="@+id/go_to_dispos"
             app:destination="@id/dispoFragment"
@@ -33,7 +32,6 @@
             app:exitAnim="@anim/exit_to_left"
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right"/>
-
 
         <action
             android:id="@+id/go_to_war_details"
@@ -88,13 +86,7 @@
             app:enterAnim="@anim/enter_from_right"
             app:exitAnim="@anim/exit_to_left"
             app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right">
-
-            <argument
-                android:name="wars"
-                app:argType="fr.harmoniamk.statsmk.model.local.MKWar[]"/>
-
-        </action>
+            app:popExitAnim="@anim/exit_to_right"/>
 
         <action
             android:id="@+id/to_team_stats"
@@ -102,13 +94,7 @@
             app:enterAnim="@anim/enter_from_right"
             app:exitAnim="@anim/exit_to_left"
             app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right">
-
-            <argument
-                android:name="wars"
-                app:argType="fr.harmoniamk.statsmk.model.local.MKWar[]"/>
-
-        </action>
+            app:popExitAnim="@anim/exit_to_right"/>
 
         <action
             android:id="@+id/to_periodic_stats"
@@ -116,13 +102,7 @@
             app:enterAnim="@anim/enter_from_right"
             app:exitAnim="@anim/exit_to_left"
             app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right">
-
-            <argument
-                android:name="wars"
-                app:argType="fr.harmoniamk.statsmk.model.local.MKWar[]"/>
-
-        </action>
+            app:popExitAnim="@anim/exit_to_right"/>
 
         <action
             android:id="@+id/to_player_ranking"
@@ -135,11 +115,6 @@
             <argument
                 android:name="players"
                 app:argType="fr.harmoniamk.statsmk.model.firebase.User[]"/>
-
-            <argument
-                android:name="wars"
-                app:argType="fr.harmoniamk.statsmk.model.local.MKWar[]"/>
-
 
         </action>
 
@@ -155,11 +130,6 @@
                 android:name="teams"
                 app:argType="fr.harmoniamk.statsmk.model.firebase.Team[]"/>
 
-            <argument
-                android:name="wars"
-                app:argType="fr.harmoniamk.statsmk.model.local.MKWar[]"/>
-
-
         </action>
 
         <action
@@ -168,14 +138,7 @@
             app:enterAnim="@anim/enter_from_right"
             app:exitAnim="@anim/exit_to_left"
             app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right">
-
-
-            <argument
-                android:name="wars"
-                app:argType="fr.harmoniamk.statsmk.model.local.MKWar[]"/>
-
-        </action>
+            app:popExitAnim="@anim/exit_to_right"/>
 
         <action
             android:id="@+id/to_profile"
@@ -233,21 +196,6 @@
 
         </action>
 
-        <action android:id="@+id/to_map_stats"
-            app:destination="@id/mapStatsFragment"
-            app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right">
-
-            <argument
-                android:name="trackId"
-                app:argType="integer"
-                app:nullable="false"/>
-
-
-        </action>
-
     </fragment>
 
     <fragment
@@ -273,6 +221,7 @@
         android:name="fr.harmoniamk.statsmk.fragment.stats.playerStatsDetails.PlayerStatsDetailsFragment"
         tools:layout="@layout/fragment_player_stats_details"
         android:label="PlayerStatsDetailsFragment">
+
         <action
             android:id="@+id/go_to_war_details"
             app:destination="@id/warDetailsFragment"
@@ -290,12 +239,12 @@
 
     </fragment>
 
-
     <fragment
         android:id="@+id/playerStatsFragment"
         android:name="fr.harmoniamk.statsmk.fragment.stats.playerStats.PlayerStatsFragment"
         tools:layout="@layout/fragment_player_stats"
         android:label="PlayerStatsFragment">
+
         <action
             android:id="@+id/to_opponent_stats"
             app:destination="@id/opponentStatsFragment"
@@ -313,20 +262,19 @@
                 app:argType="string"
                 app:nullable="true"/>
 
-
             <argument
                 android:name="isIndiv"
                 app:argType="boolean"
                 android:defaultValue="true"/>
 
         </action>
+
         <action android:id="@+id/to_map_stats"
             app:destination="@id/mapStatsFragment"
             app:enterAnim="@anim/enter_from_right"
             app:exitAnim="@anim/exit_to_left"
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right">
-
 
             <argument
                 android:name="trackId"
@@ -344,8 +292,9 @@
                 android:defaultValue="true"/>
 
             <argument
-                android:name="wars"
-                app:argType="fr.harmoniamk.statsmk.model.local.MKWar[]"/>
+                android:name="mode"
+                android:defaultValue="player"
+                app:argType="string"/>
 
         </action>
 
@@ -363,6 +312,7 @@
                 app:nullable="false"/>
 
         </action>
+
         <action
             android:id="@+id/go_to_war_list"
             app:destination="@id/playerStatsDetailsFragment"
@@ -376,6 +326,7 @@
                 app:argType="fr.harmoniamk.statsmk.fragment.stats.playerRanking.PlayerRankingItemViewModel"/>
 
         </action>
+
     </fragment>
 
     <fragment
@@ -441,7 +392,6 @@
 
     </fragment>
 
-
     <fragment
         android:id="@+id/managePlayersFragment"
         android:name="fr.harmoniamk.statsmk.fragment.settings.managePlayers.ManagePlayersFragment"
@@ -486,7 +436,6 @@
         tools:layout="@layout/fragment_current_war"
         android:label="CurrentWarFragment">
 
-
         <action
             android:id="@+id/back_to_wars"
             app:destination="@id/homeFragment"
@@ -529,7 +478,6 @@
                 android:name="index"
                 app:argType="integer"/>
 
-
             <argument
                 android:name="warTrack"
                 app:argType="fr.harmoniamk.statsmk.model.firebase.NewWarTrack"
@@ -555,6 +503,7 @@
         android:name="fr.harmoniamk.statsmk.fragment.stats.mapStatsDetails.MapStatsDetailsFragment"
         tools:layout="@layout/fragment_map_stats_details"
         android:label="MapStatsDetailsFragment" >
+
         <action
             android:id="@+id/to_track_details"
             app:destination="@id/trackDetailsFragment"
@@ -604,12 +553,10 @@
                 app:argType="boolean"
                 android:defaultValue="true"/>
 
-
             <argument
                 android:name="teamName"
                 app:nullable="true"
                 app:argType="string"/>
-
 
         </action>
 
@@ -620,7 +567,6 @@
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right">
 
-
             <argument
                 android:name="teamId"
                 app:argType="string"
@@ -630,7 +576,6 @@
                 android:name="trackId"
                 app:argType="integer"
                 app:nullable="false"/>
-
 
             <argument
                 android:name="userId"
@@ -643,8 +588,9 @@
                 android:defaultValue="true"/>
 
             <argument
-                android:name="wars"
-                app:argType="fr.harmoniamk.statsmk.model.local.MKWar[]"/>
+                android:name="mode"
+                android:defaultValue="opponent"
+                app:argType="string"/>
 
         </action>
 
@@ -662,12 +608,15 @@
                 app:nullable="false"/>
 
         </action>
+
     </fragment>
+
     <fragment
         android:id="@+id/opponentStatsDetailsFragment"
         android:name="fr.harmoniamk.statsmk.fragment.stats.opponentStatsDetails.OpponentStatsDetailsFragment"
         tools:layout="@layout/fragment_opponent_stats_details"
         android:label="OpponentStatsDetailsFragment">
+
         <action
             android:id="@+id/go_to_war_details"
             app:destination="@id/warDetailsFragment"
@@ -690,6 +639,7 @@
         android:name="fr.harmoniamk.statsmk.fragment.stats.opponentRanking.OpponentRankingFragment"
         tools:layout="@layout/fragment_opponent_ranking"
         android:label="OpponentRankingFragment">
+
         <action
             android:id="@+id/to_opponent_stats"
             app:destination="@id/opponentStatsFragment"
@@ -733,11 +683,6 @@
             <argument
                 android:name="stats"
                 app:argType="fr.harmoniamk.statsmk.fragment.stats.playerRanking.PlayerRankingItemViewModel"/>
-            <argument
-                android:name="wars"
-                app:argType="fr.harmoniamk.statsmk.model.local.MKWar[]"/>
-
-
 
         </action>
 
@@ -774,6 +719,7 @@
         android:name="fr.harmoniamk.statsmk.fragment.addUser.AddUserFragment"
         tools:layout="@layout/fragment_add_user"
         android:label="AddUserFragment">
+
         <action
             android:id="@+id/go_to_home"
             app:destination="@id/homeFragment"
@@ -781,6 +727,7 @@
             app:exitAnim="@anim/exit_to_left"
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right"/>
+
         <action
             android:id="@+id/go_to_connect"
             app:destination="@id/connectUserFragment"
@@ -788,6 +735,7 @@
             app:exitAnim="@anim/exit_to_left"
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right"/>
+
     </fragment>
 
     <fragment
@@ -795,6 +743,7 @@
         android:name="fr.harmoniamk.statsmk.fragment.connectUser.ConnectUserFragment"
         tools:layout="@layout/fragment_connect_user"
         android:label="ConnectUserFragment">
+
         <action
             android:id="@+id/go_to_home"
             app:destination="@id/homeFragment"
@@ -802,6 +751,7 @@
             app:exitAnim="@anim/exit_to_left"
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right"/>
+
         <action
             android:id="@+id/go_to_signup"
             app:destination="@id/addUserFragment"
@@ -809,8 +759,8 @@
             app:exitAnim="@anim/exit_to_left"
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right"/>
-    </fragment>
 
+    </fragment>
 
     <fragment
         android:id="@+id/warDetailsFragment"
@@ -878,6 +828,7 @@
         android:name="fr.harmoniamk.statsmk.fragment.stats.indivStats.IndivStatsFragment"
         tools:layout="@layout/fragment_indiv_stats"
         android:label="IndivStatsFragment">
+
         <action
             android:id="@+id/to_opponent_stats"
             app:destination="@id/opponentStatsFragment"
@@ -895,7 +846,6 @@
                 app:argType="string"
                 app:nullable="true"/>
 
-
             <argument
                 android:name="isIndiv"
                 app:argType="boolean"
@@ -909,7 +859,6 @@
             app:exitAnim="@anim/exit_to_left"
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right">
-
 
             <argument
                 android:name="trackId"
@@ -926,10 +875,10 @@
                 app:argType="boolean"
                 android:defaultValue="true"/>
 
-
             <argument
-                android:name="wars"
-                app:argType="fr.harmoniamk.statsmk.model.local.MKWar[]"/>
+                android:name="mode"
+                android:defaultValue="indiv"
+                app:argType="string"/>
 
         </action>
 
@@ -955,6 +904,7 @@
         android:name="fr.harmoniamk.statsmk.fragment.stats.periodicStats.PeriodicStatsFragment"
         tools:layout="@layout/fragment_periodic_stats"
         android:label="PeriodicStatsFragment">
+
         <action
             android:id="@+id/to_opponent_stats"
             app:destination="@id/opponentStatsFragment"
@@ -986,11 +936,11 @@
                 app:argType="integer"
                 app:nullable="false"/>
 
-
             <argument
                 android:name="userId"
                 app:argType="string"
                 app:nullable="true"/>
+
             <argument
                 android:name="isWeek"
                 app:argType="boolean"
@@ -1007,9 +957,9 @@
                 android:defaultValue="false"/>
 
             <argument
-                android:name="wars"
-                app:argType="fr.harmoniamk.statsmk.model.local.MKWar[]"/>
-
+                android:name="mode"
+                android:defaultValue="periodic"
+                app:argType="string"/>
 
         </action>
 
@@ -1027,6 +977,7 @@
                 app:nullable="false"/>
 
         </action>
+
     </fragment>
 
     <fragment
@@ -1034,6 +985,7 @@
         android:name="fr.harmoniamk.statsmk.fragment.stats.teamStats.TeamStatsFragment"
         tools:layout="@layout/fragment_indiv_stats"
         android:label="TeamStatsFragment">
+
         <action
             android:id="@+id/to_opponent_stats"
             app:destination="@id/opponentStatsFragment"
@@ -1058,7 +1010,6 @@
 
         </action>
 
-
         <action android:id="@+id/to_map_stats"
             app:destination="@id/mapStatsFragment"
             app:enterAnim="@anim/enter_from_right"
@@ -1066,26 +1017,25 @@
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right">
 
-
             <argument
                 android:name="trackId"
                 app:argType="integer"
                 app:nullable="false"/>
 
-
             <argument
                 android:name="userId"
                 app:argType="string"
                 app:nullable="true"/>
+
             <argument
                 android:name="isIndiv"
                 app:argType="boolean"
                 android:defaultValue="true"/>
 
-
             <argument
-                android:name="wars"
-                app:argType="fr.harmoniamk.statsmk.model.local.MKWar[]"/>
+                android:name="mode"
+                android:defaultValue="team"
+                app:argType="string"/>
 
         </action>
 
@@ -1103,6 +1053,7 @@
                 app:nullable="false"/>
 
         </action>
+
     </fragment>
 
     <fragment
@@ -1149,11 +1100,11 @@
                 app:argType="fr.harmoniamk.statsmk.model.local.MapDetails[]"
                 app:nullable="true"/>
 
-
             <argument
                 android:name="isIndiv"
                 app:argType="boolean"
                 android:defaultValue="true"/>
+
             <argument
                 android:name="userId"
                 app:argType="string"
@@ -1162,6 +1113,7 @@
         </action>
 
     </fragment>
+
     <fragment
         android:id="@+id/mapRankingFragment"
         android:name="fr.harmoniamk.statsmk.fragment.stats.mapRanking.MapRankingFragment"
@@ -1190,23 +1142,11 @@
                 app:argType="boolean"
                 android:defaultValue="true"/>
 
-
             <argument
-                android:name="wars"
-                app:argType="fr.harmoniamk.statsmk.model.local.MKWar[]"/>
+                android:name="mode"
+                android:defaultValue="map"
+                app:argType="string"/>
 
-        </action>
-
-        <action android:id="@+id/to_track_list"
-        app:destination="@id/trackListFragment"
-        app:enterAnim="@anim/enter_from_right"
-        app:exitAnim="@anim/exit_to_left"
-        app:popEnterAnim="@anim/enter_from_left"
-        app:popExitAnim="@anim/exit_to_right">
-
-            <argument
-                android:name="forStats"
-                app:argType="boolean"/>
         </action>
 
     </fragment>

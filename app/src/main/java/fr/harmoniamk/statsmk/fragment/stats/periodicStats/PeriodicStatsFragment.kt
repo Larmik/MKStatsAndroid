@@ -26,21 +26,12 @@ class PeriodicStatsFragment : Fragment(R.layout.fragment_periodic_stats) {
 
     private val binding: FragmentPeriodicStatsBinding by viewBinding()
     private val viewModel: PeriodicStatsViewModel by viewModels()
-
-    private val list = mutableListOf<MKWar>()
     private var isWeek = true
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-       (arguments?.get("wars") as? Array<out MKWar>)?.let {
-           list.addAll(it)
-       }
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.bind(
-            list = list,
             onBestClick = binding.bestTrackview.clicks(),
             onWorstClick = binding.worstTrackview.clicks(),
             onMostPlayedClick = binding.mostPlayedTrackview.clicks(),
@@ -116,7 +107,7 @@ class PeriodicStatsFragment : Fragment(R.layout.fragment_periodic_stats) {
 
         viewModel.sharedTrackClick
             .filter { findNavController().currentDestination?.id == R.id.periodicStatsFragment }
-            .onEach { findNavController().navigate(PeriodicStatsFragmentDirections.toMapStats(it.second, isWeek = isWeek, isMonth = !isWeek, userId = it.first, wars = list.toTypedArray())) }
+            .onEach { findNavController().navigate(PeriodicStatsFragmentDirections.toMapStats(it.second, isWeek = isWeek, isMonth = !isWeek, userId = it.first)) }
             .launchIn(lifecycleScope)
         viewModel.sharedWarClick
             .filter { findNavController().currentDestination?.id == R.id.periodicStatsFragment }

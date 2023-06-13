@@ -31,14 +31,10 @@ class PlayerStatsFragment : Fragment(R.layout.fragment_player_stats) {
     private val binding: FragmentPlayerStatsBinding by viewBinding()
     private val viewModel: PlayerStatsViewModel by viewModels()
     private var stats: PlayerRankingItemViewModel? = null
-    private var wars = mutableListOf<MKWar>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         stats = arguments?.get("stats") as? PlayerRankingItemViewModel
-        (arguments?.get("wars") as? Array<out MKWar>)?.let {
-            wars.addAll(it)
-        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -46,7 +42,6 @@ class PlayerStatsFragment : Fragment(R.layout.fragment_player_stats) {
         stats?.let {
             viewModel.bind(
                 userStats = it,
-                warList = wars,
                 onBestClick = binding.bestTrackview.clicks(),
                 onWorstClick = binding.worstTrackview.clicks(),
                 onMostPlayedClick = binding.mostPlayedTrackview.clicks(),
@@ -131,7 +126,7 @@ class PlayerStatsFragment : Fragment(R.layout.fragment_player_stats) {
 
         viewModel.sharedTrackClick
             .filter { findNavController().currentDestination?.id == R.id.playerStatsFragment }
-            .onEach { findNavController().navigate(PlayerStatsFragmentDirections.toMapStats(trackId = it.second, userId = it.first, wars = wars.toTypedArray())) }
+            .onEach { findNavController().navigate(PlayerStatsFragmentDirections.toMapStats(trackId = it.second, userId = it.first)) }
             .launchIn(lifecycleScope)
         viewModel.sharedWarClick
             .filter { findNavController().currentDestination?.id == R.id.playerStatsFragment }

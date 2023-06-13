@@ -23,17 +23,15 @@ class TrackListViewModel @Inject constructor(private val preferencesRepository: 
     private val _sharedSearchedItems = MutableSharedFlow<List<Maps>>()
     private val _sharedGoToWarPos = MutableSharedFlow<NewWarTrack>()
     private val _sharedGoToTmPos = MutableSharedFlow<Int>()
-    private val _sharedGoToStats = MutableSharedFlow<Int>()
     private val _sharedQuit = MutableSharedFlow<Unit>()
 
     val sharedSearchedItems = _sharedSearchedItems.asSharedFlow()
     val sharedGoToWarPos = _sharedGoToWarPos.asSharedFlow()
     val sharedGoToTmPos = _sharedGoToTmPos.asSharedFlow()
-    val sharedGoToStats = _sharedGoToStats.asSharedFlow()
     val sharedQuit = _sharedQuit.asSharedFlow()
 
 
-    fun bind(tournamentId: Int? = null, warId: String? = null, onTrackAdded: Flow<Int>, onSearch: Flow<String>,  onBack: Flow<Unit>, forStats: Boolean?) {
+    fun bind(tournamentId: Int? = null, warId: String? = null, onTrackAdded: Flow<Int>, onSearch: Flow<String>,  onBack: Flow<Unit>) {
 
         onBack.bind(_sharedQuit, viewModelScope)
         onSearch
@@ -60,10 +58,6 @@ class TrackListViewModel @Inject constructor(private val preferencesRepository: 
 
         }
 
-        forStats.takeIf { it.isTrue }?.let {
-            onTrackAdded.bind(_sharedGoToStats, viewModelScope)
-        }
-        //////////////////////////////////////////////////////////////////////
     }
 
 }

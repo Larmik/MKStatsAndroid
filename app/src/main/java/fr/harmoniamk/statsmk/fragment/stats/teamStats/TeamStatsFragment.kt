@@ -29,19 +29,12 @@ class TeamStatsFragment : Fragment(R.layout.fragment_team_stats) {
     private val binding: FragmentTeamStatsBinding by viewBinding()
     private val viewModel: TeamStatsViewModel by viewModels()
 
-    private val list = mutableListOf<MKWar>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        (arguments?.get("wars") as? Array<out MKWar>)?.let {
-            list.addAll(it)
-        }
-    }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel.bind(
-            list = list,
             onBestClick = binding.bestTrackview.clicks(),
             onWorstClick = binding.worstTrackview.clicks(),
             onMostPlayedClick = binding.mostPlayedTrackview.clicks(),
@@ -103,7 +96,7 @@ class TeamStatsFragment : Fragment(R.layout.fragment_team_stats) {
 
         viewModel.sharedTrackClick
             .filter { findNavController().currentDestination?.id == R.id.teamStatsFragment }
-            .onEach { findNavController().navigate(TeamStatsFragmentDirections.toMapStats(trackId = it.second, userId = it.first, isIndiv = false, wars = list.toTypedArray())) }
+            .onEach { findNavController().navigate(TeamStatsFragmentDirections.toMapStats(trackId = it.second, userId = it.first, isIndiv = false)) }
             .launchIn(lifecycleScope)
         viewModel.sharedWarClick
             .filter { findNavController().currentDestination?.id == R.id.teamStatsFragment }

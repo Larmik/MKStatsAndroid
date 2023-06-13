@@ -11,6 +11,9 @@ import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import fr.harmoniamk.statsmk.model.local.MapDetails
 import fr.harmoniamk.statsmk.model.local.MapStats
+import fr.harmoniamk.statsmk.repository.AuthenticationRepository
+import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
+import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -22,7 +25,9 @@ import javax.inject.Inject
 @ExperimentalCoroutinesApi
 @FlowPreview
 class MapStatsViewModel @Inject constructor(
-    private val preferencesRepository: PreferencesRepositoryInterface
+    private val preferencesRepository: PreferencesRepositoryInterface,
+    private val databaseRepository: DatabaseRepositoryInterface,
+    private val authenticationRepository: AuthenticationRepositoryInterface
 ) : ViewModel() {
 
     private val _sharedMapClick = MutableSharedFlow<MapDetails>()
@@ -36,7 +41,7 @@ class MapStatsViewModel @Inject constructor(
 
 
     fun bind(trackIndex: Int,
-             warList: List<MKWar>,
+             mode: String,
              onVictoryClick: Flow<Unit>,
              onDefeatClick: Flow<Unit>,
              isIndiv: Boolean?,
@@ -49,7 +54,16 @@ class MapStatsViewModel @Inject constructor(
         val mapDetailsList = mutableListOf<MapDetails>()
         val onlyIndiv = isIndiv.isTrue || preferencesRepository.currentTeam?.mid == null
 
-         flowOf(warList)
+        databaseRepository.getWars()
+            .map {
+                when (mode) {
+                    "indiv" -> it.filter { war -> war.hasPlayer(authenticationRepository.user?.uid) }
+                    "player" -> it.filter { war -> war.hasPlayer(userId) }
+                    "team", "periodic" -> it.filter { war -> war.hasTeam(preferencesRepository.currentTeam?.mid) }
+                    "opponent" -> it.filter { war -> war.hasTeam(teamId) }
+                    else -> it
+                }
+            }
              .filter {
                  (!onlyIndiv && it.mapNotNull { war -> war.war?.teamHost}.contains(preferencesRepository.currentTeam?.mid)
                          || it.map {war -> war.war?.teamOpponent}.contains(preferencesRepository.currentTeam?.mid))

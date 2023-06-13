@@ -152,7 +152,7 @@ class OpponentStatsFragment : Fragment(R.layout.fragment_opponent_stats) {
 
             viewModel.sharedTrackClick
                 .filter { findNavController().currentDestination?.id == R.id.opponentStatsFragment }
-                .onEach { findNavController().navigate(OpponentStatsFragmentDirections.toMapStats(trackId = it.second, userId = it.first, teamId = stats?.team?.mid, isIndiv = isIndiv.isTrue, wars = stats?.stats?.warStats?.list?.toTypedArray() ?: arrayOf())) }
+                .onEach { findNavController().navigate(OpponentStatsFragmentDirections.toMapStats(trackId = it.second, userId = it.first, teamId = stats?.team?.mid, isIndiv = isIndiv.isTrue)) }
                 .launchIn(lifecycleScope)
             viewModel.sharedWarClick
                 .filter { findNavController().currentDestination?.id == R.id.opponentStatsFragment }

@@ -29,22 +29,14 @@ class MapRankingFragment : Fragment(R.layout.fragment_map_ranking) {
     private val binding: FragmentMapRankingBinding by viewBinding()
     private val viewModel: MapRankingViewModel by viewModels()
 
-    private val wars = mutableListOf<MKWar>()
     private var indivEnabled = true
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        (arguments?.get("wars") as? Array<out MKWar>)?.let {
-            wars.addAll(it)
-        }
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val mostPlayedAdapter = MapRankingAdapter()
         binding.mostPlayedRv.adapter = mostPlayedAdapter
         viewModel.bind(
-            warList = wars,
             onTrackClick = mostPlayedAdapter.sharedClick,
             onSortClick = flowOf(
                 binding.totalPlaySortButton.clicks().map { TrackSortType.TOTAL_PLAYED },
@@ -72,7 +64,7 @@ class MapRankingFragment : Fragment(R.layout.fragment_map_ranking) {
         viewModel.sharedGoToStats
             .filter { findNavController().currentDestination?.id == R.id.mapRankingFragment }
             .onEach {
-                findNavController().navigate(MapRankingFragmentDirections.toMapStats(trackId = it.second, isIndiv = indivEnabled, userId = it.first, wars = wars.toTypedArray()))
+                findNavController().navigate(MapRankingFragmentDirections.toMapStats(trackId = it.second, isIndiv = indivEnabled, userId = it.first))
             }
             .launchIn(lifecycleScope)
         viewModel.sharedIndivStatsEnabled

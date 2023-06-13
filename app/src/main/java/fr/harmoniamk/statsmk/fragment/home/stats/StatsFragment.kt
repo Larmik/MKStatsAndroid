@@ -31,27 +31,27 @@ class StatsFragment : Fragment(R.layout.fragment_stats) {
         viewModel.bind(binding.indivStats.clicks(), binding.teamStats.clicks(), binding.mapStats.clicks(), binding.periodicStats.clicks(), binding.playerStats.clicks(), binding.opponentsStats.clicks())
         viewModel.sharedIndiv
             .filter { findNavController().currentDestination?.id == R.id.homeFragment }
-            .onEach { findNavController().navigate(HomeFragmentDirections.toIndivStats(it.toTypedArray())) }
+            .onEach { findNavController().navigate(HomeFragmentDirections.toIndivStats()) }
             .launchIn(lifecycleScope)
         viewModel.sharedTeam
             .filter { findNavController().currentDestination?.id == R.id.homeFragment }
-            .onEach { findNavController().navigate(HomeFragmentDirections.toTeamStats(it.toTypedArray())) }
+            .onEach { findNavController().navigate(HomeFragmentDirections.toTeamStats()) }
             .launchIn(lifecycleScope)
         viewModel.sharedPeriodic
             .filter { findNavController().currentDestination?.id == R.id.homeFragment }
-            .onEach { findNavController().navigate(HomeFragmentDirections.toPeriodicStats(it.toTypedArray())) }
+            .onEach { findNavController().navigate(HomeFragmentDirections.toPeriodicStats()) }
             .launchIn(lifecycleScope)
         viewModel.sharedMap
             .filter { findNavController().currentDestination?.id == R.id.homeFragment }
-            .onEach { findNavController().navigate(HomeFragmentDirections.toMapRanking(it.toTypedArray())) }
+            .onEach { findNavController().navigate(HomeFragmentDirections.toMapRanking()) }
             .launchIn(lifecycleScope)
         viewModel.sharedPlayers
             .filter { findNavController().currentDestination?.id == R.id.homeFragment }
-            .onEach { findNavController().navigate(HomeFragmentDirections.toPlayerRanking(it.first.toTypedArray(), it.second.toTypedArray())) }
+            .onEach { findNavController().navigate(HomeFragmentDirections.toPlayerRanking(it.first.toTypedArray())) }
             .launchIn(lifecycleScope)
         viewModel.sharedOpponents
             .filter { findNavController().currentDestination?.id == R.id.homeFragment }
-            .onEach { findNavController().navigate(HomeFragmentDirections.toOpponentRanking(it.first.toTypedArray(), it.second.toTypedArray())) }
+            .onEach { findNavController().navigate(HomeFragmentDirections.toOpponentRanking(it.first.toTypedArray())) }
             .launchIn(lifecycleScope)
     }
 

@@ -37,7 +37,7 @@ class MapStatsFragment : Fragment(R.layout.fragment_map_stats) {
     private var isIndiv: Boolean? = null
     private var isWeek: Boolean? = null
     private var isMonth: Boolean? = null
-    private val wars = mutableListOf<MKWar>()
+    private var mode: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,9 +47,7 @@ class MapStatsFragment : Fragment(R.layout.fragment_map_stats) {
         isWeek = arguments?.getBoolean("isWeek")
         isIndiv = arguments?.getBoolean("isIndiv")
         isMonth = arguments?.getBoolean("isMonth")
-        (arguments?.get("wars") as? Array<out MKWar>)?.let {
-            wars.addAll(it)
-        }
+        mode = arguments?.getString("mode") ?: ""
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -58,7 +56,7 @@ class MapStatsFragment : Fragment(R.layout.fragment_map_stats) {
             binding.statTrackview.bind(index)
             viewModel.bind(
                 trackIndex = index,
-                warList = wars,
+                mode = mode,
                 onVictoryClick = binding.highestVictory.clicks(),
                 onDefeatClick = binding.loudestDefeat.clicks(),
                 isIndiv = isIndiv,

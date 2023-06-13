@@ -24,7 +24,7 @@ class StatsViewModel @Inject constructor(
     private val databaseRepository: DatabaseRepositoryInterface
 ) : ViewModel() {
 
-    private val _sharedIndiv = MutableSharedFlow<List<MKWar>>()
+    private val _sharedIndiv = MutableSharedFlow<Unit>()
     private val _sharedTeam = MutableSharedFlow<List<MKWar>>()
     private val _sharedPeriodic = MutableSharedFlow<List<MKWar>>()
     private val _sharedPlayers = MutableSharedFlow<Pair<List<User>, List<MKWar>>>()
@@ -48,11 +48,7 @@ class StatsViewModel @Inject constructor(
                 warList.addAll(it)
             }.launchIn(viewModelScope)
 
-        onIndiv
-            .map { warList.filter { war -> war.hasPlayer(authenticationRepository.user?.uid)  } }
-            .filterNot { it.isEmpty() }
-            .onEach {_sharedIndiv.emit(it) }
-            .launchIn(viewModelScope)
+        onIndiv.bind(_sharedIndiv, viewModelScope)
 
         onTeam
             .filter { preferencesRepository.currentTeam != null }

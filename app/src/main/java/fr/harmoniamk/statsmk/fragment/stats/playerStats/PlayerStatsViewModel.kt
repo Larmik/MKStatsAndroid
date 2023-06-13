@@ -39,7 +39,6 @@ class PlayerStatsViewModel @Inject constructor(private val databaseRepository: D
 
     fun bind(
         userStats: PlayerRankingItemViewModel,
-        warList: List<MKWar>,
         onBestClick: Flow<Unit>,
         onWorstClick: Flow<Unit>,
         onMostPlayedClick: Flow<Unit>,
@@ -52,10 +51,12 @@ class PlayerStatsViewModel @Inject constructor(private val databaseRepository: D
         onMostDefeatedTeamClick: Flow<Unit>,
         onLessDefeatedTeamClick: Flow<Unit>
     ) {
-
-        flowOf(userStats)
+        val warList = mutableListOf<MKWar>()
+        databaseRepository.getWars()
+            .map { it.filter { war -> war.hasPlayer(userStats.user.mid) } }
+            .onEach { warList.addAll(it) }
+            .mapNotNull { userStats }
             .onEach { itemVM ->
-                delay(50)
                 item = itemVM
                 val teamStats = listOfNotNull(
                     itemVM.stats.mostPlayedTeam?.team,

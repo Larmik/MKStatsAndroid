@@ -31,14 +31,12 @@ class TrackListFragment :
 
     private var tmId : Int? = null
     private var warId: String? = null
-    private var forStats: Boolean? = null
     private val list = mutableListOf<MKWar>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         tmId = arguments?.getInt("tmId").takeIf { it != 0 }
         warId = arguments?.getString("warId")
-        forStats = arguments?.getBoolean("forStats")
         (arguments?.get("wars") as? Array<out MKWar>)?.let {
             list.addAll(it)
         }
@@ -48,7 +46,13 @@ class TrackListFragment :
         super.onViewCreated(view, savedInstanceState)
         val adapter = TrackListAdapter()
         binding.trackRv.adapter = adapter
-        viewModel.bind(tmId, warId, adapter.sharedClick, binding.searchEt.onTextChanged(), requireActivity().backPressedDispatcher(viewLifecycleOwner), forStats)
+        viewModel.bind(
+            tournamentId = tmId,
+            warId = warId,
+            onTrackAdded = adapter.sharedClick,
+            onSearch = binding.searchEt.onTextChanged(),
+            onBack = requireActivity().backPressedDispatcher(viewLifecycleOwner),
+        )
         viewModel.sharedSearchedItems
             .onEach { adapter.addTracks(it) }
             .launchIn(lifecycleScope)
@@ -71,12 +75,6 @@ class TrackListFragment :
             .filter { findNavController().currentDestination?.id == R.id.trackListFragment }
             .onEach { findNavController().popBackStack() }
             .launchIn(lifecycleScope)
-
-        viewModel.sharedGoToStats
-            .filter { findNavController().currentDestination?.id == R.id.trackListFragment }
-            .onEach { findNavController().navigate(TrackListFragmentDirections.toMapStats(it)) }
-            .launchIn(lifecycleScope)
-
 
     }
 }

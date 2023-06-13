@@ -41,8 +41,8 @@ class OpponentRankingViewModel @Inject constructor(
 
     private val itemsVM = mutableListOf<OpponentRankingItemViewModel>()
 
-    fun bind(list: List<Team>, warList: List<MKWar>, onTeamClick: Flow<OpponentRankingItemViewModel>, onSortClick: Flow<PlayerSortType>, onSearch: Flow<String>,  onIndivStatsSelected: Flow<Boolean>) {
-        refresh(list, warList)
+    fun bind(list: List<Team>, onTeamClick: Flow<OpponentRankingItemViewModel>, onSortClick: Flow<PlayerSortType>, onSearch: Flow<String>,  onIndivStatsSelected: Flow<Boolean>) {
+        refresh(list)
         onTeamClick
             .map { Pair(authenticationRepository.user?.uid, it) }
             .bind(_sharedGoToStats, viewModelScope)
@@ -66,16 +66,18 @@ class OpponentRankingViewModel @Inject constructor(
 
         onIndivStatsSelected.onEach { indivEnabled ->
             _sharedIndivStatsEnabled.emit(indivEnabled)
-            refresh(list, warList)
+            refresh(list)
         }.launchIn(viewModelScope)
 
 
     }
 
-    private fun refresh(list: List<Team>, warList: List<MKWar>) {
-        flowOf(list)
-            .filterNotNull()
-            .map { it.sortedBy { it.name }.filterNot { it.mid == preferencesRepository.currentTeam?.mid } }
+    private fun refresh(list: List<Team>) {
+        val warList = mutableListOf<MKWar>()
+        databaseRepository.getWars()
+            .onEach { warList.addAll(it) }
+            .mapNotNull { list.sortedBy { it.name } }
+            .map { it.filterNot { it.mid == preferencesRepository.currentTeam?.mid } }
             .flatMapLatest { it.withFullTeamStats(warList, databaseRepository, authenticationRepository.user?.uid, isIndiv = _sharedIndivStatsEnabled.value) }
             .mapNotNull { it.filter { vm -> (!vm.isIndiv && vm.stats.warStats.list.any { war -> war.hasTeam(preferencesRepository.currentTeam?.mid) }) || vm.isIndiv } }
             .onEach {

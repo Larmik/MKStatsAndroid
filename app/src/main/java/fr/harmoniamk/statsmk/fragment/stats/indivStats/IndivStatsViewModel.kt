@@ -48,7 +48,6 @@ class IndivStatsViewModel @Inject constructor(
     private var lessDefeatedTeam: OpponentRankingItemViewModel? = null
 
     fun bind(
-        list: List<MKWar>?,
         onBestClick: Flow<Unit>,
         onWorstClick: Flow<Unit>,
         onMostPlayedClick: Flow<Unit>,
@@ -60,9 +59,11 @@ class IndivStatsViewModel @Inject constructor(
         onMostDefeatedTeamClick: Flow<Unit>,
         onLessDefeatedTeamClick: Flow<Unit>
         ) {
-
-             flowOf(list)
-                .filterNotNull()
+            val list = mutableListOf<MKWar>()
+             databaseRepository.getWars()
+                 .map { it.filter { war -> war.hasPlayer(authenticationRepository.user?.uid)  } }
+                 .filterNot { it.isEmpty() }
+                 .onEach { list.addAll(it) }
                  .flatMapLatest { it.withFullStats(databaseRepository, authenticationRepository.user?.uid, isIndiv = true) }
                  .onEach { stats ->
                     bestMap = stats.bestPlayerMap
