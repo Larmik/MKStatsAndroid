@@ -80,15 +80,7 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
             .launchIn(viewModelScope)
     }
 
-    fun bindEditDialog(onDelete: Flow<User>, onPlayerEdited: Flow<User>, onTeamLeft: Flow<User>) {
-
-        onDelete
-            .filter { it.mid != authenticationRepository.user?.uid }
-            .flatMapLatest { firebaseRepository.deleteUser(it) }
-            .flatMapLatest {  databaseRepository.getUsers() }
-            .map { createPlayersList(list = it) }
-            .filter { authenticationRepository.user != null }
-            .bind(_sharedPlayers, viewModelScope)
+    fun bindEditDialog(onPlayerEdited: Flow<User>, onTeamLeft: Flow<User>) {
 
         onPlayerEdited
             .flatMapLatest { firebaseRepository.writeUser(it) }
@@ -98,32 +90,16 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
 
         onTeamLeft
             .filter { it.mid == authenticationRepository.user?.uid }
-            .onEach { preferencesRepository.currentTeam = null }
+            .flatMapLatest { writeFormerTeams(it) }
             .flatMapLatest { firebaseRepository.writeUser(it) }
-            .onEach { _sharedRedirectToSettings.emit(Unit) }
-            .launchIn(viewModelScope)
+            .onEach {
+                preferencesRepository.currentTeam = null
+                _sharedRedirectToSettings.emit(Unit)
+            }.launchIn(viewModelScope)
 
         onTeamLeft
             .filter { it.mid != authenticationRepository.user?.uid }
-            .mapNotNull {
-                val formerTeams = mutableListOf<String?>()
-                formerTeams.addAll(it.formerTeams.orEmpty())
-                formerTeams.add(preferencesRepository.currentTeam?.mid)
-                it.formerTeams?.takeIf { it.isNotEmpty() }?.let {
-                    it.forEach {
-                        val wars = firebaseRepository.getNewWars(it)
-                            .map { list -> list.map {  MKWar(it) } }
-                            .first()
-                        val finalList = wars.withName(databaseRepository).first()
-                        databaseRepository.writeWars(finalList).first()
-                    }
-                }
-                it.apply {
-                    this.team = "-1"
-                    this.formerTeams = formerTeams.distinct().filterNotNull()
-                    this.role = UserRole.MEMBER.ordinal
-                }
-            }
+            .flatMapLatest { writeFormerTeams(it) }
             .flatMapLatest { firebaseRepository.writeUser(it) }
             .flatMapLatest {  databaseRepository.getUsers() }
             .map { createPlayersList(list = it) }
@@ -171,5 +147,25 @@ class ManagePlayersViewModel @Inject constructor(private val firebaseRepository:
             .mapNotNull { it >= UserRole.LEADER.ordinal && networkRepository.networkAvailable }
            .bind(_sharedManageVisible, viewModelScope)
 
+    }
+
+    private fun writeFormerTeams(user: User): Flow<User> = flow {
+        val formerTeams = mutableListOf<String?>()
+        formerTeams.addAll(user.formerTeams.orEmpty())
+        formerTeams.add(preferencesRepository.currentTeam?.mid)
+        user.formerTeams?.takeIf { it.isNotEmpty() }?.let {
+            it.forEach {
+                val wars = firebaseRepository.getNewWars(it)
+                    .map { list -> list.map {  MKWar(it) } }
+                    .first()
+                val finalList = wars.withName(databaseRepository).first()
+                databaseRepository.writeWars(finalList).first()
+            }
+        }
+        emit(user.apply {
+            this.team = "-1"
+            this.formerTeams = formerTeams.distinct().filterNotNull()
+            this.role = UserRole.MEMBER.ordinal
+        })
     }
 }

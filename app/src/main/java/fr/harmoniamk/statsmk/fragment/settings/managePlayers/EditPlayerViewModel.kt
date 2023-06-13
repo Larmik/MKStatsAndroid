@@ -26,7 +26,6 @@ class EditPlayerViewModel @Inject constructor(
 
     private val _sharedPlayerIsMember = MutableSharedFlow<Boolean>()
     private val _sharedPlayerHasAccount = MutableSharedFlow<Boolean>()
-    private val _sharedDeleteVisibility = MutableSharedFlow<Boolean>()
     private val _sharedShowDialog = MutableSharedFlow<Boolean>()
     private val _sharedEditRoleVisibility = MutableSharedFlow<Int>()
     private val _sharedLeaveTeamVisibility = MutableSharedFlow<Boolean>()
@@ -38,7 +37,6 @@ class EditPlayerViewModel @Inject constructor(
     val sharedButtonEnabled = _sharedButtonEnabled.asSharedFlow()
     val sharedPlayerIsMember = _sharedPlayerIsMember.asSharedFlow()
     val sharedPlayerHasAccount = _sharedPlayerHasAccount.asSharedFlow()
-    val sharedDeleteVisibility = _sharedDeleteVisibility.asSharedFlow()
     val sharedEditRoleVisibility = _sharedEditRoleVisibility.asSharedFlow()
     val sharedLeaveTeamVisibility = _sharedLeaveTeamVisibility.asSharedFlow()
     val sharedRoleSelected = _sharedRoleSelected.asSharedFlow()
@@ -56,7 +54,6 @@ class EditPlayerViewModel @Inject constructor(
         authenticationRepository.userRole
             .onEach { userRole ->
                 _sharedPlayerHasAccount.emit(player.mid.toLongOrNull() == null)
-                _sharedDeleteVisibility.emit(userRole == UserRole.GOD.ordinal)
                 player.role?.let {
                     _sharedLeaveTeamVisibility.emit(player.mid != authenticationRepository.user?.uid && it < UserRole.LEADER.ordinal)
                 }

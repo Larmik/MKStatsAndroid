@@ -109,7 +109,6 @@ class ManagePlayersFragment : Fragment(R.layout.fragment_manage_players) {
             viewModel.sharedEdit.collect {
                 val dialog = EditPlayerFragment(it)
                 viewModel.bindEditDialog(
-                    onDelete = dialog.onPlayerDelete,
                     onTeamLeft = dialog.onTeamLeave,
                     onPlayerEdited = dialog.onPlayerEdit
                 )

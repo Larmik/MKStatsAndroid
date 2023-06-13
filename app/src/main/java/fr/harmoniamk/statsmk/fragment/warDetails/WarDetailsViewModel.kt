@@ -58,7 +58,7 @@ class WarDetailsViewModel @Inject constructor(
 
             databaseRepository.getUser(authenticationRepository.user?.uid)
                 .mapNotNull { it?.role }
-                .mapNotNull { it >= UserRole.LEADER.ordinal && networkRepository.networkAvailable }
+                .mapNotNull { it > UserRole.LEADER.ordinal && networkRepository.networkAvailable }
                 .bind(_sharedDeleteWarVisible, viewModelScope)
 
             flowOf(it.war)

@@ -31,7 +31,6 @@ class EditPlayerFragment(val user: User? = null) : BottomSheetDialogFragment() {
 
     val onPlayerEdit = MutableSharedFlow<User>()
     val onTeamLeave = MutableSharedFlow<User>()
-    val onPlayerDelete = MutableSharedFlow<User>()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         binding = FragmentEditPlayersBinding.inflate(inflater, container, false)
@@ -70,10 +69,6 @@ class EditPlayerFragment(val user: User? = null) : BottomSheetDialogFragment() {
                     binding.roleLayout.isVisible = it
                 }.launchIn(lifecycleScope)
 
-            viewModel.sharedDeleteVisibility
-                .onEach { binding.deleteBtn.isVisible = it }
-                .launchIn(lifecycleScope)
-
             viewModel.sharedEditRoleVisibility
                 .onEach { binding.editRoleBtn.visibility = it }
                 .launchIn(lifecycleScope)
@@ -91,10 +86,6 @@ class EditPlayerFragment(val user: User? = null) : BottomSheetDialogFragment() {
                 } }
                 .bind(onPlayerEdit, lifecycleScope)
 
-            binding.deleteBtn
-                .clicks()
-                .map { player }
-                .bind(onPlayerDelete, lifecycleScope)
 
             binding.leaveTeamBtn
                 .clicks()
