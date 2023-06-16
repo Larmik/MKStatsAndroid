@@ -19,7 +19,7 @@ import java.util.concurrent.Executors
 @ExperimentalCoroutinesApi
 fun View.clicks(): Flow<Unit> = callbackFlow {
     this@clicks.setOnClickListener {
-        if (isActive) offer(Unit)
+        if (isActive) trySend(Unit)
     }
     awaitClose { }
 }
@@ -27,7 +27,7 @@ fun View.clicks(): Flow<Unit> = callbackFlow {
 @ExperimentalCoroutinesApi
 fun Dialog?.dismiss(): Flow<Unit> = callbackFlow {
     this@dismiss?.setOnDismissListener {
-        if (isActive) offer(Unit)
+        if (isActive) trySend(Unit)
     }
     awaitClose { }
 }
@@ -35,7 +35,7 @@ fun Dialog?.dismiss(): Flow<Unit> = callbackFlow {
 @ExperimentalCoroutinesApi
 fun RadioGroup.checks(): Flow<Int> = callbackFlow {
    this@checks.setOnCheckedChangeListener { group, checkedId ->
-       if (isActive) offer(checkedId)
+       if (isActive) trySend(checkedId)
    }
     awaitClose {  this@checks.setOnCheckedChangeListener(null) }
 }
@@ -43,7 +43,7 @@ fun RadioGroup.checks(): Flow<Int> = callbackFlow {
 @ExperimentalCoroutinesApi
 fun RadioButton.checks(): Flow<Unit> = callbackFlow {
    this@checks.setOnCheckedChangeListener { _, checked ->
-       if (isActive) offer(Unit)
+       if (isActive) trySend(Unit)
 
    }
     awaitClose {  this@checks.setOnCheckedChangeListener(null) }
@@ -53,7 +53,7 @@ fun RadioButton.checks(): Flow<Unit> = callbackFlow {
 @ExperimentalCoroutinesApi
 fun CheckBox.checks() = callbackFlow {
     this@checks.setOnCheckedChangeListener { _, isChecked ->
-        if (isActive) offer(isChecked)
+        if (isActive) trySend(isChecked)
     }
     awaitClose { this@checks.setOnCheckedChangeListener(null) }
 }
@@ -61,7 +61,7 @@ fun CheckBox.checks() = callbackFlow {
 @ExperimentalCoroutinesApi
 fun EditText.onTextChanged() = callbackFlow {
     this@onTextChanged.addTextChangedListener {
-        if (isActive) offer(it.toString())
+        if (isActive) trySend(it.toString())
     }
     awaitClose { }
 }

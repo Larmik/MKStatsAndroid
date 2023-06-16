@@ -75,7 +75,7 @@ class OpponentStatsFragment : Fragment(R.layout.fragment_opponent_stats) {
             }.launchIn(lifecycleScope)
         viewModel.sharedDetailsClick
             .filter { findNavController().currentDestination?.id == R.id.opponentStatsFragment }
-            .onEach { findNavController().navigate(OpponentStatsFragmentDirections.toOpponentWarDetails(stats?.stats, userId != null, stats?.teamName)) }
+            .onEach { findNavController().navigate(OpponentStatsFragmentDirections.toOpponentWarDetails(stats?.stats, isIndiv = userId != null, teamName = stats?.teamName)) }
             .launchIn(lifecycleScope)
 
         stats?.let {

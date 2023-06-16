@@ -17,7 +17,6 @@ import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.extension.positionColor
 import fr.harmoniamk.statsmk.extension.trackScoreToDiff
-import fr.harmoniamk.statsmk.model.local.MKWar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.filter
@@ -107,7 +106,7 @@ class MapStatsFragment : Fragment(R.layout.fragment_map_stats) {
                 }
                 viewModel.sharedDetailsClick
                     .filter { findNavController().currentDestination?.id == R.id.mapStatsFragment }
-                    .onEach { findNavController().navigate(MapStatsFragmentDirections.toMapStatsDetails(index, stats.list.toTypedArray(), isIndiv.isTrue && userId != null, stats.userId)) }
+                    .onEach { findNavController().navigate(MapStatsFragmentDirections.toMapStatsDetails(index, stats.list.toTypedArray(), isIndiv = isIndiv.isTrue && userId != null, userId = stats.userId)) }
                     .launchIn(lifecycleScope)
             }.launchIn(lifecycleScope)
 

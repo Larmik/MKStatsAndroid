@@ -9,4 +9,6 @@ data class NewWarPositions(
     val mid: String? = null,
     var playerId: String? = null,
     val position: Int? = null
-): Serializable, Parcelable
+): Serializable, Parcelable {
+    companion object
+}

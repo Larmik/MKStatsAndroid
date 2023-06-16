@@ -117,7 +117,7 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
                     friendCode = it["friendCode"].toString(),
                     discordId = it["discordId"].toString()
                 ) }
-            if (isActive) offer(users)
+            if (isActive) trySend(users)
         }
         awaitClose {  }
     }
@@ -133,7 +133,7 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
                     shortName = it["shortName"].toString(),
                     hasLeader = it["hasLeader"].toString().toBoolean()
                 ) }
-            if (isActive) offer(teams)
+            if (isActive) trySend(teams)
         }
         awaitClose {  }
     }
@@ -157,7 +157,7 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
                     isOfficial = map["official"].toString().toBoolean()
                 )
                 }
-            if (isActive) offer(wars)
+            if (isActive) trySend(wars)
         }
         awaitClose {  }
     }
@@ -176,7 +176,7 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
                         host = map["host"]?.toString()
                     )
                     }
-                if (isActive) offer(wars)
+                if (isActive) trySend(wars)
             }
 
             override fun onCancelled(databaseError: DatabaseError) {
@@ -203,7 +203,7 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
                             isOfficial = value["official"].toString().toBoolean()
                         ).withName(databaseRepository).firstOrNull()
                     }
-                    if (isActive) offer(war)
+                    if (isActive) trySend(war)
                 }
             }
 

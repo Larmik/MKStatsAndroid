@@ -21,8 +21,7 @@ import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-@ExperimentalCoroutinesApi
-@FlowPreview
+@OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 @AndroidEntryPoint
 class SplashScreenActivity : AppCompatActivity() {
 
@@ -76,7 +75,7 @@ class SplashScreenActivity : AppCompatActivity() {
                         finish()
                     }.launchIn(lifecycleScope)
                 when (pair.first) {
-                    WelcomeScreen.CONNECT, WelcomeScreen.WELCOME -> {
+                    WelcomeScreen.Login, WelcomeScreen.Signup -> {
                         startActivity(intent)
                         finish()
                     }

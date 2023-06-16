@@ -10,4 +10,6 @@ data class NewWarTrack(
     var trackIndex: Int? = null,
     var warPositions: List<NewWarPositions>? = null,
     var shocks: List<Shock>? = null
-) : Serializable, Parcelable
+) : Serializable, Parcelable {
+    companion object
+}

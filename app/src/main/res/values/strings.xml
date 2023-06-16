@@ -145,6 +145,7 @@
     <string name="participation">Participation</string>
     <string name="aucune_war_n_a_t_trouv_e">Aucune war n\'a été trouvée.</string>
     <string name="connexion">Connexion</string>
+    <string name="connexion_en_cours">Connexion en cours…</string>
     <string name="se_connecter">Se connecter</string>
     <string name="mot_de_passe_oubli">Mot de passe oublié ?</string>
     <string name="nouveau_sur_l_appli">Nouveau sur l\'appli ?</string>
@@ -355,6 +356,7 @@
     <string name="login_in_progress">Connexion en cours…</string>
     <string name="creating_war">Création de la war en cours, veuillez patienter…</string>
     <string name="creating_player">Création du joueur en cours…</string>
+    <string name="creating_user">Création du compte en cours, veuillez patienter…</string>
     <string name="offline_mode">Vous êtes hors connexion. \n \n Vous pourrez toujours consulter les wars et statistiques mais vous n\'aurez pas accès à la war en cours ni à l\'édition des joueurs et équipes.</string>
     <string name="no_internet">Vous êtes hors connexion. \n \n Veuillez redémarrer l\'application en étant connecté à Internet pour continuer.</string>
     <string name="update">Mettre à jour</string>

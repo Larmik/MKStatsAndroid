@@ -12,7 +12,7 @@ import kotlinx.coroutines.isActive
 fun ComponentActivity.backPressedDispatcher(owner: LifecycleOwner) = callbackFlow<Unit> {
     val callBack = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            if (isActive) offer(Unit)
+            if (isActive) trySend(Unit)
         }
     }
     this@backPressedDispatcher.onBackPressedDispatcher.addCallback(owner, callBack)

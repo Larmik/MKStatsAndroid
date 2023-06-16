@@ -105,7 +105,7 @@ class ProfileFragment: Fragment(R.layout.fragment_profile) {
             .filter { findNavController().currentDestination?.id == R.id.profileFragment }
             .onEach {
                 disconnectPopup.dismiss()
-                findNavController().navigate(ProfileFragmentDirections.backToWelcome())
+              //  findNavController().navigate(ProfileFragmentDirections.backToWelcome())
             }.launchIn(lifecycleScope)
 
         viewModel.sharedDisconnectPopup

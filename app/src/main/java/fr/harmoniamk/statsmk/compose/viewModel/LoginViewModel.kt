@@ -1,4 +1,4 @@
-package fr.harmoniamk.statsmk.fragment.connectUser
+package fr.harmoniamk.statsmk.compose.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,50 +14,42 @@ import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.shareIn
 import javax.inject.Inject
 
-@FlowPreview
-@ExperimentalCoroutinesApi
+@OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 @HiltViewModel
-class ConnectUserViewModel @Inject constructor(
+class LoginViewModel @Inject constructor(
     private val firebaseRepository: FirebaseRepositoryInterface,
     private val preferencesRepository: PreferencesRepositoryInterface,
     private val authenticationRepository: AuthenticationRepositoryInterface,
-    private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
+    private val databaseRepository: DatabaseRepositoryInterface
+) : ViewModel() {
 
-    private val _sharedNext = MutableSharedFlow<Unit>()
-    private val _sharedGoToSignup = MutableSharedFlow<Unit>()
+    private val _sharedNext = MutableStateFlow<Unit?>(null)
     private val _sharedToast = MutableSharedFlow<String>()
-    private val _sharedGoToReset = MutableSharedFlow<Unit>()
-    private val _sharedButtonEnabled = MutableSharedFlow<Boolean>()
-    private val _sharedLoading = MutableSharedFlow<Int?>()
+    private val _sharedLoading = MutableStateFlow<Int?>(null)
 
     val sharedNext = _sharedNext.asSharedFlow()
     val sharedToast = _sharedToast.asSharedFlow()
-    val sharedGoToSignup = _sharedGoToSignup.asSharedFlow()
-    val sharedGoToReset = _sharedGoToReset.asSharedFlow()
-    val sharedButtonEnabled = _sharedButtonEnabled.asSharedFlow()
-    val sharedLoading = _sharedLoading.asSharedFlow()
+    val sharedLoading = _sharedLoading.asStateFlow()
 
-    fun bind(onEmail: Flow<String>, onPassword: Flow<String>, onConnect: Flow<Unit>, onSignupClick: Flow<Unit>, onResetPassword: Flow<Unit>) {
-        var password: String? = null
-        var email: String? = null
 
-        onPassword.onEach {
-            password = it
-            _sharedButtonEnabled.emit(!password.isNullOrEmpty() && !email.isNullOrEmpty())
-        }.launchIn(viewModelScope)
-
-        onEmail.onEach {
-            email = it
-            _sharedButtonEnabled.emit(!password.isNullOrEmpty() && !email.isNullOrEmpty())
-        }.launchIn(viewModelScope)
-
-        val connectUser = onConnect
-            .mapNotNull { password }
-            .onEach { _sharedLoading.emit(null) }
-            .flatMapLatest { authenticationRepository.signIn(email.toString(), password.toString()) }
+    fun onConnect(email: String, password: String) {
+        _sharedLoading.value = R.string.connexion_en_cours
+        val connectUser =  authenticationRepository.signIn(email, password)
             .shareIn(viewModelScope, SharingStarted.Lazily)
 
         connectUser
@@ -71,7 +63,7 @@ class ConnectUserViewModel @Inject constructor(
                         databaseRepository.getTeam(team).firstOrNull()
                 }
                 preferencesRepository.firstLaunch = false
-                _sharedLoading.emit(R.string.fetch_data)
+                _sharedLoading.value = R.string.fetch_data
                 it?.formerTeams?.takeIf { it.isNotEmpty() }?.let {
                     it.forEach {
                         val wars = firebaseRepository.getNewWars(it)
@@ -85,15 +77,14 @@ class ConnectUserViewModel @Inject constructor(
             .map { it.map { MKWar(it) } }
             .flatMapLatest { it.withName(databaseRepository) }
             .flatMapLatest {  databaseRepository.writeWars(it) }
-            .onEach { _sharedNext.emit(Unit) }.launchIn(viewModelScope)
+            .onEach { _sharedNext.value = Unit }.launchIn(viewModelScope)
 
 
         connectUser
             .mapNotNull { (it as? AuthUserResponse.Error)?.message }
+            .onEach { _sharedLoading.value = null }
             .bind(_sharedToast, viewModelScope)
-
-        onSignupClick.bind(_sharedGoToSignup, viewModelScope)
-        onResetPassword.bind(_sharedGoToReset, viewModelScope)
-
     }
+
+
 }

@@ -19,7 +19,7 @@
 -keep class com.crashlytics.android.**
 -dontwarn com.crashlytics.**
 -keepattributes SourceFile,LineNumberTable,*Annotation*
--keepattributes InnerClasses
+-keepattributes InnerClasses, EnclosingMethod
 -renamesourcefileattribute SourceFile
 
 -keep class * extends androidx.fragment.app.Fragment{}
@@ -108,3 +108,5 @@
 
 -keepclassmembers enum * { *; }
 
+-dontwarn com.google.errorprone.**
+-dontwarn javax.xml.stream.**

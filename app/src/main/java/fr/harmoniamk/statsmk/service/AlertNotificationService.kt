@@ -152,7 +152,7 @@ class AlertNotificationService : FirebaseMessagingService() {
 
     val token: Flow<String> = callbackFlow {
         FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-            if (task.isSuccessful && isActive) offer(task.result)
+            if (task.isSuccessful && isActive) trySend(task.result)
         }
         awaitClose {  }
     }
@@ -165,13 +165,13 @@ class AlertNotificationService : FirebaseMessagingService() {
                         if (instanceTask.isSuccessful && instanceTask.result.isNotEmpty()) {
                             if (subscribed) FirebaseMessaging.getInstance().subscribeToTopic(topic)
                             else FirebaseMessaging.getInstance().unsubscribeFromTopic(topic)
-                            if (isActive) offer(Pair(instanceTask.result, subscribed))
-                        } else if (isActive) offer(null)
+                            if (isActive) trySend(Pair(instanceTask.result, subscribed))
+                        } else if (isActive) trySend(null)
                     }
-                else if (isActive) offer(null)
+                else if (isActive) trySend(null)
             }
         } catch (e: Exception) {
-            if (isActive) offer(null)
+            if (isActive) trySend(null)
         }
         awaitClose { }
 

@@ -51,10 +51,10 @@ class AuthenticationRepository @Inject constructor(private val databaseRepositor
     override fun createUser(email: String, password: String): Flow<AuthUserResponse> = callbackFlow {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener{ task ->
-                if (isActive && task.isSuccessful) offer(AuthUserResponse.Success(auth.currentUser))
+                if (isActive && task.isSuccessful) trySend(AuthUserResponse.Success(auth.currentUser))
             }
             .addOnFailureListener {
-                offer(AuthUserResponse.Error(it.localizedMessage ?: it.message.toString()))
+                trySend(AuthUserResponse.Error(it.localizedMessage ?: it.message.toString()))
             }
         awaitClose {  }
     }
@@ -62,10 +62,10 @@ class AuthenticationRepository @Inject constructor(private val databaseRepositor
     override fun signIn(email: String, password: String): Flow<AuthUserResponse>  = callbackFlow {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener{ task ->
-                if (isActive && task.isSuccessful) offer(AuthUserResponse.Success(auth.currentUser))
+                if (isActive && task.isSuccessful) trySend(AuthUserResponse.Success(auth.currentUser))
             }
             .addOnFailureListener {
-                offer(AuthUserResponse.Error(it.localizedMessage ?: it.message.toString()))
+                trySend(AuthUserResponse.Error(it.localizedMessage ?: it.message.toString()))
             }
 
         awaitClose {  }
@@ -74,16 +74,17 @@ class AuthenticationRepository @Inject constructor(private val databaseRepositor
     override fun reauthenticate(email: String, password: String): Flow<AuthUserResponse> = callbackFlow {
         val credential = EmailAuthProvider.getCredential(email, password)
         if (isActive) {
-            if (auth.currentUser == null) offer(AuthUserResponse.Error("No user found"))
-                auth.currentUser?.let { user ->
-                    user.reauthenticate(credential)
-                        .addOnCompleteListener {
-                            if (it.isSuccessful)
-                                offer(AuthUserResponse.Success(user))
-                            else offer(AuthUserResponse.Error("Reauth task has failed"))
-                        }
-                        .addOnFailureListener { offer(AuthUserResponse.Error(it.localizedMessage ?: it.message.toString())) }
-                }
+            when (val user = auth.currentUser) {
+                null -> trySend(AuthUserResponse.Error("No user found"))
+                else -> user.reauthenticate(credential)
+                    .addOnCompleteListener {
+                        if (it.isSuccessful)
+                            trySend(AuthUserResponse.Success(user))
+                        else trySend(AuthUserResponse.Error("Reauth task has failed"))
+                    }
+                    .addOnFailureListener { trySend(AuthUserResponse.Error(it.localizedMessage ?: it.message.toString())) }
+
+            }
         }
 
 
@@ -97,10 +98,10 @@ class AuthenticationRepository @Inject constructor(private val databaseRepositor
     override fun resetPassword(email: String) = callbackFlow {
         auth.sendPasswordResetEmail(email)
             .addOnCompleteListener { task ->
-                if (isActive && task.isSuccessful) offer(ResetPasswordResponse.Success("Email envoyé"))
+                if (isActive && task.isSuccessful) trySend(ResetPasswordResponse.Success("Email envoyé"))
             }
             .addOnFailureListener {
-                if (isActive) offer(ResetPasswordResponse.Error(it.localizedMessage ?: it.message.toString()))
+                if (isActive) trySend(ResetPasswordResponse.Error(it.localizedMessage ?: it.message.toString()))
             }
         awaitClose {  }
     }
@@ -113,9 +114,9 @@ class AuthenticationRepository @Inject constructor(private val databaseRepositor
                 profileUpdate.setPhotoUri(Uri.parse(it))
             }
             it.updateProfile(profileUpdate.build()).addOnCompleteListener { task ->
-                if (isActive && task.isSuccessful) offer(Unit)
+                if (task.isSuccessful) trySend(Unit)
             }.addOnFailureListener {
-                if (isActive) offer(Unit)
+                trySend(Unit)
             }
         }
         awaitClose {  }
@@ -124,9 +125,9 @@ class AuthenticationRepository @Inject constructor(private val databaseRepositor
     override fun updateEmail(email: String) = callbackFlow {
         auth.currentUser?.let {
             it.updateEmail(email).addOnCompleteListener { task ->
-                if (isActive && task.isSuccessful) offer(Unit)
+                if (isActive && task.isSuccessful) trySend(Unit)
             }.addOnFailureListener {
-                if (isActive) offer(Unit)
+                if (isActive) trySend(Unit)
             }
         }
         awaitClose {  }

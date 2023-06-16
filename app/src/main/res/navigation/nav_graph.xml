@@ -384,14 +384,6 @@
 
         </action>
 
-        <action
-            android:id="@+id/back_to_welcome"
-            app:destination="@id/connectUserFragment"
-            app:popUpTo="@id/nav_graph"
-            app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right"/>
 
     </fragment>
 
@@ -682,14 +674,6 @@
         tools:layout="@layout/fragment_profile"
         android:label="ProfileFragment">
 
-        <action
-            android:id="@+id/back_to_welcome"
-            app:destination="@id/connectUserFragment"
-            app:popUpTo="@id/nav_graph"
-            app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right"/>
 
         <action
             android:id="@+id/back_to_home"
@@ -702,53 +686,8 @@
 
     </fragment>
 
-    <fragment
-        android:id="@+id/addUserFragment"
-        android:name="fr.harmoniamk.statsmk.fragment.addUser.AddUserFragment"
-        tools:layout="@layout/fragment_add_user"
-        android:label="AddUserFragment">
 
-        <action
-            android:id="@+id/go_to_home"
-            app:destination="@id/homeFragment"
-            app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right"/>
 
-        <action
-            android:id="@+id/go_to_connect"
-            app:destination="@id/connectUserFragment"
-            app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right"/>
-
-    </fragment>
-
-    <fragment
-        android:id="@+id/connectUserFragment"
-        android:name="fr.harmoniamk.statsmk.fragment.connectUser.ConnectUserFragment"
-        tools:layout="@layout/fragment_connect_user"
-        android:label="ConnectUserFragment">
-
-        <action
-            android:id="@+id/go_to_home"
-            app:destination="@id/homeFragment"
-            app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right"/>
-
-        <action
-            android:id="@+id/go_to_signup"
-            app:destination="@id/addUserFragment"
-            app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right"/>
-
-    </fragment>
 
     <fragment
         android:id="@+id/warDetailsFragment"

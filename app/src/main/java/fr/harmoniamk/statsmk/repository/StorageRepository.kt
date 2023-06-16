@@ -39,28 +39,28 @@ class StorageRepository @Inject constructor() : StorageRepositoryInterface {
     private val storageRef = Firebase.storage.reference
 
     override fun uploadPicture(userId: String?, image: Uri) = callbackFlow {
-        if (userId == null && isActive) offer(UploadPictureResponse.Error())
+        if (userId == null && isActive) trySend(UploadPictureResponse.Error())
         userId?.let { id ->
             storageRef.child(id).putFile(image).addOnCompleteListener {
                 val response = when (it.isSuccessful) {
                     true -> UploadPictureResponse.Success()
                     else -> UploadPictureResponse.Error()
                 }
-                if (isActive) offer(response)
+                if (isActive) trySend(response)
             }
         }
         awaitClose {  }
     }
 
     override fun getPicture(userId: String?) = callbackFlow {
-        if (userId == null && isActive) offer(PictureResponse.Error())
+        if (userId == null && isActive) trySend(PictureResponse.Error())
         userId?.let {
             storageRef.child(it).downloadUrl.addOnCompleteListener {
                 val response = when (it.isSuccessful) {
                     true -> PictureResponse.Success(it.result.toString())
                     else -> PictureResponse.Error()
                 }
-                if (isActive) offer(response)
+                if (isActive) trySend(response)
             }
         }
         awaitClose {  }

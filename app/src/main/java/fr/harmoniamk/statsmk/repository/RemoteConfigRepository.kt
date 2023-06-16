@@ -43,7 +43,7 @@ class RemoteConfigRepository @Inject constructor() : RemoteConfigRepositoryInter
                 .fetch(0)
                 .addOnCompleteListener {
                     remoteConfig.activate()
-                    if (isActive) offer(Unit)
+                    if (isActive) trySend(Unit)
                 }
             awaitClose { }
         }

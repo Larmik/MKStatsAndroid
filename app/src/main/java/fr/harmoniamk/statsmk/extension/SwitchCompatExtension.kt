@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.callbackFlow
 @ExperimentalCoroutinesApi
 fun SwitchCompat.checks() = callbackFlow {
     this@checks.setOnCheckedChangeListener { _, isChecked ->
-        this.offer(isChecked)
+        this.trySend(isChecked)
     }
     awaitClose { this@checks.setOnCheckedChangeListener(null) }
 }

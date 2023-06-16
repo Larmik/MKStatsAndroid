@@ -52,8 +52,8 @@ class SplashScreenViewModel @Inject constructor(
             .flatMapLatest { databaseRepository.getWars() }
             .map {
                 val screen = when (preferencesRepository.authEmail) {
-                    null -> WelcomeScreen.CONNECT
-                    else -> WelcomeScreen.HOME
+                    null -> WelcomeScreen.Login
+                    else -> WelcomeScreen.Home
 
                 }
                 Pair(screen, it)
@@ -105,7 +105,7 @@ class SplashScreenViewModel @Inject constructor(
                                 databaseRepository.writeWars(finalList).first()
                             }
                         }
-                        _sharedWelcomeScreen.emit(WelcomeScreen.HOME)
+                        _sharedWelcomeScreen.emit(WelcomeScreen.Home)
                     }
                     .flatMapLatest { notificationsRepository.register(preferencesRepository.currentTeam?.mid ?: "") }
                     .launchIn(viewModelScope)
@@ -114,7 +114,7 @@ class SplashScreenViewModel @Inject constructor(
                     .filter { it }
                     .onEach {
                         delay(1000)
-                        _sharedWelcomeScreen.emit(WelcomeScreen.WELCOME)
+                        _sharedWelcomeScreen.emit(WelcomeScreen.Signup)
                     }.launchIn(viewModelScope)
 
                 flowOf(preferencesRepository.authEmail)
@@ -122,7 +122,7 @@ class SplashScreenViewModel @Inject constructor(
                     .filter { it == null }
                     .onEach {
                         delay(1000)
-                        _sharedWelcomeScreen.emit(WelcomeScreen.CONNECT)
+                        _sharedWelcomeScreen.emit(WelcomeScreen.Login)
                     }.launchIn(viewModelScope)
             }
             .launchIn(viewModelScope)

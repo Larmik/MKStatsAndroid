@@ -1,11 +1,9 @@
 package fr.harmoniamk.statsmk.enums
 
-import fr.harmoniamk.statsmk.R
 
 
-enum class WelcomeScreen(val fragmentResId: Int) {
-    WELCOME(R.id.addUserFragment), CONNECT(R.id.connectUserFragment),  HOME(
-        R.id.homeFragment);
+enum class WelcomeScreen {
+    Signup, Login,  Home;
 
     companion object {
         @JvmStatic

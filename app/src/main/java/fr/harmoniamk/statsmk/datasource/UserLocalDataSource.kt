@@ -4,14 +4,15 @@ import android.content.Context
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ApplicationComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import fr.harmoniamk.statsmk.database.MKDatabase
 import fr.harmoniamk.statsmk.model.firebase.User
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
+import javax.inject.Singleton
 
 interface UserLocalDataSourceInterface {
     fun getAll(): Flow<List<User>>
@@ -26,8 +27,9 @@ interface UserLocalDataSourceInterface {
 @FlowPreview
 @ExperimentalCoroutinesApi
 @Module
-@InstallIn(ApplicationComponent::class)
+@InstallIn(SingletonComponent::class)
 interface UserLocalDataSourceModule {
+    @Singleton
     @Binds
     fun bind(impl: UserLocalDataSource): UserLocalDataSourceInterface
 }

@@ -18,6 +18,8 @@ data class NewWar(
     val isOfficial: Boolean? = null
 ) : Serializable, Parcelable {
 
+    companion object
+
 
     fun toEntity(name: String?) = WarEntity(
         mid = mid,

@@ -132,6 +132,7 @@
     <string name="officielles">Official</string>
     <string name="aucune_war_n_a_t_trouv_e">No results found.</string>
     <string name="connexion">Connection</string>
+    <string name="connexion_en_cours">Logging in…</string>
     <string name="se_connecter">Login</string>
     <string name="mot_de_passe_oubli">Forgotten password ?</string>
     <string name="nouveau_sur_l_appli">New on this app ?</string>
@@ -327,6 +328,7 @@
     <string name="month_stats">Monthly stats</string>
     <string name="fetch_data">Fetching data…</string>
     <string name="matchs_played">%s wars played</string>
+    <string name="creating_user">Creating account, please wait…</string>
     <string name="batd">Athens Dash</string>
     <string name="bdc">Daisy Cruiser</string>
     <string name="bmh">Moonview Highway</string>
