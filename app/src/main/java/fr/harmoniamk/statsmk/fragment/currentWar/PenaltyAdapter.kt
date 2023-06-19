@@ -28,15 +28,6 @@ class PenaltyAdapter(private val list: MutableList<Penalty> = mutableListOf()) :
         holder.bind(list[position])
     }
 
-
-    fun addPenalties(penalties: List<Penalty>) {
-        if (penalties.size != itemCount) {
-            notifyItemRangeRemoved(0, itemCount)
-            list.clear()
-            list.addAll(penalties)
-            notifyItemRangeInserted(0, itemCount)
-        }
-    }
     override fun getItemCount() = list.size
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main
