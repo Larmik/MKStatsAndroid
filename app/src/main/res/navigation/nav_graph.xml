@@ -33,20 +33,7 @@
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right"/>
 
-        <action
-            android:id="@+id/go_to_war_details"
-            app:destination="@id/warDetailsFragment"
-            app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right">
 
-            <argument
-                android:name="war"
-                app:argType="fr.harmoniamk.statsmk.model.local.MKWar"
-                app:nullable="false"/>
-
-        </action>
 
         <action
             android:id="@+id/manageTeams"
@@ -59,14 +46,6 @@
         <action
             android:id="@+id/managePlayers"
             app:destination="@id/managePlayersFragment"
-            app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right"/>
-
-        <action
-            android:id="@+id/go_to_current_war"
-            app:destination="@id/currentWarFragment"
             app:enterAnim="@anim/enter_from_right"
             app:exitAnim="@anim/exit_to_left"
             app:popEnterAnim="@anim/enter_from_left"

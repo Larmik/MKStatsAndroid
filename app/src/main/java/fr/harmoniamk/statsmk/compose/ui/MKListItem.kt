@@ -18,7 +18,7 @@ import fr.harmoniamk.statsmk.enums.ListItems
 @Composable
 fun MKListItem(item: ListItems, onClick: (String) -> Unit) {
     Column(Modifier.padding(horizontal = 5.dp).clickable { onClick(item.route) }) {
-        MKText(text = item.titleRes, modifier = Modifier.padding(vertical = 15.dp))
+        MKText(text = item.titleRes, modifier = Modifier.padding(vertical = 20.dp))
         Spacer(
             Modifier
                 .fillMaxWidth()

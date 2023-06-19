@@ -26,6 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            tools:visibility="visible"
             android:visibility="gone"
             android:id="@+id/main_layout">
 
@@ -263,6 +264,8 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:visibility="gone"
+                tools:visibility="visible"
+
                 android:id="@+id/penalties_layout">
 
 
@@ -341,6 +344,7 @@
                 android:textColor="@color/harmonia_dark"
                 android:textSize="16sp"
                 android:visibility="gone"
+                tools:visibility="visible"
                 android:fontFamily="@font/montserrat_bold"/>
             <RelativeLayout
                 android:layout_width="match_parent"

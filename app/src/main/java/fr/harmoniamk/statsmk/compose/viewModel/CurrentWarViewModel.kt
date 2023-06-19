@@ -1,102 +1,117 @@
-package fr.harmoniamk.statsmk.fragment.currentWar
+package fr.harmoniamk.statsmk.compose.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.enums.UserRole
-import fr.harmoniamk.statsmk.extension.*
+import fr.harmoniamk.statsmk.extension.bind
+import fr.harmoniamk.statsmk.extension.isTrue
+import fr.harmoniamk.statsmk.extension.positionToPoints
+import fr.harmoniamk.statsmk.extension.sum
+import fr.harmoniamk.statsmk.extension.withName
+import fr.harmoniamk.statsmk.extension.withTeamName
+import fr.harmoniamk.statsmk.fragment.currentWar.CurrentPlayerModel
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.firebase.Penalty
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarPosition
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
-import fr.harmoniamk.statsmk.repository.*
+import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
+import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
+import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
+import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.*
-import java.util.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flattenMerge
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.shareIn
+import java.util.Locale
 import javax.inject.Inject
-
-@ExperimentalCoroutinesApi
+@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @HiltViewModel
-@FlowPreview
-class CurrentWarViewModel @Inject constructor(
+class CurrentWarViewModel@Inject constructor(
     private val firebaseRepository: FirebaseRepositoryInterface,
     private val preferencesRepository: PreferencesRepositoryInterface,
     private val authenticationRepository: AuthenticationRepositoryInterface,
-    private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
+    private val databaseRepository: DatabaseRepositoryInterface
+) : ViewModel() {
 
-    private val _sharedButtonVisible = MutableSharedFlow<Boolean>()
-    private val _sharedCurrentWar = MutableSharedFlow<MKWar>()
+
+    private val _sharedCurrentWar = MutableStateFlow<MKWar?>(null)
+    private val _sharedButtonVisible = MutableStateFlow<Boolean>(false)
+    private val _sharedTracks = MutableStateFlow<List<MKWarTrack>?>(null)
+    private val _sharedWarPlayers = MutableStateFlow<List<CurrentPlayerModel>?>(null)
+    private val _sharedPenalties = MutableStateFlow<List<Penalty>?>(null)
+    private val _sharedShockCount = MutableStateFlow<String?>(null)
+
+
+    val sharedCurrentWar = _sharedCurrentWar.asStateFlow()
+    val sharedButtonVisible = _sharedButtonVisible.asStateFlow()
+    val sharedTracks = _sharedTracks.asStateFlow()
+    val sharedWarPlayers = _sharedWarPlayers.asStateFlow()
+    val sharedPenalties = _sharedPenalties.asStateFlow()
+    val sharedShockCount = _sharedShockCount.asStateFlow()
+
+
     private val  _sharedQuit = MutableSharedFlow<Unit>()
     private val  _sharedBackToWars = MutableSharedFlow<Unit>()
     private val _sharedSelectTrack = MutableSharedFlow<Unit>()
-    private val _sharedValidateWar = MutableSharedFlow<Boolean>()
-    private val _sharedTracks = MutableSharedFlow<List<MKWarTrack>>()
     private val _sharedTrackClick = MutableSharedFlow<Int>()
-    private val _sharedPopupShowing = MutableSharedFlow<Pair<PopupType, Boolean>>()
+    private val _sharedPopupShowing = MutableSharedFlow<Boolean>()
     private val _sharedAddPenalty = MutableSharedFlow<NewWar>()
-    private val _sharedPenalties = MutableSharedFlow<List<Penalty>?>()
-    private val _sharedWarPlayers = MutableSharedFlow<List<CurrentPlayerModel>>()
     private val _sharedSubPlayer = MutableSharedFlow<Unit>()
-    private val _sharedShockCount = MutableSharedFlow<String>()
     private val _sharedLoading = MutableSharedFlow<Boolean>()
-    private val _sharedGoToWarResume = MutableSharedFlow<MKWar>()
 
-    val sharedButtonVisible = _sharedButtonVisible.asSharedFlow()
-    val sharedCurrentWar = _sharedCurrentWar.asSharedFlow()
     val sharedQuit = _sharedQuit.asSharedFlow()
     val sharedBackToWars = _sharedBackToWars.asSharedFlow()
     val sharedSelectTrack = _sharedSelectTrack.asSharedFlow()
-    val sharedValidateWar = _sharedValidateWar.asSharedFlow()
-    val sharedTracks = _sharedTracks.asSharedFlow()
     val sharedTrackClick = _sharedTrackClick.asSharedFlow()
     val sharedPopupShowing = _sharedPopupShowing.asSharedFlow()
     val sharedAddPenalty = _sharedAddPenalty.asSharedFlow()
-    val sharedPenalties = _sharedPenalties.asSharedFlow()
-    val sharedWarPlayers = _sharedWarPlayers.asSharedFlow()
     val sharedSubPlayer = _sharedSubPlayer.asSharedFlow()
-    val sharedShockCount = _sharedShockCount.asSharedFlow()
     val sharedLoading = _sharedLoading.asSharedFlow()
-    val sharedGoToWarResume = _sharedGoToWarResume.asSharedFlow()
 
-    enum class PopupType{VALIDATE, DELETE}
-
-    fun bind(onBack: Flow<Unit>, onNextTrack: Flow<Unit>, onTrackClick: Flow<Int>, onPopup: Flow<PopupType>, onPenalty: Flow<Unit>, onSub: Flow<Unit>, onSubDismiss: Flow<Unit>) {
+    init {
         val currentWar = firebaseRepository.listenToCurrentWar()
             .shareIn(viewModelScope, SharingStarted.Lazily)
-
-        currentWar
-            .filter { it == null }
-            .flatMapLatest { firebaseRepository.getNewWars(preferencesRepository.currentTeam?.mid ?: "") }
-            .mapNotNull { it.lastOrNull() }
-            .flatMapLatest { it.withName(databaseRepository) }
-            .bind(_sharedGoToWarResume, viewModelScope)
-
 
         val warFlow = currentWar
             .filterNotNull()
             .flatMapLatest { listOf(it).withName(databaseRepository) }
             .mapNotNull { it.singleOrNull() }
 
-            warFlow.onEach { war ->
-                val isAdmin = (authenticationRepository.userRole.firstOrNull() ?: 0) >= UserRole.ADMIN.ordinal
-                preferencesRepository.currentWar = war.war
-                _sharedCurrentWar.emit(war)
-                _sharedButtonVisible.emit(isAdmin.isTrue)
-                _sharedValidateWar.emit(isAdmin.isTrue && war.isOver)
-                _sharedTracks.emit(war.war?.warTracks.orEmpty().map { MKWarTrack(it) })
-                val players = databaseRepository.getUsers().first().filter { it.currentWar == preferencesRepository.currentWar?.mid }
-                    .sortedBy { it.name?.toLowerCase(Locale.ROOT) }
-                _sharedWarPlayers.takeIf { war.war?.warTracks == null }?.emit(players.map { CurrentPlayerModel(it, 0) })
 
-            }
+        warFlow.onEach { war ->
+            val isAdmin = (authenticationRepository.userRole.firstOrNull() ?: 0) >= UserRole.ADMIN.ordinal
+            preferencesRepository.currentWar = war.war
+            _sharedCurrentWar.emit(war)
+            _sharedButtonVisible.emit(isAdmin.isTrue)
+            _sharedTracks.emit(war.war?.warTracks.orEmpty().map { MKWarTrack(it) })
+            val players = databaseRepository.getUsers().first().filter { it.currentWar == preferencesRepository.currentWar?.mid }
+                .sortedBy { it.name?.toLowerCase(Locale.ROOT) }
+            _sharedWarPlayers.takeIf { war.war?.warTracks == null }?.emit(players.map { CurrentPlayerModel(it, 0) })
+
+        }
             .mapNotNull { it.war?.penalties }
             .flatMapLatest { it.withTeamName(databaseRepository) }
             .bind(_sharedPenalties, viewModelScope)
 
-        val trackPlayersFlow = warFlow
+       warFlow
             .mapNotNull { it.war?.warTracks?.map { MKWarTrack(it) } }
             .map {
                 var shockCount = 0
@@ -133,18 +148,25 @@ class CurrentWarViewModel @Inject constructor(
                     _sharedShockCount.emit("x$it")
                 }
             }
-            .shareIn(viewModelScope, SharingStarted.Lazily)
+            .launchIn(viewModelScope)
+
+
+    }
+
+    fun bind(onBack: Flow<Unit>, onNextTrack: Flow<Unit>, onTrackClick: Flow<Int>, onPopup: Flow<Unit>, onPenalty: Flow<Unit>, onSub: Flow<Unit>, onSubDismiss: Flow<Unit>) {
+
+
 
         flowOf(flowOf(Unit), onSubDismiss)
             .flattenMerge()
-            .flatMapLatest { trackPlayersFlow }
+           // .flatMapLatest { trackPlayersFlow }
             .launchIn(viewModelScope)
 
         onBack.bind(_sharedQuit, viewModelScope)
         onNextTrack.bind(_sharedSelectTrack, viewModelScope)
         onTrackClick.bind(_sharedTrackClick, viewModelScope)
         onPopup
-            .onEach { _sharedPopupShowing.emit(Pair(it, true)) }
+            .onEach { _sharedPopupShowing.emit(true) }
             .launchIn(viewModelScope)
 
 
@@ -170,30 +192,7 @@ class CurrentWarViewModel @Inject constructor(
             .bind(_sharedBackToWars, viewModelScope)
 
         onDismiss
-            .onEach { _sharedPopupShowing.emit(Pair(PopupType.DELETE, false)) }
+            .onEach { _sharedPopupShowing.emit(false) }
             .launchIn(viewModelScope)
     }
-    fun bindValidatePopup(onValidate: Flow<Unit>, onDismiss: Flow<Unit>) {
-        onValidate
-            .mapNotNull { preferencesRepository.currentWar }
-            .onEach { war ->
-                firebaseRepository.writeNewWar(war).first()
-                firebaseRepository.deleteCurrentWar().first()
-                val mkWar = listOf(MKWar(war)).withName(databaseRepository).first()
-                mkWar.singleOrNull()?.let { databaseRepository.writeWar(it).first() }
-                databaseRepository.getUsers().first().filter { it.currentWar == war.mid }.forEach {
-                    val new = it.apply { this.currentWar = "-1" }
-                    firebaseRepository.writeUser(new).first()
-                }
-                war.withName(databaseRepository)
-                    .filterNotNull()
-                    .bind(_sharedGoToWarResume, viewModelScope)
-            }.launchIn(viewModelScope)
-
-        onDismiss
-            .onEach { _sharedPopupShowing.emit(Pair(PopupType.VALIDATE, false)) }
-            .launchIn(viewModelScope)
-    }
-
-
 }

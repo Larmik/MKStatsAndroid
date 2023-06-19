@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.onEach
 @ExperimentalCoroutinesApi
 @FlowPreview
 @AndroidEntryPoint
+@Deprecated("Migration Compose")
 class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private val binding: FragmentHomeBinding by viewBinding()
@@ -28,13 +29,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         super.onViewCreated(view, savedInstanceState)
         val inputManager = requireActivity().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         inputManager.hideSoftInputFromWindow(binding.root.windowToken, 0)
-        val adapter = HomePagerAdapter(requireActivity())
-        binding.homepager.adapter = adapter
+
         binding.homepager.currentItem = 0
         binding.homepager.isUserInputEnabled = false
-        TabLayoutMediator(binding.tablayout, binding.homepager) { tab, position ->
-            tab.text = adapter.getTabTitle(position)
-        }.attach()
 
         requireActivity().backPressedDispatcher(viewLifecycleOwner).onEach {
             when (binding.homepager.currentItem) {

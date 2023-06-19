@@ -2,9 +2,11 @@ package fr.harmoniamk.statsmk.compose.screen
 
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 
 @ExperimentalMaterialApi
 @Composable
@@ -26,7 +28,21 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
             )
         }
         composable(route = "Home") {
-            HomeScreen(onBack = onBack)
+            HomeScreen(
+                onBack = onBack, 
+                onCurrentWarClick = { navController.navigate("Home/War/Current") },
+                onWarClick = {
+                    navController.navigate(route = "Home/War/$it")
+                }
+            )
+        }
+        composable(route = "Home/War/Current") {
+            CurrentWarScreen()
+        }
+        composable(route = "Home/War/{id}",  arguments = listOf(navArgument("id") {
+            type = NavType.StringType
+        })) {
+            WarDetailsScreen(id = it.arguments?.getString("id"))
         }
 
     }

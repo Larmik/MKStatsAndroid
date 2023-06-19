@@ -16,7 +16,7 @@ import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import fr.harmoniamk.statsmk.model.mock.mock
 
 @Composable
-fun MKScoreView(track: MKWarTrack? = null, war: MKWar? = null) {
+fun MKScoreView(modifier: Modifier = Modifier, track: MKWarTrack? = null, war: MKWar? = null, isSmaller: Boolean = false) {
     val score = when {
         war != null -> war.displayedScore
         track != null -> track.displayedResult
@@ -28,6 +28,7 @@ fun MKScoreView(track: MKWarTrack? = null, war: MKWar? = null) {
         else -> ""
     }
     val diffColor = when {
+        isSmaller -> R.color.harmonia_dark
         war?.displayedDiff?.contains("-").isTrue -> R.color.lose
         war?.displayedDiff?.contains("+").isTrue -> R.color.green
         track?.displayedDiff?.contains("-").isTrue -> R.color.lose
@@ -35,9 +36,9 @@ fun MKScoreView(track: MKWarTrack? = null, war: MKWar? = null) {
         else -> R.color.harmonia_dark
     }
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        MKText(text = score, modifier = Modifier.padding(10.dp), fontSize = 20, font = R.font.orbitron_semibold)
-        MKText(text = diff, modifier = Modifier.padding(bottom = 10.dp), fontSize = 16, font = R.font.orbitron_regular, textColor = diffColor)
+    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier) {
+        MKText(text = score, modifier = Modifier.padding(horizontal = if (isSmaller) 0.dp else 10.dp), fontSize = if (isSmaller) 14 else 22, font = R.font.orbitron_semibold)
+        MKText(text = diff, modifier = Modifier.padding(horizontal = if (isSmaller) 0.dp else 10.dp), fontSize = if (isSmaller) 11 else 18, font = R.font.orbitron_regular, textColor = diffColor)
     }
 
 }
@@ -52,4 +53,9 @@ fun MKScorePreviewWar(){
 @Composable
 fun MKScorePreviewTrack(){
     MKScoreView(track = MKWarTrack(NewWarTrack.mock()))
+}
+@Preview
+@Composable
+fun MKScorePreviewTrackSmall(){
+    MKScoreView(track = MKWarTrack(NewWarTrack.mock()), isSmaller = true)
 }

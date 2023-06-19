@@ -29,6 +29,7 @@ import kotlin.coroutines.CoroutineContext
 
 @FlowPreview
 @ExperimentalCoroutinesApi
+@Deprecated("Migration Compose")
 class PopupFragment(val message: Int? = null, val positiveText: Int? = null, private val negativeText: Int = R.string.back, val editTextHint: Any? = null, val loading: Boolean = false, val playerList: List<UserSelector>? = null, val isFcCode: Boolean = false) : DialogFragment(), CoroutineScope {
 
     lateinit var binding: FragmentPopupBinding

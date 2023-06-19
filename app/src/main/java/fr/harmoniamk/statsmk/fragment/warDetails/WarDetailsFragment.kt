@@ -29,7 +29,7 @@ import kotlinx.coroutines.flow.*
 class WarDetailsFragment : Fragment(R.layout.fragment_war_details) {
 
     private val binding : FragmentWarDetailsBinding by viewBinding()
-    private val viewModel: WarDetailsViewModel by viewModels()
+    private val viewModel: OldWarDetailsViewModel by viewModels()
     private var war: MKWar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {

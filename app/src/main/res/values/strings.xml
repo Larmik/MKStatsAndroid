@@ -154,7 +154,7 @@
     <string name="joueurs">Joueurs :</string>
     <string name="p_nalit_s">Pénalités :</string>
     <string name="prochaine_course">Prochaine course</string>
-    <string name="courses_jou_es">Courses jouées</string>
+    <string name="courses_jou_es">Courses jouées :</string>
     <string name="le_match">Le match est sur le point de commencer. Vous pourrez ajouter une première course dès que le résultat du vote sera connu. \n \n Bonne chance, faites preuve de fair-play et de bienveillance, et surtout n\'oubliez pas : le plaisir avant tout !</string>
     <string name="modifier_le_nom">Modifier le nom :</string>
     <string name="r_le">Rôle:</string>

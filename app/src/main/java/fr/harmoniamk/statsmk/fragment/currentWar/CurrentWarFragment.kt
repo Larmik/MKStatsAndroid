@@ -32,7 +32,7 @@ import kotlinx.coroutines.flow.*
 class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
 
     private val binding : FragmentCurrentWarBinding by viewBinding()
-    private val viewModel: CurrentWarViewModel by viewModels()
+    private val viewModel: OldCurrentWarViewModel by viewModels()
     private var war: MKWar? = null
     private var popup = PopupFragment(R.string.delete_war_confirm, R.string.delete)
     private var validatePopup = PopupFragment(R.string.validate_war_confirm, R.string.confirm)
