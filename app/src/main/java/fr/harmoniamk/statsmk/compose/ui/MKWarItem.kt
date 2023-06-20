@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -48,26 +47,24 @@ fun MKWarItem(war: MKWar, isForStats: Boolean = false, onClick: (String?) -> Uni
                 .padding(10.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                 Image(painter = painterResource(id = pin), contentDescription = null, modifier = Modifier.size(15.dp))
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    war.name?.let { MKText(text = it, fontSize = 18, font = R.font.montserrat_bold) }
+                    war.name?.let { MKText(text = it, fontSize = 16, font = R.font.montserrat_bold) }
                     war.war?.createdDate?.let { MKText(text = it) }
                 }
-                Row() {
-                    Column() {
+                Row {
+                    Column {
                         MKText(text = stringResource(id = R.string.score), fontSize = 12)
                         MKText(text = stringResource(id = R.string.diff), fontSize = 12)
                         MKText(text = stringResource(id = R.string.maps), fontSize = 12)
                     }
                     Spacer(modifier = Modifier.width(5.dp))
-                    Column() {
+                    Column {
                         MKText(text = war.displayedScore, font = R.font.montserrat_bold, fontSize = 12)
                         MKText(text = war.displayedDiff, font = R.font.montserrat_bold, fontSize = 12)
                         MKText(text = war.mapsWon, font = R.font.montserrat_bold, fontSize = 12)
                     }
                 }
-
             }
         }
-
     }
 }
 

@@ -133,39 +133,6 @@
     </fragment>
 
     <fragment
-        android:id="@+id/trackListFragment"
-        android:name="fr.harmoniamk.statsmk.fragment.trackList.TrackListFragment"
-        tools:layout="@layout/fragment_track_list"
-        android:label="TrackListFragment">
-
-        <action
-            android:id="@+id/enter_positions"
-            app:destination="@id/positionFragment"
-            app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popUpTo="@id/trackListFragment"
-            app:popUpToInclusive="true"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right">
-
-            <argument
-                android:name="track"
-                app:argType="integer"/>
-
-            <argument
-                android:name="tmId"
-                app:argType="integer"/>
-
-            <argument
-                android:name="warTrackId"
-                app:nullable="true"
-                app:argType="string"/>
-
-        </action>
-
-    </fragment>
-
-    <fragment
         android:id="@+id/addWarFragment"
         android:name="fr.harmoniamk.statsmk.fragment.addWar.AddWarFragment"
         tools:layout="@layout/fragment_add_war"
@@ -297,52 +264,6 @@
     </fragment>
 
     <fragment
-        android:id="@+id/warTrackResultFragment"
-        android:name="fr.harmoniamk.statsmk.fragment.warTrackResult.WarTrackResultFragment"
-        tools:layout="@layout/fragment_result_war_track"
-        android:label="WarTrackResultFragment">
-
-        <action
-            android:id="@+id/back_to_current"
-            app:destination="@id/currentWarFragment"
-            app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popUpTo="@id/warTrackResultFragment"
-            app:popUpToInclusive="true"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right"/>
-
-    </fragment>
-
-    <fragment
-        android:id="@+id/positionFragment"
-        android:name="fr.harmoniamk.statsmk.fragment.position.PositionFragment"
-        tools:layout="@layout/fragment_position"
-        android:label="PositionFragment">
-
-        <action
-            android:id="@+id/go_to_result"
-            app:destination="@id/warTrackResultFragment"
-            app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popUpTo="@id/positionFragment"
-            app:popUpToInclusive="true"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right">
-
-            <argument
-                android:name="warTrackId"
-                app:nullable="true"
-                app:argType="string"/>
-            <argument
-                android:name="track"
-                app:argType="integer"/>
-
-        </action>
-
-    </fragment>
-
-    <fragment
         android:id="@+id/managePlayersFragment"
         android:name="fr.harmoniamk.statsmk.fragment.settings.managePlayers.ManagePlayersFragment"
         tools:layout="@layout/fragment_manage_players"
@@ -387,21 +308,6 @@
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right"/>
 
-        <action
-            android:id="@+id/add_track"
-            app:destination="@id/trackListFragment"
-            app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popUpTo="@id/currentWarFragment"
-            app:popUpToInclusive="true"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right">
-
-            <argument
-                android:name="warId"
-                app:argType="string"/>
-
-        </action>
 
         <action
             android:id="@+id/to_track_details"
@@ -424,23 +330,6 @@
                 android:name="warTrack"
                 app:argType="fr.harmoniamk.statsmk.model.firebase.NewWarTrack"
                 app:nullable="true"/>
-
-        </action>
-
-        <action
-            android:id="@+id/go_to_war_details"
-            app:destination="@id/warDetailsFragment"
-            app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popUpTo="@id/currentWarFragment"
-            app:popUpToInclusive="true"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right">
-
-            <argument
-                android:name="war"
-                app:argType="fr.harmoniamk.statsmk.model.local.MKWar"
-                app:nullable="false"/>
 
         </action>
 

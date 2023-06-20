@@ -12,4 +12,5 @@ import kotlinx.coroutines.FlowPreview
 @InstallIn(SingletonComponent::class)
 interface ViewModelFactoryProvider {
     val warDetailsViewModel: WarDetailsViewModel.Factory
+    val positionViewModel: PositionViewModel.Factory
 }

@@ -140,8 +140,9 @@ class WarViewModel @Inject constructor(
                         ?.safeSubList(0, 5)?.let {
                             _sharedLastWars.emit(it)
                         }
-                } else _sharedCreateManualWarEnabled.value = false
+                }
                 currentWar = it.takeIf { networkRepository.networkAvailable }
+                _sharedCreateManualWarEnabled.value = it == null
                 _sharedCurrentWar.value = currentWar
             }.launchIn(viewModelScope)
     }

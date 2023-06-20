@@ -56,10 +56,10 @@ fun SignupScreen(viewModel: SignupViewModel = hiltViewModel(), onLogin: () -> Un
     }
     MKBaseScreen(title = stringResource(id = R.string.bienvenue), verticalArrangement = Arrangement.SpaceBetween) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(horizontal = 15.dp)) {
-            MKTextField(value = nicknameValue.value, onValueChange = { nicknameValue.value = it }, placeHolderRes = R.string.entrez_votre_pseudo, modifier = Modifier.padding(vertical = 5.dp))
-            MKTextField(value = emailValue.value, onValueChange = { emailValue.value = it }, placeHolderRes = R.string.entrez_votre_adresse_email, modifier = Modifier.padding(vertical = 5.dp))
-            MKTextField(value = passwordValue.value, onValueChange = { passwordValue.value = it }, placeHolderRes = R.string.entrez_votre_mot_de_passe, modifier = Modifier.padding(vertical = 5.dp))
-            MKTextField(value = fcValue.value, onValueChange = { fcValue.value = it }, placeHolderRes = R.string.code_ami, modifier = Modifier.padding(vertical = 5.dp))
+            MKTextField(value = nicknameValue.value, onValueChange = { nicknameValue.value = it }, placeHolderRes = R.string.entrez_votre_pseudo)
+            MKTextField(value = emailValue.value, onValueChange = { emailValue.value = it }, placeHolderRes = R.string.entrez_votre_adresse_email)
+            MKTextField(value = passwordValue.value, onValueChange = { passwordValue.value = it }, placeHolderRes = R.string.entrez_votre_mot_de_passe)
+            MKTextField(value = fcValue.value, onValueChange = { fcValue.value = it }, placeHolderRes = R.string.code_ami)
             MKButton(text = R.string.suivant, enabled = emailValue.value.text.isNotEmpty() && passwordValue.value.text.isNotEmpty() && nicknameValue.value.text.isNotEmpty()) {
                 viewModel.onSignup(
                     emailValue.value.text,

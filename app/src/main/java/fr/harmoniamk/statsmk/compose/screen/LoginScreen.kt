@@ -55,8 +55,8 @@ fun LoginScreen(viewModel: LoginViewModel = hiltViewModel(), onNext: () -> Unit,
 
     MKBaseScreen(title = stringResource(id = R.string.connexion), verticalArrangement = Arrangement.SpaceBetween) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(horizontal = 15.dp)) {
-            MKTextField(value = emailValue.value, onValueChange = { emailValue.value = it }, placeHolderRes = R.string.entrez_votre_adresse_email, modifier = Modifier.padding(vertical = 5.dp))
-            MKTextField(value = passwordValue.value, onValueChange = { passwordValue.value = it }, placeHolderRes = R.string.entrez_votre_mot_de_passe, modifier = Modifier.padding(vertical = 5.dp))
+            MKTextField(value = emailValue.value, onValueChange = { emailValue.value = it }, placeHolderRes = R.string.entrez_votre_adresse_email)
+            MKTextField(value = passwordValue.value, onValueChange = { passwordValue.value = it }, placeHolderRes = R.string.entrez_votre_mot_de_passe)
             MKButton(text = R.string.se_connecter, enabled = emailValue.value.text.isNotEmpty() && passwordValue.value.text.isNotEmpty()) {
                 viewModel.onConnect(emailValue.value.text, passwordValue.value.text)
             }

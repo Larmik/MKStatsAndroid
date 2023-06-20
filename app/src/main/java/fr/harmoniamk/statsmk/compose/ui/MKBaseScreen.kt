@@ -34,7 +34,7 @@ fun MKBaseScreen(title: Any, subTitle: Any? = null, verticalArrangement: Arrange
             )) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 MKText(text = title, font = R.font.montserrat_bold, fontSize = 20, textColor = R.color.white, modifier = Modifier.padding(15.dp))
-                subTitle?.let { MKText(text = subTitle, font = R.font.montserrat_regular, fontSize = 16, textColor = R.color.white, modifier = Modifier.padding(5.dp)) }
+                subTitle?.let { MKText(text = subTitle, font = R.font.montserrat_regular, fontSize = 16, textColor = R.color.white, modifier = Modifier.padding(top = 5.dp, bottom = 10.dp)) }
             }
         }
         content()

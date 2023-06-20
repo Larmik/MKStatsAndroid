@@ -1,8 +1,8 @@
 package fr.harmoniamk.statsmk.compose.ui
 
-import android.widget.Space
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,9 +28,9 @@ import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
 
 @Composable
-fun MKTrackItem(isVertical: Boolean = false, track: MKWarTrack? = null, map: Maps? = null) {
+fun MKTrackItem(isVertical: Boolean = false, track: MKWarTrack? = null, map: Maps? = null, onClick: (Int) -> Unit) {
 
-    Card(elevation = 0.dp, backgroundColor = colorResource(track?.backgroundColor ?: R.color.white_alphaed), modifier = Modifier.padding(bottom = 5.dp)) {
+    Card(elevation = 0.dp, backgroundColor = colorResource(track?.backgroundColor ?: R.color.white_alphaed), modifier = Modifier.padding(bottom = 5.dp).clickable { map?.ordinal?.let { onClick(it) } }) {
         when {
             track?.index != null -> Maps.values()[track.index ?: 0]
             map != null -> map
@@ -67,32 +67,32 @@ fun MKTrackItem(isVertical: Boolean = false, track: MKWarTrack? = null, map: Map
                                 .padding(end = 10.dp))
                             Column() {
                                 MKText(text = stringResource(id = finalMap.label), font = R.font.montserrat_bold)
-                                MKText(text = finalMap.name)
+                                MKText(text = finalMap.name, fontSize = 12)
                             }
                         }
                         when {
                             track != null -> MKScoreView(track = track, isSmaller = true)
                             map != null ->  Image(painter = painterResource(id = map.cup.picture), contentDescription = null, modifier = Modifier.size(45.dp))
                         }
-
-
                     }
                 }
             }
         }
-
     }
-    
 }
 
 @Preview
 @Composable
 fun MKTrackItemPreviewNormal() {
-    MKTrackItem(map = Maps.dHC)
+    MKTrackItem(map = Maps.dHC) {
+
+    }
 }
 
 @Preview
 @Composable
 fun MKTrackItemPreviewVertical() {
-    MKTrackItem(true)
+    MKTrackItem(true) {
+
+    }
 }

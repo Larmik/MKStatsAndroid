@@ -1,9 +1,7 @@
 package fr.harmoniamk.statsmk.compose.ui
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -24,7 +22,7 @@ fun MKPlayerList(players: List<CurrentPlayerModel>) {
         Row(Modifier.padding(10.dp)) {
             LazyColumn(Modifier.weight(1f)) {
                 items(players.safeSubList(0,3)) {
-                    Row(Modifier.padding(vertical = 3.dp)) {
+                    Row(Modifier.padding(vertical = 1.5.dp)) {
                         MKText(text = it.player?.name ?: "", modifier = Modifier.defaultMinSize(minWidth = 120.dp))
                         MKText(text = it.score.toString(), font = R.font.montserrat_bold)
                     }
@@ -32,11 +30,10 @@ fun MKPlayerList(players: List<CurrentPlayerModel>) {
             }
             LazyColumn(Modifier.weight(1f)) {
                 items(players.safeSubList(3, players.size)) {
-                    Row(Modifier.padding(vertical = 3.dp)) {
+                    Row(Modifier.padding(vertical = 1.5.dp)) {
                         MKText(text = it.player?.name ?: "", modifier = Modifier.defaultMinSize(minWidth = 120.dp))
                         MKText(text = it.score.toString(), font = R.font.montserrat_bold)
                     }
-
                 }
             }
         }

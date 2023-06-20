@@ -360,8 +360,18 @@
     <string name="offline_mode">Vous êtes hors connexion. \n \n Vous pourrez toujours consulter les wars et statistiques mais vous n\'aurez pas accès à la war en cours ni à l\'édition des joueurs et équipes.</string>
     <string name="no_internet">Vous êtes hors connexion. \n \n Veuillez redémarrer l\'application en étant connecté à Internet pour continuer.</string>
     <string name="update">Mettre à jour</string>
-    <string name="validate_war_confirm">Une fois la war validée, elle sera définitivement comptabilisée et vous ne pourrez plus la modifier.</string>
-    <string name="validate_war">Valider la war</string>
+    <string name="track_1">1ère course</string>
+    <string name="track_2">2ème course</string>
+    <string name="track_3">3ème course</string>
+    <string name="track_4">4ème course</string>
+    <string name="track_5">5ème course</string>
+    <string name="track_6">6ème course</string>
+    <string name="track_7">7ème course</string>
+    <string name="track_8">8ème course</string>
+    <string name="track_9">9ème course</string>
+    <string name="track_10">10ème course</string>
+    <string name="track_11">11ème course</string>
+    <string name="track_12">Dernière course</string>
     <string name="need_update">L\'application nécessite une mise à jour pour fonctionner correctement. \n \n Veuillez mettre à jour l\'application pour continuer.</string>
     <string name="bsis">Poursuite à Singapour</string>
 </resources>

@@ -5,6 +5,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
@@ -35,7 +36,6 @@ import fr.harmoniamk.statsmk.R
 @Composable
 fun MKTextField(value: TextFieldValue,
                 onValueChange: (TextFieldValue) -> Unit,
-                modifier: Modifier = Modifier,
                 textStyle: TextStyle = LocalTextStyle.current,
                 label: @Composable (() -> Unit)? = null,
                 placeHolderRes: Int,
@@ -57,13 +57,14 @@ fun MKTextField(value: TextFieldValue,
     val interactionSource = remember { MutableInteractionSource() }
     BasicTextField(
         value = value,
-        modifier = modifier
+        modifier = Modifier
+            .padding(vertical = 5.dp)
             .fillMaxWidth()
             .background(colors.backgroundColor(true).value, RoundedCornerShape(5.dp))
             .indicatorLine(true, false, interactionSource, colors)
             .defaultMinSize(
                 minWidth = TextFieldDefaults.MinWidth,
-                minHeight = 40.dp
+                minHeight = 50.dp
             ),
         onValueChange = onValueChange,
         enabled = true,

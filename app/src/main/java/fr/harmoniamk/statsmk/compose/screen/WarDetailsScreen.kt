@@ -34,18 +34,24 @@ fun WarDetailsScreen(id: String?) {
         Row() {
             Column(Modifier.weight(1f).padding(horizontal = 10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 MKText(text = R.string.meilleur_circuit, font = R.font.montserrat_bold)
-                MKTrackItem(isVertical = true, track = tracks.value?.maxByOrNull { track -> track.teamScore })
+                MKTrackItem(isVertical = true, track = tracks.value?.maxByOrNull { track -> track.teamScore }) {
+
+                }
             }
             Column(Modifier.weight(1f).padding(horizontal = 10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 MKText(text = R.string.pire_circuit, font = R.font.montserrat_bold)
-                MKTrackItem(isVertical = true, track = tracks.value?.minByOrNull { track -> track.teamScore })
+                MKTrackItem(isVertical = true, track = tracks.value?.minByOrNull { track -> track.teamScore }) {
+
+                }
             }
         }
         tracks.value?.let {
             MKText(text = R.string.tous_les_circuits, font = R.font.montserrat_bold)
             LazyColumn(Modifier.padding(10.dp)) {
                 items(items = it) {
-                    MKTrackItem(track = it)
+                    MKTrackItem(track = it) {
+
+                    }
                 }
             }
         }
