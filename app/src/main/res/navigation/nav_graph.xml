@@ -132,23 +132,7 @@
 
     </fragment>
 
-    <fragment
-        android:id="@+id/addWarFragment"
-        android:name="fr.harmoniamk.statsmk.fragment.addWar.AddWarFragment"
-        tools:layout="@layout/fragment_add_war"
-        android:label="AddWarFragment">
 
-        <action
-            android:id="@+id/go_to_current_war"
-            app:destination="@id/currentWarFragment"
-            app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popUpTo="@id/addWarFragment"
-            app:popUpToInclusive="true"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right"/>
-
-    </fragment>
 
     <fragment
         android:id="@+id/playerStatsDetailsFragment"

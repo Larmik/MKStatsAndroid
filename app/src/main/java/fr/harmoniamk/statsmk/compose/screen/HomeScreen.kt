@@ -23,16 +23,13 @@ import androidx.navigation.compose.rememberNavController
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKText
 import fr.harmoniamk.statsmk.enums.BottomNavItem
-import fr.harmoniamk.statsmk.model.firebase.NewWar
-import fr.harmoniamk.statsmk.model.local.MKWar
-import fr.harmoniamk.statsmk.model.mock.mock
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun HomeScreen(onBack: () -> Unit, onCurrentWarClick: () -> Unit, onWarClick: (String?) -> Unit) {
+fun HomeScreen(onBack: () -> Unit, onCurrentWarClick: () -> Unit, onWarClick: (String?) -> Unit, onCreateWarClick: () -> Unit) {
     val navController = rememberNavController()
 
     val items = listOf(
@@ -76,7 +73,8 @@ fun HomeScreen(onBack: () -> Unit, onCurrentWarClick: () -> Unit, onWarClick: (S
                 composable(route = "Home/War") {
                     WarScreen(
                         onCurrentWarClick = onCurrentWarClick,
-                        onWarClick = onWarClick
+                        onWarClick = onWarClick,
+                        onCreateWarClick = onCreateWarClick
                     )
                 }
                 composable(route = "Home/Stats") {
@@ -96,5 +94,5 @@ fun HomeScreen(onBack: () -> Unit, onCurrentWarClick: () -> Unit, onWarClick: (S
 @Preview
 @Composable
 fun HomeScreenPreview() {
-    HomeScreen(onBack = {}, onCurrentWarClick =  {}) {}
+    HomeScreen(onBack = {}, onCurrentWarClick =  {}, onWarClick = {}) {}
 }

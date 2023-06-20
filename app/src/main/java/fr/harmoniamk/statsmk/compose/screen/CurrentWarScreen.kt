@@ -1,5 +1,6 @@
 package fr.harmoniamk.statsmk.compose.screen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,7 +22,7 @@ import fr.harmoniamk.statsmk.compose.ui.MKTrackItem
 import fr.harmoniamk.statsmk.compose.viewModel.CurrentWarViewModel
 
 @Composable
-fun CurrentWarScreen(viewModel: CurrentWarViewModel = hiltViewModel(), onNextTrack: () -> Unit) {
+fun CurrentWarScreen(viewModel: CurrentWarViewModel = hiltViewModel(), onNextTrack: () -> Unit, onBack: () -> Unit) {
 
     val war = viewModel.sharedCurrentWar.collectAsState()
     val players = viewModel.sharedWarPlayers.collectAsState()
@@ -33,6 +34,7 @@ fun CurrentWarScreen(viewModel: CurrentWarViewModel = hiltViewModel(), onNextTra
         Pair(R.string.annuler_le_match, {}),
     )
 
+    BackHandler { onBack() }
     MKBaseScreen(title = war.value?.name ?: "", subTitle = war.value?.displayedState) {
         MKSegmentedButtons(buttons = buttons)
         MKScoreView(war = war.value)

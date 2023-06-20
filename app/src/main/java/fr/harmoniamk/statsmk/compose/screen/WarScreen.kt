@@ -21,7 +21,7 @@ import kotlinx.coroutines.FlowPreview
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @Composable
-fun WarScreen(viewModel: WarViewModel = hiltViewModel(), onCurrentWarClick: () -> Unit, onWarClick: (String?) -> Unit) {
+fun WarScreen(viewModel: WarViewModel = hiltViewModel(), onCurrentWarClick: () -> Unit, onWarClick: (String?) -> Unit, onCreateWarClick: () -> Unit) {
 
     val currentWar = viewModel.sharedCurrentWar.collectAsState()
     val lastWars = viewModel.sharedLastWars.collectAsState()
@@ -30,7 +30,7 @@ fun WarScreen(viewModel: WarViewModel = hiltViewModel(), onCurrentWarClick: () -
     val createWarEnabled = viewModel.sharedCreateManualWarEnabled.collectAsState()
 
     val buttons = listOf(
-        Pair(R.string.cr_er_une_war, {}).takeIf { createWarEnabled.value },
+        Pair(R.string.cr_er_une_war, onCreateWarClick).takeIf { createWarEnabled.value },
         Pair(R.string.ajouter_les_dispos, {}).takeIf { !dispos.value.isNullOrEmpty() },
     ).filterNotNull()
 
@@ -54,5 +54,5 @@ fun WarScreen(viewModel: WarViewModel = hiltViewModel(), onCurrentWarClick: () -
 @Preview
 @Composable
 fun WarScreenPreview() {
-    WarScreen(onCurrentWarClick = {}) {}
+    WarScreen(onCurrentWarClick = {}, onWarClick = {}) {}
 }

@@ -13,4 +13,5 @@ import kotlinx.coroutines.FlowPreview
 interface ViewModelFactoryProvider {
     val warDetailsViewModel: WarDetailsViewModel.Factory
     val positionViewModel: PositionViewModel.Factory
+    val playerListViewModel: PlayerListViewModel.Factory
 }

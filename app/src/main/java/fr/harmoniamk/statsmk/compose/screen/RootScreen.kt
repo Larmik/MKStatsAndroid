@@ -31,13 +31,12 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
             HomeScreen(
                 onBack = onBack, 
                 onCurrentWarClick = { navController.navigate("Home/War/Current") },
-                onWarClick = {
-                    navController.navigate(route = "Home/War/$it")
-                }
+                onWarClick = { navController.navigate(route = "Home/War/$it") },
+                onCreateWarClick = { navController.navigate("Home/War/AddWar")}
             )
         }
         composable(route = "Home/War/Current") {
-            CurrentWarScreen(onNextTrack = { navController.navigate("Home/War/Current/AddTrack")})
+            CurrentWarScreen(onNextTrack = { navController.navigate("Home/War/Current/AddTrack")}, onBack = { navController.popBackStack("Home", inclusive = false)})
         }
         composable(route = "Home/War/{id}",  arguments = listOf(navArgument("id") { type = NavType.StringType })) {
             WarDetailsScreen(id = it.arguments?.getString("id"))
@@ -47,9 +46,11 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
         }
         composable("Home/War/Current/AddTrack/{index}/AddPosition",  arguments = listOf(navArgument("index") { type = NavType.IntType })) {
             val index = it.arguments?.getInt("index") ?: -1
-            PositionScreen(trackIndex = index, onBack = {
-                navController.popBackStack()
-            }, onNext = { navController.navigate("Home/War/Current/AddTrack/$index/AddPosition/Result")})
+            PositionScreen(
+                trackIndex = index,
+                onBack = { navController.popBackStack() },
+                onNext = { navController.navigate("Home/War/Current/AddTrack/$index/AddPosition/Result") }
+            )
         }
         composable(route = "Home/War/Current/AddTrack/{index}/AddPosition/Result", arguments = listOf(navArgument("index") { type = NavType.IntType })) {
             val index = it.arguments?.getInt("index") ?: -1
@@ -58,6 +59,14 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
                 backToCurrent = { navController.popBackStack(route = "Home/War/Current/AddTrack", inclusive = true) },
                 goToResume = { navController.popBackStack(route = "Home/War/$it", inclusive = true)}
             )
+        }
+        composable(route = "Home/War/AddWar") {
+            TeamListScreen(
+                onTeamClick = { navController.navigate("Home/War/AddWar/$it/AddPlayers")}
+            )
+        }
+        composable(route = "Home/War/AddWar/{team}/AddPlayers", arguments = listOf(navArgument("team") { type = NavType.StringType })) {
+            PlayerListScreen(it.arguments?.getString("team"), onWarStarted = { navController.navigate(route = "Home/War/Current")})
         }
 
     }
