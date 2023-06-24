@@ -28,9 +28,12 @@ import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
 
 @Composable
-fun MKTrackItem(isVertical: Boolean = false, track: MKWarTrack? = null, map: Maps? = null, onClick: (Int) -> Unit) {
+fun MKTrackItem(isVertical: Boolean = false, track: MKWarTrack? = null, map: Maps? = null, onClick: (Int) -> Unit = {}, goToDetails: (String) -> Unit = {}) {
 
-    Card(elevation = 0.dp, backgroundColor = colorResource(track?.backgroundColor ?: R.color.white_alphaed), modifier = Modifier.padding(bottom = 5.dp).clickable { map?.ordinal?.let { onClick(it) } }) {
+    Card(elevation = 0.dp, backgroundColor = colorResource(track?.backgroundColor ?: R.color.white_alphaed), modifier = Modifier.padding(bottom = 5.dp).clickable {
+        map?.ordinal?.let { onClick(it) }
+        track?.track?.mid?.let { goToDetails(it) }
+    }) {
         when {
             track?.index != null -> Maps.values()[track.index ?: 0]
             map != null -> map
@@ -84,7 +87,7 @@ fun MKTrackItem(isVertical: Boolean = false, track: MKWarTrack? = null, map: Map
 @Preview
 @Composable
 fun MKTrackItemPreviewNormal() {
-    MKTrackItem(map = Maps.dHC) {
+    MKTrackItem(map = Maps.dHC, onClick = {}) {
 
     }
 }
@@ -92,7 +95,7 @@ fun MKTrackItemPreviewNormal() {
 @Preview
 @Composable
 fun MKTrackItemPreviewVertical() {
-    MKTrackItem(true) {
+    MKTrackItem(true, onClick = {}) {
 
     }
 }

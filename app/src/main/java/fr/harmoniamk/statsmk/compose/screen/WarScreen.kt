@@ -3,6 +3,7 @@ package fr.harmoniamk.statsmk.compose.screen
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -19,7 +20,7 @@ import fr.harmoniamk.statsmk.compose.viewModel.WarViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 
-@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
+@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun WarScreen(viewModel: WarViewModel = hiltViewModel(), onCurrentWarClick: () -> Unit, onWarClick: (String?) -> Unit, onCreateWarClick: () -> Unit) {
 

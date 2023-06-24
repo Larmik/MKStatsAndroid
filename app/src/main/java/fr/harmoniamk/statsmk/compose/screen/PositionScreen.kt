@@ -4,6 +4,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -22,6 +23,7 @@ import fr.harmoniamk.statsmk.extension.isTrue
 import kotlinx.coroutines.flow.filterNotNull
 
 @Composable
+@OptIn(ExperimentalMaterialApi::class)
 fun PositionScreen(trackIndex: Int, onBack: () -> Unit, onNext: (Int) -> Unit) {
     val viewModel = viewModel(index = trackIndex)
     val war = viewModel.sharedWar.collectAsState()
@@ -40,7 +42,7 @@ fun PositionScreen(trackIndex: Int, onBack: () -> Unit, onNext: (Int) -> Unit) {
     MKBaseScreen(title = war.value?.name.orEmpty(), subTitle = trackIndexRes.value?.let { stringResource(
         id = it
     ) }) {
-        map.value?.let { MKTrackItem(map = it) {} }
+        map.value?.let { MKTrackItem(map = it) }
         MKScoreView(war = war.value, modifier = Modifier.padding(vertical = 10.dp))
         MKText(text = String.format(
             stringResource(id = R.string.select_pos_placeholder),

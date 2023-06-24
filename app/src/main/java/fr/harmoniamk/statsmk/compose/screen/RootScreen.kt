@@ -39,7 +39,8 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
             CurrentWarScreen(onNextTrack = { navController.navigate("Home/War/Current/AddTrack")}, onBack = { navController.popBackStack("Home", inclusive = false)})
         }
         composable(route = "Home/War/{id}",  arguments = listOf(navArgument("id") { type = NavType.StringType })) {
-            WarDetailsScreen(id = it.arguments?.getString("id"))
+            val warId = it.arguments?.getString("id")
+            WarDetailsScreen(id = warId, onTrackClick = { navController.navigate("Home/War/$warId/TrackDetails/$it") })
         }
         composable("Home/War/Current/AddTrack") {
             TrackListScreen(onTrackClick = { index ->  navController.navigate("Home/War/Current/AddTrack/$index/AddPosition")})
@@ -68,6 +69,14 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
         composable(route = "Home/War/AddWar/{team}/AddPlayers", arguments = listOf(navArgument("team") { type = NavType.StringType })) {
             PlayerListScreen(it.arguments?.getString("team"), onWarStarted = { navController.navigate(route = "Home/War/Current")})
         }
+        composable(
+            route = "Home/War/{id}/TrackDetails/{track_id}",
+            arguments = listOf(
+                navArgument("id") { type = NavType.StringType },
+                navArgument("track_id") { type = NavType.StringType }
+            )) {
+                TrackDetailsScreen(warId = it.arguments?.getString("id") ?: "", warTrackId = it.arguments?.getString("track_id") ?: "")
+            }
 
     }
 }

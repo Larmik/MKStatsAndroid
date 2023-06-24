@@ -25,7 +25,7 @@ import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.MKWarPosition
 
 @Composable
-fun MKPlayerItem(player: User? = null, position: MKWarPosition? = null, isSelected: Boolean = false, onAddShock: () -> Unit = { }, onRemoveShock: () -> Unit = { }, onRootClick: () -> Unit = { }) {
+fun MKPlayerItem(player: User? = null, position: MKWarPosition? = null, isSelected: Boolean = false, shockVisible: Boolean = false, onAddShock: () -> Unit = { }, onRemoveShock: () -> Unit = { }, onRootClick: () -> Unit = { }) {
     val finalPlayer = player ?: position?.player
     val backgroundColor = colorResource(id =
         when (isSelected) {
@@ -45,22 +45,21 @@ fun MKPlayerItem(player: User? = null, position: MKWarPosition? = null, isSelect
             finalPlayer?.picture?.let { AsyncImage(model = it, contentDescription = null, modifier = Modifier.size(50.dp)) }
             Row(Modifier.weight(1f), horizontalArrangement = Arrangement.SpaceAround, verticalAlignment = Alignment.CenterVertically) {
                 finalPlayer?.name?.let { MKText(text = it, font = R.font.montserrat_bold, textColor = textColor) }
-                position?.let {
-                    MKText(text = it.position.position.toString(), font = R.font.mk_position, textColor = it.position.position.positionColor(), fontSize = 26)
-
-                }
             }
             position?.let {
-                Row(horizontalArrangement = Arrangement.Center) {
-                    MKText(text = R.string.minus, font = R.font.orbitron_semibold, fontSize = 26, modifier = Modifier
-                        .size(30.dp)
-                        .clickable { onRemoveShock() })
-                    Image(painter = painterResource(id = R.drawable.shock), contentDescription = null, modifier = Modifier
-                        .size(30.dp)
-                        .padding(horizontal = 5.dp))
-                    MKText(text = R.string.plus, font = R.font.orbitron_semibold, fontSize = 26, modifier = Modifier
-                        .size(30.dp)
-                        .clickable { onAddShock() })
+                MKText(text = it.position.position.toString(), font = R.font.mk_position, textColor = it.position.position.positionColor(), fontSize = 26, modifier = Modifier.padding(end = 15.dp))
+                shockVisible.takeIf{ it }?.let {
+                    Row(horizontalArrangement = Arrangement.Center) {
+                        MKText(text = R.string.minus, font = R.font.orbitron_semibold, fontSize = 26, modifier = Modifier
+                            .size(30.dp)
+                            .clickable { onRemoveShock() })
+                        Image(painter = painterResource(id = R.drawable.shock), contentDescription = null, modifier = Modifier
+                            .size(30.dp)
+                            .padding(horizontal = 5.dp))
+                        MKText(text = R.string.plus, font = R.font.orbitron_semibold, fontSize = 26, modifier = Modifier
+                            .size(30.dp)
+                            .clickable { onAddShock() })
+                    }
                 }
             }
          }
@@ -79,6 +78,18 @@ fun MKPlayerItemPreview() {
 @Composable
 @Preview
 fun MKPlayerItemPositionPreview() {
+    MKPlayerItem(position = MKWarPosition(
+        position = NewWarPositions("mid", "pl_id", 4),
+        player = User(
+            mid = "mid",
+            name = "Lari",
+            picture = "https://firebasestorage.googleapis.com/v0/b/stats-mk.appspot.com/o/1643723546718?alt=media&token=901e95bd-5d15-4ef4-a541-bdbf28d3bfca"
+        )), shockVisible = true
+    )
+}
+@Composable
+@Preview
+fun MKPlayerItemPositionPreviewWithSkock() {
     MKPlayerItem(position = MKWarPosition(
         position = NewWarPositions("mid", "pl_id", 4),
         player = User(

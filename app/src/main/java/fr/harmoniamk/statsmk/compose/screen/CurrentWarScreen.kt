@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -22,6 +23,7 @@ import fr.harmoniamk.statsmk.compose.ui.MKTrackItem
 import fr.harmoniamk.statsmk.compose.viewModel.CurrentWarViewModel
 
 @Composable
+@OptIn(ExperimentalMaterialApi::class)
 fun CurrentWarScreen(viewModel: CurrentWarViewModel = hiltViewModel(), onNextTrack: () -> Unit, onBack: () -> Unit) {
 
     val war = viewModel.sharedCurrentWar.collectAsState()
@@ -45,9 +47,7 @@ fun CurrentWarScreen(viewModel: CurrentWarViewModel = hiltViewModel(), onNextTra
             MKText(text = R.string.courses_jou_es, font = R.font.montserrat_bold)
             LazyColumn(Modifier.padding(10.dp)) {
                 items(items = it) {
-                    MKTrackItem(track = it) {
-
-                    }
+                    MKTrackItem(track = it)
                 }
             }
         }

@@ -34,7 +34,7 @@ import kotlinx.coroutines.flow.onEach
 class TrackDetailsFragment : Fragment(R.layout.fragment_track_details) {
 
     private val binding: FragmentTrackDetailsBinding by viewBinding()
-    private val viewModel: TrackDetailsViewModel by viewModels()
+    private val viewModel: OldTrackDetailsViewModel by viewModels()
     private var war: NewWar? = null
     private var index: Int = 0
     private var warTrack: NewWarTrack? = null

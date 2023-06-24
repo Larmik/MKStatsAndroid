@@ -25,7 +25,7 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class TrackDetailsViewModel @Inject constructor(
+class OldTrackDetailsViewModel @Inject constructor(
     private val authenticationRepository: AuthenticationRepositoryInterface,
     private val databaseRepository: DatabaseRepositoryInterface,
     private val networkRepository: NetworkRepositoryInterface

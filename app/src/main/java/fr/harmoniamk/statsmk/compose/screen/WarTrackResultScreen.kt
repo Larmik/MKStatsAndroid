@@ -38,10 +38,10 @@ fun WarTrackResultScreen(viewModel: WarTrackResultViewModel = hiltViewModel(), o
     }
 
     MKBaseScreen(title = war.value?.name.orEmpty(), subTitle = trackIndexRes.value) {
-        map.value?.let { MKTrackItem(map = it) {} }
+        map.value?.let { MKTrackItem(map = it) }
         LazyColumn {
             items(positions.value.orEmpty()) {
-                MKPlayerItem(position = it)
+                MKPlayerItem(position = it, shockVisible = true)
             }
         }
         track.value?.let { MKScoreView(track = it) }
