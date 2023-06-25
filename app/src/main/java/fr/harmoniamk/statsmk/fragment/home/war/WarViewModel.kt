@@ -92,7 +92,7 @@ class WarViewModel @Inject constructor(
                     ?.sortedByDescending { it.war?.createdDate?.formatToDate() }
                     ?.safeSubList(0, 5).orEmpty()
                 dispoList.forEach {
-                    if (it.dispoHour == hour + 1 && it.lineUp != null && it.opponentId != null) {
+                    if (it.lineUp != null && it.opponentId != null) {
                         it.withLineUpAndOpponent(databaseRepository).firstOrNull()?.let {
                             scheduledWar = it
                             _sharedNextScheduledWar.emit(it)
