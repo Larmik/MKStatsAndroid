@@ -134,7 +134,7 @@ class WarViewModel @Inject constructor(
                     isOfficial = false
                 )
                 it.lineUp?.forEach { userId ->
-                    databaseRepository.getUser(userId).firstOrNull()?.let { user ->
+                    databaseRepository.getUser(userId.userId).firstOrNull()?.let { user ->
                         val new = user.apply { this.currentWar = war.mid }
                         firebaseRepository.writeUser(new).first()
                     }

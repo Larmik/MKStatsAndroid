@@ -6,6 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.fragment.playerSelect.UserSelector
+import fr.harmoniamk.statsmk.model.firebase.LineUp
 import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.firebase.WarDispo
@@ -66,7 +67,7 @@ class ScheduleWarViewModel @Inject constructor(private val databaseRepository: D
             .map {
                 dispo.apply {
                     this.opponentId = teamSelected
-                    this.lineUp = players.map { it.user?.mid ?: "" }
+                    this.lineUp = players.map { LineUp( it.user?.mid ?: "", it.user?.discordId ?: "") }
                     this.host = chosenHost
                 }
             }

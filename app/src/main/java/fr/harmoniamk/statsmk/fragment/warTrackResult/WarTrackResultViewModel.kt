@@ -31,7 +31,6 @@ class WarTrackResultViewModel @Inject constructor(
     private val _sharedWarPos = MutableSharedFlow<List<MKWarPosition>>()
     private val _sharedBack = MutableSharedFlow<Unit>()
     private val _sharedBackToCurrent = MutableSharedFlow<Unit>()
-    private val _sharedGoToWarResume = MutableSharedFlow<MKWar>()
     private val _sharedScore = MutableSharedFlow<MKWarTrack>()
     private val _sharedShocks = MutableSharedFlow<List<Pair<String?, Shock>>>()
     private val _sharedLoading = MutableSharedFlow<Boolean>()
@@ -40,7 +39,6 @@ class WarTrackResultViewModel @Inject constructor(
     val sharedBack = _sharedBack.asSharedFlow()
     val sharedBackToCurrent = _sharedBackToCurrent.asSharedFlow()
     val sharedScore = _sharedScore.asSharedFlow()
-    val sharedGoToWarResume = _sharedGoToWarResume.asSharedFlow()
     val sharedShocks = _sharedShocks.asSharedFlow()
     val sharedLoading = _sharedLoading.asSharedFlow()
 
@@ -122,23 +120,8 @@ class WarTrackResultViewModel @Inject constructor(
                 .mapNotNull { preferencesRepository.currentWar }
                 .onEach { war ->
                     _sharedLoading.emit(true)
-
-                    if (MKWar(war).isOver) {
-                        firebaseRepository.writeNewWar(war).first()
-                        firebaseRepository.deleteCurrentWar().first()
-                        val mkWar = listOf(MKWar(war)).withName(databaseRepository).first()
-                        mkWar.singleOrNull()?.let { databaseRepository.writeWar(it).first() }
-                        databaseRepository.getUsers().first().filter { it.currentWar == war.mid }.forEach {
-                            val new = it.apply { this.currentWar = "-1" }
-                            firebaseRepository.writeUser(new).first()
-                        }
-                        war.withName(databaseRepository)
-                            .filterNotNull()
-                            .bind(_sharedGoToWarResume, viewModelScope)
-                    } else {
-                        firebaseRepository.writeCurrentWar(war).first()
-                        _sharedBackToCurrent.emit(Unit)
-                    }
+                    firebaseRepository.writeCurrentWar(war).first()
+                    _sharedBackToCurrent.emit(Unit)
                     preferencesRepository.currentWarTrack = null
                 }.launchIn(viewModelScope)
         }

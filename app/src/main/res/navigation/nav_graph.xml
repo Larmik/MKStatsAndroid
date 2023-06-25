@@ -333,23 +333,6 @@
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right"/>
 
-        <action
-            android:id="@+id/go_to_war_details"
-            app:destination="@id/warDetailsFragment"
-            app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popUpTo="@id/warTrackResultFragment"
-            app:popUpToInclusive="true"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right">
-
-            <argument
-                android:name="war"
-                app:argType="fr.harmoniamk.statsmk.model.local.MKWar"
-                app:nullable="false"/>
-
-        </action>
-
     </fragment>
 
     <fragment
@@ -470,6 +453,23 @@
                 android:name="warTrack"
                 app:argType="fr.harmoniamk.statsmk.model.firebase.NewWarTrack"
                 app:nullable="true"/>
+
+        </action>
+
+        <action
+            android:id="@+id/go_to_war_details"
+            app:destination="@id/warDetailsFragment"
+            app:enterAnim="@anim/enter_from_right"
+            app:exitAnim="@anim/exit_to_left"
+            app:popUpTo="@id/currentWarFragment"
+            app:popUpToInclusive="true"
+            app:popEnterAnim="@anim/enter_from_left"
+            app:popExitAnim="@anim/exit_to_right">
+
+            <argument
+                android:name="war"
+                app:argType="fr.harmoniamk.statsmk.model.local.MKWar"
+                app:nullable="false"/>
 
         </action>
 

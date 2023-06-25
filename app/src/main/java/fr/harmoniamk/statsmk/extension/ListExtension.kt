@@ -130,7 +130,7 @@ fun WarDispo.withLineUpAndOpponent(databaseRepository: DatabaseRepositoryInterfa
         val lineupNames = mutableListOf<String?>()
         var hostName: String? = null
         this@withLineUpAndOpponent.lineUp?.forEach {
-            val playerName = databaseRepository.getUser(it).firstOrNull()?.name
+            val playerName = databaseRepository.getUser(it.userId).firstOrNull()?.name
             lineupNames.add(playerName)
         }
         this@withLineUpAndOpponent.host?.takeIf { it != "null" }?.let {
@@ -221,6 +221,14 @@ fun List<Map<*,*>>?.parsePlayerDispos() : List<PlayerDispo>? =
         PlayerDispo(
             players = item["players"].toStringList(),
             dispo =item["dispo"].toString().toInt()
+        )
+}
+
+fun List<Map<*,*>>?.parseLineUp() : List<LineUp>? =
+    this?.map { item ->
+        LineUp(
+            userId = item["userId"].toString(),
+            userDiscordId =item["userDiscordId"].toString()
         )
 }
 

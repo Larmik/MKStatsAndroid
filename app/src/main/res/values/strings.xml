@@ -349,5 +349,7 @@
     <string name="offline_mode">Vous êtes hors connexion. \n \n Vous pourrez toujours consulter les wars et statistiques mais vous n\'aurez pas accès à la war en cours ni à l\'édition des joueurs et équipes.</string>
     <string name="no_internet">Vous êtes hors connexion. \n \n Veuillez redémarrer l\'application en étant connecté à Internet pour continuer.</string>
     <string name="update">Mettre à jour</string>
+    <string name="validate_war_confirm">Une fois la war validée, elle sera définitivement comptabilisée et vous ne pourrez plus la modifier.</string>
+    <string name="validate_war">Valider la war</string>
     <string name="need_update">L\'application nécessite une mise à jour pour fonctionner correctement. \n \n Veuillez mettre à jour l\'application pour continuer.</string>
 </resources>

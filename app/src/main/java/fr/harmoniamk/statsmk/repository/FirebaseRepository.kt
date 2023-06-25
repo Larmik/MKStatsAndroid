@@ -114,7 +114,8 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
                     role = it["role"].toString().toIntOrNull(),
                     picture = it["picture"].toString(),
                     formerTeams = it["formerTeams"].toStringList(),
-                    friendCode = it["friendCode"].toString()
+                    friendCode = it["friendCode"].toString(),
+                    discordId = it["discordId"].toString()
                 ) }
             if (isActive) offer(users)
         }
@@ -171,7 +172,7 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
                         dispoPlayers = map["dispoPlayers"]?.toMapList().parsePlayerDispos(),
                         opponentId = map["opponentId"]?.toString(),
                         details = map["details"]?.toString(),
-                        lineUp = map["lineUp"]?.toStringList(),
+                        lineUp = map["lineUp"]?.toMapList().parseLineUp(),
                         host = map["host"]?.toString()
                     )
                     }

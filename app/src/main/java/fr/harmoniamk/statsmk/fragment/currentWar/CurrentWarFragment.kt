@@ -35,6 +35,7 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
     private val viewModel: CurrentWarViewModel by viewModels()
     private var war: MKWar? = null
     private var popup = PopupFragment(R.string.delete_war_confirm, R.string.delete)
+    private var validatePopup = PopupFragment(R.string.validate_war_confirm, R.string.confirm)
     private var penaltyFragment = AddPenaltyFragment()
     private var subFragment = SubPlayerFragment()
 
@@ -57,7 +58,10 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
             onBack = requireActivity().backPressedDispatcher(viewLifecycleOwner),
             onNextTrack = binding.nextTrackBtn.clicks(),
             onTrackClick = adapter.sharedClick,
-            onPopup = binding.deleteWarBtn.clicks(),
+            onPopup = flowOf(
+                binding.deleteWarBtn.clicks().map { CurrentWarViewModel.PopupType.DELETE },
+                binding.validateWarBtn.clicks().map { CurrentWarViewModel.PopupType.VALIDATE }
+            ).flattenMerge(),
             onPenalty = binding.penaltyBtn.clicks(),
             onSub = binding.subBtn.clicks(),
             onSubDismiss = subFragment.sharedDismiss
@@ -100,6 +104,13 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
                 binding.deleteWarBtn.isVisible = it
                 binding.subBtn.isVisible = it
                 binding.penaltyBtn.isVisible = it
+            }.launchIn(lifecycleScope)
+
+        viewModel.sharedValidateWar
+            .filter { lifecycle.isResumed }
+            .onEach {
+                binding.nextTrackBtn.isVisible = !it
+                binding.validateWarBtn.isVisible = it
             }.launchIn(lifecycleScope)
 
         viewModel.sharedQuit
@@ -148,17 +159,34 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
 
         viewModel.sharedPopupShowing
             .onEach {
-               when (it) {
+               when (it.second) {
                     true -> {
-                        if (!popup.isAdded && !popupShowing) {
-                            popup = PopupFragment(R.string.delete_war_confirm, R.string.delete)
-                            viewModel.bindPopup(onDelete = popup.onPositiveClick.onEach { popup.setLoading(R.string.delete_war_in_progress) }, onDismiss = popup.onNegativeClick)
-                            popup.show(childFragmentManager, null)
-                            popupShowing = true
+                        if (!popupShowing) {
+                            when (it.first) {
+                                CurrentWarViewModel.PopupType.DELETE -> {
+                                    if (!popup.isAdded) {
+                                        popup = PopupFragment(R.string.delete_war_confirm, R.string.delete)
+                                        viewModel.bindPopup(onDelete = popup.onPositiveClick.onEach { popup.setLoading(R.string.delete_war_in_progress) }, onDismiss = popup.onNegativeClick)
+                                        popup.show(childFragmentManager, null)
+                                        popupShowing = true
+                                    }
+                                }
+                                CurrentWarViewModel.PopupType.VALIDATE -> {
+                                    if (!validatePopup.isAdded) {
+                                        validatePopup = PopupFragment(R.string.validate_war_confirm, R.string.confirm)
+                                        viewModel.bindValidatePopup(onValidate = validatePopup.onPositiveClick.onEach { validatePopup.setLoading(R.string.creating_war) }, onDismiss = validatePopup.onNegativeClick)
+                                        validatePopup.show(childFragmentManager, null)
+                                        popupShowing = true
+                                    }
+                                }
+                            }
                         }
                     }
                     else -> {
-                        popup.dismiss()
+                        when (it.first) {
+                            CurrentWarViewModel.PopupType.DELETE -> popup.dismiss()
+                            CurrentWarViewModel.PopupType.VALIDATE -> validatePopup.dismiss()
+                        }
                         popupShowing = false
                     }
                 }
@@ -215,6 +243,11 @@ class CurrentWarFragment : Fragment(R.layout.fragment_current_war) {
                 binding.progress.isVisible = it
                 binding.mainLayout.isVisible = !it
             }.launchIn(lifecycleScope)
+
+        viewModel.sharedGoToWarResume
+            .filter { findNavController().currentDestination?.id == R.id.currentWarFragment }
+            .onEach { findNavController().navigate(CurrentWarFragmentDirections.goToWarDetails(it)) }
+            .launchIn(lifecycleScope)
     }
 
 }

@@ -32,21 +32,24 @@ class CurrentWarViewModel @Inject constructor(
     private val  _sharedQuit = MutableSharedFlow<Unit>()
     private val  _sharedBackToWars = MutableSharedFlow<Unit>()
     private val _sharedSelectTrack = MutableSharedFlow<Unit>()
+    private val _sharedValidateWar = MutableSharedFlow<Boolean>()
     private val _sharedTracks = MutableSharedFlow<List<MKWarTrack>>()
     private val _sharedTrackClick = MutableSharedFlow<Int>()
-    private val _sharedPopupShowing = MutableSharedFlow<Boolean>()
+    private val _sharedPopupShowing = MutableSharedFlow<Pair<PopupType, Boolean>>()
     private val _sharedAddPenalty = MutableSharedFlow<NewWar>()
     private val _sharedPenalties = MutableSharedFlow<List<Penalty>?>()
     private val _sharedWarPlayers = MutableSharedFlow<List<CurrentPlayerModel>>()
     private val _sharedSubPlayer = MutableSharedFlow<Unit>()
     private val _sharedShockCount = MutableSharedFlow<String>()
     private val _sharedLoading = MutableSharedFlow<Boolean>()
+    private val _sharedGoToWarResume = MutableSharedFlow<MKWar>()
 
     val sharedButtonVisible = _sharedButtonVisible.asSharedFlow()
     val sharedCurrentWar = _sharedCurrentWar.asSharedFlow()
     val sharedQuit = _sharedQuit.asSharedFlow()
     val sharedBackToWars = _sharedBackToWars.asSharedFlow()
     val sharedSelectTrack = _sharedSelectTrack.asSharedFlow()
+    val sharedValidateWar = _sharedValidateWar.asSharedFlow()
     val sharedTracks = _sharedTracks.asSharedFlow()
     val sharedTrackClick = _sharedTrackClick.asSharedFlow()
     val sharedPopupShowing = _sharedPopupShowing.asSharedFlow()
@@ -56,10 +59,20 @@ class CurrentWarViewModel @Inject constructor(
     val sharedSubPlayer = _sharedSubPlayer.asSharedFlow()
     val sharedShockCount = _sharedShockCount.asSharedFlow()
     val sharedLoading = _sharedLoading.asSharedFlow()
+    val sharedGoToWarResume = _sharedGoToWarResume.asSharedFlow()
 
-    fun bind(onBack: Flow<Unit>, onNextTrack: Flow<Unit>, onTrackClick: Flow<Int>, onPopup: Flow<Unit>, onPenalty: Flow<Unit>, onSub: Flow<Unit>, onSubDismiss: Flow<Unit>) {
+    enum class PopupType{VALIDATE, DELETE}
+
+    fun bind(onBack: Flow<Unit>, onNextTrack: Flow<Unit>, onTrackClick: Flow<Int>, onPopup: Flow<PopupType>, onPenalty: Flow<Unit>, onSub: Flow<Unit>, onSubDismiss: Flow<Unit>) {
         val currentWar = firebaseRepository.listenToCurrentWar()
             .shareIn(viewModelScope, SharingStarted.Lazily)
+
+        currentWar
+            .filter { it == null }
+            .flatMapLatest { firebaseRepository.getNewWars(preferencesRepository.currentTeam?.mid ?: "") }
+            .mapNotNull { it.lastOrNull() }
+            .flatMapLatest { it.withName(databaseRepository) }
+            .bind(_sharedGoToWarResume, viewModelScope)
 
 
         val warFlow = currentWar
@@ -72,6 +85,7 @@ class CurrentWarViewModel @Inject constructor(
                 preferencesRepository.currentWar = war.war
                 _sharedCurrentWar.emit(war)
                 _sharedButtonVisible.emit(isAdmin.isTrue)
+                _sharedValidateWar.emit(isAdmin.isTrue && war.isOver)
                 _sharedTracks.emit(war.war?.warTracks.orEmpty().map { MKWarTrack(it) })
                 val players = databaseRepository.getUsers().first().filter { it.currentWar == preferencesRepository.currentWar?.mid }
                     .sortedBy { it.name?.toLowerCase(Locale.ROOT) }
@@ -130,7 +144,7 @@ class CurrentWarViewModel @Inject constructor(
         onNextTrack.bind(_sharedSelectTrack, viewModelScope)
         onTrackClick.bind(_sharedTrackClick, viewModelScope)
         onPopup
-            .onEach { _sharedPopupShowing.emit(true) }
+            .onEach { _sharedPopupShowing.emit(Pair(it, true)) }
             .launchIn(viewModelScope)
 
 
@@ -156,7 +170,30 @@ class CurrentWarViewModel @Inject constructor(
             .bind(_sharedBackToWars, viewModelScope)
 
         onDismiss
-            .onEach { _sharedPopupShowing.emit(false) }
+            .onEach { _sharedPopupShowing.emit(Pair(PopupType.DELETE, false)) }
             .launchIn(viewModelScope)
     }
+    fun bindValidatePopup(onValidate: Flow<Unit>, onDismiss: Flow<Unit>) {
+        onValidate
+            .mapNotNull { preferencesRepository.currentWar }
+            .onEach { war ->
+                firebaseRepository.writeNewWar(war).first()
+                firebaseRepository.deleteCurrentWar().first()
+                val mkWar = listOf(MKWar(war)).withName(databaseRepository).first()
+                mkWar.singleOrNull()?.let { databaseRepository.writeWar(it).first() }
+                databaseRepository.getUsers().first().filter { it.currentWar == war.mid }.forEach {
+                    val new = it.apply { this.currentWar = "-1" }
+                    firebaseRepository.writeUser(new).first()
+                }
+                war.withName(databaseRepository)
+                    .filterNotNull()
+                    .bind(_sharedGoToWarResume, viewModelScope)
+            }.launchIn(viewModelScope)
+
+        onDismiss
+            .onEach { _sharedPopupShowing.emit(Pair(PopupType.VALIDATE, false)) }
+            .launchIn(viewModelScope)
+    }
+
+
 }
