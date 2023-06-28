@@ -111,9 +111,13 @@ class DispoViewModel @Inject constructor(private val firebaseRepository: Firebas
                         if (playerDispo.dispo == pair.second.ordinal)
                             finalPlayers.add(authenticationRepository.user?.uid)
                     }
+                    val listName = mutableListOf<String?>()
+                    finalPlayers.forEach {
+                        listName.add(databaseRepository.getUser(it.takeIf{it != "-1"}).firstOrNull()?.name)
+                    }
                     playerDispos.add(playerDispo.apply {
                         this.players = finalPlayers.filterNotNull()
-                        this.playerNames = null
+                        this.playerNames = listName.filterNotNull()
                     })
                 }
                 warDispo.apply { this.dispoPlayers = playerDispos }
