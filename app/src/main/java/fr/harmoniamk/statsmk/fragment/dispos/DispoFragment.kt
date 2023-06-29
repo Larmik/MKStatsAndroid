@@ -36,7 +36,6 @@ class DispoFragment : Fragment(R.layout.fragment_dispo) {
         viewModel.bind(
             onDispoSelected = adapter.sharedDispoSelected,
             onClickWarSchedule = adapter.onClickWarSchedule,
-            onClickOtherPlayer = adapter.onClickOtherPlayer,
             onPopup = binding.dispoDetails.clicks()
         )
         viewModel.sharedDispo
@@ -50,12 +49,6 @@ class DispoFragment : Fragment(R.layout.fragment_dispo) {
         viewModel.sharedGoToScheduleWar
             .onEach {
                 val fragment = ScheduleWarFragment(dispo = it)
-                if (!fragment.isAdded) fragment.show(childFragmentManager, null)
-            }.launchIn(lifecycleScope)
-
-        viewModel.sharedShowOtherPlayers
-            .onEach {
-                val fragment = OtherPlayersFragment(dispo = it)
                 if (!fragment.isAdded) fragment.show(childFragmentManager, null)
             }.launchIn(lifecycleScope)
 

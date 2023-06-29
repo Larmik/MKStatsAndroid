@@ -23,12 +23,10 @@ class DispoViewModel @Inject constructor(private val firebaseRepository: Firebas
 
     private val _sharedDispos = MutableSharedFlow<List<Pair<WarDispo, Boolean>>>()
     private val _sharedPopupShowing = MutableSharedFlow<Boolean>()
-    private val _sharedShowOtherPlayers = MutableSharedFlow<WarDispo>()
     private val _sharedGoToScheduleWar = MutableSharedFlow<WarDispo>()
 
     val sharedDispo = _sharedDispos.asSharedFlow()
     val sharedGoToScheduleWar = _sharedGoToScheduleWar.asSharedFlow()
-    val sharedShowOtherPlayers = _sharedShowOtherPlayers.asSharedFlow()
     val sharedPopupShowing = _sharedPopupShowing.asSharedFlow()
 
     private val dispos = mutableListOf<WarDispo>()
@@ -36,7 +34,7 @@ class DispoViewModel @Inject constructor(private val firebaseRepository: Firebas
 
     private var dispoDetails: String? = null
 
-    fun bind(onDispoSelected: Flow<Pair<WarDispo, Dispo>>, onClickWarSchedule: Flow<WarDispo>, onClickOtherPlayer: Flow<WarDispo>, onPopup: Flow<Unit>) {
+    fun bind(onDispoSelected: Flow<Pair<WarDispo, Dispo>>, onClickWarSchedule: Flow<WarDispo>, onPopup: Flow<Unit>) {
         firebaseRepository.getDispos()
             .map {
                 val finalDispos = mutableListOf<WarDispo>()
@@ -127,9 +125,6 @@ class DispoViewModel @Inject constructor(private val firebaseRepository: Firebas
 
         onClickWarSchedule
             .bind(_sharedGoToScheduleWar, viewModelScope)
-
-        onClickOtherPlayer
-            .bind(_sharedShowOtherPlayers, viewModelScope)
 
         onPopup.onEach { _sharedPopupShowing.emit(true) }.launchIn(viewModelScope)
     }

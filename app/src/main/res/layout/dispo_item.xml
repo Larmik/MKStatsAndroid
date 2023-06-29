@@ -25,21 +25,6 @@
             android:id="@+id/hour"
             tools:text="18h"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="10dp"
-            android:textAlignment="center"
-            android:fontFamily="@font/roboto"
-            android:layout_centerVertical="true"
-            android:textSize="12sp"
-            android:layout_alignParentEnd="true"
-            android:textColor="@color/harmonia_dark"
-            android:paddingVertical="5dp"
-            android:background="@drawable/rounded_bg"
-            android:id="@+id/add_other_player_btn"
-            android:backgroundTint="@color/harmonia_clear"
-            android:text="@string/_1_joueur"/>
 
     </RelativeLayout>
 

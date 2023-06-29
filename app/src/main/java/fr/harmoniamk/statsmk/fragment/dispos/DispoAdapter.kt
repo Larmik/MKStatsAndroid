@@ -25,7 +25,6 @@ class DispoAdapter(val list: MutableList<Pair<WarDispo, Boolean>> = mutableListO
 
     val sharedDispoSelected = MutableSharedFlow<Pair<WarDispo, Dispo>>()
     val onClickWarSchedule = MutableSharedFlow<WarDispo>()
-    val onClickOtherPlayer = MutableSharedFlow<WarDispo>()
 
     private var dispoOnly = false
 
@@ -49,7 +48,6 @@ class DispoAdapter(val list: MutableList<Pair<WarDispo, Boolean>> = mutableListO
             binding.firstHalfLu.adapter = firstHalfLuAdapter
             binding.secondHalfLu.adapter = secondHalfLuAdapter
             binding.btnSchedule.isVisible = (playersCan.size + playersCanSub.size >= 6 && item.second)
-            binding.addOtherPlayerBtn.isVisible = (playersCan.size + playersCanSub.size < 6 && item.second)
             binding.dispoListLayout.isVisible = true
             binding.lineupLayout.isVisible = false
             binding.hostLayout.isVisible = false
@@ -72,9 +70,6 @@ class DispoAdapter(val list: MutableList<Pair<WarDispo, Boolean>> = mutableListO
                 .map { item.first }
                 .bind(onClickWarSchedule, this@DispoAdapter)
 
-            binding.addOtherPlayerBtn.clicks()
-                .map { item.first }
-                .bind(onClickOtherPlayer, this@DispoAdapter)
             flowOf(
                 binding.canBtn.clicks().map { Dispo.CAN },
                 binding.canSubBtn.clicks().map { Dispo.CAN_SUB },
