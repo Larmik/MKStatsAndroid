@@ -16,6 +16,7 @@ import fr.harmoniamk.statsmk.databinding.FragmentAllWarsBinding
 import fr.harmoniamk.statsmk.enums.WarFilterType
 import fr.harmoniamk.statsmk.enums.WarSortType
 import fr.harmoniamk.statsmk.extension.clicks
+import fr.harmoniamk.statsmk.extension.isResumed
 import fr.harmoniamk.statsmk.extension.onTextChanged
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -53,12 +54,14 @@ class AllWarsFragment : Fragment(R.layout.fragment_all_wars) {
             adapter.addWars(it)
         }.launchIn(lifecycleScope)
         viewModel.sharedSortTypeSelected
+            .filter { lifecycle.isResumed }
             .onEach {
                 updateSortButton(binding.dateSortButton, it, WarSortType.DATE)
                 updateSortButton(binding.teamSortButton, it, WarSortType.TEAM)
                 updateSortButton(binding.scoreSortButton, it, WarSortType.SCORE)
             }.launchIn(lifecycleScope)
         viewModel.sharedFilterList
+            .filter { lifecycle.isResumed }
             .onEach {
                 updateFilterButton(binding.playFilterButton, WarFilterType.PLAY, it)
                 updateFilterButton(binding.officialFilterButton, WarFilterType.OFFICIAL, it)
