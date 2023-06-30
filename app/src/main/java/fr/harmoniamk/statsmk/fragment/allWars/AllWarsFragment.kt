@@ -48,7 +48,9 @@ class AllWarsFragment : Fragment(R.layout.fragment_all_wars) {
                 binding.playFilterButton.clicks().map { WarFilterType.PLAY }
             ).flattenMerge()
         )
-        viewModel.sharedWars.onEach {
+        viewModel.sharedWars
+            .filter { lifecycle.isResumed }
+            .onEach {
             binding.warRv.isVisible = it.isNotEmpty()
             binding.emptyWarTv.isVisible = it.isEmpty()
             adapter.addWars(it)
