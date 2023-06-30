@@ -3,6 +3,7 @@ package fr.harmoniamk.statsmk.compose.screen
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -18,6 +19,7 @@ import fr.harmoniamk.statsmk.compose.viewModel.PlayerListViewModel.Companion.vie
 import fr.harmoniamk.statsmk.extension.isTrue
 import kotlinx.coroutines.flow.filterNotNull
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun PlayerListScreen(teamId: String?, onWarStarted: () -> Unit) {
     val viewModel: PlayerListViewModel = viewModel(id = teamId)
