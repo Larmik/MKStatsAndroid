@@ -24,6 +24,7 @@ fun WarTrackResultScreen(viewModel: WarTrackResultViewModel = hiltViewModel(), o
     val trackIndexRes = viewModel.sharedTrackNumber.collectAsState()
     val map = viewModel.sharedCurrentMap.collectAsState()
     val positions = viewModel.sharedWarPos.collectAsState()
+    val shocks = viewModel.sharedShocks.collectAsState()
     val track = viewModel.sharedTrack.collectAsState()
     BackHandler {
         onBack()
@@ -43,7 +44,7 @@ fun WarTrackResultScreen(viewModel: WarTrackResultViewModel = hiltViewModel(), o
         map.value?.let { MKTrackItem(map = it) }
         LazyColumn {
             items(positions.value.orEmpty()) {
-                MKPlayerItem(position = it, shockVisible = true)
+                MKPlayerItem(position = it, shockVisible = true, shockCount = shocks.value?.singleOrNull { shock -> shock.playerId == it.player?.mid }?.count ?: 0, onAddShock = viewModel::onAddShock, onRemoveShock = viewModel::onRemoveShock)
             }
         }
         track.value?.let { MKScoreView(track = it) }

@@ -11,12 +11,14 @@ import dagger.assisted.AssistedInject
 import dagger.hilt.android.EntryPointAccessors
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.enums.Maps
+import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.firebase.NewWarPositions
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
+import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -32,28 +34,37 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class PositionViewModel @AssistedInject constructor(
     @Assisted private val index: Int,
+    @Assisted private val editing: Boolean,
     private val preferencesRepository: PreferencesRepositoryInterface,
-    private val databaseRepository: DatabaseRepositoryInterface
+    private val databaseRepository: DatabaseRepositoryInterface,
+    private val firebaseRepository: FirebaseRepositoryInterface
 ) : ViewModel() {
+
+    fun clearPos() {
+        positions.clear()
+        _sharedSelectedPositions.value = listOf()
+    }
 
     companion object {
         @Suppress("UNCHECKED_CAST")
         fun provideFactory(
             assistedFactory: Factory,
-            index: Int
+            index: Int,
+            editing: Boolean
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return assistedFactory.create(index) as T
+                return assistedFactory.create(index, editing) as T
             }
         }
 
         @Composable
-        fun viewModel(index: Int): PositionViewModel {
+        fun viewModel(index: Int, editing: Boolean): PositionViewModel {
             val factory: Factory = EntryPointAccessors.fromApplication<ViewModelFactoryProvider>(context = LocalContext.current).positionViewModel
             return androidx.lifecycle.viewmodel.compose.viewModel(
                 factory = provideFactory(
                     assistedFactory = factory,
-                    index = index
+                    index = index,
+                    editing = editing
                 )
             )
         }
@@ -61,7 +72,7 @@ class PositionViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(index: Int): PositionViewModel
+        fun create(index: Int, editing: Boolean): PositionViewModel
     }
     private val _sharedCurrentMap = MutableStateFlow<Maps?>(null)
     private val _sharedWar = MutableStateFlow<MKWar?>(null)
@@ -94,15 +105,29 @@ class PositionViewModel @AssistedInject constructor(
         positions.add(pos)
         _sharedSelectedPositions.value = positions.mapNotNull { it.position }
         if (positions.size == currentUsers.size) {
-            preferencesRepository.currentWarTrack.apply { this?.warPositions = positions }?.let { newTrack ->
-                preferencesRepository.currentWarTrack = newTrack
+            val warTrack = when (editing) {
+                true -> preferencesRepository.currentWar?.warTracks?.getOrNull(index)
+                else ->  preferencesRepository.currentWarTrack
+            }.apply { this?.warPositions = positions }
+           warTrack?.let { newTrack ->
+               if (!editing) preferencesRepository.currentWarTrack = newTrack
                 val tracks = mutableListOf<NewWarTrack>()
                 tracks.addAll(preferencesRepository.currentWar?.warTracks?.filterNot { tr -> tr.mid == newTrack.mid }.orEmpty())
-                tracks.add(newTrack)
+                tracks.add(index, newTrack)
                 preferencesRepository.currentWar = preferencesRepository.currentWar.apply {
                     this?.warTracks = tracks
                 }
-                _sharedGoToResult.value = newTrack.mid
+                when (editing) {
+                    true -> {
+                        preferencesRepository.currentWar?.let {
+                            firebaseRepository.writeCurrentWar(it)
+                                .onEach { positions.clear() }
+                                .bind(_sharedQuit, viewModelScope)
+                        }
+                    }
+                    else -> _sharedGoToResult.value = newTrack.mid
+                }
+
             }
         }
         else {
@@ -124,13 +149,21 @@ class PositionViewModel @AssistedInject constructor(
     }
 
     init {
-        _sharedCurrentMap.value = Maps.values()[index]
+        val trackIndexInMapList = when (editing) {
+            true -> preferencesRepository.currentWar?.warTracks?.getOrNull(index)?.trackIndex
+            else -> index
+        }
+        _sharedCurrentMap.value = Maps.values()[trackIndexInMapList ?: index]
         preferencesRepository.currentWar
             ?.withName(databaseRepository)
             ?.onEach {
                 _sharedWar.value = it
                 it.warTracks?.let { list ->
-                    _sharedTrackNumber.value = when (list.size + 1) {
+                    val trackIndexInWarTracks = when (editing) {
+                        true -> index + 1
+                        else -> list.size + 1
+                    }
+                    _sharedTrackNumber.value = when (trackIndexInWarTracks) {
                         12 -> R.string.track_12
                         11 -> R.string.track_11
                         10 -> R.string.track_10
@@ -148,7 +181,9 @@ class PositionViewModel @AssistedInject constructor(
             }
             ?.flatMapLatest {  databaseRepository.getUsers() }
             ?.onEach {
-                currentUsers = it.filter { user -> user.currentWar == _sharedWar.value?.war?.mid }.sortedBy { it.name }
+                currentUsers = it.filter { user ->
+                    user.currentWar == _sharedWar.value?.war?.mid
+                }.sortedBy { it.name }
                 currentUser = currentUsers.getOrNull(0)
                 _sharedPlayerLabel.emit(currentUser?.name)
             }?.launchIn(viewModelScope)

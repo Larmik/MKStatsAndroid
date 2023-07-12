@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import fr.harmoniamk.statsmk.R
 
 @Composable
-fun MKHeaderScreen(title: Any, subTitle: Any? = null, verticalArrangement: Arrangement.Vertical = Arrangement.Top, content: @Composable ColumnScope.() -> Unit) {
+fun MKHeaderScreen(title: Any?, subTitle: Any? = null, verticalArrangement: Arrangement.Vertical = Arrangement.Top, content: @Composable ColumnScope.() -> Unit) {
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
         .fillMaxHeight()
         .background(
@@ -33,7 +33,7 @@ fun MKHeaderScreen(title: Any, subTitle: Any? = null, verticalArrangement: Arran
                 )
             )) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                MKText(text = title, font = R.font.montserrat_bold, fontSize = 20, textColor = R.color.white, modifier = Modifier.padding(15.dp))
+                MKText(text = title ?: "", font = R.font.montserrat_bold, fontSize = 20, textColor = R.color.white, modifier = Modifier.padding(15.dp))
                 subTitle?.let { MKText(text = subTitle, font = R.font.montserrat_regular, fontSize = 16, textColor = R.color.white, modifier = Modifier.padding(top = 5.dp, bottom = 10.dp)) }
             }
         }

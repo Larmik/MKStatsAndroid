@@ -9,10 +9,11 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.EntryPointAccessors
-import fr.harmoniamk.statsmk.enums.Maps
+import fr.harmoniamk.statsmk.compose.ui.MKBottomSheetState
 import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.isTrue
+import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
 import fr.harmoniamk.statsmk.model.firebase.Shock
@@ -23,6 +24,7 @@ import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.NetworkRepositoryInterface
+import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
@@ -44,6 +46,7 @@ class TrackDetailsViewModel @AssistedInject constructor(
     @Assisted("warTrackId") private val warTrackId: String,
     private val authenticationRepository: AuthenticationRepositoryInterface,
     private val databaseRepository: DatabaseRepositoryInterface,
+    private val preferencesRepository: PreferencesRepositoryInterface,
     private val networkRepository: NetworkRepositoryInterface
 ): ViewModel() {
 
@@ -81,13 +84,13 @@ class TrackDetailsViewModel @AssistedInject constructor(
     private val _sharedButtonsVisible = MutableStateFlow(false)
     private val _sharedWar = MutableStateFlow<MKWar?>(null)
     private val _sharedCurrentTrack = MutableStateFlow<MKWarTrack?>(null)
-    private val _sharedBottomSheetValue = MutableSharedFlow<String?>()
+    private val _sharedBottomSheetValue = MutableStateFlow<MKBottomSheetState?>(null)
 
     val sharedPositions = _sharedPositions.asStateFlow()
     val sharedButtonsVisible = _sharedButtonsVisible.asStateFlow()
     val sharedWar = _sharedWar.asStateFlow()
     val sharedCurrentTrack = _sharedCurrentTrack.asStateFlow()
-    val sharedBottomSheetValue = _sharedBottomSheetValue.asSharedFlow()
+    val sharedBottomSheetValue = _sharedBottomSheetValue.asStateFlow()
 
 
 
@@ -96,13 +99,13 @@ class TrackDetailsViewModel @AssistedInject constructor(
     private val _sharedEditPositionsClick = MutableSharedFlow<Unit>()
     private val _sharedEditShocksClick = MutableSharedFlow<Unit>()
     private val _sharedTrackRefreshed = MutableSharedFlow<MKWarTrack>()
-    private val _sharedShocks = MutableSharedFlow<List<Pair<String?, Shock>>>()
+    private val _sharedShocks = MutableStateFlow<List<Shock>?>(null)
 
     val sharedEditTrackClick = _sharedEditTrackClick.asSharedFlow()
     val sharedEditPositionsClick = _sharedEditPositionsClick.asSharedFlow()
     val sharedEditShocksClick = _sharedEditShocksClick.asSharedFlow()
     val sharedTrackRefreshed = _sharedTrackRefreshed.asSharedFlow()
-    val sharedShocks = _sharedShocks.asSharedFlow()
+    val sharedShocks = _sharedShocks.asStateFlow()
 
     var index = 0
     private val users = mutableListOf<User>()
@@ -113,14 +116,19 @@ class TrackDetailsViewModel @AssistedInject constructor(
                 users.clear()
                 users.addAll(it)
             }
-            .flatMapLatest { databaseRepository.getWar(warId) }
+            .flatMapLatest {
+                when (warId) {
+                    "Current" -> preferencesRepository.currentWar?.withName(databaseRepository)!!
+                    else -> databaseRepository.getWar(warId)
+                }
+            }
             .filterNotNull()
             .onEach {
                 _sharedWar.value = it
                 _sharedCurrentTrack.value = it.warTracks?.singleOrNull { track -> track.track?.mid == warTrackId  }
-                val shocks = mutableListOf<Pair<String?, Shock>>()
+                val shocks = mutableListOf<Shock>()
                 it.war?.warTracks?.singleOrNull {it.mid == warTrackId}?.shocks?.forEach { shock ->
-                    shocks.add(Pair(users.singleOrNull { it.mid == shock.playerId }?.name, Shock(shock.playerId, shock.count)))
+                    shocks.add(Shock(shock.playerId, shock.count))
                 }
                 _sharedShocks.emit(shocks)
             }
@@ -139,7 +147,7 @@ class TrackDetailsViewModel @AssistedInject constructor(
                     positions.add(MKWarPosition(pos, users.singleOrNull { it.mid == pos.playerId }))
                 }
                 _sharedPositions.emit(positions.sortedBy { it.position.position })
-                _sharedButtonsVisible.value = networkRepository.networkAvailable && (isAdmin.isTrue || isLeader)
+                _sharedButtonsVisible.value = warId == "Current" && networkRepository.networkAvailable && (isAdmin.isTrue || isLeader)
             }.launchIn(viewModelScope)
     }
 
@@ -151,42 +159,40 @@ class TrackDetailsViewModel @AssistedInject constructor(
     }
 
     fun onEditTrack() {
-        viewModelScope.launch {
-            _sharedBottomSheetValue.emit("EditTrack")
-
-        }
+        _sharedBottomSheetValue.value = MKBottomSheetState.EditTrack()
     }
     fun onEditPositions() {
-
-        viewModelScope.launch {
-            _sharedBottomSheetValue.emit("EditPositions")
-        }
-
+        _sharedBottomSheetValue.value = MKBottomSheetState.EditPositions()
     }
     fun onEditShocks() {
+        _sharedBottomSheetValue.value = MKBottomSheetState.EditShocks()
+    }
 
-        viewModelScope.launch {
-            _sharedBottomSheetValue.emit("EditShocks")
+    fun refresh(trackIndex: Int) {
+        preferencesRepository.currentWar
+            .withName(databaseRepository)
+            .onEach {
+                _sharedWar.value = it
+                val warTrack = it.warTracks?.getOrNull(trackIndex)
+                _sharedCurrentTrack.value = warTrack
+                val positions = mutableListOf<MKWarPosition>()
+                it.warTracks?.getOrNull(trackIndex)?.track?.warPositions?.forEach { pos ->
+                    positions.add(MKWarPosition(pos, users.singleOrNull{ it.mid == pos.playerId }))
+                }
+                _sharedPositions.value = positions.sortedBy { it.position.position }
+                val shocks = mutableListOf<Shock>()
+                it.warTracks?.getOrNull(trackIndex)?.track?.shocks?.forEach { shock ->
+                    shocks.add(Shock(shock.playerId, shock.count))
+                }
+                _sharedShocks.value = shocks
 
-        }
+            }.launchIn(viewModelScope)
     }
 
 
-    fun refresh(warTrack: NewWarTrack) {
-        flowOf(Unit)
-            .onEach {
-                val shocks = mutableListOf<Pair<String?, Shock>>()
-                warTrack.shocks?.forEach { shock ->
-                    shocks.add(Pair(users.singleOrNull { it.mid == shock.playerId }?.name, Shock(shock.playerId, shock.count)))
-                }
-                _sharedShocks.emit(shocks)
-                val positions = mutableListOf<MKWarPosition>()
-                warTrack.warPositions?.forEach { pos ->
-                    positions.add(MKWarPosition(pos, users.singleOrNull{it.mid == pos.playerId}))
-                }
-                _sharedPositions.emit(positions)
-                _sharedTrackRefreshed.emit(MKWarTrack(warTrack))
-            }.launchIn(viewModelScope)
+    fun dismissBottomSheet(trackIndex: Int) {
+        _sharedBottomSheetValue.value = null
+        refresh(trackIndex)
     }
 
 

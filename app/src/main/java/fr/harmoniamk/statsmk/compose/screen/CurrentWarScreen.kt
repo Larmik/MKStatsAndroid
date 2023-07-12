@@ -24,7 +24,7 @@ import fr.harmoniamk.statsmk.compose.viewModel.CurrentWarViewModel
 
 @Composable
 @OptIn(ExperimentalMaterialApi::class)
-fun CurrentWarScreen(viewModel: CurrentWarViewModel = hiltViewModel(), onNextTrack: () -> Unit, onBack: () -> Unit) {
+fun CurrentWarScreen(viewModel: CurrentWarViewModel = hiltViewModel(), onNextTrack: () -> Unit, onBack: () -> Unit, onTrackClick: (String) -> Unit) {
 
     val war = viewModel.sharedCurrentWar.collectAsState()
     val players = viewModel.sharedWarPlayers.collectAsState()
@@ -47,7 +47,7 @@ fun CurrentWarScreen(viewModel: CurrentWarViewModel = hiltViewModel(), onNextTra
             MKText(text = R.string.courses_jou_es, font = R.font.montserrat_bold)
             LazyColumn(Modifier.padding(10.dp)) {
                 items(items = it) {
-                    MKTrackItem(track = it)
+                    MKTrackItem(modifier = Modifier.padding(bottom = 5.dp), track = it, goToDetails = { _ -> onTrackClick(it.track?.mid.orEmpty())})
                 }
             }
         }

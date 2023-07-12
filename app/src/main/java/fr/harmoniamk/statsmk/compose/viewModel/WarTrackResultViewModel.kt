@@ -54,18 +54,20 @@ class WarTrackResultViewModel @Inject constructor(
     val sharedCurrentMap = _sharedCurrentMap.asStateFlow()
     val sharedGoToWarResume = _sharedGoToWarResume.asStateFlow()
 
+    val positions = mutableListOf<MKWarPosition>()
+
     private val _sharedBack = MutableSharedFlow<Unit>()
     private val _sharedBackToCurrent = MutableSharedFlow<Unit>()
-    private val _sharedShocks = MutableSharedFlow<List<Pair<String?, Shock>>>()
+    private val _sharedShocks = MutableStateFlow<List<Shock>?>(null)
     private val _sharedLoading = MutableStateFlow<Boolean>(false)
 
     val sharedBack = _sharedBack.asSharedFlow()
     val sharedBackToCurrent = _sharedBackToCurrent.asSharedFlow()
-    val sharedShocks = _sharedShocks.asSharedFlow()
+    val sharedShocks = _sharedShocks.asStateFlow()
     val sharedLoading = _sharedLoading.asStateFlow()
 
     private val users = mutableListOf<User>()
-    private val finalList = mutableListOf<Pair<String?, Shock>>()
+    private val finalList = mutableListOf<Shock>()
     val shocks = mutableMapOf<String?, Int>()
 
 
@@ -93,23 +95,29 @@ class WarTrackResultViewModel @Inject constructor(
                 } }
             ?.launchIn(viewModelScope)
 
-        val positions = mutableListOf<MKWarPosition>()
 
         databaseRepository.getUsers()
             .onEach {
                 delay(50)
                 users.clear()
                 users.addAll(it)
-                preferencesRepository.currentWarTrack?.warPositions.orEmpty().sortedBy { it.position }.forEach { pos ->
-                    positions.add(MKWarPosition(pos, users.singleOrNull { it.mid == pos.playerId }))
-                    shocks[pos.playerId] = 0
-                }
-                _sharedWarPos.value = positions
+                refreshPos(initShockList = true)
                 preferencesRepository.currentWarTrack?.takeIf { positions.size == 6 }?.let {
                     _sharedTrack.value = MKWarTrack(it)
                 }
             }.launchIn(viewModelScope)
 
+    }
+
+    private fun refreshPos(initShockList: Boolean = false) {
+        positions.clear()
+        preferencesRepository.currentWarTrack?.warPositions.orEmpty().sortedBy { it.position }.forEach { pos ->
+            positions.add(MKWarPosition(pos, users.singleOrNull { it.mid == pos.playerId }))
+            if (initShockList) shocks[pos.playerId] = 0
+        }
+        val newPositions = mutableListOf<MKWarPosition>()
+        newPositions.addAll(positions)
+        _sharedWarPos.value = newPositions
     }
 
     fun onValid() {
@@ -135,59 +143,52 @@ class WarTrackResultViewModel @Inject constructor(
         }
     }
 
+    fun onAddShock(id: String) {
+        shocks[id]?.let { shocks[id] = it+1 }
+        finalList.clear()
+        shocks.forEach { shock ->
+            shock.takeIf { map -> map.value > 0 }?.let {
+                finalList.add(Shock(it.key, it.value))
+            }
+        }
+        val tracks = mutableListOf<NewWarTrack>()
+        tracks.addAll(preferencesRepository.currentWar?.warTracks?.filterNot { tr -> tr.mid == preferencesRepository.currentWarTrack?.mid }.orEmpty())
+        preferencesRepository.currentWarTrack?.apply { this.shocks = finalList }?.let {
+            tracks.add(it)
+        }
+        preferencesRepository.currentWar = preferencesRepository.currentWar.apply {
+            this?.warTracks = tracks
+        }
+        _sharedShocks.value = finalList
+        refreshPos(initShockList = false)
+
+    }
+
+    fun onRemoveShock(id: String) {
+            shocks[id]?.takeIf { it > 0 }?.let { shocks[id] = it-1 }
+            finalList.clear()
+            shocks.forEach { shock ->
+                shock.takeIf { map -> map.value > 0 }?.let {
+                    finalList.add(Shock(it.key, it.value))
+                }
+            }
+            preferencesRepository.currentWarTrack.apply { this?.shocks = finalList }?.let { newTrack ->
+                preferencesRepository.currentWarTrack = newTrack
+                val tracks = mutableListOf<NewWarTrack>()
+                tracks.addAll(preferencesRepository.currentWar?.warTracks?.filterNot { tr -> tr.mid == newTrack.mid }.orEmpty())
+                tracks.add(newTrack)
+                preferencesRepository.currentWar = preferencesRepository.currentWar.apply {
+                    this?.warTracks = tracks
+                }
+            }
+            _sharedShocks.value = finalList
+            refreshPos(initShockList = false)
+
+    }
+
     fun bind(onBack: Flow<Unit>, onValid: Flow<Unit>, onShockAdded: Flow<String>, onShockRemoved: Flow<String>) {
 
 
-        preferencesRepository.currentWarTrack?.let { track ->
-
-            onShockRemoved
-                .onEach { id -> shocks[id]?.takeIf { it > 0 }?.let { shocks[id] = it-1 } }
-                .map { id ->
-                    finalList.clear()
-                    shocks.forEach { shock ->
-                        shock.takeIf { map -> map.value > 0 }?.let {
-                            val name = databaseRepository.getUser(it.key).firstOrNull()?.name
-                            finalList.add(Pair(name, Shock(it.key, it.value)))
-                        }
-                    }
-                    finalList
-                }
-                .onEach {
-                    preferencesRepository.currentWarTrack.apply { this?.shocks = finalList.map { it.second } }?.let { newTrack ->
-                        preferencesRepository.currentWarTrack = newTrack
-                        val tracks = mutableListOf<NewWarTrack>()
-                        tracks.addAll(preferencesRepository.currentWar?.warTracks?.filterNot { tr -> tr.mid == newTrack.mid }.orEmpty())
-                        tracks.add(newTrack)
-                        preferencesRepository.currentWar = preferencesRepository.currentWar.apply {
-                            this?.warTracks = tracks
-                        }
-                    }
-                }.bind(_sharedShocks, viewModelScope)
-
-            onShockAdded
-                .onEach { id -> shocks[id]?.let { shocks[id] = it+1 } }
-                .map { id ->
-                    finalList.clear()
-                    shocks.forEach { shock ->
-                        shock.takeIf { map -> map.value > 0 }?.let {
-                            val name = databaseRepository.getUser(it.key).firstOrNull()?.name
-                            finalList.add(Pair(name, Shock(it.key, it.value)))
-                        }
-                    }
-                    finalList
-                }
-                .onEach {
-                    val tracks = mutableListOf<NewWarTrack>()
-                    tracks.addAll(preferencesRepository.currentWar?.warTracks?.filterNot { tr -> tr.mid == preferencesRepository.currentWarTrack?.mid }.orEmpty())
-                    preferencesRepository.currentWarTrack?.apply { this.shocks = finalList.map { it.second } }?.let {
-                        tracks.add(it)
-                    }
-                    preferencesRepository.currentWar = preferencesRepository.currentWar.apply {
-                        this?.warTracks = tracks
-                    }
-                }.bind(_sharedShocks, viewModelScope)
-
-        }
         onBack.bind(_sharedBack, viewModelScope)
     }
 }

@@ -13,24 +13,22 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
 import fr.harmoniamk.statsmk.R
-import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.extension.positionColor
-import fr.harmoniamk.statsmk.fragment.playerSelect.UserSelector
 import fr.harmoniamk.statsmk.model.firebase.NewWarPositions
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.MKWarPosition
 
 @Composable
-fun MKPlayerItem(player: User? = null, position: MKWarPosition? = null, isSelected: Boolean = false, shockVisible: Boolean = false, onAddShock: () -> Unit = { }, onRemoveShock: () -> Unit = { }, onRootClick: () -> Unit = { }) {
+fun MKPlayerItem(player: User? = null, position: MKWarPosition? = null, isSelected: Boolean = false, shockVisible: Boolean = false, shockCount: Int = 0, onAddShock: (String) -> Unit = { }, onRemoveShock: (String) -> Unit = { }, onRootClick: () -> Unit = { }) {
     val finalPlayer = player ?: position?.player
     val backgroundColor = colorResource(id =
         when (isSelected) {
             true -> R.color.harmonia_dark
-            else -> R.color.white
+            else -> R.color.white_alphaed
         }
     )
     val textColor = when (isSelected) {
@@ -42,9 +40,18 @@ fun MKPlayerItem(player: User? = null, position: MKWarPosition? = null, isSelect
         Row(modifier = Modifier
             .padding(10.dp)
             .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            finalPlayer?.picture?.let { AsyncImage(model = it, contentDescription = null, modifier = Modifier.size(50.dp)) }
-            Row(Modifier.weight(1f), horizontalArrangement = Arrangement.SpaceAround, verticalAlignment = Alignment.CenterVertically) {
+            //finalPlayer?.picture?.let { AsyncImage(model = it, contentDescription = null, modifier = Modifier.size(50.dp)) }
+            Row(Modifier.weight(1f), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
                 finalPlayer?.name?.let { MKText(text = it, font = R.font.montserrat_bold, textColor = textColor) }
+                shockCount.takeIf { it > 0 }?.let {
+                    Image(painter = painterResource(id = R.drawable.shock), contentDescription = null, modifier = Modifier
+                        .size(25.dp)
+                        .padding(start = 10.dp))
+                    MKText(text = String.format(
+                        stringResource(id = R.string.shock_count_placeholder),
+                        shockCount.toString()
+                    ), font = R.font.orbitron_semibold)
+                }
             }
             position?.let {
                 MKText(text = it.position.position.toString(), font = R.font.mk_position, textColor = it.position.position.positionColor(), fontSize = 26, modifier = Modifier.padding(end = 15.dp))
@@ -52,13 +59,19 @@ fun MKPlayerItem(player: User? = null, position: MKWarPosition? = null, isSelect
                     Row(horizontalArrangement = Arrangement.Center) {
                         MKText(text = R.string.minus, font = R.font.orbitron_semibold, fontSize = 26, modifier = Modifier
                             .size(30.dp)
-                            .clickable { onRemoveShock() })
+                            .clickable {position.player?.mid?.let { mid ->
+                                onRemoveShock(mid)
+                            }})
                         Image(painter = painterResource(id = R.drawable.shock), contentDescription = null, modifier = Modifier
                             .size(30.dp)
                             .padding(horizontal = 5.dp))
                         MKText(text = R.string.plus, font = R.font.orbitron_semibold, fontSize = 26, modifier = Modifier
                             .size(30.dp)
-                            .clickable { onAddShock() })
+                            .clickable {
+                                position.player?.mid?.let { mid ->
+                                    onAddShock(mid)
+                                }
+                            })
                     }
                 }
             }
@@ -96,6 +109,7 @@ fun MKPlayerItemPositionPreviewWithSkock() {
             mid = "mid",
             name = "Lari",
             picture = "https://firebasestorage.googleapis.com/v0/b/stats-mk.appspot.com/o/1643723546718?alt=media&token=901e95bd-5d15-4ef4-a541-bdbf28d3bfca"
-        ))
+        ),
+    ), shockCount = 2
     )
 }

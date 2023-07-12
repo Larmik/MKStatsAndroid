@@ -24,8 +24,8 @@ import kotlinx.coroutines.flow.filterNotNull
 
 @Composable
 @OptIn(ExperimentalMaterialApi::class)
-fun PositionScreen(trackIndex: Int, onBack: () -> Unit, onNext: (Int) -> Unit) {
-    val viewModel = viewModel(index = trackIndex)
+fun PositionScreen(trackIndex: Int, editing: Boolean = false, onBack: (Int) -> Unit, onNext: (Int) -> Unit) {
+    val viewModel = viewModel(index = trackIndex, editing = editing)
     val war = viewModel.sharedWar.collectAsState()
     val map = viewModel.sharedCurrentMap.collectAsState()
     val selectedPositions = viewModel.sharedSelectedPositions.collectAsState()
@@ -34,7 +34,10 @@ fun PositionScreen(trackIndex: Int, onBack: () -> Unit, onNext: (Int) -> Unit) {
     
     BackHandler { viewModel.onBack() }
     LaunchedEffect(Unit) {
-        viewModel.sharedQuit.filterNotNull().collect { onBack() }
+        viewModel.sharedQuit.filterNotNull().collect {
+            if (editing) viewModel.clearPos()
+            onBack(trackIndex)
+        }
     }
     LaunchedEffect(Unit) {
         viewModel.sharedGoToResult.filterNotNull().collect { onNext(trackIndex) }
@@ -76,7 +79,7 @@ fun PositionScreen(trackIndex: Int, onBack: () -> Unit, onNext: (Int) -> Unit) {
 @Preview
 @Composable
 fun PositionScreenPreview() {
-    PositionScreen(trackIndex = 23, {}) {
+    PositionScreen(trackIndex = 23, editing = false, {}) {
 
     }
 }

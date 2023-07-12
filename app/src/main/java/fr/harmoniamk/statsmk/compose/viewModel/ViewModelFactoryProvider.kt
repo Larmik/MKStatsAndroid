@@ -15,4 +15,5 @@ interface ViewModelFactoryProvider {
     val positionViewModel: PositionViewModel.Factory
     val playerListViewModel: PlayerListViewModel.Factory
     val trackDetailsViewModel: TrackDetailsViewModel.Factory
+    val trackListViewModel: TrackListViewModel.Factory
 }
