@@ -79,7 +79,14 @@
     <string name="bbr">Bousculade à Bangkok</string>
     <string name="bmc">Circuit Mario DS</string>
     <string name="bws">Stade Waluigi</string>
-    <string name="bsis">Poursuite à Singapour</string>
+    <string name="batd">Athènes antique</string>
+    <string name="bdc">Paquebot Daisy</string>
+    <string name="bmh">Route Clair de Lune</string>
+    <string name="bscs">Course à la propreté</string>
+    <string name="blal">Road-trip à Los Angeles</string>
+    <string name="bsw">Pays Crépuscule</string>
+    <string name="bkc">Cap Koopa</string>
+    <string name="bvv">Virages à Vancouver</string>
     <string name="mushroom">Coupe Champignon</string>
     <string name="flower">Coupe Fleur</string>
     <string name="star">Coupe Etoile</string>
@@ -100,6 +107,8 @@
     <string name="moon">Coupe Lune</string>
     <string name="boomerang">Coupe Boomerang</string>
     <string name="fruit">Coupe Fruit</string>
+    <string name="feather">Coupe Plume</string>
+    <string name="cherry">Coupe Cerises</string>
     <string name="team_war">War en équipe</string>
     <string name="settings">Paramètres</string>
     <string name="stats">Statistiques</string>
@@ -352,4 +361,5 @@
     <string name="validate_war_confirm">Une fois la war validée, elle sera définitivement comptabilisée et vous ne pourrez plus la modifier.</string>
     <string name="validate_war">Valider la war</string>
     <string name="need_update">L\'application nécessite une mise à jour pour fonctionner correctement. \n \n Veuillez mettre à jour l\'application pour continuer.</string>
+    <string name="bsis">Poursuite à Singapour</string>
 </resources>

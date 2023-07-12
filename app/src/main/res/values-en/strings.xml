@@ -327,4 +327,15 @@
     <string name="month_stats">Monthly stats</string>
     <string name="fetch_data">Fetching data…</string>
     <string name="matchs_played">%s wars played</string>
+    <string name="batd">Athens Dash</string>
+    <string name="bdc">Daisy Cruiser</string>
+    <string name="bmh">Moonview Highway</string>
+    <string name="bscs">Squeaky Clean Sprint</string>
+    <string name="blal">Los Angeles Laps</string>
+    <string name="bsw">Sunset Wilds</string>
+    <string name="bkc">Koopa Cape</string>
+    <string name="bvv">Vancouver Velocity</string>
+    <string name="feather">Feather Cup</string>
+    <string name="cherry">Cherry Cup</string>
+    <string name="validate_war">Validate war</string>
 </resources>

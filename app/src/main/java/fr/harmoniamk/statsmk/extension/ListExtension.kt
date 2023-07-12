@@ -36,21 +36,18 @@ fun List<MKWar>.withFullStats(databaseRepository: DatabaseRepositoryInterface, u
 
     val mostPlayedTeamId = wars
         .asSequence()
-        .filterNot { it.war?.teamOpponent == "1652270659565" }
         .groupBy { it.war?.teamOpponent }
         .toList().maxByOrNull { it.second.size }
 
     val mostDefeatedTeamId = wars
         .asSequence()
         .filterNot { it.displayedDiff.contains('-') }
-        .filterNot { it.war?.teamOpponent == "1652270659565" }
         .groupBy { it.war?.teamOpponent }
         .toList().maxByOrNull { it.second.size }
 
     val lessDefeatedTeamId = wars
         .asSequence()
         .filter { it.displayedDiff.contains('-') }
-        .filterNot { it.war?.teamOpponent == "1652270659565" }
         .groupBy { it.war?.teamOpponent }
         .toList().maxByOrNull { it.second.size }
 
