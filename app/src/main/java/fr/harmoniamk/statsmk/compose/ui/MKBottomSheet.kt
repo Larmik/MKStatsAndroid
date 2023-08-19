@@ -3,6 +3,7 @@ package fr.harmoniamk.statsmk.compose.ui
 import androidx.compose.runtime.Composable
 import fr.harmoniamk.statsmk.compose.screen.PositionScreen
 import fr.harmoniamk.statsmk.compose.screen.TrackListScreen
+import fr.harmoniamk.statsmk.model.local.MKWarTrack
 
 sealed class MKBottomSheetState() {
     class EditTrack() : MKBottomSheetState()
@@ -13,7 +14,7 @@ sealed class MKBottomSheetState() {
 }
 
 @Composable
-fun MKBottomSheet(trackIndex: Int?, state: MKBottomSheetState?, onEditTrack: (Int) -> Unit = { }, onDismiss: (Int) -> Unit, onEditPosition: (Int) -> Unit = { }) {
+fun MKBottomSheet(track: MKWarTrack? = null, trackIndex: Int?, state: MKBottomSheetState?, onEditTrack: (Int) -> Unit = { }, onDismiss: (Int) -> Unit, onEditPosition: (Int) -> Unit = { }) {
     when (state) {
         is MKBottomSheetState.EditTrack -> {
             trackIndex?.let {
@@ -23,7 +24,7 @@ fun MKBottomSheet(trackIndex: Int?, state: MKBottomSheetState?, onEditTrack: (In
         }
         is MKBottomSheetState.EditPositions -> {
             trackIndex?.let {
-                PositionScreen(trackIndex = it, onBack = onDismiss, editing = true, onNext = onEditPosition)
+                PositionScreen(track = track, trackIndex = it, onBack = onDismiss, editing = true, onNext = onEditPosition)
             }
 
         }

@@ -20,11 +20,12 @@ import fr.harmoniamk.statsmk.compose.ui.MKText
 import fr.harmoniamk.statsmk.compose.ui.MKTrackItem
 import fr.harmoniamk.statsmk.compose.viewModel.PositionViewModel.Companion.viewModel
 import fr.harmoniamk.statsmk.extension.isTrue
+import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import kotlinx.coroutines.flow.filterNotNull
 
 @Composable
 @OptIn(ExperimentalMaterialApi::class)
-fun PositionScreen(trackIndex: Int, editing: Boolean = false, onBack: (Int) -> Unit, onNext: (Int) -> Unit) {
+fun PositionScreen(track: MKWarTrack? = null, trackIndex: Int, editing: Boolean = false, onBack: (Int) -> Unit, onNext: (Int) -> Unit) {
     val viewModel = viewModel(index = trackIndex, editing = editing)
     val war = viewModel.sharedWar.collectAsState()
     val map = viewModel.sharedCurrentMap.collectAsState()
@@ -46,7 +47,10 @@ fun PositionScreen(trackIndex: Int, editing: Boolean = false, onBack: (Int) -> U
         id = it
     ) }) {
         map.value?.let { MKTrackItem(map = it) }
-        MKScoreView(war = war.value, modifier = Modifier.padding(vertical = 10.dp))
+        when (editing) {
+            true -> MKScoreView(track = track ?: war.value?.warTracks?.getOrNull(trackIndex), modifier = Modifier.padding(vertical = 10.dp))
+            else -> MKScoreView(war = war.value, modifier = Modifier.padding(vertical = 10.dp))
+        }
         MKText(text = String.format(
             stringResource(id = R.string.select_pos_placeholder),
             playerName.value
@@ -79,7 +83,7 @@ fun PositionScreen(trackIndex: Int, editing: Boolean = false, onBack: (Int) -> U
 @Preview
 @Composable
 fun PositionScreenPreview() {
-    PositionScreen(trackIndex = 23, editing = false, {}) {
+    PositionScreen(track = null, trackIndex = 23, editing = false, {}) {
 
     }
 }

@@ -57,7 +57,7 @@ fun TrackDetailsScreen(warId: String, warTrackId: String, onBack: () -> Unit) {
     }
     
     MKBaseScreen(title = war.value?.name.orEmpty(), subTitle = war.value?.war?.createdDate, state = bottomSheetState, sheetContent = {
-        MKBottomSheet(trackIndex = war.value?.warTracks?.map { it.track }?.indexOf(currentTrack.value?.track) , state = currentState.value, onDismiss = viewModel::dismissBottomSheet)
+        MKBottomSheet(track = currentTrack.value, trackIndex = war.value?.warTracks?.map { it.track }?.indexOf(currentTrack.value?.track) , state = currentState.value, onDismiss = viewModel::dismissBottomSheet)
     }) {
         currentTrack.value?.index?.let { MKTrackItem(map = Maps.values()[it]) }
         buttonsVisible.value.takeIf { it }?.let { 
