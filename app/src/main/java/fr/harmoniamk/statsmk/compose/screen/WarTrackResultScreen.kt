@@ -7,7 +7,6 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.hilt.navigation.compose.hiltViewModel
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKBaseScreen
 import fr.harmoniamk.statsmk.compose.ui.MKButton
@@ -15,11 +14,13 @@ import fr.harmoniamk.statsmk.compose.ui.MKPlayerItem
 import fr.harmoniamk.statsmk.compose.ui.MKScoreView
 import fr.harmoniamk.statsmk.compose.ui.MKTrackItem
 import fr.harmoniamk.statsmk.compose.viewModel.WarTrackResultViewModel
+import fr.harmoniamk.statsmk.compose.viewModel.WarTrackResultViewModel.Companion.viewModel
 import kotlinx.coroutines.flow.filterNotNull
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun WarTrackResultScreen(viewModel: WarTrackResultViewModel = hiltViewModel(), onBack: () -> Unit, backToCurrent: () -> Unit, goToResume: (String) -> Unit) {
+fun WarTrackResultScreen(trackIndex: Int? = null, onBack: () -> Unit, backToCurrent: () -> Unit, goToResume: (String) -> Unit) {
+    val viewModel: WarTrackResultViewModel = viewModel(trackResultIndex = trackIndex)
     val war = viewModel.sharedWar.collectAsState()
     val trackIndexRes = viewModel.sharedTrackNumber.collectAsState()
     val map = viewModel.sharedCurrentMap.collectAsState()
@@ -29,6 +30,7 @@ fun WarTrackResultScreen(viewModel: WarTrackResultViewModel = hiltViewModel(), o
     BackHandler {
         onBack()
     }
+
     LaunchedEffect(Unit) {
         viewModel.sharedBackToCurrent.collect {
             backToCurrent()

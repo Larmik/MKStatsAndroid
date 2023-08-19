@@ -3,6 +3,7 @@ package fr.harmoniamk.statsmk.compose.ui
 import androidx.compose.runtime.Composable
 import fr.harmoniamk.statsmk.compose.screen.PositionScreen
 import fr.harmoniamk.statsmk.compose.screen.TrackListScreen
+import fr.harmoniamk.statsmk.compose.screen.WarTrackResultScreen
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
 
 sealed class MKBottomSheetState() {
@@ -29,7 +30,14 @@ fun MKBottomSheet(track: MKWarTrack? = null, trackIndex: Int?, state: MKBottomSh
 
         }
         is MKBottomSheetState.EditShocks -> {
-
+            trackIndex?.let {
+                WarTrackResultScreen(
+                    trackIndex = it,
+                    onBack = { onDismiss(trackIndex) },
+                    backToCurrent = { onDismiss(trackIndex) },
+                    goToResume = { onDismiss(trackIndex) }
+                )
+            }
         }
         else -> {}
     }

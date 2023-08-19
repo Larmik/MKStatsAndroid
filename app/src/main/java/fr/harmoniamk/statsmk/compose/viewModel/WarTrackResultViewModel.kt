@@ -1,11 +1,16 @@
 package fr.harmoniamk.statsmk.compose.viewModel
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
+import dagger.hilt.android.EntryPointAccessors
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.enums.Maps
-import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
 import fr.harmoniamk.statsmk.model.firebase.Shock
@@ -19,26 +24,51 @@ import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
-@HiltViewModel
-class WarTrackResultViewModel @Inject constructor(
+class WarTrackResultViewModel @AssistedInject constructor(
+    @Assisted val trackResultIndex: Int?,
     private val firebaseRepository: FirebaseRepositoryInterface,
     private val preferencesRepository: PreferencesRepositoryInterface,
     private val databaseRepository: DatabaseRepositoryInterface
 ) : ViewModel() {
+    companion object {
+        @Suppress("UNCHECKED_CAST")
+        fun provideFactory(
+            assistedFactory: Factory,
+            trackResultIndex: Int?
+        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return assistedFactory.create(trackResultIndex) as T
+            }
+        }
+
+        @Composable
+        fun viewModel(trackResultIndex: Int?): WarTrackResultViewModel {
+            val factory: Factory =
+                EntryPointAccessors.fromApplication<ViewModelFactoryProvider>(context = LocalContext.current).warTrackResultViewModel
+            return androidx.lifecycle.viewmodel.compose.viewModel(
+                factory = provideFactory(
+                    assistedFactory = factory,
+                    trackResultIndex = trackResultIndex
+                )
+            )
+        }
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(trackResultIndex: Int?): WarTrackResultViewModel
+    }
+
 
     private val _sharedWarPos = MutableStateFlow<List<MKWarPosition>?>(null)
     private val _sharedTrack = MutableStateFlow<MKWarTrack?>(null)
@@ -72,7 +102,10 @@ class WarTrackResultViewModel @Inject constructor(
 
 
     init {
-        _sharedCurrentMap.value = Maps.values()[preferencesRepository.currentWarTrack?.trackIndex ?: 0]
+        val currentTrack =
+            preferencesRepository.currentWar?.warTracks?.getOrNull(trackResultIndex ?: 0)
+                ?: preferencesRepository.currentWarTrack
+        _sharedCurrentMap.value = Maps.values()[currentTrack?.trackIndex ?: 0]
         preferencesRepository.currentWar
             ?.withName(databaseRepository)
             ?.onEach {
@@ -102,7 +135,7 @@ class WarTrackResultViewModel @Inject constructor(
                 users.clear()
                 users.addAll(it)
                 refreshPos(initShockList = true)
-                preferencesRepository.currentWarTrack?.takeIf { positions.size == 6 }?.let {
+                currentTrack?.takeIf { positions.size == 6 }?.let {
                     _sharedTrack.value = MKWarTrack(it)
                 }
             }.launchIn(viewModelScope)
@@ -111,9 +144,14 @@ class WarTrackResultViewModel @Inject constructor(
 
     private fun refreshPos(initShockList: Boolean = false) {
         positions.clear()
-        preferencesRepository.currentWarTrack?.warPositions.orEmpty().sortedBy { it.position }.forEach { pos ->
+        val currentTrack =
+            preferencesRepository.currentWar?.warTracks?.getOrNull(trackResultIndex ?: 0)
+                ?: preferencesRepository.currentWarTrack
+        currentTrack?.warPositions.orEmpty().sortedBy { it.position }.forEach { pos ->
+            val shocksForPlayer = currentTrack?.shocks.orEmpty().singleOrNull { it.playerId == pos.playerId }?.count
             positions.add(MKWarPosition(pos, users.singleOrNull { it.mid == pos.playerId }))
             if (initShockList) shocks[pos.playerId] = 0
+            else if (trackResultIndex != null) shocks[pos.playerId] = shocksForPlayer ?: 0
         }
         val newPositions = mutableListOf<MKWarPosition>()
         newPositions.addAll(positions)
@@ -121,7 +159,7 @@ class WarTrackResultViewModel @Inject constructor(
     }
 
     fun onValid() {
-        preferencesRepository.currentWar?.let {war ->
+        preferencesRepository.currentWar?.let { war ->
             _sharedLoading.value = true
             viewModelScope.launch {
                 if (MKWar(war).isOver) {
@@ -129,11 +167,12 @@ class WarTrackResultViewModel @Inject constructor(
                     firebaseRepository.deleteCurrentWar().first()
                     val mkWar = listOf(MKWar(war)).withName(databaseRepository).first()
                     mkWar.singleOrNull()?.let { databaseRepository.writeWar(it).first() }
-                    databaseRepository.getUsers().first().filter { it.currentWar == war.mid }.forEach {
-                        val new = it.apply { this.currentWar = "-1" }
-                        firebaseRepository.writeUser(new).first()
-                    }
-               _sharedGoToWarResume.value = war.mid
+                    databaseRepository.getUsers().first().filter { it.currentWar == war.mid }
+                        .forEach {
+                            val new = it.apply { this.currentWar = "-1" }
+                            firebaseRepository.writeUser(new).first()
+                        }
+                    _sharedGoToWarResume.value = war.mid
                 } else {
                     firebaseRepository.writeCurrentWar(war).first()
                     _sharedBackToCurrent.emit(Unit)
@@ -144,7 +183,7 @@ class WarTrackResultViewModel @Inject constructor(
     }
 
     fun onAddShock(id: String) {
-        shocks[id]?.let { shocks[id] = it+1 }
+        shocks[id]?.let { shocks[id] = it + 1 }
         finalList.clear()
         shocks.forEach { shock ->
             shock.takeIf { map -> map.value > 0 }?.let {
@@ -152,9 +191,14 @@ class WarTrackResultViewModel @Inject constructor(
             }
         }
         val tracks = mutableListOf<NewWarTrack>()
-        tracks.addAll(preferencesRepository.currentWar?.warTracks?.filterNot { tr -> tr.mid == preferencesRepository.currentWarTrack?.mid }.orEmpty())
-        preferencesRepository.currentWarTrack?.apply { this.shocks = finalList }?.let {
-            tracks.add(it)
+        val currentTrack =
+            preferencesRepository.currentWar?.warTracks?.getOrNull(trackResultIndex ?: 0)
+                ?: preferencesRepository.currentWarTrack
+        tracks.addAll(preferencesRepository.currentWar?.warTracks?.filterNot { tr -> tr.mid == currentTrack?.mid }
+            .orEmpty())
+
+        currentTrack?.apply { this.shocks = finalList }?.let {
+            tracks.add(trackResultIndex ?: tracks.size, it)
         }
         preferencesRepository.currentWar = preferencesRepository.currentWar.apply {
             this?.warTracks = tracks
@@ -165,30 +209,28 @@ class WarTrackResultViewModel @Inject constructor(
     }
 
     fun onRemoveShock(id: String) {
-            shocks[id]?.takeIf { it > 0 }?.let { shocks[id] = it-1 }
-            finalList.clear()
-            shocks.forEach { shock ->
-                shock.takeIf { map -> map.value > 0 }?.let {
-                    finalList.add(Shock(it.key, it.value))
-                }
+        shocks[id]?.takeIf { it > 0 }?.let { shocks[id] = it - 1 }
+        finalList.clear()
+        shocks.forEach { shock ->
+            shock.takeIf { map -> map.value > 0 }?.let {
+                finalList.add(Shock(it.key, it.value))
             }
-            preferencesRepository.currentWarTrack.apply { this?.shocks = finalList }?.let { newTrack ->
-                preferencesRepository.currentWarTrack = newTrack
-                val tracks = mutableListOf<NewWarTrack>()
-                tracks.addAll(preferencesRepository.currentWar?.warTracks?.filterNot { tr -> tr.mid == newTrack.mid }.orEmpty())
-                tracks.add(newTrack)
-                preferencesRepository.currentWar = preferencesRepository.currentWar.apply {
-                    this?.warTracks = tracks
-                }
+        }
+        val currentTrack =
+            preferencesRepository.currentWar?.warTracks?.getOrNull(trackResultIndex ?: 0)
+                ?: preferencesRepository.currentWarTrack
+        currentTrack.apply { this?.shocks = finalList }?.let { newTrack ->
+            preferencesRepository.currentWarTrack = newTrack
+            val tracks = mutableListOf<NewWarTrack>()
+            tracks.addAll(preferencesRepository.currentWar?.warTracks?.filterNot { tr -> tr.mid == newTrack.mid }
+                .orEmpty())
+            tracks.add(trackResultIndex ?: tracks.size, newTrack)
+            preferencesRepository.currentWar = preferencesRepository.currentWar.apply {
+                this?.warTracks = tracks
             }
-            _sharedShocks.value = finalList
-            refreshPos(initShockList = false)
+        }
+        _sharedShocks.value = finalList
+        refreshPos(initShockList = false)
 
-    }
-
-    fun bind(onBack: Flow<Unit>, onValid: Flow<Unit>, onShockAdded: Flow<String>, onShockRemoved: Flow<String>) {
-
-
-        onBack.bind(_sharedBack, viewModelScope)
     }
 }
