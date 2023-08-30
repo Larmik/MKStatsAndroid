@@ -74,6 +74,7 @@ class PositionViewModel @AssistedInject constructor(
     interface Factory {
         fun create(index: Int, editing: Boolean): PositionViewModel
     }
+
     private val _sharedCurrentMap = MutableStateFlow<Maps?>(null)
     private val _sharedWar = MutableStateFlow<MKWar?>(null)
     private val _sharedPlayerLabel = MutableStateFlow<String?>(null)
@@ -113,7 +114,10 @@ class PositionViewModel @AssistedInject constructor(
                if (!editing) preferencesRepository.currentWarTrack = newTrack
                 val tracks = mutableListOf<NewWarTrack>()
                 tracks.addAll(preferencesRepository.currentWar?.warTracks?.filterNot { tr -> tr.mid == newTrack.mid }.orEmpty())
-                tracks.add(index, newTrack)
+                when (editing) {
+                    true -> tracks.add(index, newTrack)
+                    else -> tracks.add(newTrack)
+                }
                 preferencesRepository.currentWar = preferencesRepository.currentWar.apply {
                     this?.warTracks = tracks
                 }
@@ -150,10 +154,12 @@ class PositionViewModel @AssistedInject constructor(
 
     init {
         val trackIndexInMapList = when (editing) {
-            true -> preferencesRepository.currentWar?.warTracks?.getOrNull(index)?.trackIndex
+            true -> preferencesRepository.currentWar?.warTracks?.getOrNull(index)?.trackIndex ?: 0
             else -> index
         }
-        _sharedCurrentMap.value = Maps.values()[trackIndexInMapList ?: index]
+        val currentTrack = preferencesRepository.currentWar?.warTracks?.getOrNull(index) ?: preferencesRepository.currentWarTrack
+
+        _sharedCurrentMap.value = Maps.values()[currentTrack?.trackIndex ?: trackIndexInMapList]
         preferencesRepository.currentWar
             ?.withName(databaseRepository)
             ?.onEach {

@@ -49,6 +49,7 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
             val index = it.arguments?.getInt("index") ?: -1
             PositionScreen(
                 trackIndex = index,
+                editing = false,
                 onBack = { navController.popBackStack() },
                 onNext = { navController.navigate("Home/War/Current/AddTrack/$index/AddPosition/Result") }
             )
@@ -56,6 +57,8 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
         composable(route = "Home/War/Current/AddTrack/{index}/AddPosition/Result", arguments = listOf(navArgument("index") { type = NavType.IntType })) {
             val index = it.arguments?.getInt("index") ?: -1
             WarTrackResultScreen(
+                trackIndex = index,
+                editing = false,
                 onBack = { navController.popBackStack(route = "Home/War/Current/AddTrack/$index/AddPosition", inclusive = true) },
                 backToCurrent = { navController.popBackStack(route = "Home/War/Current/AddTrack", inclusive = true) },
                 goToResume = { navController.popBackStack(route = "Home/War/$it", inclusive = true)}

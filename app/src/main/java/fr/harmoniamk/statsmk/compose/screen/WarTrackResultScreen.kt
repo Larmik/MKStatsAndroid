@@ -7,6 +7,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.res.stringResource
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKBaseScreen
 import fr.harmoniamk.statsmk.compose.ui.MKButton
@@ -20,13 +21,17 @@ import kotlinx.coroutines.flow.filterNotNull
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun WarTrackResultScreen(trackIndex: Int = -1, editing: Boolean = false, onBack: () -> Unit, backToCurrent: () -> Unit, goToResume: (String) -> Unit) {
+    
     val viewModel: WarTrackResultViewModel = viewModel(trackResultIndex = trackIndex, editing = editing)
+    
     val war = viewModel.sharedWar.collectAsState()
-    val trackIndexRes = viewModel.sharedTrackNumber.collectAsState()
     val map = viewModel.sharedCurrentMap.collectAsState()
     val positions = viewModel.sharedWarPos.collectAsState()
     val shocks = viewModel.sharedShocks.collectAsState()
     val track = viewModel.sharedTrack.collectAsState()
+    val trackIndexRes = viewModel.sharedTrackNumber.collectAsState()
+
+
     BackHandler {
         onBack()
     }
@@ -42,7 +47,9 @@ fun WarTrackResultScreen(trackIndex: Int = -1, editing: Boolean = false, onBack:
         }
     }
 
-    MKBaseScreen(title = war.value?.name.orEmpty(), subTitle = trackIndexRes.value) {
+    MKBaseScreen(title = war.value?.name.orEmpty(), subTitle = trackIndexRes.value?.let { stringResource(
+        id = it
+    ) }) {
         map.value?.let { MKTrackItem(map = it) }
         LazyColumn {
             items(positions.value.orEmpty()) {

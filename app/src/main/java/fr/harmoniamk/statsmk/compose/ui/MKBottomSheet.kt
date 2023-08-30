@@ -15,17 +15,26 @@ sealed class MKBottomSheetState() {
 }
 
 @Composable
-fun MKBottomSheet(track: MKWarTrack? = null, trackIndex: Int?, state: MKBottomSheetState?, onEditTrack: (Int) -> Unit = { }, onDismiss: (Int) -> Unit, onEditPosition: (Int) -> Unit = { }) {
+fun MKBottomSheet(trackIndex: Int?, state: MKBottomSheetState?, onEditTrack: (Int) -> Unit = { }, onDismiss: (Int) -> Unit, onEditPosition: (Int) -> Unit = { }) {
     when (state) {
         is MKBottomSheetState.EditTrack -> {
             trackIndex?.let {
-                TrackListScreen(onTrackClick = onEditTrack, editing = true, trackIndex = it, onDismiss = onDismiss)
+                TrackListScreen(
+                    trackIndex = it,
+                    editing = true,
+                    onDismiss = onDismiss,
+                    onTrackClick = onEditTrack
+                )
             }
-
         }
         is MKBottomSheetState.EditPositions -> {
             trackIndex?.let {
-                PositionScreen(track = track, trackIndex = it, onBack = onDismiss, editing = true, onNext = onEditPosition)
+                PositionScreen(
+                    trackIndex = it,
+                    editing = true,
+                    onBack = onDismiss,
+                    onNext = onEditPosition
+                )
             }
 
         }

@@ -95,16 +95,8 @@ class TrackDetailsViewModel @AssistedInject constructor(
 
 
 
-    private val _sharedEditTrackClick = MutableSharedFlow<Unit>()
-    private val _sharedEditPositionsClick = MutableSharedFlow<Unit>()
-    private val _sharedEditShocksClick = MutableSharedFlow<Unit>()
-    private val _sharedTrackRefreshed = MutableSharedFlow<MKWarTrack>()
     private val _sharedShocks = MutableStateFlow<List<Shock>?>(null)
 
-    val sharedEditTrackClick = _sharedEditTrackClick.asSharedFlow()
-    val sharedEditPositionsClick = _sharedEditPositionsClick.asSharedFlow()
-    val sharedEditShocksClick = _sharedEditShocksClick.asSharedFlow()
-    val sharedTrackRefreshed = _sharedTrackRefreshed.asSharedFlow()
     val sharedShocks = _sharedShocks.asStateFlow()
 
     var index = 0
@@ -151,12 +143,7 @@ class TrackDetailsViewModel @AssistedInject constructor(
             }.launchIn(viewModelScope)
     }
 
-    fun bind(war: NewWar, warTrack: NewWarTrack?, index: Int, onEditTrack: Flow<Unit>, onEditPositions: Flow<Unit>, onEditShocks: Flow<Unit>) {
-        this.index = index
-        onEditTrack.bind(_sharedEditTrackClick, viewModelScope)
-        onEditPositions.bind(_sharedEditPositionsClick, viewModelScope)
-        onEditShocks.bind(_sharedEditShocksClick, viewModelScope)
-    }
+
 
     fun onEditTrack() {
         _sharedBottomSheetValue.value = MKBottomSheetState.EditTrack()

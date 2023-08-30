@@ -41,6 +41,7 @@ class WarTrackResultViewModel @AssistedInject constructor(
     private val preferencesRepository: PreferencesRepositoryInterface,
     private val databaseRepository: DatabaseRepositoryInterface
 ) : ViewModel() {
+
     companion object {
         @Suppress("UNCHECKED_CAST")
         fun provideFactory(
@@ -86,7 +87,6 @@ class WarTrackResultViewModel @AssistedInject constructor(
     val sharedCurrentMap = _sharedCurrentMap.asStateFlow()
     val sharedGoToWarResume = _sharedGoToWarResume.asStateFlow()
 
-    val positions = mutableListOf<MKWarPosition>()
 
     private val _sharedBack = MutableSharedFlow<Unit>()
     private val _sharedBackToCurrent = MutableSharedFlow<Unit>()
@@ -97,6 +97,8 @@ class WarTrackResultViewModel @AssistedInject constructor(
     val sharedBackToCurrent = _sharedBackToCurrent.asSharedFlow()
     val sharedShocks = _sharedShocks.asStateFlow()
     val sharedLoading = _sharedLoading.asStateFlow()
+    val positions = mutableListOf<MKWarPosition>()
+
 
     private val users = mutableListOf<User>()
     private val finalList = mutableListOf<Shock>()
@@ -108,17 +110,18 @@ class WarTrackResultViewModel @AssistedInject constructor(
             true -> preferencesRepository.currentWar?.warTracks?.getOrNull(trackResultIndex)?.trackIndex ?: 0
             else -> trackResultIndex
         }
-        val currentTrack =
-            preferencesRepository.currentWar?.warTracks?.getOrNull(trackResultIndex)
-                ?: preferencesRepository.currentWarTrack
-        _sharedCurrentMap.value = Maps.values()[currentTrack?.trackIndex ?: 0]
+        val currentTrack = preferencesRepository.currentWar?.warTracks?.getOrNull(trackResultIndex) ?: preferencesRepository.currentWarTrack
+
+        _sharedCurrentMap.value = Maps.values()[currentTrack?.trackIndex ?: trackIndexInMapList]
         preferencesRepository.currentWar
             ?.withName(databaseRepository)
             ?.onEach {
+                users.clear()
+                users.addAll(databaseRepository.getUsers().first())
                 _sharedWar.value = it
                 it.warTracks?.let { list ->
                     val trackIndexInWarTracks = when (editing) {
-                        true -> trackIndexInMapList + 1
+                        true -> trackResultIndex + 1
                         else -> list.size + 1
                     }
                     _sharedTrackNumber.value = when (trackIndexInWarTracks) {
@@ -135,37 +138,29 @@ class WarTrackResultViewModel @AssistedInject constructor(
                         2 -> R.string.track_2
                         else -> R.string.track_1
                     }
+                    makeShockList()
+                    refreshPos()
+                    currentTrack?.takeIf { positions.size == 6 }?.let {
+                        _sharedTrack.value = MKWarTrack(it)
+                    }
                 } }
             ?.launchIn(viewModelScope)
 
 
-        databaseRepository.getUsers()
-            .onEach {
-                delay(50)
-                users.clear()
-                users.addAll(it)
-                refreshPos(initShockList = true)
-                currentTrack?.takeIf { positions.size == 6 }?.let {
-                    _sharedTrack.value = MKWarTrack(it)
-                }
-            }.launchIn(viewModelScope)
-
     }
 
-    private fun refreshPos(initShockList: Boolean = false) {
+    private fun refreshPos() {
         positions.clear()
-        val currentTrack =
-            preferencesRepository.currentWar?.warTracks?.getOrNull(trackResultIndex ?: 0)
-                ?: preferencesRepository.currentWarTrack
+        val currentTrack = preferencesRepository.currentWar?.warTracks?.getOrNull(trackResultIndex) ?: preferencesRepository.currentWarTrack
         currentTrack?.warPositions.orEmpty().sortedBy { it.position }.forEach { pos ->
-            val shocksForPlayer = currentTrack?.shocks.orEmpty().singleOrNull { it.playerId == pos.playerId }?.count
+            val shocksForPlayer = shocks[pos.playerId] ?: currentTrack?.shocks.orEmpty().singleOrNull { it.playerId == pos.playerId }?.count
             positions.add(MKWarPosition(pos, users.singleOrNull { it.mid == pos.playerId }))
-            if (initShockList) shocks[pos.playerId] = 0
-            else if (trackResultIndex != null) shocks[pos.playerId] = shocksForPlayer ?: 0
+            shocks[pos.playerId] = shocksForPlayer ?: 0
         }
         val newPositions = mutableListOf<MKWarPosition>()
         newPositions.addAll(positions)
         _sharedWarPos.value = newPositions
+        _sharedShocks.value = finalList
     }
 
     fun onValid() {
@@ -194,53 +189,29 @@ class WarTrackResultViewModel @AssistedInject constructor(
 
     fun onAddShock(id: String) {
         shocks[id]?.let { shocks[id] = it + 1 }
-        finalList.clear()
-        shocks.forEach { shock ->
-            shock.takeIf { map -> map.value > 0 }?.let {
-                finalList.add(Shock(it.key, it.value))
-            }
-        }
-        val tracks = mutableListOf<NewWarTrack>()
-        val currentTrack =
-            preferencesRepository.currentWar?.warTracks?.getOrNull(trackResultIndex ?: 0)
-                ?: preferencesRepository.currentWarTrack
-        tracks.addAll(preferencesRepository.currentWar?.warTracks?.filterNot { tr -> tr.mid == currentTrack?.mid }
-            .orEmpty())
-
-        currentTrack?.apply { this.shocks = finalList }?.let {
-            tracks.add(trackResultIndex ?: tracks.size, it)
-        }
-        preferencesRepository.currentWar = preferencesRepository.currentWar.apply {
-            this?.warTracks = tracks
-        }
-        _sharedShocks.value = finalList
-        refreshPos(initShockList = false)
-
+        makeShockList()
     }
 
     fun onRemoveShock(id: String) {
         shocks[id]?.takeIf { it > 0 }?.let { shocks[id] = it - 1 }
-        finalList.clear()
-        shocks.forEach { shock ->
-            shock.takeIf { map -> map.value > 0 }?.let {
-                finalList.add(Shock(it.key, it.value))
-            }
-        }
-        val currentTrack =
-            preferencesRepository.currentWar?.warTracks?.getOrNull(trackResultIndex ?: 0)
-                ?: preferencesRepository.currentWarTrack
-        currentTrack.apply { this?.shocks = finalList }?.let { newTrack ->
-            preferencesRepository.currentWarTrack = newTrack
-            val tracks = mutableListOf<NewWarTrack>()
-            tracks.addAll(preferencesRepository.currentWar?.warTracks?.filterNot { tr -> tr.mid == newTrack.mid }
-                .orEmpty())
-            tracks.add(trackResultIndex ?: tracks.size, newTrack)
-            preferencesRepository.currentWar = preferencesRepository.currentWar.apply {
-                this?.warTracks = tracks
-            }
-        }
-        _sharedShocks.value = finalList
-        refreshPos(initShockList = false)
+        makeShockList()
+    }
 
+    private fun makeShockList() {
+        finalList.clear()
+        shocks.forEach { finalList.add(Shock(it.key, it.value)) }
+        val tracks = mutableListOf<NewWarTrack>()
+        val currentTrack = preferencesRepository.currentWar?.warTracks?.getOrNull(trackResultIndex) ?: preferencesRepository.currentWarTrack
+        tracks.addAll(preferencesRepository.currentWar?.warTracks?.filterNot { tr -> tr.mid == currentTrack?.mid }
+            .orEmpty())
+
+        currentTrack?.apply { this.shocks = finalList }?.let {
+            when (editing) {
+                true -> tracks.add(trackResultIndex, it)
+                else -> tracks.add(it)
+            }
+        }
+        preferencesRepository.currentWar = preferencesRepository.currentWar.apply { this?.warTracks = tracks }
+        refreshPos()
     }
 }

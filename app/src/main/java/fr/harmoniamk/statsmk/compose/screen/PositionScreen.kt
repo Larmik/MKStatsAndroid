@@ -25,8 +25,10 @@ import kotlinx.coroutines.flow.filterNotNull
 
 @Composable
 @OptIn(ExperimentalMaterialApi::class)
-fun PositionScreen(track: MKWarTrack? = null, trackIndex: Int, editing: Boolean = false, onBack: (Int) -> Unit, onNext: (Int) -> Unit) {
+fun PositionScreen(trackIndex: Int, editing: Boolean = false, onBack: (Int) -> Unit, onNext: (Int) -> Unit) {
+
     val viewModel = viewModel(index = trackIndex, editing = editing)
+
     val war = viewModel.sharedWar.collectAsState()
     val map = viewModel.sharedCurrentMap.collectAsState()
     val selectedPositions = viewModel.sharedSelectedPositions.collectAsState()
@@ -34,6 +36,7 @@ fun PositionScreen(track: MKWarTrack? = null, trackIndex: Int, editing: Boolean 
     val trackIndexRes = viewModel.sharedTrackNumber.collectAsState()
     
     BackHandler { viewModel.onBack() }
+
     LaunchedEffect(Unit) {
         viewModel.sharedQuit.filterNotNull().collect {
             if (editing) viewModel.clearPos()
@@ -43,12 +46,11 @@ fun PositionScreen(track: MKWarTrack? = null, trackIndex: Int, editing: Boolean 
     LaunchedEffect(Unit) {
         viewModel.sharedGoToResult.filterNotNull().collect { onNext(trackIndex) }
     }
-    MKBaseScreen(title = war.value?.name.orEmpty(), subTitle = trackIndexRes.value?.let { stringResource(
-        id = it
-    ) }) {
+
+    MKBaseScreen(title = war.value?.name.orEmpty(), subTitle = trackIndexRes.value?.let { stringResource(id = it) }) {
         map.value?.let { MKTrackItem(map = it) }
         when (editing) {
-            true -> MKScoreView(track = track ?: war.value?.warTracks?.getOrNull(trackIndex), modifier = Modifier.padding(vertical = 10.dp))
+            true -> MKScoreView(track = war.value?.warTracks?.getOrNull(trackIndex), modifier = Modifier.padding(vertical = 10.dp))
             else -> MKScoreView(war = war.value, modifier = Modifier.padding(vertical = 10.dp))
         }
         MKText(text = String.format(
@@ -83,7 +85,7 @@ fun PositionScreen(track: MKWarTrack? = null, trackIndex: Int, editing: Boolean 
 @Preview
 @Composable
 fun PositionScreenPreview() {
-    PositionScreen(track = null, trackIndex = 23, editing = false, {}) {
+    PositionScreen(trackIndex = 23, editing = false, {}) {
 
     }
 }

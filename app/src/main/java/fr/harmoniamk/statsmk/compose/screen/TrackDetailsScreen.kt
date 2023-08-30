@@ -26,12 +26,14 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterialApi::class)
 fun TrackDetailsScreen(warId: String, warTrackId: String, onBack: () -> Unit) {
     val viewModel: TrackDetailsViewModel = viewModel(warId = warId, warTrackId = warTrackId)
+
     val war = viewModel.sharedWar.collectAsState()
     val currentTrack = viewModel.sharedCurrentTrack.collectAsState()
     val positions = viewModel.sharedPositions.collectAsState()
     val shocks = viewModel.sharedShocks.collectAsState()
     val buttonsVisible = viewModel.sharedButtonsVisible.collectAsState()
     val currentState = viewModel.sharedBottomSheetValue.collectAsState()
+
     val bottomSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
     val coroutineScope = rememberCoroutineScope()
     
@@ -56,18 +58,29 @@ fun TrackDetailsScreen(warId: String, warTrackId: String, onBack: () -> Unit) {
         }
     }
     
-    MKBaseScreen(title = war.value?.name.orEmpty(), subTitle = war.value?.war?.createdDate, state = bottomSheetState, sheetContent = {
-        MKBottomSheet(track = currentTrack.value, trackIndex = war.value?.warTracks?.map { it.track }?.indexOf(currentTrack.value?.track) , state = currentState.value, onDismiss = viewModel::dismissBottomSheet)
-    }) {
-        currentTrack.value?.index?.let { MKTrackItem(map = Maps.values()[it]) }
-        buttonsVisible.value.takeIf { it }?.let { 
-            MKSegmentedButtons(buttons = buttons)
-        }
-        LazyColumn {
-            items(items = positions.value.orEmpty()) {
-                MKPlayerItem(position = it, shockVisible = false, shockCount = shocks.value?.singleOrNull { shock -> shock.playerId == it.player?.mid }?.count ?: 0)
+    MKBaseScreen(
+        title = war.value?.name.orEmpty(),
+        subTitle = war.value?.war?.createdDate,
+        state = bottomSheetState,
+        sheetContent = {
+            MKBottomSheet(
+                trackIndex = war.value?.warTracks?.map { it.track }?.indexOf(currentTrack.value?.track) ,
+                state = currentState.value,
+                onDismiss = viewModel::dismissBottomSheet)
+            },
+        content = {
+            currentTrack.value?.index?.let { MKTrackItem(map = Maps.values()[it]) }
+            buttonsVisible.value.takeIf { it }?.let { MKSegmentedButtons(buttons = buttons) }
+            LazyColumn {
+                items(items = positions.value.orEmpty()) {
+                    MKPlayerItem(
+                        position = it,
+                        shockVisible = false,
+                        shockCount = shocks.value?.singleOrNull { shock -> shock.playerId == it.player?.mid }?.count ?: 0
+                    )
+                }
             }
+            currentTrack.value?.let { MKScoreView(track = it) }
         }
-        currentTrack.value?.let { MKScoreView(track = it) }
-    }
+    )
 }
