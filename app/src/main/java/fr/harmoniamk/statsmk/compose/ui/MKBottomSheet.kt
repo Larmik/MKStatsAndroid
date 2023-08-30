@@ -2,9 +2,12 @@ package fr.harmoniamk.statsmk.compose.ui
 
 import androidx.compose.runtime.Composable
 import fr.harmoniamk.statsmk.compose.screen.PositionScreen
+import fr.harmoniamk.statsmk.compose.screen.SubPlayerScreen
 import fr.harmoniamk.statsmk.compose.screen.TrackListScreen
 import fr.harmoniamk.statsmk.compose.screen.WarTrackResultScreen
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 
 sealed class MKBottomSheetState() {
     class EditTrack() : MKBottomSheetState()
@@ -14,6 +17,7 @@ sealed class MKBottomSheetState() {
     class Penalty() : MKBottomSheetState()
 }
 
+@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @Composable
 fun MKBottomSheet(trackIndex: Int?, state: MKBottomSheetState?, onEditTrack: (Int) -> Unit = { }, onDismiss: (Int) -> Unit, onEditPosition: (Int) -> Unit = { }) {
     when (state) {
@@ -48,6 +52,9 @@ fun MKBottomSheet(trackIndex: Int?, state: MKBottomSheetState?, onEditTrack: (In
                     goToResume = { onDismiss(trackIndex) }
                 )
             }
+        }
+        is MKBottomSheetState.SubPlayer -> {
+            SubPlayerScreen(onDismiss = { onDismiss(-1) })
         }
         else -> {}
     }

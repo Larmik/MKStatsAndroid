@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.dp
 import fr.harmoniamk.statsmk.R
 
 @Composable
-fun MKButton(text: Int, enabled: Boolean = true, hasBackground: Boolean = true, onClick: () -> Unit) {
+fun MKButton(text: Any, enabled: Boolean = true, hasBackground: Boolean = true, onClick: () -> Unit) {
     val bgcolor = when (hasBackground) {
         true -> colorResource(id = R.color.harmonia_dark)
         else -> colorResource(id = R.color.transparent)
@@ -38,7 +38,11 @@ fun MKButton(text: Int, enabled: Boolean = true, hasBackground: Boolean = true, 
         ),
         content = {
             Text(
-                text = stringResource(text)
+                text = when (text) {
+                    is Int -> stringResource(text)
+                    is String -> text
+                    else -> ""
+                }
             )
         }
     )

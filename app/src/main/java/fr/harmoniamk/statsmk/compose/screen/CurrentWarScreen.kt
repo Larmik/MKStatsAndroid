@@ -7,13 +7,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKBaseScreen
+import fr.harmoniamk.statsmk.compose.ui.MKBottomSheet
 import fr.harmoniamk.statsmk.compose.ui.MKButton
 import fr.harmoniamk.statsmk.compose.ui.MKPlayerList
 import fr.harmoniamk.statsmk.compose.ui.MKScoreView
@@ -29,15 +33,33 @@ fun CurrentWarScreen(viewModel: CurrentWarViewModel = hiltViewModel(), onNextTra
     val war = viewModel.sharedCurrentWar.collectAsState()
     val players = viewModel.sharedWarPlayers.collectAsState()
     val tracks = viewModel.sharedTracks.collectAsState()
+    val currentState = viewModel.sharedBottomSheetValue.collectAsState()
+    val bottomSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+
 
     val buttons = listOf(
-        Pair(R.string.remplacement, {}),
+        Pair(R.string.remplacement, viewModel::onSubPlayer),
         Pair(R.string.p_nalit, {}),
         Pair(R.string.annuler_le_match, {}),
     )
-
+    LaunchedEffect(Unit) {
+        viewModel.sharedBottomSheetValue.collect {
+            when (it) {
+                null -> bottomSheetState.hide()
+                else -> bottomSheetState.show()
+            }
+        }
+    }
     BackHandler { onBack() }
-    MKBaseScreen(title = war.value?.name ?: "", subTitle = war.value?.displayedState) {
+    MKBaseScreen(title = war.value?.name ?: "", subTitle = war.value?.displayedState,
+        state = bottomSheetState,
+        sheetContent = {
+            MKBottomSheet(
+                trackIndex = null,
+                state = currentState.value,
+                onDismiss = viewModel::dismissBottomSheet
+            )
+        }) {
         MKSegmentedButtons(buttons = buttons)
         MKScoreView(war = war.value)
         players.value?.let { MKPlayerList(players = it) }

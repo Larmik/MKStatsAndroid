@@ -41,23 +41,7 @@ class SubPlayerFragment : BottomSheetDialogFragment() {
         val otherAdapter = SubPlayerAdapter()
         binding.currentPlayersRv.adapter = currentAdapter
         binding.newPlayersRv.adapter = otherAdapter
-        viewModel.bind(
-            onSubClick = binding.subPlayersBtn.clicks(),
-            onCancel = flowOf(binding.cancelBtn.clicks(), binding.backBtn.clicks()).flattenMerge(),
-            onOldPlayerSelect = currentAdapter.sharedUserSelected.mapNotNull { it.user },
-            onNewPlayerSelect = otherAdapter.sharedUserSelected.mapNotNull { it.user },
-            onSearch = binding.searchSubEt.onTextChanged(),
-            onNextClick = binding.nextBtn.clicks()
-        )
-        viewModel.sharedCurrentPlayers
-            .onEach {
-                currentAdapter.addUsers(it)
-            }.launchIn(lifecycleScope)
-        viewModel.sharedOtherPlayers
-            .onEach {
-                otherAdapter.addUsers(it)
-            }
-            .launchIn(lifecycleScope)
+
 
         viewModel.sharedPlayerSelected
             .onEach {
@@ -66,7 +50,7 @@ class SubPlayerFragment : BottomSheetDialogFragment() {
                 binding.subLabel.text = requireContext().getString(R.string.select_sub)
                 binding.subPlayersBtn.text = String.format(
                     requireContext().getString(R.string.sub_confirm),
-                    it.name
+                    it?.name
                 )
             }.launchIn(lifecycleScope)
 

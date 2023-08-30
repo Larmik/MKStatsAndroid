@@ -3,6 +3,7 @@ package fr.harmoniamk.statsmk.compose.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import fr.harmoniamk.statsmk.compose.ui.MKBottomSheetState
 import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.isTrue
@@ -58,6 +59,8 @@ class CurrentWarViewModel@Inject constructor(
     private val _sharedWarPlayers = MutableStateFlow<List<CurrentPlayerModel>?>(null)
     private val _sharedPenalties = MutableStateFlow<List<Penalty>?>(null)
     private val _sharedShockCount = MutableStateFlow<String?>(null)
+    private val _sharedBottomSheetValue = MutableStateFlow<MKBottomSheetState?>(null)
+
 
 
     val sharedCurrentWar = _sharedCurrentWar.asStateFlow()
@@ -66,6 +69,8 @@ class CurrentWarViewModel@Inject constructor(
     val sharedWarPlayers = _sharedWarPlayers.asStateFlow()
     val sharedPenalties = _sharedPenalties.asStateFlow()
     val sharedShockCount = _sharedShockCount.asStateFlow()
+    val sharedBottomSheetValue = _sharedBottomSheetValue.asStateFlow()
+
 
 
     private val  _sharedQuit = MutableSharedFlow<Unit>()
@@ -176,6 +181,14 @@ class CurrentWarViewModel@Inject constructor(
         onSub.bind(_sharedSubPlayer, viewModelScope)
 
 
+    }
+
+    fun onSubPlayer() {
+        _sharedBottomSheetValue.value = MKBottomSheetState.SubPlayer()
+    }
+
+    fun dismissBottomSheet(trackIndex: Int) {
+        _sharedBottomSheetValue.value = null
     }
 
     fun bindPopup(onDelete: Flow<Unit>, onDismiss: Flow<Unit>) {

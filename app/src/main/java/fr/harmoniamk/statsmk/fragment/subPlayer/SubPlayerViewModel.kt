@@ -3,6 +3,7 @@ package fr.harmoniamk.statsmk.fragment.subPlayer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.fragment.playerSelect.UserSelector
@@ -13,6 +14,7 @@ import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 import java.util.*
 import javax.inject.Inject
 
@@ -24,63 +26,82 @@ class SubPlayerViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepositoryInterface,
     private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
 
-    private val _sharedCurrentPlayers = MutableSharedFlow<List<UserSelector>>()
-    private val _sharedOtherPlayers = MutableSharedFlow<List<UserSelector>>()
+    private val _sharedPlayers = MutableStateFlow<List<UserSelector>>(listOf())
+    private val _sharedTitle = MutableStateFlow(R.string.joueur_sortant)
     private val _sharedDismissDialog = MutableSharedFlow<Unit>()
-    private val _sharedPlayerSelected = MutableSharedFlow<User>()
+    private val _sharedBack = MutableSharedFlow<Unit>()
+    private val _sharedPlayerSelected = MutableStateFlow<User?>(null)
 
-    val sharedCurrentPlayers = _sharedCurrentPlayers.asSharedFlow()
-    val sharedOtherPlayers = _sharedOtherPlayers.asSharedFlow()
+    val sharedPlayers = _sharedPlayers.asStateFlow()
     val sharedDismissDialog = _sharedDismissDialog.asSharedFlow()
-    val sharedPlayerSelected = _sharedPlayerSelected.asSharedFlow()
+    val sharedPlayerSelected = _sharedPlayerSelected.asStateFlow()
+    val sharedTitle = _sharedTitle.asStateFlow()
+    val sharedBack = _sharedBack.asSharedFlow()
 
     private val playersList = mutableListOf<UserSelector>()
+    private val currentPlayersList = mutableListOf<UserSelector>()
 
-    fun bind(
-        onSubClick: Flow<Unit>,
-        onCancel: Flow<Unit>,
-        onOldPlayerSelect: Flow<User>,
-        onNewPlayerSelect: Flow<User>,
-        onNextClick: Flow<Unit>,
-        onSearch: Flow<String>
-    ) {
-        var oldPlayer: User? = null
-        var newPlayer: User? = null
+    var oldPlayer: User? = null
+    var newPlayer: User? = null
+
+    init {
         databaseRepository.getUsers()
             .onEach {
                 playersList.clear()
+                currentPlayersList.clear()
                 playersList.addAll(it.filter { user -> user.currentWar == "-1" }.map { UserSelector(user = it, isSelected = false) })
-                _sharedCurrentPlayers.emit(it.filter { user -> user.currentWar == preferencesRepository.currentWar?.mid }.map { UserSelector(user = it, isSelected = false) } )
-                _sharedOtherPlayers.emit(playersList)
+                currentPlayersList.addAll(it.filter { user -> user.currentWar == preferencesRepository.currentWar?.mid }.map { UserSelector(user = it, isSelected = false) } )
+                _sharedPlayers.emit(currentPlayersList)
             }.launchIn(viewModelScope)
-
-        onOldPlayerSelect.onEach {
-            oldPlayer = it
-        }.launchIn(viewModelScope)
-
-        onNextClick
-            .mapNotNull { oldPlayer }
-            .bind(_sharedPlayerSelected, viewModelScope)
-
-        onNewPlayerSelect.onEach { newPlayer = it }.launchIn(viewModelScope)
-
-        onSubClick
-            .mapNotNull { oldPlayer?.copy(currentWar = "-1") }
-            .flatMapLatest { firebaseRepository.writeUser(it) }
-            .mapNotNull { newPlayer?.copy(currentWar = preferencesRepository.currentWar?.mid) }
-            .flatMapLatest { firebaseRepository.writeUser(it) }
-            .bind(_sharedDismissDialog, viewModelScope)
-
-        onCancel.bind(_sharedDismissDialog, viewModelScope)
-
-        onSearch
-            .filterNot { it.isEmpty() }
-            .map { searched -> playersList.filter { it.user?.name?.toLowerCase(Locale.ROOT)?.contains(searched.toLowerCase(Locale.ROOT)).isTrue }}
-            .bind(_sharedOtherPlayers, viewModelScope)
-        onSearch
-            .filter { it.isEmpty() }
-            .map { playersList }
-            .bind(_sharedOtherPlayers, viewModelScope)
     }
+
+    fun onOldPlayerSelect(user : User) {
+        oldPlayer = user
+        _sharedPlayers.value = playersList
+        _sharedTitle.value = R.string.joueur_entrant
+        _sharedPlayerSelected.value = user
+    }
+
+    fun onNewPlayerSelect(user: User) {
+        newPlayer = user
+        val playerListWithSelected = mutableListOf<UserSelector>()
+        playersList.forEach {
+            when (it.user?.mid == user.mid) {
+                true -> playerListWithSelected.add(it.copy(isSelected = true))
+                else -> playerListWithSelected.add(it)
+            }
+        }
+        _sharedPlayers.value = playerListWithSelected
+    }
+
+    fun onSubClick() {
+        oldPlayer?.copy(currentWar = "-1")?.let {
+            firebaseRepository.writeUser(it)
+                .mapNotNull { newPlayer?.copy(currentWar = preferencesRepository.currentWar?.mid) }
+                .flatMapLatest { firebaseRepository.writeUser(it) }
+                .bind(_sharedBack, viewModelScope)
+        }
+
+    }
+
+    fun onBack() {
+        when (oldPlayer) {
+            null ->  viewModelScope.launch { _sharedBack.emit(Unit) }
+            else -> {
+                oldPlayer = null
+                _sharedPlayerSelected.value = null
+                _sharedPlayers.value = currentPlayersList
+                _sharedTitle.value = R.string.joueur_sortant
+            }
+        }
+    }
+
+    fun onSearch(searched: String) {
+        when (searched.isEmpty()) {
+            true -> _sharedPlayers.value = playersList
+            else -> _sharedPlayers.value = playersList.filter { it.user?.name?.toLowerCase(Locale.ROOT)?.contains(searched.toLowerCase(Locale.ROOT)).isTrue }
+        }
+    }
+
 
 }

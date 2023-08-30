@@ -375,4 +375,6 @@
     <string name="need_update">L\'application nécessite une mise à jour pour fonctionner correctement. \n \n Veuillez mettre à jour l\'application pour continuer.</string>
     <string name="bsis">Poursuite à Singapour</string>
     <string name="validate_war">Valider la war</string>
+    <string name="joueur_sortant">Joueur sortant</string>
+    <string name="joueur_entrant">Joueur entrant</string>
 </resources>
