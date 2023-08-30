@@ -19,8 +19,8 @@ import kotlinx.coroutines.flow.filterNotNull
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun WarTrackResultScreen(trackIndex: Int? = null, onBack: () -> Unit, backToCurrent: () -> Unit, goToResume: (String) -> Unit) {
-    val viewModel: WarTrackResultViewModel = viewModel(trackResultIndex = trackIndex)
+fun WarTrackResultScreen(trackIndex: Int = -1, editing: Boolean = false, onBack: () -> Unit, backToCurrent: () -> Unit, goToResume: (String) -> Unit) {
+    val viewModel: WarTrackResultViewModel = viewModel(trackResultIndex = trackIndex, editing = editing)
     val war = viewModel.sharedWar.collectAsState()
     val trackIndexRes = viewModel.sharedTrackNumber.collectAsState()
     val map = viewModel.sharedCurrentMap.collectAsState()

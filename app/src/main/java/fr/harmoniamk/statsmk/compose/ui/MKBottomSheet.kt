@@ -33,6 +33,7 @@ fun MKBottomSheet(track: MKWarTrack? = null, trackIndex: Int?, state: MKBottomSh
             trackIndex?.let {
                 WarTrackResultScreen(
                     trackIndex = it,
+                    editing = true,
                     onBack = { onDismiss(trackIndex) },
                     backToCurrent = { onDismiss(trackIndex) },
                     goToResume = { onDismiss(trackIndex) }

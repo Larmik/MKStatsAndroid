@@ -35,7 +35,8 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class WarTrackResultViewModel @AssistedInject constructor(
-    @Assisted val trackResultIndex: Int?,
+    @Assisted val trackResultIndex: Int,
+    @Assisted val editing: Boolean,
     private val firebaseRepository: FirebaseRepositoryInterface,
     private val preferencesRepository: PreferencesRepositoryInterface,
     private val databaseRepository: DatabaseRepositoryInterface
@@ -44,21 +45,22 @@ class WarTrackResultViewModel @AssistedInject constructor(
         @Suppress("UNCHECKED_CAST")
         fun provideFactory(
             assistedFactory: Factory,
-            trackResultIndex: Int?
+            trackResultIndex: Int, editing: Boolean
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return assistedFactory.create(trackResultIndex) as T
+                return assistedFactory.create(trackResultIndex, editing) as T
             }
         }
 
         @Composable
-        fun viewModel(trackResultIndex: Int?): WarTrackResultViewModel {
+        fun viewModel(trackResultIndex: Int, editing: Boolean): WarTrackResultViewModel {
             val factory: Factory =
                 EntryPointAccessors.fromApplication<ViewModelFactoryProvider>(context = LocalContext.current).warTrackResultViewModel
             return androidx.lifecycle.viewmodel.compose.viewModel(
                 factory = provideFactory(
                     assistedFactory = factory,
-                    trackResultIndex = trackResultIndex
+                    trackResultIndex = trackResultIndex,
+                    editing = editing
                 )
             )
         }
@@ -66,7 +68,7 @@ class WarTrackResultViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(trackResultIndex: Int?): WarTrackResultViewModel
+        fun create(trackResultIndex: Int, editing: Boolean): WarTrackResultViewModel
     }
 
 
@@ -102,8 +104,12 @@ class WarTrackResultViewModel @AssistedInject constructor(
 
 
     init {
+        val trackIndexInMapList = when (editing) {
+            true -> preferencesRepository.currentWar?.warTracks?.getOrNull(trackResultIndex)?.trackIndex ?: 0
+            else -> trackResultIndex
+        }
         val currentTrack =
-            preferencesRepository.currentWar?.warTracks?.getOrNull(trackResultIndex ?: 0)
+            preferencesRepository.currentWar?.warTracks?.getOrNull(trackResultIndex)
                 ?: preferencesRepository.currentWarTrack
         _sharedCurrentMap.value = Maps.values()[currentTrack?.trackIndex ?: 0]
         preferencesRepository.currentWar
@@ -111,7 +117,11 @@ class WarTrackResultViewModel @AssistedInject constructor(
             ?.onEach {
                 _sharedWar.value = it
                 it.warTracks?.let { list ->
-                    _sharedTrackNumber.value = when (list.size + 1) {
+                    val trackIndexInWarTracks = when (editing) {
+                        true -> trackIndexInMapList + 1
+                        else -> list.size + 1
+                    }
+                    _sharedTrackNumber.value = when (trackIndexInWarTracks) {
                         12 -> R.string.track_12
                         11 -> R.string.track_11
                         10 -> R.string.track_10
