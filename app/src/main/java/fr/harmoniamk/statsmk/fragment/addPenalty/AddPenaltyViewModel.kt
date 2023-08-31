@@ -4,63 +4,80 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.extension.bind
+import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.firebase.Penalty
+import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
+import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
 import javax.inject.Inject
 
 
+@OptIn(FlowPreview::class)
 @ExperimentalCoroutinesApi
 @HiltViewModel
 class AddPenaltyViewModel @Inject constructor(
+    private val preferencesRepository: PreferencesRepositoryInterface,
     private val firebaseRepository: FirebaseRepositoryInterface,
     private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
 
-    private val _sharedTeam1Label = MutableSharedFlow<String>()
-    private val _sharedTeam2Label = MutableSharedFlow<String>()
-    private val _sharedTeam1Selected = MutableSharedFlow<Boolean>()
+    private val _sharedTeam1 = MutableStateFlow<Team?>(null)
+    private val _sharedTeam2 = MutableStateFlow<Team?>(null)
+    private val _sharedTeam1Selected = MutableStateFlow(true)
     private val _sharedDismiss = MutableSharedFlow<Unit>()
+    private val _sharedButtonEnable = MutableStateFlow(false)
 
-    val sharedTeam1Label = _sharedTeam1Label.asSharedFlow()
-    val sharedTeam2Label = _sharedTeam2Label.asSharedFlow()
-    val sharedTeam1Selected = _sharedTeam1Selected.asSharedFlow()
+    val sharedTeam1 = _sharedTeam1.asStateFlow()
+    val sharedTeam2 = _sharedTeam2.asStateFlow()
+    val sharedTeam1Selected = _sharedTeam1Selected.asStateFlow()
     val sharedDismiss = _sharedDismiss.asSharedFlow()
+    val sharedButtonEnable = _sharedButtonEnable.asStateFlow()
+
+    var teamSelected: String? = null
 
     private var amount: Int? = null
-
-    fun bind(war: NewWar, onTeamSelected: Flow<String>, onAmountAdded: Flow<String?>, onPenaltyClick: Flow<Unit>) {
-        var teamSelected: String? = war.teamHost
-        databaseRepository.getTeam(war.teamHost)
-            .mapNotNull { it?.name }
-            .onEach {
-                _sharedTeam1Selected.emit(true)
-                _sharedTeam1Label.emit(it)
-            }.launchIn(viewModelScope)
-        databaseRepository.getTeam(war.teamOpponent)
-            .mapNotNull { it?.name }
-            .bind(_sharedTeam2Label, viewModelScope)
-
-        onTeamSelected
-            .onEach {
-                teamSelected = it
-                _sharedTeam1Selected.emit(it == war.teamHost)
-            }.launchIn(viewModelScope)
-        onAmountAdded.filterNotNull().onEach { amount = it.toIntOrNull() }.launchIn(viewModelScope)
-        onPenaltyClick
-            .mapNotNull { teamSelected }
-            .mapNotNull { amount?.let { amount ->  Penalty(it, amount) } }
-            .flatMapLatest {
-                val penalties = war.penalties?.toMutableList() ?: mutableListOf()
-                penalties.add(it)
-                val newWar = war.apply { this.penalties = penalties }
-                firebaseRepository.writeCurrentWar(newWar)
+    init {
+        preferencesRepository.currentWar
+            ?.withName(databaseRepository)
+            ?.mapNotNull { it.war }
+            ?.onEach {
+                teamSelected = it.teamHost
+                _sharedTeam1.value = databaseRepository.getTeam(it.teamHost).firstOrNull()
+                _sharedTeam2.value = databaseRepository.getTeam(it.teamOpponent).firstOrNull()
             }
-            .onEach { _sharedDismiss.emit(Unit) }
-            .launchIn(viewModelScope)
-
-
+            ?.launchIn(viewModelScope)
     }
+
+    fun onSelectTeam(team: String?) {
+        teamSelected = team
+        _sharedTeam1Selected.value = team == preferencesRepository.currentWar?.teamHost
+        _sharedButtonEnable.value = this.amount != null
+    }
+
+    fun onAmount(amount: String) {
+        this.amount = amount.toIntOrNull()
+        _sharedButtonEnable.value = teamSelected != null && this.amount != null
+    }
+
+    fun onPenaltyAdded() {
+        teamSelected?.let { team ->
+            amount?.let { amount ->
+                val penalties = preferencesRepository.currentWar?.penalties?.toMutableList() ?: mutableListOf()
+                penalties.add(Penalty(team, amount))
+                preferencesRepository.currentWar?.apply { this.penalties = penalties }?.withName(databaseRepository)
+                    ?.mapNotNull { it.war }
+                    ?.flatMapLatest {  firebaseRepository.writeCurrentWar(it) }
+                    ?.onEach { _sharedDismiss.emit(Unit) }
+                    ?.launchIn(viewModelScope)
+                }
+            }
+
+        }
+
+
+
 }

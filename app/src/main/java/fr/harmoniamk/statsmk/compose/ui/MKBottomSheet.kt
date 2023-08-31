@@ -1,6 +1,7 @@
 package fr.harmoniamk.statsmk.compose.ui
 
 import androidx.compose.runtime.Composable
+import fr.harmoniamk.statsmk.compose.screen.PenaltyScreen
 import fr.harmoniamk.statsmk.compose.screen.PositionScreen
 import fr.harmoniamk.statsmk.compose.screen.SubPlayerScreen
 import fr.harmoniamk.statsmk.compose.screen.TrackListScreen
@@ -55,6 +56,9 @@ fun MKBottomSheet(trackIndex: Int?, state: MKBottomSheetState?, onEditTrack: (In
         }
         is MKBottomSheetState.SubPlayer -> {
             SubPlayerScreen(onDismiss = { onDismiss(-1) })
+        }
+        is MKBottomSheetState.Penalty -> {
+            PenaltyScreen(onDismiss = { onDismiss(-1) })
         }
         else -> {}
     }

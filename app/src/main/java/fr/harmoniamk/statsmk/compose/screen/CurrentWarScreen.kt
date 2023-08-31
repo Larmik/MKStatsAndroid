@@ -39,7 +39,7 @@ fun CurrentWarScreen(viewModel: CurrentWarViewModel = hiltViewModel(), onNextTra
 
     val buttons = listOf(
         Pair(R.string.remplacement, viewModel::onSubPlayer),
-        Pair(R.string.p_nalit, {}),
+        Pair(R.string.p_nalit, viewModel::onPenalty),
         Pair(R.string.annuler_le_match, {}),
     )
     LaunchedEffect(Unit) {

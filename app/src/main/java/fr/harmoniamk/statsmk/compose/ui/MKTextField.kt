@@ -34,7 +34,9 @@ import fr.harmoniamk.statsmk.R
 
 @ExperimentalMaterialApi
 @Composable
-fun MKTextField(value: TextFieldValue,
+fun MKTextField(
+    modifier: Modifier = Modifier.fillMaxWidth(),
+    value: TextFieldValue,
                 onValueChange: (TextFieldValue) -> Unit,
                 textStyle: TextStyle = LocalTextStyle.current,
                 label: @Composable (() -> Unit)? = null,
@@ -57,9 +59,8 @@ fun MKTextField(value: TextFieldValue,
     val interactionSource = remember { MutableInteractionSource() }
     BasicTextField(
         value = value,
-        modifier = Modifier
+        modifier = modifier
             .padding(vertical = 5.dp)
-            .fillMaxWidth()
             .background(colors.backgroundColor(true).value, RoundedCornerShape(5.dp))
             .indicatorLine(true, false, interactionSource, colors)
             .defaultMinSize(

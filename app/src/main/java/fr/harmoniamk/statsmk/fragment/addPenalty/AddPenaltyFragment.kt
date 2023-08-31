@@ -37,15 +37,7 @@ class AddPenaltyFragment(val war: NewWar? = null) : BottomSheetDialogFragment() 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         war?.let {
-            viewModel.bind(
-                war = it,
-                onTeamSelected = flowOf(
-                    binding.team1Label.clicks().mapNotNull { war.teamHost },
-                    binding.team2Label.clicks().mapNotNull { war.teamOpponent },
-                ).flattenMerge(),
-                onAmountAdded = binding.addPenaltyEdit.onTextChanged(),
-                onPenaltyClick = binding.addPenaltyBtn.clicks()
-            )
+
 
             viewModel.sharedTeam1Label
                 .onEach { binding.team1Label.text = it }

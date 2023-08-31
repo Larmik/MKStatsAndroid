@@ -187,6 +187,10 @@ class CurrentWarViewModel@Inject constructor(
         _sharedBottomSheetValue.value = MKBottomSheetState.SubPlayer()
     }
 
+    fun onPenalty() {
+        _sharedBottomSheetValue.value = MKBottomSheetState.Penalty()
+    }
+
     fun dismissBottomSheet(trackIndex: Int) {
         _sharedBottomSheetValue.value = null
     }
