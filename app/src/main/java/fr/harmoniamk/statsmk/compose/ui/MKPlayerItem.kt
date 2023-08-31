@@ -18,13 +18,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.extension.positionColor
+import fr.harmoniamk.statsmk.fragment.settings.managePlayers.ManagePlayersItemViewModel
 import fr.harmoniamk.statsmk.model.firebase.NewWarPositions
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.MKWarPosition
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 
+@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @Composable
-fun MKPlayerItem(player: User? = null, position: MKWarPosition? = null, isSelected: Boolean = false, shockVisible: Boolean = false, shockCount: Int = 0, onAddShock: (String) -> Unit = { }, onRemoveShock: (String) -> Unit = { }, onRootClick: () -> Unit = { }) {
-    val finalPlayer = player ?: position?.player
+fun MKPlayerItem(player: User? = null, playerToManage: ManagePlayersItemViewModel? = null, position: MKWarPosition? = null, isSelected: Boolean = false, shockVisible: Boolean = false, shockCount: Int = 0, onAddShock: (String) -> Unit = { }, onRemoveShock: (String) -> Unit = { }, onRootClick: () -> Unit = { }) {
+    val finalPlayer = player ?: position?.player ?: playerToManage?.player
     val backgroundColor = colorResource(id =
         when (isSelected) {
             true -> R.color.harmonia_dark
@@ -36,7 +40,10 @@ fun MKPlayerItem(player: User? = null, position: MKWarPosition? = null, isSelect
         else -> R.color.harmonia_dark
     }
 
-    Card(Modifier.padding(5.dp).clickable { onRootClick() }, backgroundColor = backgroundColor) {
+    Card(
+        Modifier
+            .padding(5.dp)
+            .clickable { onRootClick() }, backgroundColor = backgroundColor) {
         Row(modifier = Modifier
             .padding(10.dp)
             .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
@@ -52,6 +59,7 @@ fun MKPlayerItem(player: User? = null, position: MKWarPosition? = null, isSelect
                         shockCount.toString()
                     ), font = R.font.orbitron_semibold)
                 }
+
             }
             position?.let {
                 MKText(text = it.position.position.toString(), font = R.font.mk_position, textColor = it.position.position.positionColor(), fontSize = 26, modifier = Modifier.padding(end = 15.dp))
@@ -59,9 +67,11 @@ fun MKPlayerItem(player: User? = null, position: MKWarPosition? = null, isSelect
                     Row(horizontalArrangement = Arrangement.Center) {
                         MKText(text = R.string.minus, font = R.font.orbitron_semibold, fontSize = 26, modifier = Modifier
                             .size(30.dp)
-                            .clickable {position.player?.mid?.let { mid ->
-                                onRemoveShock(mid)
-                            }})
+                            .clickable {
+                                position.player?.mid?.let { mid ->
+                                    onRemoveShock(mid)
+                                }
+                            })
                         Image(painter = painterResource(id = R.drawable.shock), contentDescription = null, modifier = Modifier
                             .size(30.dp)
                             .padding(horizontal = 5.dp))
@@ -74,6 +84,9 @@ fun MKPlayerItem(player: User? = null, position: MKWarPosition? = null, isSelect
                             })
                     }
                 }
+            }
+            playerToManage?.let {
+                Image(painter = painterResource(id = R.drawable.edit), contentDescription = null, modifier = Modifier.size(30.dp))
             }
          }
     }

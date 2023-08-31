@@ -25,30 +25,34 @@ import javax.inject.Inject
 @HiltViewModel
 class ManagePlayersViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val storageRepository: StorageRepository, private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface, private val networkRepository: NetworkRepositoryInterface) : ViewModel() {
 
-    private val _sharedPlayers = MutableSharedFlow<List<ManagePlayersItemViewModel>>()
+    private val _sharedPlayers = MutableStateFlow<List<ManagePlayersItemViewModel>>(listOf())
     private val _sharedAddPlayer = MutableSharedFlow<Unit>()
     private val _sharedAddPlayerVisibility = MutableSharedFlow<Int>()
     private val _sharedEdit = MutableSharedFlow<User>()
     private val _sharedRedirectToSettings = MutableSharedFlow<Unit>()
-    private val _sharedTeamName = MutableSharedFlow<String?>()
+    private val _sharedTeamName = MutableStateFlow<String?>(null)
     private val _sharedTeamEdit = MutableSharedFlow<Team>()
     private val _sharedEditPicture = MutableSharedFlow<Unit>()
     private val _sharedManageVisible = MutableSharedFlow<Boolean>()
-    private val _sharedPictureLoaded = MutableSharedFlow<String?>()
+    private val _sharedPictureLoaded = MutableStateFlow<String?>(null)
 
-    val sharedPlayers = _sharedPlayers.asSharedFlow()
+    val sharedPlayers = _sharedPlayers.asStateFlow()
     val sharedAddPlayer = _sharedAddPlayer.asSharedFlow()
     val sharedEditTeamVisibility = _sharedAddPlayerVisibility.asSharedFlow()
     val sharedEdit = _sharedEdit.asSharedFlow()
     val sharedRedirectToSettings = _sharedRedirectToSettings.asSharedFlow()
-    val sharedTeamName = _sharedTeamName.asSharedFlow()
+    val sharedTeamName = _sharedTeamName.asStateFlow()
     val sharedTeamEdit = _sharedTeamEdit.asSharedFlow()
     val sharedEditPicture =_sharedEditPicture.asSharedFlow()
-    val sharedPictureLoaded =_sharedPictureLoaded.asSharedFlow()
+    val sharedPictureLoaded =_sharedPictureLoaded.asStateFlow()
     val sharedManageVisible =_sharedManageVisible.asSharedFlow()
 
     private val players = mutableListOf<ManagePlayersItemViewModel>()
     private val allPlayers = mutableListOf<ManagePlayersItemViewModel>()
+
+    init {
+        refresh()
+    }
 
     fun bind(onPictureClick: Flow<Unit>, onPictureEdited: Flow<String>, onAdd: Flow<Unit>, onEdit: Flow<User>, onSearch: Flow<String>, onEditTeam: Flow<Unit>) {
         var url: String? = null

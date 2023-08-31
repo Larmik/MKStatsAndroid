@@ -7,7 +7,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 
+@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @ExperimentalMaterialApi
 @Composable
 fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
@@ -32,7 +35,8 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
                 onBack = onBack, 
                 onCurrentWarClick = { navController.navigate("Home/War/Current") },
                 onWarClick = { navController.navigate(route = "Home/War/$it") },
-                onCreateWarClick = { navController.navigate("Home/War/AddWar")}
+                onCreateWarClick = { navController.navigate("Home/War/AddWar")},
+                onSettingsItemClick = { navController.navigate(it) }
             )
         }
         composable(route = "Home/War/Current") {
@@ -80,6 +84,10 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
             )) {
                 TrackDetailsScreen(warId = it.arguments?.getString("id") ?: "", warTrackId = it.arguments?.getString("track_id") ?: "", onBack = { navController.popBackStack() })
             }
+
+        composable("Home/Settings/ManagePlayers") {
+            TeamSettingsScreen()
+        }
 
     }
 }

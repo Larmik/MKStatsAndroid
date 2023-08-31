@@ -29,7 +29,13 @@ import kotlinx.coroutines.FlowPreview
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
 @Composable
-fun HomeScreen(onBack: () -> Unit, onCurrentWarClick: () -> Unit, onWarClick: (String?) -> Unit, onCreateWarClick: () -> Unit) {
+fun HomeScreen(
+    onBack: () -> Unit,
+    onCurrentWarClick: () -> Unit,
+    onWarClick: (String?) -> Unit,
+    onCreateWarClick: () -> Unit,
+    onSettingsItemClick: (String) -> Unit
+) {
     val navController = rememberNavController()
 
     val items = listOf(
@@ -37,9 +43,7 @@ fun HomeScreen(onBack: () -> Unit, onCurrentWarClick: () -> Unit, onWarClick: (S
         BottomNavItem.Stats,
         BottomNavItem.Settings,
     )
-    BackHandler {
-        onBack()
-    }
+    BackHandler { onBack() }
         Scaffold(
             bottomBar = {
                 BottomNavigation(
@@ -83,8 +87,7 @@ fun HomeScreen(onBack: () -> Unit, onCurrentWarClick: () -> Unit, onWarClick: (S
                     }
                 }
                 composable(route = "Home/Settings") {
-                    SettingsScreen {
-                    }
+                    SettingsScreen(onItemClick = onSettingsItemClick)
                 }
             }
         }
@@ -94,5 +97,5 @@ fun HomeScreen(onBack: () -> Unit, onCurrentWarClick: () -> Unit, onWarClick: (S
 @Preview
 @Composable
 fun HomeScreenPreview() {
-    HomeScreen(onBack = {}, onCurrentWarClick =  {}, onWarClick = {}) {}
+    HomeScreen(onBack = {}, onCurrentWarClick =  {}, onWarClick = {}, onCreateWarClick = { }) {}
 }
