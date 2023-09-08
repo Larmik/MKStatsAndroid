@@ -42,6 +42,8 @@ fun SubPlayerScreen(viewModel: SubPlayerViewModel = hiltViewModel(), onDismiss: 
                 MKPlayerItem(
                     player = it.user,
                     isSelected = it.isSelected.isTrue,
+                    onAddShock = {},
+                    onRemoveShock = {},
                     onRootClick = {
                         it.user?.let { user ->
                             when (playerSelected.value) {
@@ -51,7 +53,9 @@ fun SubPlayerScreen(viewModel: SubPlayerViewModel = hiltViewModel(), onDismiss: 
 
                         }
                     }
-                )
+                ) {
+
+                }
             }
         }
         playerSelected.value?.let {

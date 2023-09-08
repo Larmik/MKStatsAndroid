@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.R
+import fr.harmoniamk.statsmk.compose.ui.MKDialogState
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.firebase.AuthUserResponse
@@ -40,15 +41,15 @@ class LoginViewModel @Inject constructor(
 
     private val _sharedNext = MutableStateFlow<Unit?>(null)
     private val _sharedToast = MutableSharedFlow<String>()
-    private val _sharedLoading = MutableStateFlow<Int?>(null)
+    private val _sharedDialogValue = MutableStateFlow<MKDialogState?>(null)
 
     val sharedNext = _sharedNext.asSharedFlow()
     val sharedToast = _sharedToast.asSharedFlow()
-    val sharedLoading = _sharedLoading.asStateFlow()
+    val sharedDialogValue = _sharedDialogValue.asStateFlow()
 
 
     fun onConnect(email: String, password: String) {
-        _sharedLoading.value = R.string.connexion_en_cours
+        _sharedDialogValue.value = MKDialogState.Loading(R.string.connexion_en_cours)
         val connectUser =  authenticationRepository.signIn(email, password)
             .shareIn(viewModelScope, SharingStarted.Lazily)
 
@@ -63,7 +64,7 @@ class LoginViewModel @Inject constructor(
                         databaseRepository.getTeam(team).firstOrNull()
                 }
                 preferencesRepository.firstLaunch = false
-                _sharedLoading.value = R.string.fetch_data
+                _sharedDialogValue.value = MKDialogState.Loading(R.string.fetch_data)
                 it?.formerTeams?.takeIf { it.isNotEmpty() }?.let {
                     it.forEach {
                         val wars = firebaseRepository.getNewWars(it)
@@ -82,7 +83,7 @@ class LoginViewModel @Inject constructor(
 
         connectUser
             .mapNotNull { (it as? AuthUserResponse.Error)?.message }
-            .onEach { _sharedLoading.value = null }
+            .onEach { _sharedDialogValue.value = null }
             .bind(_sharedToast, viewModelScope)
     }
 

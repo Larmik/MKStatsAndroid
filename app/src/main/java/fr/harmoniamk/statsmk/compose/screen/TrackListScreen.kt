@@ -21,7 +21,7 @@ import kotlinx.coroutines.flow.filterNotNull
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun TrackListScreen(editing: Boolean = false, trackIndex: Int = -1, onTrackClick: (Int) -> Unit, onDismiss: (Int) -> Unit = {}) {
+fun TrackListScreen(editing: Boolean = false, trackIndex: Int = -1, onTrackClick: (Int) -> Unit, onDismiss: () -> Unit = {}) {
     val viewModel = viewModel(editing)
     val tracks = viewModel.sharedSearchedItems.collectAsState()
     val searchState = remember { mutableStateOf(TextFieldValue("")) }
@@ -29,7 +29,7 @@ fun TrackListScreen(editing: Boolean = false, trackIndex: Int = -1, onTrackClick
 
     LaunchedEffect(Unit) {
         viewModel.sharedQuit.filterNotNull().takeIf { editing }?.collect {
-            onDismiss(trackIndex)
+            onDismiss()
         }
     }
 

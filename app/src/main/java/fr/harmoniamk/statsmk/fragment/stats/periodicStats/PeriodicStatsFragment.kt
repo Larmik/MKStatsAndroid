@@ -14,7 +14,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentPeriodicStatsBinding
 import fr.harmoniamk.statsmk.extension.clicks
-import fr.harmoniamk.statsmk.model.local.MKWar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
@@ -108,10 +107,6 @@ class PeriodicStatsFragment : Fragment(R.layout.fragment_periodic_stats) {
         viewModel.sharedTrackClick
             .filter { findNavController().currentDestination?.id == R.id.periodicStatsFragment }
             .onEach { findNavController().navigate(PeriodicStatsFragmentDirections.toMapStats(it.second, isWeek = isWeek, isMonth = !isWeek, userId = it.first)) }
-            .launchIn(lifecycleScope)
-        viewModel.sharedWarClick
-            .filter { findNavController().currentDestination?.id == R.id.periodicStatsFragment }
-            .onEach { findNavController().navigate(PeriodicStatsFragmentDirections.goToWarDetails(it)) }
             .launchIn(lifecycleScope)
         viewModel.sharedWeekStatsEnabled
             .onEach {

@@ -24,6 +24,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
@@ -37,14 +38,14 @@ import fr.harmoniamk.statsmk.R
 fun MKTextField(
     modifier: Modifier = Modifier.fillMaxWidth(),
     value: TextFieldValue,
-                onValueChange: (TextFieldValue) -> Unit,
-                textStyle: TextStyle = LocalTextStyle.current,
-                label: @Composable (() -> Unit)? = null,
-                placeHolderRes: Int,
-                leadingIcon: @Composable (() -> Unit)? = null,
-                trailingIcon: @Composable (() -> Unit)? = null,
-                keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
-                keyboardActions: KeyboardActions = KeyboardActions()
+    onValueChange: (TextFieldValue) -> Unit,
+    textStyle: TextStyle = LocalTextStyle.current,
+    label: @Composable (() -> Unit)? = null,
+    placeHolderRes: Int,
+    leadingIcon: @Composable (() -> Unit)? = null,
+    trailingIcon: @Composable (() -> Unit)? = null,
+    keyboardType: KeyboardType = KeyboardType.Text,
+    keyboardActions: KeyboardActions = KeyboardActions()
 ) {
     val colors = TextFieldDefaults.textFieldColors(
         textColor = colorResource(id = R.color.black),
@@ -73,7 +74,7 @@ fun MKTextField(
         textStyle = TextStyle(color = textColor, fontFamily = FontFamily(Font(R.font.montserrat_regular)), fontSize = TextUnit(14f, TextUnitType.Sp)),
         cursorBrush = SolidColor(colors.cursorColor(false).value),
         visualTransformation = VisualTransformation.None,
-        keyboardOptions = keyboardOptions,
+        keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
         keyboardActions =  keyboardActions,
         interactionSource = interactionSource,
         singleLine = true,

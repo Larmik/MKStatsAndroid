@@ -11,10 +11,10 @@ import fr.harmoniamk.statsmk.enums.ListItems
 
 @Composable
 @OptIn(ExperimentalMaterialApi::class)
-fun StatsScreen(onItemClick: (String) -> Unit) {
+fun StatsScreen(onItemClick: (String?) -> Unit) {
     MKBaseScreen(title = R.string.stats) {
         ListItems.values().filter { it.type == ListItemType.stats }.forEach {
-            MKListItem(item = it, onClick = onItemClick)
+            MKListItem(item = it, separator = true, onNavigate = onItemClick) {}
         }
     }
 }

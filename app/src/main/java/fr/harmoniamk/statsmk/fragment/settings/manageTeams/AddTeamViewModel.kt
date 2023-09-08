@@ -13,7 +13,6 @@ import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
-import java.util.*
 import javax.inject.Inject
 
 @FlowPreview
@@ -21,33 +20,16 @@ import javax.inject.Inject
 @HiltViewModel
 class AddTeamViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
     private val _sharedTeamAdded = MutableSharedFlow<Unit>()
-    private val _sharedButtonEnabled = MutableSharedFlow<Boolean>()
-    val sharedButtonEnabled = _sharedButtonEnabled.asSharedFlow()
     val sharedTeamAdded = _sharedTeamAdded.asSharedFlow()
 
-    fun bind(teamWithLeader: Boolean, onTeamName: Flow<String>, onShortname: Flow<String>, onAddClick: Flow<Unit>) {
-        var name: String? = null
-        var shortName: String? = null
+    fun onCreateClick(name: String, shortName: String, teamWithLeader: Boolean) {
         val id = System.currentTimeMillis().toString()
-
-        onTeamName.onEach {
-            name = it
-            _sharedButtonEnabled.emit(!name.isNullOrEmpty() && !shortName.isNullOrEmpty())
-        }.launchIn(viewModelScope)
-        onShortname.onEach {
-            shortName = it
-            _sharedButtonEnabled.emit(!name.isNullOrEmpty() && !shortName.isNullOrEmpty())
-        }.launchIn(viewModelScope)
-
-        val addClick =  onAddClick
-            .filter { name != null && shortName != null }
-            .flatMapLatest { databaseRepository.getTeams() }
-            .shareIn(viewModelScope, SharingStarted.Lazily)
+        val addClick =  databaseRepository.getTeams().shareIn(viewModelScope, SharingStarted.Lazily)
 
         addClick
             .filterNot {
-                it.map { team -> team.name?.toLowerCase(Locale.getDefault()) }.contains(name?.toLowerCase(Locale.getDefault()))
-                || it.map { team -> team.shortName?.toLowerCase(Locale.getDefault()) }.contains(shortName?.toLowerCase(Locale.getDefault()))
+                it.map { team -> team.name?.lowercase() }.contains(name.lowercase())
+                        || it.map { team -> team.shortName?.lowercase() }.contains(shortName.lowercase())
             }
             .filterNot { teamWithLeader }
             .map {
@@ -68,10 +50,10 @@ class AddTeamViewModel @Inject constructor(private val firebaseRepository: Fireb
             .filter { teamWithLeader }
             .mapNotNull {
                 it.singleOrNull { team ->
-                    team.name?.toLowerCase(Locale.getDefault())
-                        ?.equals(name?.toLowerCase(Locale.getDefault())).isTrue
-                            || team.shortName?.toLowerCase(Locale.getDefault())
-                        ?.equals(shortName?.toLowerCase(Locale.getDefault())).isTrue
+                    team.name?.lowercase()
+                        ?.equals(name.lowercase()).isTrue
+                            || team.shortName?.lowercase()
+                        ?.equals(shortName.lowercase()).isTrue
                 }?.takeIf { !it.hasLeader.isTrue }?.apply { this.hasLeader = true }
             }
             .onEach { preferencesRepository.currentTeam = it }
@@ -87,8 +69,8 @@ class AddTeamViewModel @Inject constructor(private val firebaseRepository: Fireb
 
         addClick
             .filterNot {
-                it.map { team -> team.name?.toLowerCase(Locale.getDefault()) }.contains(name?.toLowerCase(Locale.getDefault()))
-                || it.map { team -> team.shortName?.toLowerCase(Locale.getDefault()) }.contains(shortName?.toLowerCase(Locale.getDefault()))
+                it.map { team -> team.name?.lowercase() }.contains(name.lowercase())
+                        || it.map { team -> team.shortName?.lowercase() }.contains(shortName.lowercase())
             }
             .filter { teamWithLeader }
             .map {

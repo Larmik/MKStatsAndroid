@@ -53,7 +53,7 @@ fun WarTrackResultScreen(trackIndex: Int = -1, editing: Boolean = false, onBack:
         map.value?.let { MKTrackItem(map = it) }
         LazyColumn {
             items(positions.value.orEmpty()) {
-                MKPlayerItem(position = it, shockVisible = true, shockCount = shocks.value?.singleOrNull { shock -> shock.playerId == it.player?.mid }?.count ?: 0, onAddShock = viewModel::onAddShock, onRemoveShock = viewModel::onRemoveShock)
+                MKPlayerItem(position = it, shockVisible = true, shockCount = shocks.value?.singleOrNull { shock -> shock.playerId == it.player?.mid }?.count ?: 0, onAddShock = viewModel::onAddShock, onRemoveShock = viewModel::onRemoveShock) {}
             }
         }
         track.value?.let { MKScoreView(track = it) }

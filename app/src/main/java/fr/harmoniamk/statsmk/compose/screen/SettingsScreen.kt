@@ -14,7 +14,7 @@ import fr.harmoniamk.statsmk.enums.ListItems
 fun SettingsScreen(onItemClick: (String) -> Unit) {
     MKBaseScreen(title = R.string.settings) {
         ListItems.values().filter { it.type == ListItemType.settings }.forEach {
-            MKListItem(item = it, onClick = onItemClick)
+            MKListItem(item = it, separator = true, onNavigate = onItemClick) {}
         }
     }
 }

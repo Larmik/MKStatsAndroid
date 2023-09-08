@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -34,7 +35,7 @@ fun SignupScreen(viewModel: SignupViewModel = hiltViewModel(), onLogin: () -> Un
     val nicknameValue = remember { mutableStateOf(TextFieldValue("")) }
     val fcValue = remember { mutableStateOf(TextFieldValue("")) }
 
-    val loadingState = viewModel.sharedLoading.collectAsState()
+    val loadingState = viewModel.sharedDialogValue.collectAsState()
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
@@ -52,14 +53,14 @@ fun SignupScreen(viewModel: SignupViewModel = hiltViewModel(), onLogin: () -> Un
     BackHandler { onBack() }
 
     loadingState.value?.let {
-        MKDialog(text = it, isLoading = true)
+        MKDialog(state = it)
     }
     MKBaseScreen(title = stringResource(id = R.string.bienvenue), verticalArrangement = Arrangement.SpaceBetween) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(horizontal = 15.dp)) {
             MKTextField(value = nicknameValue.value, onValueChange = { nicknameValue.value = it }, placeHolderRes = R.string.entrez_votre_pseudo)
-            MKTextField(value = emailValue.value, onValueChange = { emailValue.value = it }, placeHolderRes = R.string.entrez_votre_adresse_email)
-            MKTextField(value = passwordValue.value, onValueChange = { passwordValue.value = it }, placeHolderRes = R.string.entrez_votre_mot_de_passe)
-            MKTextField(value = fcValue.value, onValueChange = { fcValue.value = it }, placeHolderRes = R.string.code_ami)
+            MKTextField(value = emailValue.value, onValueChange = { emailValue.value = it }, placeHolderRes = R.string.entrez_votre_adresse_email, keyboardType = KeyboardType.Email)
+            MKTextField(value = passwordValue.value, onValueChange = { passwordValue.value = it }, placeHolderRes = R.string.entrez_votre_mot_de_passe, keyboardType = KeyboardType.Password)
+            MKTextField(value = fcValue.value, onValueChange = { fcValue.value = it }, placeHolderRes = R.string.code_ami, keyboardType = KeyboardType.Number)
             MKButton(text = R.string.suivant, enabled = emailValue.value.text.isNotEmpty() && passwordValue.value.text.isNotEmpty() && nicknameValue.value.text.isNotEmpty()) {
                 viewModel.onSignup(
                     emailValue.value.text,

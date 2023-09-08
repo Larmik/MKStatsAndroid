@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.compose.ui.MKBottomSheetState
+import fr.harmoniamk.statsmk.compose.ui.MKDialogState
 import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.isTrue
@@ -45,7 +46,7 @@ import java.util.Locale
 import javax.inject.Inject
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @HiltViewModel
-class CurrentWarViewModel@Inject constructor(
+class CurrentWarViewModel @Inject constructor(
     private val firebaseRepository: FirebaseRepositoryInterface,
     private val preferencesRepository: PreferencesRepositoryInterface,
     private val authenticationRepository: AuthenticationRepositoryInterface,
@@ -60,6 +61,7 @@ class CurrentWarViewModel@Inject constructor(
     private val _sharedPenalties = MutableStateFlow<List<Penalty>?>(null)
     private val _sharedShockCount = MutableStateFlow<String?>(null)
     private val _sharedBottomSheetValue = MutableStateFlow<MKBottomSheetState?>(null)
+    private val _sharedDialogValue = MutableStateFlow<MKDialogState?>(null)
 
 
 
@@ -70,6 +72,7 @@ class CurrentWarViewModel@Inject constructor(
     val sharedPenalties = _sharedPenalties.asStateFlow()
     val sharedShockCount = _sharedShockCount.asStateFlow()
     val sharedBottomSheetValue = _sharedBottomSheetValue.asStateFlow()
+    val sharedDialogValue = _sharedDialogValue.asStateFlow()
 
 
 
@@ -191,25 +194,27 @@ class CurrentWarViewModel@Inject constructor(
         _sharedBottomSheetValue.value = MKBottomSheetState.Penalty()
     }
 
-    fun dismissBottomSheet(trackIndex: Int) {
-        _sharedBottomSheetValue.value = null
+    fun onCancelClick() {
+        _sharedDialogValue.value = MKDialogState.CancelWar(
+            onWarCancelled = {
+                databaseRepository.getUsers()
+                    .map { list -> list.filter { user -> user.currentWar == preferencesRepository.currentWar?.mid } }
+                    .onEach { list ->
+                        list.forEach {
+                            val newUser = it.apply { this.currentWar = "-1" }
+                            firebaseRepository.writeUser(newUser).first()
+                        }
+                    }
+                    .flatMapLatest { firebaseRepository.deleteCurrentWar() }
+                    .bind(_sharedBackToWars, viewModelScope)
+            },
+            onDismiss = {
+                _sharedDialogValue.value = null
+            }
+        )
     }
 
-    fun bindPopup(onDelete: Flow<Unit>, onDismiss: Flow<Unit>) {
-        onDelete
-            .flatMapLatest { databaseRepository.getUsers() }
-            .map { list -> list.filter { user -> user.currentWar == preferencesRepository.currentWar?.mid } }
-            .onEach { list ->
-                list.forEach {
-                    val newUser = it.apply { this.currentWar = "-1" }
-                    firebaseRepository.writeUser(newUser).first()
-                }
-            }
-            .flatMapLatest { firebaseRepository.deleteCurrentWar() }
-            .bind(_sharedBackToWars, viewModelScope)
-
-        onDismiss
-            .onEach { _sharedPopupShowing.emit(false) }
-            .launchIn(viewModelScope)
+    fun dismissBottomSheet() {
+        _sharedBottomSheetValue.value = null
     }
 }

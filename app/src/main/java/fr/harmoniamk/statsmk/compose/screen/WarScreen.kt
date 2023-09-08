@@ -10,9 +10,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKBaseScreen
 import fr.harmoniamk.statsmk.compose.ui.MKCurrentWarCell
+import fr.harmoniamk.statsmk.compose.ui.MKLifecycleEvent
 import fr.harmoniamk.statsmk.compose.ui.MKSegmentedButtons
 import fr.harmoniamk.statsmk.compose.ui.MKText
 import fr.harmoniamk.statsmk.compose.ui.MKWarItem
@@ -34,6 +36,11 @@ fun WarScreen(viewModel: WarViewModel = hiltViewModel(), onCurrentWarClick: () -
         Pair(R.string.cr_er_une_war, onCreateWarClick).takeIf { createWarEnabled.value },
         Pair(R.string.ajouter_les_dispos, {}).takeIf { !dispos.value.isNullOrEmpty() },
     ).filterNotNull()
+
+    MKLifecycleEvent {
+        if (it == Lifecycle.Event.ON_RESUME)
+            viewModel.refresh()
+    }
 
     MKBaseScreen(title = R.string.team_war, subTitle = team.value?.name) {
         MKSegmentedButtons(buttons)

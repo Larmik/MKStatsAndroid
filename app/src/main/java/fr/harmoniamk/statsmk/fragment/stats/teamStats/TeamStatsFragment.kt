@@ -14,7 +14,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentTeamStatsBinding
 import fr.harmoniamk.statsmk.extension.clicks
-import fr.harmoniamk.statsmk.model.local.MKWar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.filter
@@ -28,9 +27,6 @@ class TeamStatsFragment : Fragment(R.layout.fragment_team_stats) {
 
     private val binding: FragmentTeamStatsBinding by viewBinding()
     private val viewModel: TeamStatsViewModel by viewModels()
-
-
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -97,10 +93,6 @@ class TeamStatsFragment : Fragment(R.layout.fragment_team_stats) {
         viewModel.sharedTrackClick
             .filter { findNavController().currentDestination?.id == R.id.teamStatsFragment }
             .onEach { findNavController().navigate(TeamStatsFragmentDirections.toMapStats(trackId = it.second, userId = it.first, isIndiv = false)) }
-            .launchIn(lifecycleScope)
-        viewModel.sharedWarClick
-            .filter { findNavController().currentDestination?.id == R.id.teamStatsFragment }
-            .onEach { findNavController().navigate(TeamStatsFragmentDirections.goToWarDetails(it)) }
             .launchIn(lifecycleScope)
         viewModel.sharedTeamClick
             .filter { findNavController().currentDestination?.id == R.id.teamStatsFragment }

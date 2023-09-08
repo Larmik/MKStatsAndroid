@@ -18,17 +18,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.extension.positionColor
-import fr.harmoniamk.statsmk.fragment.settings.managePlayers.ManagePlayersItemViewModel
 import fr.harmoniamk.statsmk.model.firebase.NewWarPositions
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.MKWarPosition
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 
-@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @Composable
-fun MKPlayerItem(player: User? = null, playerToManage: ManagePlayersItemViewModel? = null, position: MKWarPosition? = null, isSelected: Boolean = false, shockVisible: Boolean = false, shockCount: Int = 0, onAddShock: (String) -> Unit = { }, onRemoveShock: (String) -> Unit = { }, onRootClick: () -> Unit = { }) {
-    val finalPlayer = player ?: position?.player ?: playerToManage?.player
+fun MKPlayerItem(player: User? = null, position: MKWarPosition? = null, isSelected: Boolean = false, shockVisible: Boolean = false, editVisible: Boolean = false, shockCount: Int = 0, onAddShock: (String) -> Unit = { }, onRemoveShock: (String) -> Unit = { }, onRootClick: () -> Unit = { }, onEditClick: (User) -> Unit) {
+    val finalPlayer = player ?: position?.player
     val backgroundColor = colorResource(id =
         when (isSelected) {
             true -> R.color.harmonia_dark
@@ -85,8 +81,8 @@ fun MKPlayerItem(player: User? = null, playerToManage: ManagePlayersItemViewMode
                     }
                 }
             }
-            playerToManage?.let {
-                Image(painter = painterResource(id = R.drawable.edit), contentDescription = null, modifier = Modifier.size(30.dp))
+            player?.takeIf { editVisible }?.let {
+                Image(painter = painterResource(id = R.drawable.edit), contentDescription = null, modifier = Modifier.size(25.dp).clickable { onEditClick(it) })
             }
          }
     }
@@ -99,7 +95,9 @@ fun MKPlayerItemPreview() {
         mid = "mid",
         name = "Lari",
         picture = "https://firebasestorage.googleapis.com/v0/b/stats-mk.appspot.com/o/1643723546718?alt=media&token=901e95bd-5d15-4ef4-a541-bdbf28d3bfca"
-    ))
+    )) {
+
+    }
 }
 @Composable
 @Preview
@@ -111,7 +109,7 @@ fun MKPlayerItemPositionPreview() {
             name = "Lari",
             picture = "https://firebasestorage.googleapis.com/v0/b/stats-mk.appspot.com/o/1643723546718?alt=media&token=901e95bd-5d15-4ef4-a541-bdbf28d3bfca"
         )), shockVisible = true
-    )
+    ) {}
 }
 @Composable
 @Preview
@@ -124,5 +122,5 @@ fun MKPlayerItemPositionPreviewWithSkock() {
             picture = "https://firebasestorage.googleapis.com/v0/b/stats-mk.appspot.com/o/1643723546718?alt=media&token=901e95bd-5d15-4ef4-a541-bdbf28d3bfca"
         ),
     ), shockCount = 2
-    )
+    ) {}
 }

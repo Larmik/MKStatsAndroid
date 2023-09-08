@@ -2,6 +2,8 @@ package fr.harmoniamk.statsmk.compose.screen
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -32,25 +34,33 @@ fun WarDetailsScreen(id: String?, onTrackClick: (String) -> Unit) {
     val worstTrack = tracks.value?.minByOrNull { track -> track.teamScore }
 
     MKBaseScreen(title = war.value?.name.orEmpty(), subTitle = war.value?.war?.createdDate) {
+        Spacer(modifier = Modifier.height(10.dp))
+        MKScoreView(war = war.value)
         players.value?.let {
             MKPlayerList(players = it)
         }
-        MKScoreView(war = war.value)
         Row() {
-            Column(Modifier.weight(1f).padding(horizontal = 10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(
+                Modifier
+                    .weight(1f)
+                    .padding(horizontal = 10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 MKText(text = R.string.meilleur_circuit, font = R.font.montserrat_bold)
                 MKTrackItem(isVertical = true, track = bestTrack, goToDetails = { onTrackClick(bestTrack?.track?.mid.orEmpty())})
             }
-            Column(Modifier.weight(1f).padding(horizontal = 10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(
+                Modifier
+                    .weight(1f)
+                    .padding(horizontal = 10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 MKText(text = R.string.pire_circuit, font = R.font.montserrat_bold)
                 MKTrackItem(isVertical = true, track = worstTrack, goToDetails = { onTrackClick(worstTrack?.track?.mid.orEmpty())})
             }
         }
+        Spacer(modifier = Modifier.height(10.dp))
         tracks.value?.let {
             MKText(text = R.string.tous_les_circuits, font = R.font.montserrat_bold)
             LazyColumn(Modifier.padding(10.dp)) {
                 items(items = it) {
-                    MKTrackItem(track = it, goToDetails = { _ -> onTrackClick(it.track?.mid.orEmpty())})
+                    MKTrackItem(modifier = Modifier.padding(bottom = 5.dp), track = it, goToDetails = { _ -> onTrackClick(it.track?.mid.orEmpty())})
                 }
             }
         }

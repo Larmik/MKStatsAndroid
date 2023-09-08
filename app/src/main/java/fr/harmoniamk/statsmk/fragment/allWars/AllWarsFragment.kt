@@ -69,11 +69,6 @@ class AllWarsFragment : Fragment(R.layout.fragment_all_wars) {
                 updateFilterButton(binding.officialFilterButton, WarFilterType.OFFICIAL, it)
                 updateFilterButton(binding.periodFilterButton, WarFilterType.WEEK, it)
             }.launchIn(lifecycleScope)
-        viewModel.sharedWarClick
-            .filter { findNavController().currentDestination?.id == R.id.allWarsFragment }
-            .onEach { findNavController().navigate(AllWarsFragmentDirections.goToWarDetails(it)) }
-            .launchIn(lifecycleScope)
-
     }
 
     private fun updateSortButton(

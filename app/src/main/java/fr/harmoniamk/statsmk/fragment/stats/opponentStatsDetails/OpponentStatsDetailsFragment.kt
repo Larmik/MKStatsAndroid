@@ -8,7 +8,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
@@ -81,10 +80,6 @@ class OpponentStatsDetailsFragment: Fragment(R.layout.fragment_opponent_stats_de
                     updateFilterButton(binding.officialFilterButton, WarFilterType.OFFICIAL, it)
                     updateFilterButton(binding.periodFilterButton, WarFilterType.WEEK, it)
                 }.launchIn(lifecycleScope)
-            viewModel.sharedWarClick
-                .filter { findNavController().currentDestination?.id == R.id.opponentStatsDetailsFragment }
-                .onEach { findNavController().navigate(OpponentStatsDetailsFragmentDirections.goToWarDetails(it)) }
-                .launchIn(lifecycleScope)
 
             viewModel.sharedLoaded.onEach {
                 binding.progress.isVisible = false

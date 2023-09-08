@@ -57,16 +57,20 @@ fun TrackDetailsScreen(warId: String, warTrackId: String, onBack: () -> Unit) {
             else -> onBack()
         }
     }
-    
+    val trackIndex = war.value?.warTracks?.map { it.track }?.indexOf(currentTrack.value?.track)
     MKBaseScreen(
         title = war.value?.name.orEmpty(),
         subTitle = war.value?.war?.createdDate,
         state = bottomSheetState,
         sheetContent = {
             MKBottomSheet(
-                trackIndex = war.value?.warTracks?.map { it.track }?.indexOf(currentTrack.value?.track) ,
+                trackIndex =  trackIndex,
                 state = currentState.value,
-                onDismiss = viewModel::dismissBottomSheet)
+                onDismiss = { trackIndex?.let { viewModel.dismissBottomSheet(it) } },
+                onEditPosition = {},
+                onEditTrack = {}
+
+            )
             },
         content = {
             currentTrack.value?.index?.let { MKTrackItem(map = Maps.values()[it]) }
@@ -77,7 +81,9 @@ fun TrackDetailsScreen(warId: String, warTrackId: String, onBack: () -> Unit) {
                         position = it,
                         shockVisible = false,
                         shockCount = shocks.value?.singleOrNull { shock -> shock.playerId == it.player?.mid }?.count ?: 0
-                    )
+                    ) {
+
+                    }
                 }
             }
             currentTrack.value?.let { MKScoreView(track = it) }

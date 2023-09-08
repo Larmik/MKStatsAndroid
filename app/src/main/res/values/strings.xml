@@ -164,6 +164,7 @@
     <string name="membre">Membre</string>
     <string name="admin">Admin</string>
     <string name="leader">Leader</string>
+    <string name="god">Dieu</string>
     <string name="modifier_le_tag">Modifier le tag :</string>
     <string name="supprimer_l_quipe">Supprimer l\'équipe</string>
     <string name="position">Position</string>
@@ -221,6 +222,7 @@
     <string name="maps_jou_es">maps jouées</string>
     <string name="diff_rence_quipe">Différence équipe</string>
     <string name="position_joueur">Position joueur</string>
+    <string name="cr_er_un_joueur">Créer un joueur</string>
     <string name="voir_le_d_tail">Voir le détail</string>
     <string name="d_tails">Détails</string>
     <string name="statistiques_des_adversaires">Statistiques des adversaires</string>

@@ -116,10 +116,6 @@ class IndivStatsFragment : Fragment(R.layout.fragment_indiv_stats) {
             .filter { findNavController().currentDestination?.id == R.id.indivStatsFragment }
             .onEach { findNavController().navigate(IndivStatsFragmentDirections.toMapStats(userId = it.first, trackId = it.second)) }
             .launchIn(lifecycleScope)
-        viewModel.sharedWarClick
-            .filter { findNavController().currentDestination?.id == R.id.indivStatsFragment }
-            .onEach { findNavController().navigate(IndivStatsFragmentDirections.goToWarDetails(it)) }
-            .launchIn(lifecycleScope)
         viewModel.sharedTeamClick
             .filter { findNavController().currentDestination?.id == R.id.indivStatsFragment }
             .onEach { findNavController().navigate(IndivStatsFragmentDirections.toOpponentStats(stats = it.second, userId = it.first, isIndiv = true)) }

@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -31,7 +32,7 @@ import kotlinx.coroutines.flow.filterNotNull
 fun LoginScreen(viewModel: LoginViewModel = hiltViewModel(), onNext: () -> Unit, onSignup: () -> Unit, onBack: () -> Unit) {
 
     val emailValue = remember { mutableStateOf(TextFieldValue("")) }
-    val loadingState = viewModel.sharedLoading.collectAsState()
+    val loadingState = viewModel.sharedDialogValue.collectAsState()
     val passwordValue = remember { mutableStateOf(TextFieldValue("")) }
     val context = LocalContext.current
 
@@ -50,13 +51,13 @@ fun LoginScreen(viewModel: LoginViewModel = hiltViewModel(), onNext: () -> Unit,
     BackHandler { onBack() }
 
     loadingState.value?.let {
-        MKDialog(text = it, isLoading = true)
+        MKDialog(state = it)
     }
 
     MKBaseScreen(title = stringResource(id = R.string.connexion), verticalArrangement = Arrangement.SpaceBetween) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(horizontal = 15.dp)) {
-            MKTextField(value = emailValue.value, onValueChange = { emailValue.value = it }, placeHolderRes = R.string.entrez_votre_adresse_email)
-            MKTextField(value = passwordValue.value, onValueChange = { passwordValue.value = it }, placeHolderRes = R.string.entrez_votre_mot_de_passe)
+            MKTextField(value = emailValue.value, onValueChange = { emailValue.value = it }, placeHolderRes = R.string.entrez_votre_adresse_email, keyboardType = KeyboardType.Email)
+            MKTextField(value = passwordValue.value, onValueChange = { passwordValue.value = it }, placeHolderRes = R.string.entrez_votre_mot_de_passe, keyboardType = KeyboardType.Password)
             MKButton(text = R.string.se_connecter, enabled = emailValue.value.text.isNotEmpty() && passwordValue.value.text.isNotEmpty()) {
                 viewModel.onConnect(emailValue.value.text, passwordValue.value.text)
             }

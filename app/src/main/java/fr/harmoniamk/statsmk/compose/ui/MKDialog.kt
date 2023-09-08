@@ -16,16 +16,49 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import fr.harmoniamk.statsmk.R
+import fr.harmoniamk.statsmk.extension.isTrue
+
+sealed class MKDialogState(
+    val text: Any? = null,
+    val isLoading: Boolean? = null,
+    val positiveButtonText: Int? = null,
+    val positiveButtonClick: () -> Unit = { },
+    val negativeButtonText: Int = R.string.retour,
+    val negativeButtonClick: () -> Unit = { }
+) {
+    class LeaveTeam(onTeamLeft: () -> Unit, onDismiss: () -> Unit) : MKDialogState(
+        text = R.string.leave_team_confirm,
+        positiveButtonText = R.string.quitter_mon_quipe,
+        positiveButtonClick = onTeamLeft,
+        negativeButtonClick = onDismiss
+    )
+    class ChangePassword(text : Int, onDismiss: () -> Unit): MKDialogState(
+        text = text,
+        negativeButtonClick = onDismiss
+    )
+
+    class CancelWar(onWarCancelled: () -> Unit, onDismiss: () -> Unit) : MKDialogState(
+        text = R.string.delete_war_confirm,
+        positiveButtonText = R.string.supprimer_la_war,
+        positiveButtonClick = onWarCancelled,
+        negativeButtonClick = onDismiss
+    )
+
+    class Logout(onLogout: () -> Unit, onDismiss: () -> Unit) : MKDialogState(
+        text = R.string.logout_confirm,
+        positiveButtonText = R.string.se_d_connecter,
+        positiveButtonClick = onLogout,
+        negativeButtonClick = onDismiss
+    )
+
+    class Loading(loadingText: Int): MKDialogState(
+        text = loadingText,
+        isLoading = true
+    )
+}
 
 @Composable
-fun MKDialog(
-    text: Any? = null,
-    isLoading: Boolean? = null,
-    positiveButtonText: Int? = null,
-    positiveButtonClick: () -> Unit = { },
-    negativeButtonText: Int? = null,
-    negativeButtonClick: () -> Unit = { },
-) {
+fun MKDialog(state: MKDialogState) {
     Dialog(onDismissRequest = { }) {
         Column(
             Modifier
@@ -38,11 +71,13 @@ fun MKDialog(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            text?.let { MKText(text = it, modifier = Modifier.padding(vertical = 10.dp)) }
-            isLoading?.takeIf { it }?.let { CircularProgressIndicator(modifier = Modifier.padding(vertical = 10.dp)) }
+            state.text?.let { MKText(text = it, modifier = Modifier.padding(20.dp)) }
+            state.isLoading?.takeIf { it }?.let { CircularProgressIndicator(modifier = Modifier.padding(vertical = 10.dp), color = colorResource(
+                id = R.color.harmonia_dark
+            )) }
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround) {
-                positiveButtonText?.let { MKButton(text = it, onClick = positiveButtonClick)  }
-                negativeButtonText?.let { MKButton(text = it, onClick = negativeButtonClick, hasBackground = false)  }
+                state.positiveButtonText?.let { MKButton(text = it, onClick = state.positiveButtonClick)  }
+                state.takeIf { !it.isLoading.isTrue }?.let { MKButton(text = state.negativeButtonText, onClick = state.negativeButtonClick, hasBackground = false) }
             }
         }
     }
@@ -50,16 +85,6 @@ fun MKDialog(
 
 @Preview
 @Composable
-fun MKDialogPreview() {
-    MKDialog(text = "Création de la war en cours, veuillez patienter...", isLoading = true)
-}
-@Preview
-@Composable
-fun MKDialogPreviewWithOneButton() {
-    MKDialog(text = "Le mot de passe a été changé.", negativeButtonText = R.string.back)
-}
-@Preview
-@Composable
 fun MKDialogPreviewWitButtons() {
-    MKDialog(text = "Voulez-vous quitter l'équipe ?", negativeButtonText = R.string.back, positiveButtonText = R.string.confirm)
+    MKDialog(state = MKDialogState.LeaveTeam({}, {}))
 }

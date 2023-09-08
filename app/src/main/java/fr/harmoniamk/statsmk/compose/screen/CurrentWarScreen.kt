@@ -19,6 +19,7 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKBaseScreen
 import fr.harmoniamk.statsmk.compose.ui.MKBottomSheet
 import fr.harmoniamk.statsmk.compose.ui.MKButton
+import fr.harmoniamk.statsmk.compose.ui.MKDialog
 import fr.harmoniamk.statsmk.compose.ui.MKPlayerList
 import fr.harmoniamk.statsmk.compose.ui.MKScoreView
 import fr.harmoniamk.statsmk.compose.ui.MKSegmentedButtons
@@ -34,13 +35,14 @@ fun CurrentWarScreen(viewModel: CurrentWarViewModel = hiltViewModel(), onNextTra
     val players = viewModel.sharedWarPlayers.collectAsState()
     val tracks = viewModel.sharedTracks.collectAsState()
     val currentState = viewModel.sharedBottomSheetValue.collectAsState()
+    val dialogState = viewModel.sharedDialogValue.collectAsState()
     val bottomSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
 
 
     val buttons = listOf(
         Pair(R.string.remplacement, viewModel::onSubPlayer),
         Pair(R.string.p_nalit, viewModel::onPenalty),
-        Pair(R.string.annuler_le_match, {}),
+        Pair(R.string.annuler_le_match, viewModel::onCancelClick),
     )
     LaunchedEffect(Unit) {
         viewModel.sharedBottomSheetValue.collect {
@@ -50,14 +52,22 @@ fun CurrentWarScreen(viewModel: CurrentWarViewModel = hiltViewModel(), onNextTra
             }
         }
     }
+    LaunchedEffect(Unit) {
+        viewModel.sharedBackToWars.collect {
+           onBack()
+        }
+    }
     BackHandler { onBack() }
+    dialogState.value?.let { MKDialog(state = it) }
     MKBaseScreen(title = war.value?.name ?: "", subTitle = war.value?.displayedState,
         state = bottomSheetState,
         sheetContent = {
             MKBottomSheet(
                 trackIndex = null,
                 state = currentState.value,
-                onDismiss = viewModel::dismissBottomSheet
+                onDismiss = viewModel::dismissBottomSheet,
+                onEditPosition = {},
+                onEditTrack = {}
             )
         }) {
         MKSegmentedButtons(buttons = buttons)

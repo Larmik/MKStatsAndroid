@@ -1,11 +1,8 @@
-package fr.harmoniamk.statsmk.fragment.settings.manageTeams
-
+package fr.harmoniamk.statsmk.compose.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.harmoniamk.statsmk.enums.UserRole
-import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
@@ -13,46 +10,41 @@ import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.zip
 import javax.inject.Inject
 
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class EditTeamViewModel @Inject constructor(
+class EditUserViewModel @Inject constructor(
     private val authenticationRepository: AuthenticationRepositoryInterface,
     private val preferencesRepository: PreferencesRepositoryInterface,
     private val databaseRepository: DatabaseRepositoryInterface,
-    private val firebaseRepository: FirebaseRepositoryInterface): ViewModel() {
+    private val firebaseRepository: FirebaseRepositoryInterface
+): ViewModel() {
 
-    private val _sharedTeam = MutableStateFlow<Team?>(null)
-    private val _sharedDeleteVisible = MutableStateFlow(false)
     private val _sharedDismiss = MutableSharedFlow<Unit>()
 
-    val sharedTeam = _sharedTeam.asStateFlow()
     val sharedDismiss = _sharedDismiss.asSharedFlow()
 
-    fun refresh(teamId: String) {
-        databaseRepository.getTeam(teamId)
-            .zip(authenticationRepository.userRole) { team, role ->
-                _sharedTeam.value = team
-                _sharedDeleteVisible.value = role == UserRole.GOD.ordinal
-            }.launchIn(viewModelScope)
-    }
-
-    fun onTeamEdited(name: String, tag: String) {
-        _sharedTeam.value?.copy(name = name, shortName = tag)?.let { team ->
-            firebaseRepository.writeTeam(team)
+    fun onValidate(isEmail: Boolean, value: String) {
+        when (isEmail) {
+            true -> authenticationRepository.updateEmail(value)
                 .onEach {
-                    if (team.mid == preferencesRepository.currentTeam?.mid)
-                        preferencesRepository.currentTeam = team
+                    preferencesRepository.authEmail = value
                     _sharedDismiss.emit(Unit)
                 }.launchIn(viewModelScope)
+            else -> authenticationRepository.updateProfile(value, null)
+                .flatMapLatest { databaseRepository.getUser(authenticationRepository.user?.uid) }
+                .mapNotNull { it?.copy(name = value) }
+                .flatMapLatest { firebaseRepository.writeUser(it) }
+                .onEach { _sharedDismiss.emit(Unit) }
+                .launchIn(viewModelScope)
         }
     }
+
 }

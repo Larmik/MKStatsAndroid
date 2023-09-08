@@ -30,7 +30,7 @@ fun TeamListScreen(viewModel: TeamListViewModel = hiltViewModel(), onTeamClick: 
             placeHolderRes = R.string.rechercher_un_advsersaire)
         LazyColumn {
             items(teams.value.orEmpty()) {
-                MKTeamItem(team = it, onClick = onTeamClick)
+                MKTeamItem(team = it, onClick = onTeamClick, onEditClick = {})
             }
         }
     }

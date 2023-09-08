@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.BuildConfig
-import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.formatToDate
 import fr.harmoniamk.statsmk.extension.get
@@ -69,7 +68,7 @@ class WarViewModel @Inject constructor(
 
 
 
-    private val _sharedHasTeam = MutableSharedFlow<Boolean>()
+    private val _sharedHasTeam = MutableStateFlow<Boolean?>(null)
     private val _sharedCreateWar = MutableSharedFlow<Unit>()
     private val _sharedCreateTeamDialog = MutableSharedFlow<Boolean>()
     private val  _sharedShowUpdatePopup = MutableSharedFlow<Unit>()
@@ -85,7 +84,7 @@ class WarViewModel @Inject constructor(
 
 
 
-    val sharedHasTeam = _sharedHasTeam.asSharedFlow()
+    val sharedHasTeam = _sharedHasTeam.asStateFlow()
     val sharedCreateWar = _sharedCreateWar.asSharedFlow()
     val sharedCreateTeamDialog = _sharedCreateTeamDialog.asSharedFlow()
     val sharedCurrentWarClick = _sharedCurrentWarClick.asSharedFlow()
@@ -99,13 +98,11 @@ class WarViewModel @Inject constructor(
     private var scheduledWar: WarDispo? = null
     private val dispoList = mutableListOf<WarDispo>()
 
-    init {
-        authenticationRepository.userRole
-            .onEach {
-                _sharedTeam.value = preferencesRepository.currentTeam
-                _sharedHasTeam.emit(preferencesRepository.currentTeam?.mid.takeIf { it != "-1" } != null)
-            }.launchIn(viewModelScope)
+    init { refresh() }
 
+    fun refresh() {
+        _sharedTeam.value = preferencesRepository.currentTeam
+        _sharedHasTeam.value = preferencesRepository.currentTeam?.mid.takeIf { it != "-1" } != null
         firebaseRepository.getDispos()
             .onEach {
                 dispoList.clear()
@@ -127,7 +124,6 @@ class WarViewModel @Inject constructor(
                 _sharedDispoVisible.value = it
                 _sharedLastWars.value = lastWars
             }.launchIn(viewModelScope)
-
         firebaseRepository.listenToCurrentWar()
             .onEach {
                 if (it == null) {

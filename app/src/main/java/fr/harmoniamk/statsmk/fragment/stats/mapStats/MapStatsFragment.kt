@@ -110,11 +110,6 @@ class MapStatsFragment : Fragment(R.layout.fragment_map_stats) {
                     .launchIn(lifecycleScope)
             }.launchIn(lifecycleScope)
 
-            viewModel.sharedMapClick
-                .filter { findNavController().currentDestination?.id == R.id.mapStatsFragment }
-                .onEach { findNavController().navigate(MapStatsFragmentDirections.toTrackDetails(it.war.war, it.warTrack.track)) }
-                .launchIn(lifecycleScope)
-
         }
     }
 

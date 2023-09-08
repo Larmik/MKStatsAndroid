@@ -36,7 +36,9 @@ fun PlayerListScreen(teamId: String?, onWarStarted: () -> Unit) {
             items(players.value.orEmpty()) {
                 MKPlayerItem(player = it.user, isSelected = it.isSelected.isTrue, onRootClick = {
                     viewModel.selectUser(it.copy(isSelected = !it.isSelected.isTrue))
-                })
+                }) {
+
+                }
             }
         }
         MKButton(text = R.string.valider, enabled = players.value?.filter { it.isSelected.isTrue }?.size == 6, onClick = viewModel::createWar)

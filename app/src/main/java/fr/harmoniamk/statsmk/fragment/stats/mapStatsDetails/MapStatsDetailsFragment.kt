@@ -86,10 +86,6 @@ class MapStatsDetailsFragment : Fragment(R.layout.fragment_map_stats_details) {
                     updateFilterButton(binding.officialFilterButton, WarFilterType.OFFICIAL, it)
                     updateFilterButton(binding.periodFilterButton, WarFilterType.WEEK, it)
                 }.launchIn(lifecycleScope)
-            viewModel.sharedTrackClick
-                .filter { findNavController().currentDestination?.id == R.id.mapStatsDetailsFragment }
-                .onEach { findNavController().navigate(MapStatsFragmentDirections.toTrackDetails(it.war.war, it.warTrack.track)) }
-                .launchIn(lifecycleScope)
         }
     }
 

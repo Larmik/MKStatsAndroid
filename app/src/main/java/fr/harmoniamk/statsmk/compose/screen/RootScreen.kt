@@ -85,8 +85,19 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
                 TrackDetailsScreen(warId = it.arguments?.getString("id") ?: "", warTrackId = it.arguments?.getString("track_id") ?: "", onBack = { navController.popBackStack() })
             }
 
-        composable("Home/Settings/ManagePlayers") {
+        composable("Home/Settings/Team") {
             TeamSettingsScreen()
+        }
+        composable("Home/Settings/Players") {
+            PlayersSettingsScreen(onBack = { navController.popBackStack() }, canAdd = false)
+        }
+        composable("Home/Settings/Opponents") {
+            OpponentSettingsScreen()
+        }
+        composable("Home/Settings/Profile") {
+            ProfileScreen(onLogout = {
+                navController.navigate("Login")
+            })
         }
 
     }

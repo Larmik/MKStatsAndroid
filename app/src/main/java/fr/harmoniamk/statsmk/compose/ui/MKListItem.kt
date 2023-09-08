@@ -16,21 +16,27 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.enums.ListItems
 
 @Composable
-fun MKListItem(item: ListItems, onClick: (String) -> Unit) {
-    Column(Modifier.padding(horizontal = 5.dp).clickable { onClick(item.route) }) {
-        MKText(text = item.titleRes, modifier = Modifier.padding(vertical = 20.dp))
-        Spacer(
-            Modifier
-                .fillMaxWidth()
-                .height(1.dp)
-                .background(color = colorResource(id = R.color.white)
-                )
-        )
+fun MKListItem(item: ListItems, separator: Boolean = true, onNavigate: (String) -> Unit, onClick: (ListItems) -> Unit) {
+    Column(Modifier.fillMaxWidth().padding(horizontal = 5.dp).clickable {
+        when (item.route) {
+            null -> onClick(item)
+            else -> onNavigate(item.route)
+        }
+    }) {
+        MKText(text = item.titleRes, modifier = Modifier.padding(vertical = if (separator) 20.dp else 15.dp))
+        if (separator)
+            Spacer(
+                Modifier
+                    .fillMaxWidth()
+                    .height(1.dp)
+                    .background(color = colorResource(id = R.color.white)
+                    )
+            )
     }
 }
 
 @Preview
 @Composable
 fun MKListItemPreview() {
-    MKListItem(ListItems.manage_players) { }
+    MKListItem(ListItems.manage_players, onNavigate = {}) { }
 }

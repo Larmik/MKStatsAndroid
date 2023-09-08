@@ -16,7 +16,6 @@ import fr.harmoniamk.statsmk.databinding.FragmentPlayerStatsBinding
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.extension.positionColor
 import fr.harmoniamk.statsmk.fragment.stats.playerRanking.PlayerRankingItemViewModel
-import fr.harmoniamk.statsmk.model.local.MKWar
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.filter
@@ -127,10 +126,6 @@ class PlayerStatsFragment : Fragment(R.layout.fragment_player_stats) {
         viewModel.sharedTrackClick
             .filter { findNavController().currentDestination?.id == R.id.playerStatsFragment }
             .onEach { findNavController().navigate(PlayerStatsFragmentDirections.toMapStats(trackId = it.second, userId = it.first)) }
-            .launchIn(lifecycleScope)
-        viewModel.sharedWarClick
-            .filter { findNavController().currentDestination?.id == R.id.playerStatsFragment }
-            .onEach { findNavController().navigate(PlayerStatsFragmentDirections.goToWarDetails(it)) }
             .launchIn(lifecycleScope)
         viewModel.sharedGoToDetails
             .filter { findNavController().currentDestination?.id == R.id.playerStatsFragment }

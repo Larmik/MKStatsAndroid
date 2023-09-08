@@ -1,12 +1,18 @@
 package fr.harmoniamk.statsmk.compose.ui
 
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
+import fr.harmoniamk.statsmk.compose.screen.CreatePlayerScreen
+import fr.harmoniamk.statsmk.compose.screen.CreateTeamScreen
+import fr.harmoniamk.statsmk.compose.screen.EditPlayerScreen
+import fr.harmoniamk.statsmk.compose.screen.EditTeamScreen
+import fr.harmoniamk.statsmk.compose.screen.EditUserScreen
 import fr.harmoniamk.statsmk.compose.screen.PenaltyScreen
+import fr.harmoniamk.statsmk.compose.screen.PlayersSettingsScreen
 import fr.harmoniamk.statsmk.compose.screen.PositionScreen
 import fr.harmoniamk.statsmk.compose.screen.SubPlayerScreen
 import fr.harmoniamk.statsmk.compose.screen.TrackListScreen
 import fr.harmoniamk.statsmk.compose.screen.WarTrackResultScreen
-import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 
@@ -16,11 +22,24 @@ sealed class MKBottomSheetState() {
     class EditShocks() : MKBottomSheetState()
     class SubPlayer() : MKBottomSheetState()
     class Penalty() : MKBottomSheetState()
+    class CreatePlayer() : MKBottomSheetState()
+    class AddPlayer() : MKBottomSheetState()
+    class EditPlayer(val playerId: String) : MKBottomSheetState()
+    class EditUser(val emailEditing: Boolean) : MKBottomSheetState()
+    class CreateTeam(): MKBottomSheetState()
+    class EditTeam(val teamId: String) : MKBottomSheetState()
 }
 
-@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
+@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class, ExperimentalMaterialApi::class)
 @Composable
-fun MKBottomSheet(trackIndex: Int?, state: MKBottomSheetState?, onEditTrack: (Int) -> Unit = { }, onDismiss: (Int) -> Unit, onEditPosition: (Int) -> Unit = { }) {
+fun MKBottomSheet(
+    trackIndex: Int?,
+    state: MKBottomSheetState?,
+    onEditTrack: (Int) -> Unit = { },
+    onDismiss: () -> Unit,
+    onEditPosition: (Int) -> Unit = { },
+    onEditTeam: () -> Unit = { }
+) {
     when (state) {
         is MKBottomSheetState.EditTrack -> {
             trackIndex?.let {
@@ -48,17 +67,35 @@ fun MKBottomSheet(trackIndex: Int?, state: MKBottomSheetState?, onEditTrack: (In
                 WarTrackResultScreen(
                     trackIndex = it,
                     editing = true,
-                    onBack = { onDismiss(trackIndex) },
-                    backToCurrent = { onDismiss(trackIndex) },
-                    goToResume = { onDismiss(trackIndex) }
+                    onBack = onDismiss,
+                    backToCurrent = onDismiss,
+                    goToResume = { onDismiss() }
                 )
             }
         }
         is MKBottomSheetState.SubPlayer -> {
-            SubPlayerScreen(onDismiss = { onDismiss(-1) })
+            SubPlayerScreen(onDismiss = onDismiss)
         }
         is MKBottomSheetState.Penalty -> {
-            PenaltyScreen(onDismiss = { onDismiss(-1) })
+            PenaltyScreen(onDismiss = onDismiss)
+        }
+        is MKBottomSheetState.AddPlayer -> {
+            PlayersSettingsScreen(onBack = onDismiss, canAdd = true)
+        }
+        is MKBottomSheetState.EditTeam -> {
+            EditTeamScreen(teamId = state.teamId, onDismiss = onDismiss)
+        }
+        is MKBottomSheetState.EditPlayer -> {
+            EditPlayerScreen(playerId = state.playerId, onDismiss = onDismiss)
+        }
+        is MKBottomSheetState.CreatePlayer -> {
+            CreatePlayerScreen(onDismiss = onDismiss)
+        }
+        is MKBottomSheetState.EditUser -> {
+            EditUserScreen(emailEditing = state.emailEditing, onDismiss = onDismiss)
+        }
+        is MKBottomSheetState.CreateTeam -> {
+            CreateTeamScreen(onDismiss = onDismiss)
         }
         else -> {}
     }

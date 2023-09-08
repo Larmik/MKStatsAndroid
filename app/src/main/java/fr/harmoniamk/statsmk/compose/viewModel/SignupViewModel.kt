@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.R
+import fr.harmoniamk.statsmk.compose.ui.MKDialogState
 import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.withName
@@ -45,14 +46,14 @@ class SignupViewModel @Inject constructor(
 
     private val _sharedNext = MutableSharedFlow<Unit>()
     private val _sharedToast = MutableSharedFlow<String>()
-    private val _sharedLoading = MutableStateFlow<Int?>(null)
+    private val _sharedDialogValue = MutableStateFlow<MKDialogState?>(null)
 
     val sharedNext = _sharedNext.asSharedFlow()
-    val sharedLoading = _sharedLoading.asStateFlow()
+    val sharedDialogValue = _sharedDialogValue.asStateFlow()
     val sharedToast = _sharedToast.asSharedFlow()
 
     fun onSignup(email: String, password: String, name: String, fc: String) {
-        _sharedLoading.value = R.string.creating_user
+        _sharedDialogValue.value = MKDialogState.Loading(R.string.creating_user)
         val createUser = authenticationRepository.createUser(email, password).shareIn(viewModelScope, SharingStarted.Lazily)
         createUser
             .mapNotNull { (it as? AuthUserResponse.Success)?.user?.uid }
@@ -60,7 +61,7 @@ class SignupViewModel @Inject constructor(
             .flatMapLatest { authenticationRepository.updateProfile(it, "https://firebasestorage.googleapis.com/v0/b/stats-mk.appspot.com/o/mk_stats_logo.png?alt=media&token=930c6fdb-9e42-4b23-a9de-3c069d2f982b") }
             .mapNotNull { authenticationRepository.user }
             .map { fbUser ->
-                _sharedLoading.value = R.string.fetch_data
+                _sharedDialogValue.value = MKDialogState.Loading(R.string.fetch_data)
                 var finalUser: User? = null
                 databaseRepository.getUsers().firstOrNull()?.singleOrNull { user ->
                     user.name?.toLowerCase(Locale.getDefault())
@@ -119,12 +120,12 @@ class SignupViewModel @Inject constructor(
                 preferencesRepository.currentTeam = databaseRepository.getTeam(it.team.takeIf { it != "-1" }).firstOrNull()
             }
             .flatMapLatest { firebaseRepository.writeUser(it) }
-            .onEach { _sharedLoading.value = null }
+            .onEach { _sharedDialogValue.value = null }
             .bind(_sharedNext, viewModelScope)
 
         createUser
             .mapNotNull { (it as? AuthUserResponse.Error)?.message }
-            .onEach { _sharedLoading.value = null }
+            .onEach { _sharedDialogValue.value = null }
             .bind(_sharedToast, viewModelScope)
     }
 
