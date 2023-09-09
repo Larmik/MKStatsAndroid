@@ -1,4 +1,4 @@
-package fr.harmoniamk.statsmk.fragment.teamSelect
+package fr.harmoniamk.statsmk.fragment.scheduleWar
 
 import android.os.Build
 import android.view.LayoutInflater

@@ -85,14 +85,8 @@ class CurrentWarViewModel @Inject constructor(
     private val _sharedSubPlayer = MutableSharedFlow<Unit>()
     private val _sharedLoading = MutableSharedFlow<Boolean>()
 
-    val sharedQuit = _sharedQuit.asSharedFlow()
     val sharedBackToWars = _sharedBackToWars.asSharedFlow()
-    val sharedSelectTrack = _sharedSelectTrack.asSharedFlow()
     val sharedTrackClick = _sharedTrackClick.asSharedFlow()
-    val sharedPopupShowing = _sharedPopupShowing.asSharedFlow()
-    val sharedAddPenalty = _sharedAddPenalty.asSharedFlow()
-    val sharedSubPlayer = _sharedSubPlayer.asSharedFlow()
-    val sharedLoading = _sharedLoading.asSharedFlow()
 
     init {
         val currentWar = firebaseRepository.listenToCurrentWar()
@@ -104,15 +98,17 @@ class CurrentWarViewModel @Inject constructor(
             .mapNotNull { it.singleOrNull() }
 
 
-        warFlow.onEach { war ->
+        warFlow.onEach {
+            val penalties = it.war?.penalties?.withTeamName(databaseRepository)?.firstOrNull()
+            val warWithPenas = it.war?.copy(penalties = penalties).withName(databaseRepository).firstOrNull()
             val isAdmin = (authenticationRepository.userRole.firstOrNull() ?: 0) >= UserRole.ADMIN.ordinal
-            preferencesRepository.currentWar = war.war
-            _sharedCurrentWar.emit(war)
+            preferencesRepository.currentWar = warWithPenas?.war
+            _sharedCurrentWar.emit(warWithPenas)
             _sharedButtonVisible.emit(isAdmin.isTrue)
-            _sharedTracks.emit(war.war?.warTracks.orEmpty().map { MKWarTrack(it) })
+            _sharedTracks.emit(warWithPenas?.war?.warTracks.orEmpty().map { MKWarTrack(it) })
             val players = databaseRepository.getUsers().first().filter { it.currentWar == preferencesRepository.currentWar?.mid }
                 .sortedBy { it.name?.toLowerCase(Locale.ROOT) }
-            _sharedWarPlayers.takeIf { war.war?.warTracks == null }?.emit(players.map { CurrentPlayerModel(it, 0) })
+            _sharedWarPlayers.takeIf { warWithPenas?.war?.warTracks == null }?.emit(players.map { CurrentPlayerModel(it, 0) })
 
         }
             .mapNotNull { it.war?.penalties }

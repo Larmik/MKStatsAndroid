@@ -17,7 +17,6 @@ import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.extension.onTextChanged
 import fr.harmoniamk.statsmk.extension.safeSubList
 import fr.harmoniamk.statsmk.fragment.popup.PopupFragment
-import fr.harmoniamk.statsmk.fragment.teamSelect.TeamListAdapter
 import fr.harmoniamk.statsmk.model.firebase.WarDispo
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview

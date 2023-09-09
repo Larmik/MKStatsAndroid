@@ -32,13 +32,6 @@ fun Dialog?.dismiss(): Flow<Unit> = callbackFlow {
     awaitClose { }
 }
 
-@ExperimentalCoroutinesApi
-fun RadioGroup.checks(): Flow<Int> = callbackFlow {
-   this@checks.setOnCheckedChangeListener { group, checkedId ->
-       if (isActive) trySend(checkedId)
-   }
-    awaitClose {  this@checks.setOnCheckedChangeListener(null) }
-}
 
 @ExperimentalCoroutinesApi
 fun RadioButton.checks(): Flow<Unit> = callbackFlow {
@@ -48,14 +41,6 @@ fun RadioButton.checks(): Flow<Unit> = callbackFlow {
    }
     awaitClose {  this@checks.setOnCheckedChangeListener(null) }
 
-}
-
-@ExperimentalCoroutinesApi
-fun CheckBox.checks() = callbackFlow {
-    this@checks.setOnCheckedChangeListener { _, isChecked ->
-        if (isActive) trySend(isChecked)
-    }
-    awaitClose { this@checks.setOnCheckedChangeListener(null) }
 }
 
 @ExperimentalCoroutinesApi

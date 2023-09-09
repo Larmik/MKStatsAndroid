@@ -25,7 +25,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.enums.Maps
+import fr.harmoniamk.statsmk.extension.sum
+import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
+import fr.harmoniamk.statsmk.model.mock.mock
 
 @Composable
 fun MKTrackItem(modifier: Modifier = Modifier, isVertical: Boolean = false, track: MKWarTrack? = null, map: Maps? = null, onClick: (Int) -> Unit = {}, goToDetails: (String) -> Unit = {}) {
@@ -53,7 +56,12 @@ fun MKTrackItem(modifier: Modifier = Modifier, isVertical: Boolean = false, trac
                         MKText(text = finalMap.name, fontSize = 12)
                         Spacer(modifier = Modifier.height(5.dp))
                         track?.let {
-                            MKScoreView(track = it, isSmaller = true, modifier = Modifier.fillMaxWidth().background(color = colorResource(R.color.white_alphaed), shape = RoundedCornerShape(5.dp)))
+                            MKScoreView(track = it, isSmaller = true, modifier = Modifier
+                                .fillMaxWidth()
+                                .background(
+                                    color = colorResource(R.color.white_alphaed),
+                                    shape = RoundedCornerShape(5.dp)
+                                ))
                         }
                     }
                 }
@@ -72,10 +80,20 @@ fun MKTrackItem(modifier: Modifier = Modifier, isVertical: Boolean = false, trac
                                 MKText(text = stringResource(id = finalMap.label), font = R.font.montserrat_bold)
                                 MKText(text = finalMap.name, fontSize = 12)
                             }
+
+                        }
+                        track?.track?.shocks?.takeIf { it.isNotEmpty() }?.map { it.count }?.sum()?.let {
+                            Row {
+                                for (i in 0 until  it) {
+                                    Image(painter = painterResource(id = R.drawable.shock), contentDescription = null, modifier = Modifier.size(15.dp))
+                                }
+                            }
+
                         }
                         when {
                             track != null -> MKScoreView(track = track, isSmaller = true)
                             map != null ->  Image(painter = painterResource(id = map.cup.picture), contentDescription = null, modifier = Modifier.size(45.dp))
+
                         }
                     }
                 }
@@ -88,6 +106,14 @@ fun MKTrackItem(modifier: Modifier = Modifier, isVertical: Boolean = false, trac
 @Composable
 fun MKTrackItemPreviewNormal() {
     MKTrackItem(map = Maps.dHC, onClick = {}) {
+
+    }
+}
+
+@Preview
+@Composable
+fun MKTrackItemPreviewWithShock() {
+    MKTrackItem(track = MKWarTrack(NewWarTrack.mock(hasShocks = true)), onClick = {}) {
 
     }
 }

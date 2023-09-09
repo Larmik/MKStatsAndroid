@@ -19,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -85,7 +86,15 @@ fun PenaltyScreen(viewModel: AddPenaltyViewModel = hiltViewModel(), onDismiss: (
                     }
         }
         Spacer(modifier = Modifier.height(20.dp))
-        MKTextField(modifier = Modifier.width(100.dp), value = amountValue.value, onValueChange = { amountValue.value = it }, placeHolderRes = R.string.valeur)
+        MKTextField(
+            modifier = Modifier.width(100.dp),
+            value = amountValue.value,
+            placeHolderRes = R.string.valeur,
+            keyboardType = KeyboardType.Number,
+            onValueChange = {
+                amountValue.value = it
+                viewModel.onAmount(it.text)
+            })
         MKButton(text = R.string.infliger_la_p_nalit, enabled = amountValue.value.text.toIntOrNull() != null) {
             viewModel.onPenaltyAdded()
         }
