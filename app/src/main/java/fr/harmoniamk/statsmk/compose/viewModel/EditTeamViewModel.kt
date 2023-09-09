@@ -1,4 +1,4 @@
-package fr.harmoniamk.statsmk.fragment.settings.manageTeams
+package fr.harmoniamk.statsmk.compose.viewModel
 
 
 import androidx.lifecycle.ViewModel

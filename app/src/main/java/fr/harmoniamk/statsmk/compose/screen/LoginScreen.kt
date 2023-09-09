@@ -29,7 +29,12 @@ import kotlinx.coroutines.flow.filterNotNull
 
 @ExperimentalMaterialApi
 @Composable
-fun LoginScreen(viewModel: LoginViewModel = hiltViewModel(), onNext: () -> Unit, onSignup: () -> Unit, onBack: () -> Unit) {
+fun LoginScreen(
+    viewModel: LoginViewModel = hiltViewModel(),
+    onNext: () -> Unit,
+    onSignup: () -> Unit,
+    onBack: () -> Unit
+) {
 
     val emailValue = remember { mutableStateOf(TextFieldValue("")) }
     val loadingState = viewModel.sharedDialogValue.collectAsState()
@@ -54,11 +59,30 @@ fun LoginScreen(viewModel: LoginViewModel = hiltViewModel(), onNext: () -> Unit,
         MKDialog(state = it)
     }
 
-    MKBaseScreen(title = stringResource(id = R.string.connexion), verticalArrangement = Arrangement.SpaceBetween) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(horizontal = 15.dp)) {
-            MKTextField(value = emailValue.value, onValueChange = { emailValue.value = it }, placeHolderRes = R.string.entrez_votre_adresse_email, keyboardType = KeyboardType.Email)
-            MKTextField(value = passwordValue.value, onValueChange = { passwordValue.value = it }, placeHolderRes = R.string.entrez_votre_mot_de_passe, keyboardType = KeyboardType.Password)
-            MKButton(text = R.string.se_connecter, enabled = emailValue.value.text.isNotEmpty() && passwordValue.value.text.isNotEmpty()) {
+    MKBaseScreen(
+        title = stringResource(id = R.string.connexion),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(horizontal = 15.dp)
+        ) {
+            MKTextField(
+                value = emailValue.value,
+                onValueChange = { emailValue.value = it },
+                placeHolderRes = R.string.entrez_votre_adresse_email,
+                keyboardType = KeyboardType.Email
+            )
+            MKTextField(
+                value = passwordValue.value,
+                onValueChange = { passwordValue.value = it },
+                placeHolderRes = R.string.entrez_votre_mot_de_passe,
+                keyboardType = KeyboardType.Password
+            )
+            MKButton(
+                text = R.string.se_connecter,
+                enabled = emailValue.value.text.isNotEmpty() && passwordValue.value.text.isNotEmpty()
+            ) {
                 viewModel.onConnect(emailValue.value.text, passwordValue.value.text)
             }
         }

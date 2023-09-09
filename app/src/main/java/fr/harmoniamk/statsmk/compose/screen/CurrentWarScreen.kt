@@ -2,7 +2,6 @@ package fr.harmoniamk.statsmk.compose.screen
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -45,14 +44,20 @@ import kotlinx.coroutines.FlowPreview
 
 @Composable
 @OptIn(ExperimentalMaterialApi::class)
-fun CurrentWarScreen(viewModel: CurrentWarViewModel = hiltViewModel(), onNextTrack: () -> Unit, onBack: () -> Unit, onTrackClick: (String) -> Unit) {
+fun CurrentWarScreen(
+    viewModel: CurrentWarViewModel = hiltViewModel(),
+    onNextTrack: () -> Unit,
+    onBack: () -> Unit,
+    onTrackClick: (String) -> Unit
+) {
 
     val war = viewModel.sharedCurrentWar.collectAsState()
     val players = viewModel.sharedWarPlayers.collectAsState()
     val tracks = viewModel.sharedTracks.collectAsState()
     val currentState = viewModel.sharedBottomSheetValue.collectAsState()
     val dialogState = viewModel.sharedDialogValue.collectAsState()
-    val bottomSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+    val bottomSheetState =
+        rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
 
 
     val buttons = listOf(
@@ -70,7 +75,7 @@ fun CurrentWarScreen(viewModel: CurrentWarViewModel = hiltViewModel(), onNextTra
     }
     LaunchedEffect(Unit) {
         viewModel.sharedBackToWars.collect {
-           onBack()
+            onBack()
         }
     }
     BackHandler { onBack() }
@@ -87,7 +92,11 @@ fun CurrentWarScreen(viewModel: CurrentWarViewModel = hiltViewModel(), onNextTra
             )
         }) {
         MKSegmentedButtons(buttons = buttons)
-        Row(horizontalArrangement = Arrangement.SpaceEvenly, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
             MKPenaltyView(modifier = Modifier.weight(1f), penalties = war.value?.war?.penalties)
             MKScoreView(modifier = Modifier.weight(1f), war = war.value)
             MKShockView(modifier = Modifier.weight(1f), tracks = war.value?.warTracks)
@@ -100,7 +109,10 @@ fun CurrentWarScreen(viewModel: CurrentWarViewModel = hiltViewModel(), onNextTra
             MKText(text = R.string.courses_jou_es, font = R.font.montserrat_bold)
             LazyColumn(Modifier.padding(10.dp)) {
                 items(items = it) {
-                    MKTrackItem(modifier = Modifier.padding(bottom = 5.dp), track = it, goToDetails = { _ -> onTrackClick(it.track?.mid.orEmpty())})
+                    MKTrackItem(
+                        modifier = Modifier.padding(bottom = 5.dp),
+                        track = it,
+                        goToDetails = { _ -> onTrackClick(it.track?.mid.orEmpty()) })
                 }
             }
         }

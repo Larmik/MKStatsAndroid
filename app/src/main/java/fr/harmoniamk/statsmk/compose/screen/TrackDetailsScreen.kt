@@ -34,9 +34,10 @@ fun TrackDetailsScreen(warId: String, warTrackId: String, onBack: () -> Unit) {
     val buttonsVisible = viewModel.sharedButtonsVisible.collectAsState()
     val currentState = viewModel.sharedBottomSheetValue.collectAsState()
 
-    val bottomSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+    val bottomSheetState =
+        rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
     val coroutineScope = rememberCoroutineScope()
-    
+
     val buttons = listOf(
         Pair(R.string.editer_circuit, viewModel::onEditTrack),
         Pair(R.string.editer_positions, viewModel::onEditPositions),
@@ -64,14 +65,14 @@ fun TrackDetailsScreen(warId: String, warTrackId: String, onBack: () -> Unit) {
         state = bottomSheetState,
         sheetContent = {
             MKBottomSheet(
-                trackIndex =  trackIndex,
+                trackIndex = trackIndex,
                 state = currentState.value,
                 onDismiss = { trackIndex?.let { viewModel.dismissBottomSheet(it) } },
                 onEditPosition = {},
                 onEditTrack = {}
 
             )
-            },
+        },
         content = {
             currentTrack.value?.index?.let { MKTrackItem(map = Maps.values()[it]) }
             buttonsVisible.value.takeIf { it }?.let { MKSegmentedButtons(buttons = buttons) }
@@ -80,7 +81,8 @@ fun TrackDetailsScreen(warId: String, warTrackId: String, onBack: () -> Unit) {
                     MKPlayerItem(
                         position = it,
                         shockVisible = false,
-                        shockCount = shocks.value?.singleOrNull { shock -> shock.playerId == it.player?.mid }?.count ?: 0
+                        shockCount = shocks.value?.singleOrNull { shock -> shock.playerId == it.player?.mid }?.count
+                            ?: 0
                     ) {
 
                     }

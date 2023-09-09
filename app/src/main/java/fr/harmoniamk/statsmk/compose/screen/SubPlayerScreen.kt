@@ -1,20 +1,23 @@
 package fr.harmoniamk.statsmk.compose.screen
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKBaseScreen
 import fr.harmoniamk.statsmk.compose.ui.MKButton
 import fr.harmoniamk.statsmk.compose.ui.MKPlayerItem
+import fr.harmoniamk.statsmk.compose.viewModel.SubPlayerViewModel
 import fr.harmoniamk.statsmk.extension.isTrue
-import fr.harmoniamk.statsmk.fragment.subPlayer.SubPlayerViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 
@@ -37,7 +40,7 @@ fun SubPlayerScreen(viewModel: SubPlayerViewModel = hiltViewModel(), onDismiss: 
 
 
     MKBaseScreen(title = title.value) {
-        LazyColumn {
+        LazyColumn(Modifier.height(500.dp)) {
             items(currentPlayers.value) {
                 MKPlayerItem(
                     player = it.user,

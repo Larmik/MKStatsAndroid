@@ -1,8 +1,14 @@
-package fr.harmoniamk.statsmk.compose.viewModel
+package fr.harmoniamk.statsmk.compose
 
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import fr.harmoniamk.statsmk.compose.viewModel.PlayerListViewModel
+import fr.harmoniamk.statsmk.compose.viewModel.PositionViewModel
+import fr.harmoniamk.statsmk.compose.viewModel.TrackDetailsViewModel
+import fr.harmoniamk.statsmk.compose.viewModel.TrackListViewModel
+import fr.harmoniamk.statsmk.compose.viewModel.WarDetailsViewModel
+import fr.harmoniamk.statsmk.compose.viewModel.WarTrackResultViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 

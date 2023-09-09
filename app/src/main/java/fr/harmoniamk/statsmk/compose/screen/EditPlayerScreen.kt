@@ -9,20 +9,29 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKBaseScreen
 import fr.harmoniamk.statsmk.compose.ui.MKButton
 import fr.harmoniamk.statsmk.compose.ui.MKRadioGroup
 import fr.harmoniamk.statsmk.compose.ui.MKTextField
+import fr.harmoniamk.statsmk.compose.viewModel.EditPlayerViewModel
 import fr.harmoniamk.statsmk.enums.UserRole
-import fr.harmoniamk.statsmk.fragment.settings.managePlayers.EditPlayerViewModel
+import fr.harmoniamk.statsmk.repository.mock.AuthenticationRepositoryMock
+import fr.harmoniamk.statsmk.repository.mock.DatabaseRepositoryMock
+import fr.harmoniamk.statsmk.repository.mock.FirebaseRepositoryMock
+import fr.harmoniamk.statsmk.repository.mock.PreferencesRepositoryMock
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class, ExperimentalMaterialApi::class)
 @Composable
-fun EditPlayerScreen(viewModel: EditPlayerViewModel = hiltViewModel(), playerId: String, onDismiss: () -> Unit) {
+fun EditPlayerScreen(
+    viewModel: EditPlayerViewModel = hiltViewModel(),
+    playerId: String,
+    onDismiss: () -> Unit
+) {
     viewModel.refresh(playerId)
     val playerHasAccount by viewModel.sharedPlayerHasAccount.collectAsState()
     val leaveTeamVisible = viewModel.sharedLeaveTeamVisibility.collectAsState()
@@ -49,9 +58,14 @@ fun EditPlayerScreen(viewModel: EditPlayerViewModel = hiltViewModel(), playerId:
                     viewModel.onPlayerEdited(player?.name.orEmpty(), player?.role)
                 }
             }
+
             else -> {
-                MKTextField(value = nameState.value, onValueChange = { nameState.value = it }, placeHolderRes = R.string.modifier_le_nom)
-                MKButton(text = R.string.enregistrer, enabled = nameState.value.text.isNotEmpty() ) {
+                MKTextField(
+                    value = nameState.value,
+                    onValueChange = { nameState.value = it },
+                    placeHolderRes = R.string.modifier_le_nom
+                )
+                MKButton(text = R.string.enregistrer, enabled = nameState.value.text.isNotEmpty()) {
                     viewModel.onPlayerEdited(nameState.value.text, player?.role)
                 }
             }
@@ -61,6 +75,22 @@ fun EditPlayerScreen(viewModel: EditPlayerViewModel = hiltViewModel(), playerId:
             MKButton(text = R.string.retirer_ce_joueur_de_l_quipe, hasBackground = false) {
                 viewModel.onRemoveFromTeam(player)
             }
+
+    }
+}
+
+@OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
+@Preview
+@Composable
+fun EditPlayerPreview() {
+    EditPlayerScreen(
+        viewModel = EditPlayerViewModel(
+            firebaseRepository = FirebaseRepositoryMock(),
+            databaseRepository = DatabaseRepositoryMock(),
+            preferencesRepository = PreferencesRepositoryMock(),
+            authenticationRepository = AuthenticationRepositoryMock()
+        ), playerId = "12345"
+    ) {
 
     }
 }

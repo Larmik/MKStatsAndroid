@@ -39,7 +39,11 @@ fun WarDetailsScreen(id: String?, onTrackClick: (String) -> Unit) {
 
     MKBaseScreen(title = war.value?.name.orEmpty(), subTitle = war.value?.war?.createdDate) {
         Spacer(modifier = Modifier.height(10.dp))
-        Row(horizontalArrangement = Arrangement.SpaceEvenly, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
             MKPenaltyView(modifier = Modifier.weight(1f), penalties = war.value?.war?.penalties)
             MKScoreView(modifier = Modifier.weight(1f), war = war.value)
             MKShockView(modifier = Modifier.weight(1f), tracks = war.value?.warTracks)
@@ -51,16 +55,24 @@ fun WarDetailsScreen(id: String?, onTrackClick: (String) -> Unit) {
             Column(
                 Modifier
                     .weight(1f)
-                    .padding(horizontal = 10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                    .padding(horizontal = 10.dp), horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 MKText(text = R.string.meilleur_circuit, font = R.font.montserrat_bold)
-                MKTrackItem(isVertical = true, track = bestTrack, goToDetails = { onTrackClick(bestTrack?.track?.mid.orEmpty())})
+                MKTrackItem(
+                    isVertical = true,
+                    track = bestTrack,
+                    goToDetails = { onTrackClick(bestTrack?.track?.mid.orEmpty()) })
             }
             Column(
                 Modifier
                     .weight(1f)
-                    .padding(horizontal = 10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                    .padding(horizontal = 10.dp), horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 MKText(text = R.string.pire_circuit, font = R.font.montserrat_bold)
-                MKTrackItem(isVertical = true, track = worstTrack, goToDetails = { onTrackClick(worstTrack?.track?.mid.orEmpty())})
+                MKTrackItem(
+                    isVertical = true,
+                    track = worstTrack,
+                    goToDetails = { onTrackClick(worstTrack?.track?.mid.orEmpty()) })
             }
         }
         Spacer(modifier = Modifier.height(10.dp))
@@ -68,7 +80,10 @@ fun WarDetailsScreen(id: String?, onTrackClick: (String) -> Unit) {
             MKText(text = R.string.tous_les_circuits, font = R.font.montserrat_bold)
             LazyColumn(Modifier.padding(10.dp)) {
                 items(items = it) {
-                    MKTrackItem(modifier = Modifier.padding(bottom = 5.dp), track = it, goToDetails = { _ -> onTrackClick(it.track?.mid.orEmpty())})
+                    MKTrackItem(
+                        modifier = Modifier.padding(bottom = 5.dp),
+                        track = it,
+                        goToDetails = { _ -> onTrackClick(it.track?.mid.orEmpty()) })
                 }
             }
         }

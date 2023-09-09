@@ -24,7 +24,12 @@ import kotlinx.coroutines.FlowPreview
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class, ExperimentalMaterialApi::class)
 @Composable
-fun WarScreen(viewModel: WarViewModel = hiltViewModel(), onCurrentWarClick: () -> Unit, onWarClick: (String?) -> Unit, onCreateWarClick: () -> Unit) {
+fun WarScreen(
+    viewModel: WarViewModel = hiltViewModel(),
+    onCurrentWarClick: () -> Unit,
+    onWarClick: (String?) -> Unit,
+    onCreateWarClick: () -> Unit
+) {
 
     val currentWar = viewModel.sharedCurrentWar.collectAsState()
     val lastWars = viewModel.sharedLastWars.collectAsState()
@@ -49,7 +54,11 @@ fun WarScreen(viewModel: WarViewModel = hiltViewModel(), onCurrentWarClick: () -
             MKCurrentWarCell(it, onCurrentWarClick)
         }
         lastWars.value?.let {
-            MKText(text = R.string.derni_res_wars, modifier = Modifier.padding(top = 10.dp), font = R.font.montserrat_bold)
+            MKText(
+                text = R.string.derni_res_wars,
+                modifier = Modifier.padding(top = 10.dp),
+                font = R.font.montserrat_bold
+            )
             LazyColumn(Modifier.padding(10.dp)) {
                 items(items = it) {
                     MKWarItem(war = it, onClick = onWarClick)

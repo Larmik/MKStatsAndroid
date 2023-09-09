@@ -1,4 +1,4 @@
-package fr.harmoniamk.statsmk.compose.screen
+package fr.harmoniamk.statsmk.compose.screen.root
 
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable

@@ -17,18 +17,25 @@ import kotlinx.coroutines.FlowPreview
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class, ExperimentalMaterialApi::class)
 @Composable
-fun EditUserScreen(viewModel: EditUserViewModel = hiltViewModel(), emailEditing: Boolean, onDismiss: () -> Unit) {
+fun EditUserScreen(
+    viewModel: EditUserViewModel = hiltViewModel(),
+    emailEditing: Boolean,
+    onDismiss: () -> Unit
+) {
     val fieldState = remember { mutableStateOf(TextFieldValue("")) }
     val title = when (emailEditing) {
         true -> R.string.edit_mail
         else -> R.string.edit_nickname
     }
 
-
     BackHandler { onDismiss() }
     MKBaseScreen(title = title) {
-        MKTextField(value = fieldState.value, onValueChange = { fieldState.value = it }, placeHolderRes = R.string.modifier_le_nom)
-        MKButton(text = R.string.enregistrer, enabled = fieldState.value.text.isNotEmpty() ) {
+        MKTextField(
+            value = fieldState.value,
+            onValueChange = { fieldState.value = it },
+            placeHolderRes = R.string.modifier_le_nom
+        )
+        MKButton(text = R.string.enregistrer, enabled = fieldState.value.text.isNotEmpty()) {
             viewModel.onValidate(emailEditing, fieldState.value.text)
             onDismiss()
         }

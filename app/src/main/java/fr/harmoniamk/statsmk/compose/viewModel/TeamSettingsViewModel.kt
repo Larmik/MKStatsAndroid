@@ -5,11 +5,11 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import fr.harmoniamk.statsmk.compose.ManagePlayersItemViewModel
 import fr.harmoniamk.statsmk.compose.ui.MKBottomSheetState
 import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.withName
-import fr.harmoniamk.statsmk.fragment.settings.managePlayers.ManagePlayersItemViewModel
 import fr.harmoniamk.statsmk.model.firebase.PictureResponse
 import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.model.firebase.UploadPictureResponse

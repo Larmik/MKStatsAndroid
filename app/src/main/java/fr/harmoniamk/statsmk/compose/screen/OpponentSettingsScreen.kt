@@ -21,17 +21,18 @@ import fr.harmoniamk.statsmk.compose.ui.MKBottomSheet
 import fr.harmoniamk.statsmk.compose.ui.MKSegmentedButtons
 import fr.harmoniamk.statsmk.compose.ui.MKTeamItem
 import fr.harmoniamk.statsmk.compose.ui.MKTextField
-import fr.harmoniamk.statsmk.fragment.settings.manageTeams.ManageTeamsViewModel
+import fr.harmoniamk.statsmk.compose.viewModel.OpponentSettingsViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class, ExperimentalMaterialApi::class)
 @Composable
-fun OpponentSettingsScreen(viewModel: ManageTeamsViewModel = hiltViewModel()) {
+fun OpponentSettingsScreen(viewModel: OpponentSettingsViewModel = hiltViewModel()) {
     val searchState = remember { mutableStateOf(TextFieldValue("")) }
     val teams = viewModel.sharedTeams.collectAsState()
 
-    val bottomSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+    val bottomSheetState =
+        rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
     val currentState = viewModel.sharedBottomSheetValue.collectAsState(null)
 
     LaunchedEffect(Unit) {
@@ -52,10 +53,16 @@ fun OpponentSettingsScreen(viewModel: ManageTeamsViewModel = hiltViewModel()) {
             onEditTrack = {}
         )
     }) {
-        MKSegmentedButtons(buttons = listOf(
-            Pair(R.string.ajouter_une_quipe, viewModel::onAddTeam)
-        ))
-        MKTextField(value = searchState.value, onValueChange = { searchState.value = it }, placeHolderRes = R.string.rechercher_un_advsersaire)
+        MKSegmentedButtons(
+            buttons = listOf(
+                Pair(R.string.ajouter_une_quipe, viewModel::onAddTeam)
+            )
+        )
+        MKTextField(
+            value = searchState.value,
+            onValueChange = { searchState.value = it },
+            placeHolderRes = R.string.rechercher_un_advsersaire
+        )
         LazyColumn(Modifier.padding(10.dp)) {
             items(items = teams.value) {
                 MKTeamItem(

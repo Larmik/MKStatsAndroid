@@ -1,4 +1,4 @@
-package fr.harmoniamk.statsmk.fragment.currentWar
+package fr.harmoniamk.statsmk.compose
 
 import fr.harmoniamk.statsmk.model.firebase.User
 

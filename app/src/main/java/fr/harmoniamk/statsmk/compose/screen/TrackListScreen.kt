@@ -21,7 +21,12 @@ import kotlinx.coroutines.flow.filterNotNull
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun TrackListScreen(editing: Boolean = false, trackIndex: Int = -1, onTrackClick: (Int) -> Unit, onDismiss: () -> Unit = {}) {
+fun TrackListScreen(
+    editing: Boolean = false,
+    trackIndex: Int = -1,
+    onTrackClick: (Int) -> Unit,
+    onDismiss: () -> Unit = {}
+) {
     val viewModel = viewModel(editing)
     val tracks = viewModel.sharedSearchedItems.collectAsState()
     val searchState = remember { mutableStateOf(TextFieldValue("")) }
@@ -40,20 +45,25 @@ fun TrackListScreen(editing: Boolean = false, trackIndex: Int = -1, onTrackClick
                 searchState.value = it
                 viewModel.search(it.text)
             },
-            placeHolderRes = R.string.rechercher_un_nom_ou_une_abr_viation)
+            placeHolderRes = R.string.rechercher_un_nom_ou_une_abr_viation
+        )
         LazyColumn {
             items(tracks.value) {
-                MKTrackItem(modifier = Modifier.padding(bottom = 5.dp), map = it, onClick = { index ->
-                    when (editing) {
-                        true -> viewModel.editTrack(
-                            war = war.value?.war,
-                            indexInList = trackIndex,
-                            newTrackIndex = index
-                        )
-                        else -> viewModel.addTrack(index)
-                    }
-                    onTrackClick(index)
-                })
+                MKTrackItem(
+                    modifier = Modifier.padding(bottom = 5.dp),
+                    map = it,
+                    onClick = { index ->
+                        when (editing) {
+                            true -> viewModel.editTrack(
+                                war = war.value?.war,
+                                indexInList = trackIndex,
+                                newTrackIndex = index
+                            )
+
+                            else -> viewModel.addTrack(index)
+                        }
+                        onTrackClick(index)
+                    })
             }
         }
     }

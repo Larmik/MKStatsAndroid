@@ -1,11 +1,9 @@
-package fr.harmoniamk.statsmk.fragment.addPenalty
+package fr.harmoniamk.statsmk.compose.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.withName
-import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.firebase.Penalty
 import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
@@ -20,7 +18,7 @@ import javax.inject.Inject
 @OptIn(FlowPreview::class)
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class AddPenaltyViewModel @Inject constructor(
+class PenaltyViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepositoryInterface,
     private val firebaseRepository: FirebaseRepositoryInterface,
     private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {

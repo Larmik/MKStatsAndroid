@@ -1,4 +1,4 @@
-package fr.harmoniamk.statsmk.fragment.subPlayer
+package fr.harmoniamk.statsmk.compose.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

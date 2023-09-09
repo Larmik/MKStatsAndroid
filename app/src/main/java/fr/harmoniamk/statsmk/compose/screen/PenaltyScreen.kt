@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
@@ -28,12 +27,12 @@ import fr.harmoniamk.statsmk.compose.ui.MKBaseScreen
 import fr.harmoniamk.statsmk.compose.ui.MKButton
 import fr.harmoniamk.statsmk.compose.ui.MKText
 import fr.harmoniamk.statsmk.compose.ui.MKTextField
-import fr.harmoniamk.statsmk.fragment.addPenalty.AddPenaltyViewModel
+import fr.harmoniamk.statsmk.compose.viewModel.PenaltyViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @OptIn(ExperimentalCoroutinesApi::class, ExperimentalMaterialApi::class)
 @Composable
-fun PenaltyScreen(viewModel: AddPenaltyViewModel = hiltViewModel(), onDismiss: () -> Unit) {
+fun PenaltyScreen(viewModel: PenaltyViewModel = hiltViewModel(), onDismiss: () -> Unit) {
     val amountValue = remember { mutableStateOf(TextFieldValue("")) }
 
     val team1 = viewModel.sharedTeam1.collectAsState()
@@ -59,11 +58,11 @@ fun PenaltyScreen(viewModel: AddPenaltyViewModel = hiltViewModel(), onDismiss: (
                         )
                     )
                     .clickable { viewModel.onSelectTeam(team1.value?.mid) }) {
-                        MKText(
-                            text = team1.value?.name.orEmpty(),
-                            fontSize = 16
-                        )
-                    }
+                MKText(
+                    text = team1.value?.name.orEmpty(),
+                    fontSize = 16
+                )
+            }
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
@@ -79,11 +78,11 @@ fun PenaltyScreen(viewModel: AddPenaltyViewModel = hiltViewModel(), onDismiss: (
                         )
                     )
                     .clickable { viewModel.onSelectTeam(team2.value?.mid) }) {
-                        MKText(
-                            text = team2.value?.name.orEmpty(),
-                            fontSize = 16
-                        )
-                    }
+                MKText(
+                    text = team2.value?.name.orEmpty(),
+                    fontSize = 16
+                )
+            }
         }
         Spacer(modifier = Modifier.height(20.dp))
         MKTextField(
@@ -95,7 +94,10 @@ fun PenaltyScreen(viewModel: AddPenaltyViewModel = hiltViewModel(), onDismiss: (
                 amountValue.value = it
                 viewModel.onAmount(it.text)
             })
-        MKButton(text = R.string.infliger_la_p_nalit, enabled = amountValue.value.text.toIntOrNull() != null) {
+        MKButton(
+            text = R.string.infliger_la_p_nalit,
+            enabled = amountValue.value.text.toIntOrNull() != null
+        ) {
             viewModel.onPenaltyAdded()
         }
     }

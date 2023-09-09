@@ -9,14 +9,14 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.EntryPointAccessors
-import dagger.hilt.android.lifecycle.HiltViewModel
+import fr.harmoniamk.statsmk.compose.CurrentPlayerModel
+import fr.harmoniamk.statsmk.compose.ViewModelFactoryProvider
 import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.extension.positionToPoints
 import fr.harmoniamk.statsmk.extension.sum
 import fr.harmoniamk.statsmk.extension.withTeamName
-import fr.harmoniamk.statsmk.fragment.currentWar.CurrentPlayerModel
 import fr.harmoniamk.statsmk.model.firebase.Penalty
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.MKWar

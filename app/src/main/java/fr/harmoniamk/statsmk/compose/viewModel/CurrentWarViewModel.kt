@@ -3,6 +3,7 @@ package fr.harmoniamk.statsmk.compose.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import fr.harmoniamk.statsmk.compose.CurrentPlayerModel
 import fr.harmoniamk.statsmk.compose.ui.MKBottomSheetState
 import fr.harmoniamk.statsmk.compose.ui.MKDialogState
 import fr.harmoniamk.statsmk.enums.UserRole
@@ -12,7 +13,6 @@ import fr.harmoniamk.statsmk.extension.positionToPoints
 import fr.harmoniamk.statsmk.extension.sum
 import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.extension.withTeamName
-import fr.harmoniamk.statsmk.fragment.currentWar.CurrentPlayerModel
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.firebase.Penalty
 import fr.harmoniamk.statsmk.model.firebase.User

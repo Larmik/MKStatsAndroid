@@ -5,7 +5,7 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.ExperimentalMaterialApi
 import dagger.hilt.android.AndroidEntryPoint
-import fr.harmoniamk.statsmk.compose.screen.RootScreen
+import fr.harmoniamk.statsmk.compose.screen.root.RootScreen
 
 
 @OptIn(ExperimentalMaterialApi::class)

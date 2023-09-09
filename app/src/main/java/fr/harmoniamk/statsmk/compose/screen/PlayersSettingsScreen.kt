@@ -30,7 +30,11 @@ import kotlinx.coroutines.FlowPreview
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class, ExperimentalMaterialApi::class)
 @Composable
 
-fun PlayersSettingsScreen(viewModel: PlayerSettingsViewModel = hiltViewModel(), canAdd: Boolean = false, onBack: () -> Unit) {
+fun PlayersSettingsScreen(
+    viewModel: PlayerSettingsViewModel = hiltViewModel(),
+    canAdd: Boolean = false,
+    onBack: () -> Unit
+) {
 
     BackHandler {
         onBack()
@@ -39,7 +43,8 @@ fun PlayersSettingsScreen(viewModel: PlayerSettingsViewModel = hiltViewModel(), 
     val searchState = remember { mutableStateOf(TextFieldValue("")) }
     val currentState = viewModel.sharedBottomSheetValue.collectAsState(null)
     val players by viewModel.sharedPlayers.collectAsState()
-    val bottomSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+    val bottomSheetState =
+        rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
 
     LaunchedEffect(Unit) {
         viewModel.sharedBottomSheetValue.collect {
@@ -65,16 +70,22 @@ fun PlayersSettingsScreen(viewModel: PlayerSettingsViewModel = hiltViewModel(), 
             onEditTrack = {}
         )
     }) {
-        MKSegmentedButtons(buttons = listOf(
-            Pair(R.string.cr_er_un_joueur, viewModel::onCreatePlayer)
-        ))
-        MKTextField(value = searchState.value, onValueChange = { searchState.value = it }, placeHolderRes = R.string.rechercher_un_joueur)
+        MKSegmentedButtons(
+            buttons = listOf(
+                Pair(R.string.cr_er_un_joueur, viewModel::onCreatePlayer)
+            )
+        )
+        MKTextField(
+            value = searchState.value,
+            onValueChange = { searchState.value = it },
+            placeHolderRes = R.string.rechercher_un_joueur
+        )
         LazyColumn(Modifier.padding(10.dp)) {
             items(items = players) {
                 MKPlayerItem(
                     player = it.player,
                     editVisible = it.canEdit && !canAdd,
-                    onRootClick ={ viewModel.takeIf { canAdd }?.onAddToTeam(it.player) },
+                    onRootClick = { viewModel.takeIf { canAdd }?.onAddToTeam(it.player) },
                     onEditClick = viewModel::onEditPlayer
                 )
             }

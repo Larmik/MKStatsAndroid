@@ -1,4 +1,4 @@
-package fr.harmoniamk.statsmk.fragment.settings.manageTeams
+package fr.harmoniamk.statsmk.compose.viewModel
 
 import android.view.View
 import androidx.lifecycle.ViewModel
@@ -19,7 +19,7 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class ManageTeamsViewModel @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val firebaseRepository: FirebaseRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface, private val networkRepository: NetworkRepositoryInterface): ViewModel() {
+class OpponentSettingsViewModel @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val firebaseRepository: FirebaseRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface, private val networkRepository: NetworkRepositoryInterface): ViewModel() {
 
     private val _sharedTeams = MutableStateFlow<List<Team>>(listOf())
     private val _sharedAddTeam = MutableSharedFlow<Unit>()

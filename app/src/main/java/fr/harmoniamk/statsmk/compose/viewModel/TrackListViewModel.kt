@@ -10,6 +10,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.EntryPointAccessors
 import fr.harmoniamk.statsmk.application.MainApplication
+import fr.harmoniamk.statsmk.compose.ViewModelFactoryProvider
 import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.model.firebase.NewWar

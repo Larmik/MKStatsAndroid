@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.extension.safeSubList
-import fr.harmoniamk.statsmk.fragment.currentWar.CurrentPlayerModel
+import fr.harmoniamk.statsmk.compose.CurrentPlayerModel
 import fr.harmoniamk.statsmk.model.firebase.User
 
 @Composable

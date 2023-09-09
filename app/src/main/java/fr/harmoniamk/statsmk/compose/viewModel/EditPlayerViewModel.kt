@@ -1,4 +1,4 @@
-package fr.harmoniamk.statsmk.fragment.settings.managePlayers
+package fr.harmoniamk.statsmk.compose.viewModel
 
 import android.view.View
 import androidx.lifecycle.ViewModel

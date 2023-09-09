@@ -113,7 +113,7 @@ fun MKTrackItemPreviewNormal() {
 @Preview
 @Composable
 fun MKTrackItemPreviewWithShock() {
-    MKTrackItem(track = MKWarTrack(NewWarTrack.mock(hasShocks = true)), onClick = {}) {
+    MKTrackItem(track = MKWarTrack(NewWarTrack.mock()), onClick = {}) {
 
     }
 }

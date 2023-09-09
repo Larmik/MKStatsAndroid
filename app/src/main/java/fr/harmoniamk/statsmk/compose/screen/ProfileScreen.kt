@@ -33,9 +33,9 @@ import fr.harmoniamk.statsmk.compose.ui.MKBottomSheet
 import fr.harmoniamk.statsmk.compose.ui.MKDialog
 import fr.harmoniamk.statsmk.compose.ui.MKListItem
 import fr.harmoniamk.statsmk.compose.ui.MKText
+import fr.harmoniamk.statsmk.compose.viewModel.ProfileViewModel
 import fr.harmoniamk.statsmk.enums.ListItemType
 import fr.harmoniamk.statsmk.enums.ListItems
-import fr.harmoniamk.statsmk.fragment.settings.profile.ProfileViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 
@@ -53,8 +53,12 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), onLogout: () ->
     val currentState = viewModel.sharedBottomSheetValue.collectAsState(null)
     val dialogState = viewModel.sharedDialogValue.collectAsState(null)
 
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia(), onResult = viewModel::onPictureEdited)
-    val bottomSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+    val launcher = rememberLauncherForActivityResult(
+        ActivityResultContracts.PickVisualMedia(),
+        onResult = viewModel::onPictureEdited
+    )
+    val bottomSheetState =
+        rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
 
     LaunchedEffect(Unit) {
         viewModel.sharedDisconnect.collect {
@@ -87,43 +91,80 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), onLogout: () ->
                 onEditTrack = {}
             )
         }) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.verticalScroll(rememberScrollState())) {
-             AsyncImage(model = picture.value, contentDescription = null, modifier = Modifier
-                 .size(170.dp)
-                 .padding(top = 15.dp))
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.verticalScroll(rememberScrollState())
+        ) {
+            AsyncImage(
+                model = picture.value, contentDescription = null, modifier = Modifier
+                    .size(170.dp)
+                    .padding(top = 15.dp)
+            )
 
 
             localPicture.value?.let {
-                Image(painter = painterResource(id = it), contentDescription = null, modifier = Modifier
-                    .size(170.dp)
-                    .padding(top = 15.dp))
+                Image(
+                    painter = painterResource(id = it),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(170.dp)
+                        .padding(top = 15.dp)
+                )
             }
-            MKText(text = name.value.orEmpty(), fontSize = 26, font = R.font.montserrat_bold, modifier = Modifier.padding(vertical = 15.dp))
-            Spacer(modifier = Modifier
-                .fillMaxWidth(0.95f)
-                .height(1.dp)
-                .background(color = colorResource(id = R.color.white)))
-            Column(modifier = Modifier
-                .fillMaxWidth()
-                .padding(15.dp), horizontalAlignment = Alignment.Start) {
+            MKText(
+                text = name.value.orEmpty(),
+                fontSize = 26,
+                font = R.font.montserrat_bold,
+                modifier = Modifier.padding(vertical = 15.dp)
+            )
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth(0.95f)
+                    .height(1.dp)
+                    .background(color = colorResource(id = R.color.white))
+            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(15.dp), horizontalAlignment = Alignment.Start
+            ) {
                 team.value?.let {
                     MKText(text = stringResource(id = R.string.equipe_actuelle))
-                    MKText(text = team.value.orEmpty(), fontSize = 16, font = R.font.montserrat_bold, modifier = Modifier.padding(bottom = 15.dp))
+                    MKText(
+                        text = team.value.orEmpty(),
+                        fontSize = 16,
+                        font = R.font.montserrat_bold,
+                        modifier = Modifier.padding(bottom = 15.dp)
+                    )
                     role.value?.let {
                         MKText(text = stringResource(id = R.string.r_le))
-                        MKText(text = it, fontSize = 16, font = R.font.montserrat_bold, modifier = Modifier.padding(bottom = 15.dp))
+                        MKText(
+                            text = it,
+                            fontSize = 16,
+                            font = R.font.montserrat_bold,
+                            modifier = Modifier.padding(bottom = 15.dp)
+                        )
 
                     }
                 }
                 MKText(text = stringResource(id = R.string.adresse_mail))
-                MKText(text = email.value.orEmpty(), fontSize = 16, font = R.font.montserrat_bold, modifier = Modifier.padding(bottom = 15.dp))
-                MKText(text = stringResource(id = R.string.code_ami))
-                MKText(text = fc.value.orEmpty(), fontSize = 16, font = R.font.montserrat_bold)
+                MKText(
+                    text = email.value.orEmpty(),
+                    fontSize = 16,
+                    font = R.font.montserrat_bold,
+                    modifier = Modifier.padding(bottom = 15.dp)
+                )
+                fc.value?.let {
+                    MKText(text = stringResource(id = R.string.code_ami))
+                    MKText(text = fc.value.orEmpty(), fontSize = 16, font = R.font.montserrat_bold)
+                }
             }
-            Spacer(modifier = Modifier
-                .fillMaxWidth(0.95f)
-                .height(1.dp)
-                .background(color = colorResource(id = R.color.white)))
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth(0.95f)
+                    .height(1.dp)
+                    .background(color = colorResource(id = R.color.white))
+            )
             Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.Start) {
                 ListItems.values().filter {
                     it.type == ListItemType.profile &&
@@ -141,6 +182,7 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), onLogout: () ->
                                     )
                                 )
                             }
+
                             ListItems.leave_team -> viewModel.onLeaveTeam()
                             ListItems.logout -> viewModel.onLogout()
                             else -> {}

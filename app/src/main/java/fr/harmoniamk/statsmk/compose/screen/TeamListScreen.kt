@@ -27,7 +27,8 @@ fun TeamListScreen(viewModel: TeamListViewModel = hiltViewModel(), onTeamClick: 
                 searchState.value = it
                 viewModel.search(it.text)
             },
-            placeHolderRes = R.string.rechercher_un_advsersaire)
+            placeHolderRes = R.string.rechercher_un_advsersaire
+        )
         LazyColumn {
             items(teams.value.orEmpty()) {
                 MKTeamItem(team = it, onClick = onTeamClick, onEditClick = {})

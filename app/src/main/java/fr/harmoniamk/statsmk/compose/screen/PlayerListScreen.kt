@@ -31,7 +31,10 @@ fun PlayerListScreen(teamId: String?, onWarStarted: () -> Unit) {
         }
     }
     MKBaseScreen(title = R.string.cr_er_une_war, subTitle = warName.value) {
-        MKText(text = R.string.s_lectionnez_les_six_joueurs_de_votre_quipe, modifier = Modifier.padding(vertical = 10.dp))
+        MKText(
+            text = R.string.s_lectionnez_les_six_joueurs_de_votre_quipe,
+            modifier = Modifier.padding(vertical = 10.dp)
+        )
         LazyColumn(Modifier.weight(1f)) {
             items(players.value.orEmpty()) {
                 MKPlayerItem(player = it.user, isSelected = it.isSelected.isTrue, onRootClick = {
@@ -41,7 +44,11 @@ fun PlayerListScreen(teamId: String?, onWarStarted: () -> Unit) {
                 }
             }
         }
-        MKButton(text = R.string.valider, enabled = players.value?.filter { it.isSelected.isTrue }?.size == 6, onClick = viewModel::createWar)
+        MKButton(
+            text = R.string.valider,
+            enabled = players.value?.filter { it.isSelected.isTrue }?.size == 6,
+            onClick = viewModel::createWar
+        )
     }
 
 }

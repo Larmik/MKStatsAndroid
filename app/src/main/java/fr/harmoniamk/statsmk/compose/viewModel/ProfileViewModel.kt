@@ -1,4 +1,4 @@
-package fr.harmoniamk.statsmk.fragment.settings.profile
+package fr.harmoniamk.statsmk.compose.viewModel
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel
@@ -80,7 +80,7 @@ class ProfileViewModel @Inject constructor(
                 _sharedPictureLoaded.value = authenticationRepository.user?.photoUrl?.toString()
                 _sharedEmail.value = authenticationRepository.user?.email
                 _sharedLocalPicture.takeIf { !networkRepository.networkAvailable }?.value = R.drawable.mk_stats_logo_picture
-                _sharedFriendCode.value = it.friendCode
+                _sharedFriendCode.value = it.friendCode.takeIf { code -> code != "null" }
                 it.role?.let { role -> _sharedRole.value = UserRole.values().getOrNull(role)?.labelId }
             }.launchIn(viewModelScope)
     }

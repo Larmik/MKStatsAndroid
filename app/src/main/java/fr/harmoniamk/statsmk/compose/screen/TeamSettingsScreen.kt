@@ -40,9 +40,13 @@ fun TeamSettingsScreen(viewModel: TeamSettingsViewModel = hiltViewModel()) {
     val players by viewModel.sharedPlayers.collectAsState()
 
     val currentState = viewModel.sharedBottomSheetValue.collectAsState(null)
-    val bottomSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+    val bottomSheetState =
+        rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
 
-    val launcher = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia(), onResult = viewModel::onPictureEdited)
+    val launcher = rememberLauncherForActivityResult(
+        ActivityResultContracts.PickVisualMedia(),
+        onResult = viewModel::onPictureEdited
+    )
 
     val buttons = listOf(
         Pair(R.string.modifier_l_quipe, viewModel::onEditTeam),
@@ -78,11 +82,23 @@ fun TeamSettingsScreen(viewModel: TeamSettingsViewModel = hiltViewModel()) {
         }
     ) {
         MKSegmentedButtons(buttons = buttons)
-        AsyncImage(model = picture.value, contentDescription = null, modifier = Modifier.size(200.dp))
-        MKTextField(value = searchState.value, onValueChange = { searchState.value = it }, placeHolderRes = R.string.rechercher_un_joueur)
+        AsyncImage(
+            model = picture.value,
+            contentDescription = null,
+            modifier = Modifier.size(200.dp)
+        )
+        MKTextField(
+            value = searchState.value,
+            onValueChange = { searchState.value = it },
+            placeHolderRes = R.string.rechercher_un_joueur
+        )
         LazyColumn(Modifier.padding(10.dp)) {
             items(items = players) {
-                MKPlayerItem(player = it.player, editVisible = it.canEdit, onEditClick = viewModel::onEditPlayer)
+                MKPlayerItem(
+                    player = it.player,
+                    editVisible = it.canEdit,
+                    onEditClick = viewModel::onEditPlayer
+                )
             }
         }
     }

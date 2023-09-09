@@ -29,7 +29,12 @@ import kotlinx.coroutines.flow.filterNotNull
 
 @ExperimentalMaterialApi
 @Composable
-fun SignupScreen(viewModel: SignupViewModel = hiltViewModel(), onLogin: () -> Unit, onBack: () -> Unit, onNext: () -> Unit) {
+fun SignupScreen(
+    viewModel: SignupViewModel = hiltViewModel(),
+    onLogin: () -> Unit,
+    onBack: () -> Unit,
+    onNext: () -> Unit
+) {
     val emailValue = remember { mutableStateOf(TextFieldValue("")) }
     val passwordValue = remember { mutableStateOf(TextFieldValue("")) }
     val nicknameValue = remember { mutableStateOf(TextFieldValue("")) }
@@ -55,13 +60,41 @@ fun SignupScreen(viewModel: SignupViewModel = hiltViewModel(), onLogin: () -> Un
     loadingState.value?.let {
         MKDialog(state = it)
     }
-    MKBaseScreen(title = stringResource(id = R.string.bienvenue), verticalArrangement = Arrangement.SpaceBetween) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(horizontal = 15.dp)) {
-            MKTextField(value = nicknameValue.value, onValueChange = { nicknameValue.value = it }, placeHolderRes = R.string.entrez_votre_pseudo)
-            MKTextField(value = emailValue.value, onValueChange = { emailValue.value = it }, placeHolderRes = R.string.entrez_votre_adresse_email, keyboardType = KeyboardType.Email)
-            MKTextField(value = passwordValue.value, onValueChange = { passwordValue.value = it }, placeHolderRes = R.string.entrez_votre_mot_de_passe, keyboardType = KeyboardType.Password)
-            MKTextField(value = fcValue.value, onValueChange = { fcValue.value = it }, placeHolderRes = R.string.code_ami, keyboardType = KeyboardType.Number)
-            MKButton(text = R.string.suivant, enabled = emailValue.value.text.isNotEmpty() && passwordValue.value.text.isNotEmpty() && nicknameValue.value.text.isNotEmpty()) {
+    MKBaseScreen(
+        title = stringResource(id = R.string.bienvenue),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(horizontal = 15.dp)
+        ) {
+            MKTextField(
+                value = nicknameValue.value,
+                onValueChange = { nicknameValue.value = it },
+                placeHolderRes = R.string.entrez_votre_pseudo
+            )
+            MKTextField(
+                value = emailValue.value,
+                onValueChange = { emailValue.value = it },
+                placeHolderRes = R.string.entrez_votre_adresse_email,
+                keyboardType = KeyboardType.Email
+            )
+            MKTextField(
+                value = passwordValue.value,
+                onValueChange = { passwordValue.value = it },
+                placeHolderRes = R.string.entrez_votre_mot_de_passe,
+                keyboardType = KeyboardType.Password
+            )
+            MKTextField(
+                value = fcValue.value,
+                onValueChange = { fcValue.value = it },
+                placeHolderRes = R.string.code_ami,
+                keyboardType = KeyboardType.Number
+            )
+            MKButton(
+                text = R.string.suivant,
+                enabled = emailValue.value.text.isNotEmpty() && passwordValue.value.text.isNotEmpty() && nicknameValue.value.text.isNotEmpty()
+            ) {
                 viewModel.onSignup(
                     emailValue.value.text,
                     passwordValue.value.text,
