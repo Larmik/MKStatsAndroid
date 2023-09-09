@@ -25,6 +25,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
@@ -73,7 +74,10 @@ fun MKTextField(
         readOnly = false,
         textStyle = TextStyle(color = textColor, fontFamily = FontFamily(Font(R.font.montserrat_regular)), fontSize = TextUnit(14f, TextUnitType.Sp)),
         cursorBrush = SolidColor(colors.cursorColor(false).value),
-        visualTransformation = VisualTransformation.None,
+        visualTransformation = when (keyboardType) {
+            KeyboardType.Password -> PasswordVisualTransformation()
+            else -> VisualTransformation.None
+        },
         keyboardOptions = KeyboardOptions(keyboardType = keyboardType),
         keyboardActions =  keyboardActions,
         interactionSource = interactionSource,

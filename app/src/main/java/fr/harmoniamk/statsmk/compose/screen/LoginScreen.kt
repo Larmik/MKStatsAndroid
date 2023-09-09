@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -21,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKBaseScreen
+import fr.harmoniamk.statsmk.compose.ui.MKBottomSheet
 import fr.harmoniamk.statsmk.compose.ui.MKButton
 import fr.harmoniamk.statsmk.compose.ui.MKDialog
 import fr.harmoniamk.statsmk.compose.ui.MKTextField
@@ -41,6 +44,10 @@ fun LoginScreen(
     val passwordValue = remember { mutableStateOf(TextFieldValue("")) }
     val context = LocalContext.current
 
+    val currentState = viewModel.sharedBottomSheetValue.collectAsState()
+    val bottomSheetState =
+        rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+
     LaunchedEffect(Unit) {
         viewModel.sharedNext.filterNotNull().collect {
             onNext()
@@ -48,8 +55,11 @@ fun LoginScreen(
     }
 
     LaunchedEffect(Unit) {
-        viewModel.sharedToast.filterNotNull().collect {
-            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+        viewModel.sharedBottomSheetValue.collect {
+            when (it) {
+                null -> bottomSheetState.hide()
+                else -> bottomSheetState.show()
+            }
         }
     }
 
@@ -61,7 +71,17 @@ fun LoginScreen(
 
     MKBaseScreen(
         title = stringResource(id = R.string.connexion),
-        verticalArrangement = Arrangement.SpaceBetween
+        verticalArrangement = Arrangement.SpaceBetween,
+        state = bottomSheetState,
+        sheetContent = {
+            MKBottomSheet(
+                trackIndex = null,
+                state = currentState.value,
+                onDismiss = viewModel::dismissBottomSheet,
+                onEditPosition = {},
+                onEditTrack = {}
+            )
+        }
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -87,7 +107,7 @@ fun LoginScreen(
             }
         }
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-            MKButton(text = R.string.mot_de_passe_oubli, hasBackground = false) {}
+            MKButton(text = R.string.mot_de_passe_oubli, hasBackground = false, onClick = viewModel::onForgotPassword)
             MKButton(text = R.string.nouveau_sur_l_appli, hasBackground = false, onClick = onSignup)
         }
     }

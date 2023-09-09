@@ -10,6 +10,7 @@ import fr.harmoniamk.statsmk.compose.screen.EditUserScreen
 import fr.harmoniamk.statsmk.compose.screen.PenaltyScreen
 import fr.harmoniamk.statsmk.compose.screen.PlayersSettingsScreen
 import fr.harmoniamk.statsmk.compose.screen.PositionScreen
+import fr.harmoniamk.statsmk.compose.screen.ResetPasswordScreen
 import fr.harmoniamk.statsmk.compose.screen.SubPlayerScreen
 import fr.harmoniamk.statsmk.compose.screen.TrackListScreen
 import fr.harmoniamk.statsmk.compose.screen.WarTrackResultScreen
@@ -28,6 +29,7 @@ sealed class MKBottomSheetState() {
     class EditUser(val emailEditing: Boolean) : MKBottomSheetState()
     class CreateTeam(): MKBottomSheetState()
     class EditTeam(val teamId: String) : MKBottomSheetState()
+    class ResetPassword() : MKBottomSheetState()
 }
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class, ExperimentalMaterialApi::class)
@@ -96,6 +98,9 @@ fun MKBottomSheet(
         }
         is MKBottomSheetState.CreateTeam -> {
             CreateTeamScreen(onDismiss = onDismiss)
+        }
+        is MKBottomSheetState.ResetPassword -> {
+            ResetPasswordScreen(onDismiss = onDismiss)
         }
         else -> {}
     }

@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -32,7 +33,8 @@ sealed class MKDialogState(
         positiveButtonClick = onTeamLeft,
         negativeButtonClick = onDismiss
     )
-    class ChangePassword(text : Int, onDismiss: () -> Unit): MKDialogState(
+
+    class ChangePassword(text: Any, onDismiss: () -> Unit) : MKDialogState(
         text = text,
         negativeButtonClick = onDismiss
     )
@@ -51,7 +53,7 @@ sealed class MKDialogState(
         negativeButtonClick = onDismiss
     )
 
-    class Loading(loadingText: Int): MKDialogState(
+    class Loading(loadingText: Int) : MKDialogState(
         text = loadingText,
         isLoading = true
     )
@@ -71,13 +73,36 @@ fun MKDialog(state: MKDialogState) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            state.text?.let { MKText(text = it, modifier = Modifier.padding(20.dp)) }
-            state.isLoading?.takeIf { it }?.let { CircularProgressIndicator(modifier = Modifier.padding(vertical = 10.dp), color = colorResource(
-                id = R.color.harmonia_dark
-            )) }
+            state.text?.let {
+                MKText(
+                    text = when (it) {
+                        is String -> it
+                        is Int -> stringResource(id = it)
+                        else -> it.toString()
+                    }, modifier = Modifier.padding(20.dp)
+                )
+            }
+            state.isLoading?.takeIf { it }?.let {
+                CircularProgressIndicator(
+                    modifier = Modifier.padding(vertical = 10.dp), color = colorResource(
+                        id = R.color.harmonia_dark
+                    )
+                )
+            }
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround) {
-                state.positiveButtonText?.let { MKButton(text = it, onClick = state.positiveButtonClick)  }
-                state.takeIf { !it.isLoading.isTrue }?.let { MKButton(text = state.negativeButtonText, onClick = state.negativeButtonClick, hasBackground = false) }
+                state.positiveButtonText?.let {
+                    MKButton(
+                        text = it,
+                        onClick = state.positiveButtonClick
+                    )
+                }
+                state.takeIf { !it.isLoading.isTrue }?.let {
+                    MKButton(
+                        text = state.negativeButtonText,
+                        onClick = state.negativeButtonClick,
+                        hasBackground = false
+                    )
+                }
             }
         }
     }

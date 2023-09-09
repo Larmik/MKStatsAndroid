@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.R
+import fr.harmoniamk.statsmk.compose.ui.MKBottomSheetState
 import fr.harmoniamk.statsmk.compose.ui.MKDialogState
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.withName
@@ -42,10 +43,12 @@ class LoginViewModel @Inject constructor(
     private val _sharedNext = MutableStateFlow<Unit?>(null)
     private val _sharedToast = MutableSharedFlow<String>()
     private val _sharedDialogValue = MutableStateFlow<MKDialogState?>(null)
+    private val _sharedBottomSheetValue = MutableStateFlow<MKBottomSheetState?>(null)
 
     val sharedNext = _sharedNext.asSharedFlow()
     val sharedToast = _sharedToast.asSharedFlow()
     val sharedDialogValue = _sharedDialogValue.asStateFlow()
+    val sharedBottomSheetValue = _sharedBottomSheetValue.asStateFlow()
 
 
     fun onConnect(email: String, password: String) {
@@ -85,6 +88,14 @@ class LoginViewModel @Inject constructor(
             .mapNotNull { (it as? AuthUserResponse.Error)?.message }
             .onEach { _sharedDialogValue.value = null }
             .bind(_sharedToast, viewModelScope)
+    }
+
+    fun onForgotPassword() {
+        _sharedBottomSheetValue.value = MKBottomSheetState.ResetPassword()
+    }
+
+    fun dismissBottomSheet() {
+        _sharedBottomSheetValue.value = null
     }
 
 
