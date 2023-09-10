@@ -44,9 +44,9 @@ fun WarDetailsScreen(id: String?, onTrackClick: (String) -> Unit) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
-            MKPenaltyView(modifier = Modifier.weight(1f), penalties = war.value?.war?.penalties)
-            MKScoreView(modifier = Modifier.weight(1f), war = war.value)
-            MKShockView(modifier = Modifier.weight(1f), tracks = war.value?.warTracks)
+            MKPenaltyView(modifier = Modifier.weight(0.8f), penalties = war.value?.war?.penalties)
+            MKScoreView(modifier = Modifier.weight(1.2f), war = war.value)
+            MKShockView(modifier = Modifier.weight(0.8f), tracks = war.value?.warTracks)
         }
         players.value?.let {
             MKPlayerList(players = it)

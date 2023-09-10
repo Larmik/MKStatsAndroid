@@ -48,12 +48,14 @@ fun CurrentWarScreen(
     viewModel: CurrentWarViewModel = hiltViewModel(),
     onNextTrack: () -> Unit,
     onBack: () -> Unit,
-    onTrackClick: (String) -> Unit
+    onTrackClick: (String) -> Unit,
+    onRedirectToResume: (String) -> Unit
 ) {
 
     val war = viewModel.sharedCurrentWar.collectAsState()
     val players = viewModel.sharedWarPlayers.collectAsState()
     val tracks = viewModel.sharedTracks.collectAsState()
+    val buttonVisible = viewModel.sharedButtonVisible.collectAsState()
     val currentState = viewModel.sharedBottomSheetValue.collectAsState()
     val dialogState = viewModel.sharedDialogValue.collectAsState()
     val bottomSheetState =
@@ -78,6 +80,11 @@ fun CurrentWarScreen(
             onBack()
         }
     }
+    LaunchedEffect(Unit) {
+        viewModel.sharedGoToWarResume.collect {
+            onRedirectToResume(it)
+        }
+    }
     BackHandler { onBack() }
     dialogState.value?.let { MKDialog(state = it) }
     MKBaseScreen(title = war.value?.name ?: "", subTitle = war.value?.displayedState,
@@ -91,21 +98,30 @@ fun CurrentWarScreen(
                 onEditTrack = {}
             )
         }) {
-        MKSegmentedButtons(buttons = buttons)
+        if (buttonVisible.value)
+            MKSegmentedButtons(buttons = buttons)
+        else
+            Spacer(Modifier.height(20.dp))
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
-            MKPenaltyView(modifier = Modifier.weight(1f), penalties = war.value?.war?.penalties)
-            MKScoreView(modifier = Modifier.weight(1f), war = war.value)
-            MKShockView(modifier = Modifier.weight(1f), tracks = war.value?.warTracks)
+            MKPenaltyView(modifier = Modifier.weight(0.8f), penalties = war.value?.war?.penalties)
+            MKScoreView(modifier = Modifier.weight(1.2f), war = war.value)
+            MKShockView(modifier = Modifier.weight(0.8f), tracks = war.value?.warTracks)
         }
         players.value?.let { MKPlayerList(players = it) }
-
-        MKButton(text = R.string.prochaine_course, onClick = onNextTrack)
+        if (buttonVisible.value)
+            MKButton(text = when (war.value?.warTracks.orEmpty().size) {
+                12 -> R.string.validate_war
+                else -> R.string.prochaine_course
+            }, onClick = when (war.value?.warTracks.orEmpty().size) {
+                12 -> viewModel::onValidateWar
+                else -> onNextTrack
+            })
         Spacer(modifier = Modifier.height(10.dp))
-        tracks.value?.let {
+        tracks.value?.takeIf { it.isNotEmpty() }?.let {
             MKText(text = R.string.courses_jou_es, font = R.font.montserrat_bold)
             LazyColumn(Modifier.padding(10.dp)) {
                 items(items = it) {
@@ -135,6 +151,7 @@ fun CurrentWarScreenPreview() {
         ),
         onNextTrack = {},
         onBack = {},
-        onTrackClick = {}
+        onTrackClick = {},
+        onRedirectToResume = {}
     )
 }

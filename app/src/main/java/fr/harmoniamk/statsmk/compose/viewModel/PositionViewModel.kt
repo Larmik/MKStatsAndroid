@@ -149,7 +149,10 @@ class PositionViewModel @AssistedInject constructor(
                 currentUser = currentUsers.getOrNull(positions.size)
                 _sharedPlayerLabel.value = currentUser?.name
             }
-            else -> viewModelScope.launch { _sharedQuit.emit(Unit) }
+            else -> viewModelScope.launch {
+                preferencesRepository.currentWarTrack = null
+                _sharedQuit.emit(Unit)
+            }
         }
     }
 
@@ -165,10 +168,9 @@ class PositionViewModel @AssistedInject constructor(
             ?.withName(databaseRepository)
             ?.onEach {
                 _sharedWar.value = it
-                it.warTracks?.let { list ->
                     val trackIndexInWarTracks = when (editing) {
                         true -> index + 1
-                        else -> list.size + 1
+                        else -> it.warTracks.orEmpty().size + 1
                     }
                     _sharedTrackNumber.value = when (trackIndexInWarTracks) {
                         12 -> R.string.track_12
@@ -184,9 +186,7 @@ class PositionViewModel @AssistedInject constructor(
                         2 -> R.string.track_2
                         else -> R.string.track_1
                     }
-                }
-            }
-            ?.flatMapLatest {  databaseRepository.getUsers() }
+            }?.flatMapLatest { databaseRepository.getUsers() }
             ?.onEach {
                 currentUsers = it.filter { user ->
                     user.currentWar == _sharedWar.value?.war?.mid

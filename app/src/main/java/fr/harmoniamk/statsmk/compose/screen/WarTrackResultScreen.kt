@@ -16,7 +16,6 @@ import fr.harmoniamk.statsmk.compose.ui.MKScoreView
 import fr.harmoniamk.statsmk.compose.ui.MKTrackItem
 import fr.harmoniamk.statsmk.compose.viewModel.WarTrackResultViewModel
 import fr.harmoniamk.statsmk.compose.viewModel.WarTrackResultViewModel.Companion.viewModel
-import kotlinx.coroutines.flow.filterNotNull
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -24,8 +23,7 @@ fun WarTrackResultScreen(
     trackIndex: Int = -1,
     editing: Boolean = false,
     onBack: () -> Unit,
-    backToCurrent: () -> Unit,
-    goToResume: (String) -> Unit
+    backToCurrent: () -> Unit
 ) {
 
     val viewModel: WarTrackResultViewModel =
@@ -40,17 +38,13 @@ fun WarTrackResultScreen(
 
 
     BackHandler {
+        viewModel.onBack()
         onBack()
     }
 
     LaunchedEffect(Unit) {
         viewModel.sharedBackToCurrent.collect {
             backToCurrent()
-        }
-    }
-    LaunchedEffect(Unit) {
-        viewModel.sharedGoToWarResume.filterNotNull().collect {
-            goToResume(it)
         }
     }
 

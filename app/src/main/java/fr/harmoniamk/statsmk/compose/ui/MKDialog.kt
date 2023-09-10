@@ -45,6 +45,12 @@ sealed class MKDialogState(
         positiveButtonClick = onWarCancelled,
         negativeButtonClick = onDismiss
     )
+    class ValidateWar(onValidateWar: () -> Unit, onDismiss: () -> Unit): MKDialogState(
+        text = "Une fois la war validée, vous ne pourrez plus la modifier.",
+        positiveButtonText = R.string.valider,
+        positiveButtonClick = onValidateWar,
+        negativeButtonClick = onDismiss
+    )
 
     class Logout(onLogout: () -> Unit, onDismiss: () -> Unit) : MKDialogState(
         text = R.string.logout_confirm,

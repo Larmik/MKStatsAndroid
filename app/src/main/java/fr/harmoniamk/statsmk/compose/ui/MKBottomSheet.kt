@@ -1,12 +1,12 @@
 package fr.harmoniamk.statsmk.compose.ui
 
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import fr.harmoniamk.statsmk.compose.screen.CreatePlayerScreen
 import fr.harmoniamk.statsmk.compose.screen.CreateTeamScreen
 import fr.harmoniamk.statsmk.compose.screen.EditPlayerScreen
 import fr.harmoniamk.statsmk.compose.screen.EditTeamScreen
 import fr.harmoniamk.statsmk.compose.screen.EditUserScreen
+import fr.harmoniamk.statsmk.compose.screen.FilterSortScreen
 import fr.harmoniamk.statsmk.compose.screen.PenaltyScreen
 import fr.harmoniamk.statsmk.compose.screen.PlayersSettingsScreen
 import fr.harmoniamk.statsmk.compose.screen.PositionScreen
@@ -14,25 +14,28 @@ import fr.harmoniamk.statsmk.compose.screen.ResetPasswordScreen
 import fr.harmoniamk.statsmk.compose.screen.SubPlayerScreen
 import fr.harmoniamk.statsmk.compose.screen.TrackListScreen
 import fr.harmoniamk.statsmk.compose.screen.WarTrackResultScreen
+import fr.harmoniamk.statsmk.compose.viewModel.Filter
+import fr.harmoniamk.statsmk.compose.viewModel.Sort
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 
-sealed class MKBottomSheetState() {
-    class EditTrack() : MKBottomSheetState()
-    class EditPositions() : MKBottomSheetState()
-    class EditShocks() : MKBottomSheetState()
-    class SubPlayer() : MKBottomSheetState()
-    class Penalty() : MKBottomSheetState()
-    class CreatePlayer() : MKBottomSheetState()
-    class AddPlayer() : MKBottomSheetState()
+sealed class MKBottomSheetState {
+    class EditTrack : MKBottomSheetState()
+    class EditPositions : MKBottomSheetState()
+    class EditShocks : MKBottomSheetState()
+    class SubPlayer : MKBottomSheetState()
+    class Penalty : MKBottomSheetState()
+    class CreatePlayer : MKBottomSheetState()
+    class AddPlayer : MKBottomSheetState()
     class EditPlayer(val playerId: String) : MKBottomSheetState()
     class EditUser(val emailEditing: Boolean) : MKBottomSheetState()
-    class CreateTeam(): MKBottomSheetState()
+    class CreateTeam: MKBottomSheetState()
     class EditTeam(val teamId: String) : MKBottomSheetState()
-    class ResetPassword() : MKBottomSheetState()
+    class ResetPassword : MKBottomSheetState()
+    class FilterSort(val sort: Sort, val filter: Filter): MKBottomSheetState()
 }
 
-@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class, ExperimentalMaterialApi::class)
+@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @Composable
 fun MKBottomSheet(
     trackIndex: Int?,
@@ -70,8 +73,7 @@ fun MKBottomSheet(
                     trackIndex = it,
                     editing = true,
                     onBack = onDismiss,
-                    backToCurrent = onDismiss,
-                    goToResume = { onDismiss() }
+                    backToCurrent = onDismiss
                 )
             }
         }
@@ -101,6 +103,9 @@ fun MKBottomSheet(
         }
         is MKBottomSheetState.ResetPassword -> {
             ResetPasswordScreen(onDismiss = onDismiss)
+        }
+        is MKBottomSheetState.FilterSort -> {
+            FilterSortScreen(sort = state.sort, filter = state.filter, onDismiss = onDismiss)
         }
         else -> {}
     }

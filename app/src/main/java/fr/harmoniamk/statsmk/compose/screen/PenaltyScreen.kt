@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,6 +41,12 @@ fun PenaltyScreen(viewModel: PenaltyViewModel = hiltViewModel(), onDismiss: () -
     val team1Selected = viewModel.sharedTeam1Selected.collectAsState()
 
     BackHandler { onDismiss() }
+
+    LaunchedEffect(Unit) {
+        viewModel.sharedDismiss.collect {
+            onDismiss()
+        }
+    }
 
     MKBaseScreen(title = R.string.p_nalit) {
         Row(Modifier.fillMaxWidth()) {

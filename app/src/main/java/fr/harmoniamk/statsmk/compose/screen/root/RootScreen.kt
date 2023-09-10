@@ -57,7 +57,14 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
             CurrentWarScreen(
                 onNextTrack = { navController.navigate("Home/War/Current/AddTrack") },
                 onBack = { navController.popBackStack("Home", inclusive = false) },
-                onTrackClick = { navController.navigate("Home/War/Current/TrackDetails/$it") })
+                onTrackClick = { navController.navigate("Home/War/Current/TrackDetails/$it") },
+                onRedirectToResume = {  navController.navigate(route = "Home/War/$it") {
+                        popUpTo("Home/War/Current") {
+                            inclusive = true
+                        }
+                    }
+                }
+            )
         }
         composable(
             route = "Home/War/{id}",
@@ -103,12 +110,6 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
                         inclusive = true
                     )
                 },
-                goToResume = {
-                    navController.popBackStack(
-                        route = "Home/War/$it",
-                        inclusive = true
-                    )
-                }
             )
         }
         composable(route = "Home/War/AddWar") {

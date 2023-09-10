@@ -170,6 +170,10 @@ class ProfileViewModel @Inject constructor(
         )
     }
 
+    fun onTestFilter() {
+        _sharedBottomSheetValue.value = MKBottomSheetState.FilterSort(Sort.TrackSort(), Filter.WarFilter())
+    }
+
     fun onPictureEdited(pictureUri: Uri?) {
         pictureUri?.let { uri ->
             var url: String? = null
