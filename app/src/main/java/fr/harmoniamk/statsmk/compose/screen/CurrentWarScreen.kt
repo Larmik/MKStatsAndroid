@@ -128,6 +128,7 @@ fun CurrentWarScreen(
                     MKTrackItem(
                         modifier = Modifier.padding(bottom = 5.dp),
                         track = it,
+                        isIndiv = false,
                         goToDetails = { _ -> onTrackClick(it.track?.mid.orEmpty()) })
                 }
             }

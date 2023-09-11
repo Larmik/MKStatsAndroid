@@ -96,9 +96,7 @@ fun HomeScreen(
                 )
             }
             composable(route = "Home/Stats") {
-                StatsScreen {
-
-                }
+                StatsMenuScreen(onItemClick = onSettingsItemClick)
             }
             composable(route = "Home/Settings") {
                 SettingsScreen(onItemClick = onSettingsItemClick)

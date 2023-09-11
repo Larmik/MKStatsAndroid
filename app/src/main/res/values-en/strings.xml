@@ -246,7 +246,6 @@
     <string name="defeat_placeholder">%s losses</string>
     <string name="map_played_placeholder">%s times played</string>
     <string name="track_played_placeholder">%s times played</string>
-    <string name="winrate_placeholder">Winrate: %s</string>
     <string name="hour_placeholder">%s:00</string>
     <string name="track_count_placeholder">Race %s/12</string>
     <string name="select_pos_placeholder">Select the position of %s</string>

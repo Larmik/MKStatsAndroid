@@ -1,12 +1,15 @@
 package fr.harmoniamk.statsmk.model.local
 
 import android.os.Parcelable
+import fr.harmoniamk.statsmk.compose.RankingItemViewModel
 import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.extension.*
 import fr.harmoniamk.statsmk.model.firebase.Team
 import kotlinx.android.parcel.Parcelize
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+
+interface MKStats
 
 @Parcelize
 data class Stats(
@@ -17,7 +20,7 @@ data class Stats(
     val warScores: List<WarScore>,
     val maps: List<TrackStats>,
     val averageForMaps: List<TrackStats>,
-): Parcelable {
+): Parcelable, MKStats {
      val highestScore: WarScore? = warScores.maxByOrNull { it.score }
      val lowestScore: WarScore? = warScores.minByOrNull { it.score }
      val bestMap: TrackStats? = averageForMaps.filter { it.totalPlayed >= 2 }.maxByOrNull { it.teamScore ?: 0 }
@@ -33,6 +36,8 @@ data class Stats(
      val averagePlayerMapPoints: Int = averagePlayerPosition.pointsToPosition()
      val mapsWon = "${maps.filter { (it.teamScore ?: 0) > 41 }.size} / ${maps.size}"
      val shockCount = maps.map { it.shockCount }.sum()
+    var highestPlayerScore: Pair<Int, String?>? = null
+    var lowestPlayerScore: Pair<Int, String?>? = null
  }
 
 @Parcelize
@@ -45,6 +50,7 @@ class WarScore(
 
 @Parcelize
 data class TrackStats(
+    override val stats: Stats? = null,
     val map: Maps? = null,
     val trackIndex: Int? = null,
     val teamScore: Int? = null,
@@ -52,7 +58,7 @@ data class TrackStats(
     val totalPlayed: Int = 0,
     val winRate: Int? = null,
     val shockCount: Int? = null
-): Parcelable
+): Parcelable, RankingItemViewModel
 
 @Parcelize
 class TeamStats(val team: Team?, val totalPlayed: Int?): Parcelable {
@@ -82,7 +88,7 @@ class MapStats(
     val list: List<MapDetails>,
     private val isIndiv: Boolean,
     val userId: String? = null
-) {
+) : MKStats {
     private val playerScoreList = list
         .filter { pair -> pair.war.war?.warTracks?.any { MKWarTrack(it).hasPlayer(userId) }.isTrue }
         .mapNotNull { it.warTrack.track?.warPositions }

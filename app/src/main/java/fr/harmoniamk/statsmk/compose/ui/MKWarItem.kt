@@ -26,41 +26,44 @@ import fr.harmoniamk.statsmk.model.mock.mock
 
 @Composable
 fun MKWarItem(war: MKWar, isForStats: Boolean = false, onClick: (String?) -> Unit) {
-    val pin =  when (war.displayedDiff.first()) {
-        '+' -> R.drawable.checked
-        '0' -> R.drawable.circle_grey
-        else -> R.drawable.close
+
+    val bgColor = when (isForStats) {
+        true -> R.color.transparent
+        else -> R.color.white_alphaed
     }
-    Card(backgroundColor = colorResource(id = R.color.white_alphaed), modifier = Modifier.padding(bottom = 5.dp).clickable { onClick(war.war?.mid) }, elevation = 0.dp) {
+    Card(backgroundColor = colorResource(id = bgColor), modifier = Modifier.padding(bottom = 5.dp).clickable { onClick(war.war?.mid) }, elevation = 0.dp) {
         when (isForStats) {
             true -> Column(Modifier.padding(10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                Row(horizontalArrangement = Arrangement.Center) {
-                    Image(painter = painterResource(id = pin), contentDescription = null, modifier = Modifier.size(15.dp))
-                    Spacer(modifier = Modifier.padding(horizontal = 10.dp))
-                    war.name?.let { MKText(text = it, fontSize = 18, font = R.font.montserrat_bold) }
-                }
+                war.name?.let { MKText(text = it,  font = R.font.montserrat_bold) }
                 war.war?.createdDate?.let { MKText(text = it, modifier = Modifier.padding(bottom = 10.dp)) }
-                MKScoreView(war = war)
+                MKScoreView(war = war, isSmaller = true, colored = true)
             }
-            else -> Row(modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                Image(painter = painterResource(id = pin), contentDescription = null, modifier = Modifier.size(15.dp))
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    war.name?.let { MKText(text = it, fontSize = 16, font = R.font.montserrat_bold) }
-                    war.war?.createdDate?.let { MKText(text = it) }
+            else -> {
+                val pin =  when (war.displayedDiff.first()) {
+                    '+' -> R.drawable.checked
+                    '0' -> R.drawable.circle_grey
+                    else -> R.drawable.close
                 }
-                Row {
-                    Column {
-                        MKText(text = stringResource(id = R.string.score), fontSize = 12)
-                        MKText(text = stringResource(id = R.string.diff), fontSize = 12)
-                        MKText(text = stringResource(id = R.string.maps), fontSize = 12)
+                Row(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                    Image(painter = painterResource(id = pin), contentDescription = null, modifier = Modifier.size(15.dp))
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        war.name?.let { MKText(text = it, fontSize = 16, font = R.font.montserrat_bold) }
+                        war.war?.createdDate?.let { MKText(text = it) }
                     }
-                    Spacer(modifier = Modifier.width(5.dp))
-                    Column {
-                        MKText(text = war.displayedScore, font = R.font.montserrat_bold, fontSize = 12)
-                        MKText(text = war.displayedDiff, font = R.font.montserrat_bold, fontSize = 12)
-                        MKText(text = war.mapsWon, font = R.font.montserrat_bold, fontSize = 12)
+                    Row {
+                        Column {
+                            MKText(text = stringResource(id = R.string.score), fontSize = 12)
+                            MKText(text = stringResource(id = R.string.diff), fontSize = 12)
+                            MKText(text = stringResource(id = R.string.maps), fontSize = 12)
+                        }
+                        Spacer(modifier = Modifier.width(5.dp))
+                        Column {
+                            MKText(text = war.displayedScore, font = R.font.montserrat_bold, fontSize = 12)
+                            MKText(text = war.displayedDiff, font = R.font.montserrat_bold, fontSize = 12)
+                            MKText(text = war.mapsWon, font = R.font.montserrat_bold, fontSize = 12)
+                        }
                     }
                 }
             }

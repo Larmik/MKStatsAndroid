@@ -192,13 +192,13 @@
     <string name="shocks_rapport_s">Shocks rapportés</string>
     <string name="pire_score">Pire score</string>
     <string name="meilleur_score">Meilleur score</string>
-    <string name="equipe_la_plus_jou_e">Equipe la plus jouée</string>
-    <string name="la_plus_gagn_e">La plus gagnée</string>
-    <string name="la_plus_perdue">La plus perdue</string>
+    <string name="equipe_la_plus_jou_e">Le plus joué</string>
+    <string name="la_plus_gagn_e">Le plus gagné</string>
+    <string name="la_plus_perdue">Le plus perdu</string>
     <string name="plus_large_victoire">Plus large victoire</string>
     <string name="plus_lourde_d_faite">Plus lourde défaite</string>
     <string name="aucune">Aucune</string>
-    <string name="circuit_le_plus_jou">Circuit le plus joué</string>
+    <string name="circuit_le_plus_jou">Le plus joué</string>
     <string name="meilleur_circuit">Meilleur circuit</string>
     <string name="pire_circuit">Pire circuit</string>
     <string name="mon_quipe">Mon équipe</string>
@@ -286,7 +286,7 @@
     <string name="defeat_placeholder">%s défaites</string>
     <string name="map_played_placeholder">Joué %s fois</string>
     <string name="track_played_placeholder">Jouée %s fois</string>
-    <string name="winrate_placeholder">Winrate : %s </string>
+    <string name="winrate_placeholder" translatable="false">%s %</string>
     <string name="minus_placeholder" translatable="false">-%s</string>
     <string name="hour_placeholder">%sh</string>
     <string name="select_pos_placeholder">Sélectionnez la position de %s</string>

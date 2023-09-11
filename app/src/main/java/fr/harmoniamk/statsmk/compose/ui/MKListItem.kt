@@ -13,10 +13,10 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import fr.harmoniamk.statsmk.R
-import fr.harmoniamk.statsmk.enums.ListItems
+import fr.harmoniamk.statsmk.enums.MenuItems
 
 @Composable
-fun MKListItem(item: ListItems, separator: Boolean = true, onNavigate: (String) -> Unit, onClick: (ListItems) -> Unit) {
+fun MKListItem(item: MenuItems, separator: Boolean = true, onNavigate: (String) -> Unit, onClick: (MenuItems) -> Unit) {
     Column(Modifier.fillMaxWidth().padding(horizontal = 5.dp).clickable {
         when (item.route) {
             null -> onClick(item)
@@ -38,5 +38,5 @@ fun MKListItem(item: ListItems, separator: Boolean = true, onNavigate: (String) 
 @Preview
 @Composable
 fun MKListItemPreview() {
-    MKListItem(ListItems.manage_players, onNavigate = {}) { }
+    MKListItem(MenuItems.ManagePlayers(), onNavigate = {}) { }
 }

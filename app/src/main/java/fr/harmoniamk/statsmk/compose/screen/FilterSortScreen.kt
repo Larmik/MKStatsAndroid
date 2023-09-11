@@ -25,11 +25,12 @@ import fr.harmoniamk.statsmk.compose.ui.MKText
 import fr.harmoniamk.statsmk.compose.viewModel.Filter
 import fr.harmoniamk.statsmk.compose.viewModel.FilterSortViewModel
 import fr.harmoniamk.statsmk.compose.viewModel.Sort
+import fr.harmoniamk.statsmk.enums.SortType
 import fr.harmoniamk.statsmk.extension.isTrue
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun FilterSortScreen(viewModel: FilterSortViewModel = hiltViewModel(), sort: Sort, filter: Filter, onDismiss: () -> Unit) {
+fun FilterSortScreen(viewModel: FilterSortViewModel = hiltViewModel(), sort: Sort, filter: Filter, onDismiss: () -> Unit, onSorted: (SortType) -> Unit) {
 
     val sortState = viewModel.sortState.collectAsState()
     val filterState = viewModel.filterState.collectAsState()
@@ -63,7 +64,10 @@ fun FilterSortScreen(viewModel: FilterSortViewModel = hiltViewModel(), sort: Sor
                         modifier = Modifier
                             .weight(1f)
                             .height(40.dp)
-                            .clickable { viewModel.setSortType(it) },
+                            .clickable {
+                                viewModel.setSortType(it)
+                                onSorted(it)
+                           },
                         elevation = 0.dp,
                         backgroundColor = colorResource(id = bgColor)
                     ) {

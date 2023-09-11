@@ -1,12 +1,13 @@
 package fr.harmoniamk.statsmk.fragment.stats.opponentRanking
 
 import android.os.Parcelable
+import fr.harmoniamk.statsmk.compose.RankingItemViewModel
 import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.model.local.Stats
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class OpponentRankingItemViewModel(val team: Team?, val stats: Stats, val userId: String? = null, val isIndiv: Boolean = false) : Parcelable {
+data class OpponentRankingItemViewModel(val team: Team?, override val stats: Stats, val userId: String? = null, val isIndiv: Boolean = false) : Parcelable, RankingItemViewModel {
 
 
     val teamName: String?

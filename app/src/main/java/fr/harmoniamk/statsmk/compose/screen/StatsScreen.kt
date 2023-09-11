@@ -1,0 +1,59 @@
+package fr.harmoniamk.statsmk.compose.screen
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import fr.harmoniamk.statsmk.compose.ui.MKBaseScreen
+import fr.harmoniamk.statsmk.compose.ui.MKTrackItem
+import fr.harmoniamk.statsmk.compose.ui.stats.MKMapsStatsView
+import fr.harmoniamk.statsmk.compose.ui.stats.MKPlayerScoreStatsView
+import fr.harmoniamk.statsmk.compose.ui.stats.MKTeamScoreStatView
+import fr.harmoniamk.statsmk.compose.ui.stats.MKTeamStatsView
+import fr.harmoniamk.statsmk.compose.ui.stats.MKWarDetailsStatsView
+import fr.harmoniamk.statsmk.compose.ui.stats.MKWarStatsView
+import fr.harmoniamk.statsmk.compose.viewModel.StatsType
+import fr.harmoniamk.statsmk.compose.viewModel.StatsViewModel
+import fr.harmoniamk.statsmk.enums.Maps
+import fr.harmoniamk.statsmk.extension.isTrue
+import fr.harmoniamk.statsmk.model.local.Stats
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun StatsScreen(viewModel: StatsViewModel = hiltViewModel(), type: StatsType) {
+    val stats = viewModel.sharedStats.collectAsState()
+    val subtitle = viewModel.sharedSubtitle.collectAsState()
+
+    viewModel.init(type)
+
+    MKBaseScreen(title = type.title, subTitle = subtitle.value) {
+        (type as? StatsType.MapStats)?.trackIndex?.let {
+            MKTrackItem(map = Maps.values().getOrNull(it))
+        }
+        Column(modifier = Modifier
+            .verticalScroll(rememberScrollState())
+            .padding(10.dp)) {
+            stats.value?.let { MKWarStatsView(mkStats = it) }
+            type.takeIf { it is StatsType.IndivStats || (it as? StatsType.OpponentStats)?.isIndiv.isTrue }?.let {
+                (stats.value as? Stats) ?.let { MKPlayerScoreStatsView(stats = it) }
+            }
+            stats.value?.let { MKWarDetailsStatsView(mkStats = it, type = type) }
+            type.takeIf { it is StatsType.IndivStats || it is StatsType.TeamStats ||it is StatsType.PeriodicStats }?.let {
+                (stats.value as? Stats) ?.let {
+                    MKTeamStatsView(stats = it)
+
+                }
+            }
+            stats.value?.let { MKTeamScoreStatView(stats = it) }
+            type.takeIf { it !is StatsType.MapStats }?.let {
+                (stats.value as? Stats) ?.let { MKMapsStatsView(stats = it, type = type) }
+            }
+        }
+    }
+}

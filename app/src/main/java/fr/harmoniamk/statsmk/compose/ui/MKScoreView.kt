@@ -16,7 +16,7 @@ import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import fr.harmoniamk.statsmk.model.mock.mock
 
 @Composable
-fun MKScoreView(modifier: Modifier = Modifier, track: MKWarTrack? = null, war: MKWar? = null, isSmaller: Boolean = false) {
+fun MKScoreView(modifier: Modifier = Modifier, track: MKWarTrack? = null, war: MKWar? = null, isSmaller: Boolean = false, colored: Boolean = false) {
     val score = when {
         war != null -> war.displayedScore
         track != null -> track.displayedResult
@@ -28,7 +28,7 @@ fun MKScoreView(modifier: Modifier = Modifier, track: MKWarTrack? = null, war: M
         else -> ""
     }
     val diffColor = when {
-        isSmaller -> R.color.harmonia_dark
+        isSmaller && !colored -> R.color.harmonia_dark
         war?.displayedDiff?.contains("-").isTrue -> R.color.lose
         war?.displayedDiff?.contains("+").isTrue -> R.color.green
         track?.displayedDiff?.contains("-").isTrue -> R.color.lose

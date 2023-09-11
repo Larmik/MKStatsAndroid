@@ -1,12 +1,13 @@
 package fr.harmoniamk.statsmk.fragment.stats.playerRanking
 
 import android.os.Parcelable
+import fr.harmoniamk.statsmk.compose.RankingItemViewModel
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.Stats
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class PlayerRankingItemViewModel(val user: User, val stats: Stats) : Parcelable {
+data class PlayerRankingItemViewModel(val user: User, override val stats: Stats) : Parcelable, RankingItemViewModel {
 
     val playerName: String?
         get() = user.name

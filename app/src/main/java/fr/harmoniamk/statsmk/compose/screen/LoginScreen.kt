@@ -1,6 +1,5 @@
 package fr.harmoniamk.statsmk.compose.screen
 
-import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -42,7 +41,6 @@ fun LoginScreen(
     val emailValue = remember { mutableStateOf(TextFieldValue("")) }
     val loadingState = viewModel.sharedDialogValue.collectAsState()
     val passwordValue = remember { mutableStateOf(TextFieldValue("")) }
-    val context = LocalContext.current
 
     val currentState = viewModel.sharedBottomSheetValue.collectAsState()
     val bottomSheetState =

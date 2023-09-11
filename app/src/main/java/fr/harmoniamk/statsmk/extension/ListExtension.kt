@@ -19,8 +19,9 @@ fun <T> List<T>.safeSubList(from: Int, to: Int): List<T> = when {
     else -> this.subList(from, to)
 }
 
-fun Any?.toMapList(): List<Map<*,*>>? = this as? List<Map<*,*>>
-fun Any?.toStringList(): List<String>? = this as? List<String>
+fun List<MapDetails>.getVictory() = this.maxByOrNull { it.warTrack.teamScore }?.takeIf { it.warTrack.displayedDiff.contains('+') }
+fun List<MapDetails>.getDefeat() = this.minByOrNull { it.warTrack.teamScore }?.takeIf { it.warTrack.displayedDiff.contains('-') }
+
 
 fun List<MKWar>.withFullStats(databaseRepository: DatabaseRepositoryInterface, userId: String? = null, teamId: String? = null, isIndiv: Boolean = false) = flow {
     Log.d("MKDebugOnly", "ListExtension withFullStats: userId = $userId, teamId = $teamId, isIndiv= $isIndiv")
@@ -121,36 +122,6 @@ fun List<MKWar?>.withName(databaseRepository: DatabaseRepositoryInterface) = flo
     emit(temp)
 }
 
-fun WarDispo.withLineUpAndOpponent(databaseRepository: DatabaseRepositoryInterface) = flow {
-    this@withLineUpAndOpponent.opponentId?.takeIf { it != "null" }.let { id ->
-        val opponentName = databaseRepository.getTeam(id).firstOrNull()?.name
-        val lineupNames = mutableListOf<String?>()
-        var hostName: String? = null
-        this@withLineUpAndOpponent.lineUp?.forEach {
-            val playerName = databaseRepository.getUser(it.userId).firstOrNull()?.name
-            lineupNames.add(playerName)
-        }
-        this@withLineUpAndOpponent.host?.takeIf { it != "null" }?.let {
-             hostName = when (this@withLineUpAndOpponent.host?.contains("-")) {
-                true -> this@withLineUpAndOpponent.host
-                else -> databaseRepository.getUser(this@withLineUpAndOpponent.host).firstOrNull()?.name
-            }
-        }
-        emit(this@withLineUpAndOpponent.apply {
-            this.lineupNames = lineupNames.filterNotNull()
-            this.opponentName = opponentName
-            this.hostName = hostName
-        })
-    }
-}
-fun NewWar?.withName(databaseRepository: DatabaseRepositoryInterface) = flow {
-    this@withName?.let {
-        val hostName = databaseRepository.getTeam(it.teamHost).firstOrNull()?.shortName
-        val opponentName = databaseRepository.getTeam(it.teamOpponent).firstOrNull()?.shortName
-        emit(MKWar(it).apply { this.name = "$hostName - $opponentName" })
-    }
-}
-
 fun List<Team>.withFullTeamStats(wars: List<MKWar>?, databaseRepository: DatabaseRepositoryInterface, userId: String? = null, weekOnly: Boolean = false, monthOnly: Boolean = false, isIndiv: Boolean = false) = flow {
     val temp = mutableListOf<OpponentRankingItemViewModel>()
     Log.d("MKDebugOnly", "ListExtension withFullTeamStats:  wars = ${wars?.map { it.name }}, weekOnly = $weekOnly, monthOnly = $monthOnly, isIndiv= $isIndiv")
@@ -176,12 +147,56 @@ fun List<Penalty>.withTeamName(databaseRepository: DatabaseRepositoryInterface) 
     emit(temp)
 }
 
+fun WarDispo.withLineUpAndOpponent(databaseRepository: DatabaseRepositoryInterface) = flow {
+    this@withLineUpAndOpponent.opponentId?.takeIf { it != "null" }.let { id ->
+        val opponentName = databaseRepository.getTeam(id).firstOrNull()?.name
+        val lineupNames = mutableListOf<String?>()
+        var hostName: String? = null
+        this@withLineUpAndOpponent.lineUp?.forEach {
+            val playerName = databaseRepository.getUser(it.userId).firstOrNull()?.name
+            lineupNames.add(playerName)
+        }
+        this@withLineUpAndOpponent.host?.takeIf { it != "null" }?.let {
+             hostName = when (this@withLineUpAndOpponent.host?.contains("-")) {
+                true -> this@withLineUpAndOpponent.host
+                else -> databaseRepository.getUser(this@withLineUpAndOpponent.host).firstOrNull()?.name
+            }
+        }
+        emit(this@withLineUpAndOpponent.apply {
+            this.lineupNames = lineupNames.filterNotNull()
+            this.opponentName = opponentName
+            this.hostName = hostName
+        })
+    }
+}
+
+fun NewWar?.withName(databaseRepository: DatabaseRepositoryInterface) = flow {
+    this@withName?.let {
+        val hostName = databaseRepository.getTeam(it.teamHost).firstOrNull()?.shortName
+        val opponentName = databaseRepository.getTeam(it.teamOpponent).firstOrNull()?.shortName
+        emit(MKWar(it).apply { this.name = "$hostName - $opponentName" })
+    }
+}
+
+fun Team.withFullTeamStats(wars: List<MKWar>?, databaseRepository: DatabaseRepositoryInterface, userId: String? = null, weekOnly: Boolean = false, monthOnly: Boolean = false, isIndiv: Boolean = false) = flow {
+        wars
+            ?.filter { (weekOnly && it.isThisWeek) || !weekOnly }
+            ?.filter { (monthOnly && it.isThisMonth) || !monthOnly }
+            ?.withFullStats(databaseRepository, teamId = this@withFullTeamStats.mid, userId = userId, isIndiv = isIndiv)?.first()
+            ?.takeIf { it.warStats.list.isNotEmpty() }
+            ?.let { emit(it) }
+}
+
 fun List<Int?>?.sum(): Int {
     var sum = 0
     this?.filterNotNull()?.forEach { sum += it }
     return sum
 }
 
+/** Parsing methods for firebase POJOs **/
+
+fun Any?.toMapList(): List<Map<*,*>>? = this as? List<Map<*,*>>
+fun Any?.toStringList(): List<String>? = this as? List<String>
 fun List<Map<*,*>>?.parseTracks() : List<NewWarTrack>? =
     this?.map { track ->
         NewWarTrack(
@@ -213,6 +228,7 @@ fun List<Map<*,*>>?.parsePenalties() : List<Penalty>? =
             amount = item["amount"].toString().toInt()
         )
 }
+
 fun List<Map<*,*>>?.parsePlayerDispos() : List<PlayerDispo>? =
     this?.map { item ->
         PlayerDispo(
@@ -228,6 +244,3 @@ fun List<Map<*,*>>?.parseLineUp() : List<LineUp>? =
             userDiscordId =item["userDiscordId"].toString()
         )
 }
-
-fun List<MapDetails>.getVictory() = this.maxByOrNull { it.warTrack.teamScore }?.takeIf { it.warTrack.displayedDiff.contains('+') }
-fun List<MapDetails>.getDefeat() = this.minByOrNull { it.warTrack.teamScore }?.takeIf { it.warTrack.displayedDiff.contains('-') }

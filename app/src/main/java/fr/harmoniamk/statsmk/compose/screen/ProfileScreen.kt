@@ -35,8 +35,7 @@ import fr.harmoniamk.statsmk.compose.ui.MKDialog
 import fr.harmoniamk.statsmk.compose.ui.MKListItem
 import fr.harmoniamk.statsmk.compose.ui.MKText
 import fr.harmoniamk.statsmk.compose.viewModel.ProfileViewModel
-import fr.harmoniamk.statsmk.enums.ListItemType
-import fr.harmoniamk.statsmk.enums.ListItems
+import fr.harmoniamk.statsmk.enums.MenuItems
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 
@@ -66,8 +65,6 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), onLogout: () ->
             onLogout()
         }
     }
-
-
     LaunchedEffect(Unit) {
         viewModel.sharedBottomSheetValue.collect {
             when (it) {
@@ -102,8 +99,6 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), onLogout: () ->
                     .padding(top = 15.dp)
                     .clickable { viewModel.onTestFilter() }
             )
-
-
             localPicture.value?.let {
                 Image(
                     painter = painterResource(id = it),
@@ -168,25 +163,29 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), onLogout: () ->
                     .background(color = colorResource(id = R.color.white))
             )
             Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.Start) {
-                ListItems.values().filter {
-                    it.type == ListItemType.profile &&
-                            ((it == ListItems.leave_team && team.value != null) || it != ListItems.leave_team)
-                }.forEach {
+                listOf(
+                    MenuItems.ChangePseudo(),
+                    MenuItems.ChangeMail(),
+                    MenuItems.ChangePassword(),
+                    MenuItems.ChangePicture(),
+                    MenuItems.LeaveTeam().takeIf { team.value != null },
+                    MenuItems.Logout()
+                ).filterNotNull()
+                    .forEach {
                     MKListItem(item = it, separator = false, onNavigate = { }) {
                         when (it) {
-                            ListItems.change_pseudo -> viewModel.onEditNickname()
-                            ListItems.change_mail -> viewModel.onEditEmail()
-                            ListItems.change_password -> viewModel.onEditPassword()
-                            ListItems.change_picture -> {
+                            is MenuItems.ChangePseudo -> viewModel.onEditNickname()
+                            is MenuItems.ChangeMail -> viewModel.onEditEmail()
+                            is MenuItems.ChangePassword -> viewModel.onEditPassword()
+                            is MenuItems.ChangePicture -> {
                                 launcher.launch(
                                     PickVisualMediaRequest(
                                         mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
                                     )
                                 )
                             }
-
-                            ListItems.leave_team -> viewModel.onLeaveTeam()
-                            ListItems.logout -> viewModel.onLogout()
+                            is MenuItems.LeaveTeam -> viewModel.onLeaveTeam()
+                            is MenuItems.Logout -> viewModel.onLogout()
                             else -> {}
                         }
                     }

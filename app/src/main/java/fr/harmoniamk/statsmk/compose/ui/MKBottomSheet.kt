@@ -16,6 +16,7 @@ import fr.harmoniamk.statsmk.compose.screen.TrackListScreen
 import fr.harmoniamk.statsmk.compose.screen.WarTrackResultScreen
 import fr.harmoniamk.statsmk.compose.viewModel.Filter
 import fr.harmoniamk.statsmk.compose.viewModel.Sort
+import fr.harmoniamk.statsmk.enums.SortType
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 
@@ -43,7 +44,7 @@ fun MKBottomSheet(
     onEditTrack: (Int) -> Unit = { },
     onDismiss: () -> Unit,
     onEditPosition: (Int) -> Unit = { },
-    onEditTeam: () -> Unit = { }
+    onSorted: (SortType) -> Unit = { }
 ) {
     when (state) {
         is MKBottomSheetState.EditTrack -> {
@@ -105,7 +106,7 @@ fun MKBottomSheet(
             ResetPasswordScreen(onDismiss = onDismiss)
         }
         is MKBottomSheetState.FilterSort -> {
-            FilterSortScreen(sort = state.sort, filter = state.filter, onDismiss = onDismiss)
+            FilterSortScreen(sort = state.sort, filter = state.filter, onDismiss = onDismiss, onSorted = onSorted)
         }
         else -> {}
     }
