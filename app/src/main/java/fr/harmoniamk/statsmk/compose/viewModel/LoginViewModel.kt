@@ -84,7 +84,9 @@ class LoginViewModel @Inject constructor(
 
         connectUser
             .mapNotNull { (it as? AuthUserResponse.Error)?.message }
-            .onEach { _sharedDialogValue.value = null }
+            .onEach { _sharedDialogValue.value = MKDialogState.ChangePassword(it) {
+                _sharedDialogValue.value = null
+            } }
             .bind(_sharedToast, viewModelScope)
     }
 

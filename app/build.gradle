@@ -17,7 +17,7 @@ android {
             keyAlias 'MKStats'
         }
     }
-    compileSdkVersion 33
+    compileSdkVersion 34
     buildToolsVersion "30.0.3"
     useLibrary 'org.apache.http.legacy'
 
@@ -43,7 +43,7 @@ android {
     defaultConfig {
         applicationId "fr.harmoniamk.statsmk"
         minSdk 23
-        targetSdk 32
+        targetSdk 34
         versionCode 26
         versionName "1.9.1"
         multiDexEnabled true
@@ -194,7 +194,7 @@ dependencies {
     implementation 'com.github.blackfizz:eazegraph:1.2.5l@aar'
     implementation 'com.nineoldandroids:library:2.4.0'
 
-    implementation platform('com.google.firebase:firebase-bom:29.0.4')
+    implementation platform('com.google.firebase:firebase-bom:32.2.3')
     implementation 'com.google.firebase:firebase-database-ktx'
     implementation 'com.firebaseui:firebase-ui-auth:7.2.0'
     implementation 'androidx.security:security-crypto:1.1.0-alpha03'

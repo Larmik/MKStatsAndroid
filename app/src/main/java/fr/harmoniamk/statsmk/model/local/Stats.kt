@@ -1,7 +1,6 @@
 package fr.harmoniamk.statsmk.model.local
 
 import android.os.Parcelable
-import fr.harmoniamk.statsmk.compose.RankingItemViewModel
 import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.extension.*
 import fr.harmoniamk.statsmk.model.firebase.Team
@@ -31,9 +30,8 @@ data class Stats(
      val averagePoints: Int = warScores.map { it.score }.sum() / (warScores.takeIf { it.isNotEmpty() }?.size ?: 1)
      val averagePointsLabel: String = averagePoints.warScoreToDiff()
      private val averageMapPoints: Int = (maps.map { it.teamScore }.sum() / (maps.takeIf { it.isNotEmpty() }?.size ?: 1))
-     private val averagePlayerPosition: Int = (maps.map { it.playerScore }.sum() / (maps.takeIf { it.isNotEmpty() }?.size ?: 1))
+    val averagePlayerPosition: Int = (maps.map { it.playerScore }.sum() / (maps.takeIf { it.isNotEmpty() }?.size ?: 1)).pointsToPosition()
      val averageMapPointsLabel = averageMapPoints.trackScoreToDiff()
-     val averagePlayerMapPoints: Int = averagePlayerPosition.pointsToPosition()
      val mapsWon = "${maps.filter { (it.teamScore ?: 0) > 41 }.size} / ${maps.size}"
      val shockCount = maps.map { it.shockCount }.sum()
     var highestPlayerScore: Pair<Int, String?>? = null
@@ -112,7 +110,7 @@ class MapStats(
             }.isTrue)
         }
     val teamScore = list.map { pair -> pair.warTrack }.map { it.teamScore }.sum() / list.size
-    val playerScore = playerScoreList.takeIf { it.isNotEmpty() }?.let {  (playerScoreList.sum() / playerScoreList.size).pointsToPosition() } ?: 0
+    val playerPosition = playerScoreList.takeIf { it.isNotEmpty() }?.let {  (playerScoreList.sum() / playerScoreList.size).pointsToPosition() } ?: 0
     val highestVictory = list.filter { !isIndiv || (isIndiv && it.war.war?.warTracks?.any { MKWarTrack(it).hasPlayer(userId) }.isTrue) }.getVictory()
     val loudestDefeat = list.filter { !isIndiv || (isIndiv && it.war.hasPlayer(userId)) }.getDefeat()
     val shockCount = list.map { it.warTrack.track?.shocks?.filter { !isIndiv || (isIndiv && it.playerId == userId) }?.map { it.count }.sum() }.sum()

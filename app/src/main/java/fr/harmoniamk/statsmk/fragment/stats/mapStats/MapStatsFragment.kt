@@ -15,7 +15,6 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentMapStatsBinding
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.extension.isTrue
-import fr.harmoniamk.statsmk.extension.positionColor
 import fr.harmoniamk.statsmk.extension.trackScoreToDiff
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -84,15 +83,6 @@ class MapStatsFragment : Fragment(R.layout.fragment_map_stats) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
                         requireContext().getColor(averageDiffColor)
                     else ContextCompat.getColor(requireContext(), averageDiffColor)
-                )
-                binding.mapPlayerAverage.text = when (stats.playerScore) {
-                    0 -> "-"
-                    else -> stats.playerScore.toString()
-                }
-                binding.mapPlayerAverage.setTextColor(
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                        requireContext().getColor(stats.playerScore.positionColor())
-                    else ContextCompat.getColor(requireContext(), stats.playerScore.positionColor())
                 )
                 stats.highestVictory?.let {
                     binding.noVictory.isVisible = false

@@ -1,9 +1,7 @@
 package fr.harmoniamk.statsmk.fragment.stats.indivStats
 
-import android.os.Build
 import android.os.Bundle
 import android.view.View
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -14,7 +12,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentIndivStatsBinding
 import fr.harmoniamk.statsmk.extension.clicks
-import fr.harmoniamk.statsmk.extension.positionColor
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.filter
@@ -58,12 +55,6 @@ class IndivStatsFragment : Fragment(R.layout.fragment_indiv_stats) {
             binding.tieText.text = it.warStats.warsTied.toString()
             binding.loseText.text = it.warStats.warsLoss.toString()
             binding.totalAverage.text = it.averagePoints.toString()
-            binding.mapAverage.text = it.averagePlayerMapPoints.toString()
-            binding.mapAverage.setTextColor(
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                    requireContext().getColor(it.averagePlayerMapPoints.positionColor())
-                else ContextCompat.getColor(requireContext(), it.averagePlayerMapPoints.positionColor())
-            )
             binding.highestScore.text = it.highestScore?.score.toString()
             binding.highestScoreWarName.text = it.highestScore?.opponentLabel
             binding.highestScoreWarDate.text = it.highestScore?.war?.war?.createdDate

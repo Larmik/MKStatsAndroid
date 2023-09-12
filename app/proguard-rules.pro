@@ -110,3 +110,4 @@
 
 -dontwarn com.google.errorprone.**
 -dontwarn javax.xml.stream.**
+-dontwarn androidx.window.**

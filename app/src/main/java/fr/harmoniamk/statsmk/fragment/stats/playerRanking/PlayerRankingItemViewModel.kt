@@ -1,7 +1,7 @@
 package fr.harmoniamk.statsmk.fragment.stats.playerRanking
 
 import android.os.Parcelable
-import fr.harmoniamk.statsmk.compose.RankingItemViewModel
+import fr.harmoniamk.statsmk.model.local.RankingItemViewModel
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.Stats
 import kotlinx.android.parcel.Parcelize

@@ -92,8 +92,8 @@ fun MKWarDetailsStatsView(mkStats: MKStats, type: StatsType) {
                 )
                 MKText(
                     text = when {
-                        type is StatsType.IndivStats || (type as? StatsType.OpponentStats)?.isIndiv.isTrue -> stats?.averagePlayerMapPoints.pointsToPosition().toString()
-                        type is StatsType.MapStats -> mapStats?.playerScore?.pointsToPosition().toString()
+                        type is StatsType.IndivStats || (type as? StatsType.OpponentStats)?.isIndiv.isTrue -> stats?.averagePlayerPosition.toString()
+                        type is StatsType.MapStats -> mapStats?.playerPosition.toString()
                         else -> stats?.averageMapPointsLabel.toString()
                     }, font = when {
                         type is StatsType.IndivStats || type is StatsType.MapStats || (type as? StatsType.OpponentStats)?.isIndiv.isTrue -> R.font.mk_position
@@ -102,8 +102,8 @@ fun MKWarDetailsStatsView(mkStats: MKStats, type: StatsType) {
                         type is StatsType.IndivStats || type is StatsType.MapStats || (type as? StatsType.OpponentStats)?.isIndiv.isTrue -> 26
                         else -> 20
                     }, textColor = when {
-                        type is StatsType.IndivStats || (type as? StatsType.OpponentStats)?.isIndiv.isTrue -> stats?.averagePlayerMapPoints.positionColor()
-                        type is StatsType.MapStats -> mapStats?.playerScore?.pointsToPosition().positionColor()
+                        type is StatsType.IndivStats || (type as? StatsType.OpponentStats)?.isIndiv.isTrue -> stats?.averagePlayerPosition.positionColor()
+                        type is StatsType.MapStats -> mapStats?.playerPosition?.pointsToPosition().positionColor()
                         else -> when {
                             stats?.averageMapPointsLabel?.contains("+").isTrue -> R.color.luigi
                             stats?.averageMapPointsLabel?.contains("-").isTrue -> R.color.lose

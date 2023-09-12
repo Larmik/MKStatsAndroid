@@ -1,7 +1,7 @@
 package fr.harmoniamk.statsmk.fragment.stats.opponentRanking
 
 import android.os.Parcelable
-import fr.harmoniamk.statsmk.compose.RankingItemViewModel
+import fr.harmoniamk.statsmk.model.local.RankingItemViewModel
 import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.model.local.Stats
 import kotlinx.android.parcel.Parcelize
@@ -28,7 +28,7 @@ data class OpponentRankingItemViewModel(val team: Team?, override val stats: Sta
 
     val averageMapLabel: String
         get() = when (userId != null && isIndiv) {
-            true -> stats.averagePlayerMapPoints.toString()
+            true -> stats.averagePlayerPosition.toString()
             else -> stats.averageMapPointsLabel
         }
 

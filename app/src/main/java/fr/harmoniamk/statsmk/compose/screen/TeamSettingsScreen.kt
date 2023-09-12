@@ -81,7 +81,7 @@ fun TeamSettingsScreen(viewModel: TeamSettingsViewModel = hiltViewModel()) {
         AsyncImage(
             model = picture.value,
             contentDescription = null,
-            modifier = Modifier.size(200.dp)
+            modifier = Modifier.size(100.dp)
         )
         MKTextField(
             value = searchState.value,

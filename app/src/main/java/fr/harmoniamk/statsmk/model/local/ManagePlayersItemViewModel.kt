@@ -1,4 +1,4 @@
-package fr.harmoniamk.statsmk.compose
+package fr.harmoniamk.statsmk.model.local
 
 import fr.harmoniamk.statsmk.model.firebase.User
 
