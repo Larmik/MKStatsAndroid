@@ -144,5 +144,4 @@ fun StatsRankingScreen(
             }
         }
     }
-
 }

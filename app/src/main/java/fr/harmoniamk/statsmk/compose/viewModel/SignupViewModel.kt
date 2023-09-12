@@ -102,7 +102,6 @@ class SignupViewModel @Inject constructor(
                         }
                     }
                 }
-
                 User(
                     mid = fbUser.uid,
                     name = finalUser?.name ?: name,
@@ -128,6 +127,5 @@ class SignupViewModel @Inject constructor(
             .onEach { _sharedDialogValue.value = null }
             .bind(_sharedToast, viewModelScope)
     }
-
 
 }

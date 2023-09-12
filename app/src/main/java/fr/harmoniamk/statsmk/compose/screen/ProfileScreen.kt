@@ -52,13 +52,11 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), onLogout: () ->
     val localPicture = viewModel.sharedLocalPicture.collectAsState()
     val currentState = viewModel.sharedBottomSheetValue.collectAsState(null)
     val dialogState = viewModel.sharedDialogValue.collectAsState(null)
-
     val launcher = rememberLauncherForActivityResult(
         ActivityResultContracts.PickVisualMedia(),
         onResult = viewModel::onPictureEdited
     )
-    val bottomSheetState =
-        rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+    val bottomSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
 
     LaunchedEffect(Unit) {
         viewModel.sharedDisconnect.collect {
@@ -73,11 +71,7 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), onLogout: () ->
             }
         }
     }
-
-    dialogState.value?.let {
-        MKDialog(state = it)
-    }
-
+    dialogState.value?.let { MKDialog(state = it) }
     MKBaseScreen(title = R.string.profil,
         state = bottomSheetState,
         sheetContent = {

@@ -11,7 +11,6 @@ import androidx.lifecycle.LifecycleEventObserver
 fun MKLifecycleEvent(onEvent: (event: Lifecycle.Event) -> Unit) {
     val eventHandler = rememberUpdatedState(onEvent)
     val lifecycleOwner = rememberUpdatedState(LocalLifecycleOwner.current)
-
     DisposableEffect(lifecycleOwner.value) {
         val lifecycle = lifecycleOwner.value.lifecycle
         val observer = LifecycleEventObserver { _, event ->

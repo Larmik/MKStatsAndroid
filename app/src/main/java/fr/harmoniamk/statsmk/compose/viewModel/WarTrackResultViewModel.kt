@@ -99,7 +99,6 @@ class WarTrackResultViewModel @AssistedInject constructor(
             else -> trackResultIndex
         }
         val currentTrack = preferencesRepository.currentWar?.warTracks?.getOrNull(trackResultIndex) ?: preferencesRepository.currentWarTrack
-
         _sharedCurrentMap.value = Maps.values()[currentTrack?.trackIndex ?: trackIndexInMapList]
         preferencesRepository.currentWar
             ?.withName(databaseRepository)

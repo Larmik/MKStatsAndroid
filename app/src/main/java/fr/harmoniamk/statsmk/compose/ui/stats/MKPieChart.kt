@@ -30,18 +30,15 @@ fun MKPieChart(
 ) {
     val warStats = (stats as? Stats)?.warStats
     val mapStats = stats as? MapStats
-
     val win = warStats?.warsWon ?: mapStats?.trackWon
     val tie = warStats?.warsTied ?: mapStats?.trackTie
     val loss = warStats?.warsLoss ?: mapStats?.trackLoss
-
-    val values = listOf(win?.toFloat(), tie?.toFloat(), loss?.toFloat()).filterNotNull()
+    val values = listOfNotNull(win?.toFloat(), tie?.toFloat(), loss?.toFloat())
     val colors = listOf(
         colorResource(id = R.color.win),
         colorResource(id = R.color.white),
         colorResource(id = R.color.lose),
     )
-
     val sumOfValues = values.sum()
     val proportions = values.map { it * 100 / sumOfValues }
     val sweepAngles = proportions.map { 360 * it / 100 }

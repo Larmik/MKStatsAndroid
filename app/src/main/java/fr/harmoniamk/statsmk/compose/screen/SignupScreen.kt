@@ -39,7 +39,6 @@ fun SignupScreen(
     val passwordValue = remember { mutableStateOf(TextFieldValue("")) }
     val nicknameValue = remember { mutableStateOf(TextFieldValue("")) }
     val fcValue = remember { mutableStateOf(TextFieldValue("")) }
-
     val loadingState = viewModel.sharedDialogValue.collectAsState()
     val context = LocalContext.current
 
@@ -48,15 +47,12 @@ fun SignupScreen(
             onNext()
         }
     }
-
     LaunchedEffect(Unit) {
         viewModel.sharedToast.filterNotNull().collect {
             Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
         }
     }
-
     BackHandler { onBack() }
-
     loadingState.value?.let {
         MKDialog(state = it)
     }
@@ -107,5 +103,4 @@ fun SignupScreen(
             MKButton(text = R.string.d_j_sur_l_appli, hasBackground = false, onClick = onLogin)
         }
     }
-
 }

@@ -18,37 +18,32 @@ import fr.harmoniamk.statsmk.model.local.MKWarTrack
 
 @Composable
 fun MKShockView(modifier: Modifier = Modifier, tracks: List<MKWarTrack>?) {
-        var total = 0
-        tracks?.forEach { track ->
-            track.track?.shocks?.forEach {
-                total += it.count
+    var total = 0
+    tracks?.forEach { track ->
+        track.track?.shocks?.forEach {
+            total += it.count
+        }
+    }
+    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center, modifier = modifier) {
+        if (total > 0) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.shock),
+                    contentDescription = null,
+                    modifier = Modifier.size(30.dp)
+                )
+                MKText(
+                    text = String.format(
+                        stringResource(id = R.string.shock_count_placeholder),
+                        total.toString()
+                    ),
+                    font = R.font.orbitron_semibold,
+                    fontSize = 16
+                )
             }
         }
-
-            Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center, modifier = modifier) {
-                if (total > 0) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        Image(
-                            painter = painterResource(id = R.drawable.shock),
-                            contentDescription = null,
-                            modifier = Modifier.size(30.dp)
-                        )
-                        MKText(
-                            text = String.format(
-                                stringResource(id = R.string.shock_count_placeholder),
-                                total.toString()
-                            ),
-                            font = R.font.orbitron_semibold,
-                            fontSize = 16
-                        )
-                    }
-                }
-            }
-
-
-
-
+    }
 }

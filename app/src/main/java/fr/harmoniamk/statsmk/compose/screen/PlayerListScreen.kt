@@ -50,5 +50,4 @@ fun PlayerListScreen(teamId: String?, onWarStarted: () -> Unit) {
             onClick = viewModel::createWar
         )
     }
-
 }

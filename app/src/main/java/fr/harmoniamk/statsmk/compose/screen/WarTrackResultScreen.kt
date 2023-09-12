@@ -25,10 +25,7 @@ fun WarTrackResultScreen(
     onBack: () -> Unit,
     backToCurrent: () -> Unit
 ) {
-
-    val viewModel: WarTrackResultViewModel =
-        viewModel(trackResultIndex = trackIndex, editing = editing)
-
+    val viewModel: WarTrackResultViewModel = viewModel(trackResultIndex = trackIndex, editing = editing)
     val war = viewModel.sharedWar.collectAsState()
     val map = viewModel.sharedCurrentMap.collectAsState()
     val positions = viewModel.sharedWarPos.collectAsState()
@@ -36,31 +33,23 @@ fun WarTrackResultScreen(
     val track = viewModel.sharedTrack.collectAsState()
     val trackIndexRes = viewModel.sharedTrackNumber.collectAsState()
 
-
     BackHandler {
         viewModel.onBack()
         onBack()
     }
-
     LaunchedEffect(Unit) {
         viewModel.sharedBackToCurrent.collect {
             backToCurrent()
         }
     }
-
-    MKBaseScreen(title = war.value?.name.orEmpty(), subTitle = trackIndexRes.value?.let {
-        stringResource(
-            id = it
-        )
-    }) {
+    MKBaseScreen(title = war.value?.name.orEmpty(), subTitle = trackIndexRes.value?.let { stringResource(id = it) }) {
         map.value?.let { MKTrackItem(map = it) }
         LazyColumn {
             items(positions.value.orEmpty()) {
                 MKPlayerItem(
                     position = it,
                     shockVisible = true,
-                    shockCount = shocks.value?.singleOrNull { shock -> shock.playerId == it.player?.mid }?.count
-                        ?: 0,
+                    shockCount = shocks.value?.singleOrNull { shock -> shock.playerId == it.player?.mid }?.count ?: 0,
                     onAddShock = viewModel::onAddShock,
                     onRemoveShock = viewModel::onRemoveShock
                 ) {}
@@ -69,5 +58,4 @@ fun WarTrackResultScreen(
         track.value?.let { MKScoreView(track = it) }
         MKButton(text = R.string.valider, onClick = viewModel::onValid)
     }
-
 }

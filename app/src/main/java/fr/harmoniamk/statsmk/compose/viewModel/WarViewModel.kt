@@ -60,14 +60,8 @@ class WarViewModel @Inject constructor(
     private val _sharedTeam = MutableStateFlow<Team?>(null)
     private val _sharedDispoVisible = MutableStateFlow<List<WarDispo>?>(null)
     private val _sharedCreateManualWarEnabled = MutableStateFlow(false)
-
-
-
     private val _sharedCurrentWarClick = MutableSharedFlow<Boolean>()
     private val _sharedGoToWar = MutableSharedFlow<MKWar>()
-
-
-
     private val _sharedHasTeam = MutableStateFlow<Boolean?>(null)
     private val _sharedCreateWar = MutableSharedFlow<Unit>()
     private val _sharedCreateTeamDialog = MutableSharedFlow<Boolean>()
@@ -81,9 +75,6 @@ class WarViewModel @Inject constructor(
     val sharedTeam = _sharedTeam.asStateFlow()
     val sharedDispos = _sharedDispoVisible.asStateFlow()
     val sharedCreateManualWarEnabled = _sharedCreateManualWarEnabled.asStateFlow()
-
-
-
     val sharedHasTeam = _sharedHasTeam.asStateFlow()
     val sharedCreateWar = _sharedCreateWar.asSharedFlow()
     val sharedCreateTeamDialog = _sharedCreateTeamDialog.asSharedFlow()
@@ -201,6 +192,5 @@ class WarViewModel @Inject constructor(
                     }.launchIn(viewModelScope)
             }.launchIn(viewModelScope)
     }
-
 
 }

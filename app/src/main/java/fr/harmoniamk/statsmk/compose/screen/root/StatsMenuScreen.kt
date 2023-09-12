@@ -10,7 +10,6 @@ import fr.harmoniamk.statsmk.compose.ui.MKListItem
 import fr.harmoniamk.statsmk.compose.viewModel.StatsMenuViewModel
 import fr.harmoniamk.statsmk.enums.MenuItems
 
-
 @Composable
 @OptIn(ExperimentalMaterialApi::class)
 fun StatsMenuScreen(viewModel: StatsMenuViewModel = hiltViewModel(), onItemClick: (String) -> Unit) {

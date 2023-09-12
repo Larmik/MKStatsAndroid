@@ -35,12 +35,10 @@ fun MKScoreView(modifier: Modifier = Modifier, track: MKWarTrack? = null, war: M
         track?.displayedDiff?.contains("+").isTrue -> R.color.green
         else -> R.color.harmonia_dark
     }
-
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier) {
         MKText(text = score, modifier = Modifier.padding(horizontal = if (isSmaller) 0.dp else 10.dp), fontSize = if (isSmaller) 14 else 22, font = R.font.orbitron_semibold)
         MKText(text = diff, modifier = Modifier.padding(horizontal = if (isSmaller) 0.dp else 10.dp), fontSize = if (isSmaller) 11 else 18, font = R.font.orbitron_regular, textColor = diffColor)
     }
-
 }
 
 @Preview

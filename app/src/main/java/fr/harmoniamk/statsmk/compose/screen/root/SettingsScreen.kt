@@ -7,7 +7,6 @@ import fr.harmoniamk.statsmk.compose.ui.MKBaseScreen
 import fr.harmoniamk.statsmk.compose.ui.MKListItem
 import fr.harmoniamk.statsmk.enums.MenuItems
 
-
 @Composable
 @OptIn(ExperimentalMaterialApi::class)
 fun SettingsScreen(onItemClick: (String) -> Unit) {

@@ -19,13 +19,13 @@ import javax.inject.Inject
 @ExperimentalCoroutinesApi
 @HiltViewModel
 class CreateTeamViewModel @Inject constructor(private val firebaseRepository: FirebaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
+
     private val _sharedTeamAdded = MutableSharedFlow<Unit>()
     val sharedTeamAdded = _sharedTeamAdded.asSharedFlow()
 
     fun onCreateClick(name: String, shortName: String, teamWithLeader: Boolean) {
         val id = System.currentTimeMillis().toString()
         val addClick =  databaseRepository.getTeams().shareIn(viewModelScope, SharingStarted.Lazily)
-
         addClick
             .filterNot {
                 it.map { team -> team.name?.lowercase() }.contains(name.lowercase())
@@ -93,7 +93,6 @@ class CreateTeamViewModel @Inject constructor(private val firebaseRepository: Fi
             }) }
             .onEach { _sharedTeamAdded.emit(Unit) }
             .launchIn(viewModelScope)
-
     }
 
 }

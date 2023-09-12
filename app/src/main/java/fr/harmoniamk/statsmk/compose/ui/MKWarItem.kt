@@ -26,7 +26,6 @@ import fr.harmoniamk.statsmk.model.mock.mock
 
 @Composable
 fun MKWarItem(war: MKWar, isForStats: Boolean = false, onClick: (String?) -> Unit) {
-
     val bgColor = when (isForStats) {
         true -> R.color.transparent
         else -> R.color.white_alphaed

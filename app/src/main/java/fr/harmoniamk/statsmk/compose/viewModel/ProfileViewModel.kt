@@ -149,7 +149,6 @@ class ProfileViewModel @Inject constructor(
                 _sharedDialogValue.value = null
                 refresh()
             }
-
         )
     }
 

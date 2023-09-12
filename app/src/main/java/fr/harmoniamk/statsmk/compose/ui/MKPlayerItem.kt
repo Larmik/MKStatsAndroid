@@ -51,7 +51,6 @@ fun MKPlayerItem(
         true -> R.color.white
         else -> R.color.harmonia_dark
     }
-
     Card(
         Modifier
             .padding(5.dp)
@@ -71,7 +70,6 @@ fun MKPlayerItem(
                         shockCount.toString()
                     ), font = R.font.orbitron_semibold)
                 }
-
             }
             position?.let {
                 MKText(text = it.position.position.toString(), font = R.font.mk_position, textColor = it.position.position.positionColor(), fontSize = 26, modifier = Modifier.padding(end = 15.dp))

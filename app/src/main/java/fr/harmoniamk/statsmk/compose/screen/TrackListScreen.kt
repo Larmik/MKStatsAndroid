@@ -31,13 +31,11 @@ fun TrackListScreen(
     val tracks = viewModel.sharedSearchedItems.collectAsState()
     val searchState = remember { mutableStateOf(TextFieldValue("")) }
     val war = viewModel.sharedCurrentWar.collectAsState()
-
     LaunchedEffect(Unit) {
         viewModel.sharedQuit.filterNotNull().takeIf { editing }?.collect {
             onDismiss()
         }
     }
-
     MKBaseScreen(title = R.string.tous_les_circuits) {
         MKTextField(
             value = searchState.value,
@@ -59,11 +57,11 @@ fun TrackListScreen(
                                 indexInList = trackIndex,
                                 newTrackIndex = index
                             )
-
                             else -> viewModel.addTrack(index)
                         }
                         onTrackClick(index)
-                    })
+                    }
+                )
             }
         }
     }

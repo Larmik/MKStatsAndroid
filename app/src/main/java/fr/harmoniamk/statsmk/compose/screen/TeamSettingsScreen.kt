@@ -38,16 +38,12 @@ fun TeamSettingsScreen(viewModel: TeamSettingsViewModel = hiltViewModel()) {
     val teamName = viewModel.sharedTeamName.collectAsState()
     val searchState = remember { mutableStateOf(TextFieldValue("")) }
     val players by viewModel.sharedPlayers.collectAsState()
-
     val currentState = viewModel.sharedBottomSheetValue.collectAsState(null)
-    val bottomSheetState =
-        rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
-
+    val bottomSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
     val launcher = rememberLauncherForActivityResult(
         ActivityResultContracts.PickVisualMedia(),
         onResult = viewModel::onPictureEdited
     )
-
     val buttons = listOf(
         Pair(R.string.modifier_l_quipe, viewModel::onEditTeam),
         Pair(R.string.modifier_le_logo) {
@@ -102,5 +98,4 @@ fun TeamSettingsScreen(viewModel: TeamSettingsViewModel = hiltViewModel()) {
             }
         }
     }
-
 }

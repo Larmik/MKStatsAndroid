@@ -35,17 +35,12 @@ fun PlayersSettingsScreen(
     canAdd: Boolean = false,
     onBack: () -> Unit
 ) {
-
-    BackHandler {
-        onBack()
-    }
-
     val searchState = remember { mutableStateOf(TextFieldValue("")) }
     val currentState = viewModel.sharedBottomSheetValue.collectAsState(null)
     val players by viewModel.sharedPlayers.collectAsState()
-    val bottomSheetState =
-        rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+    val bottomSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
 
+    BackHandler { onBack() }
     LaunchedEffect(Unit) {
         viewModel.sharedBottomSheetValue.collect {
             when (it) {
@@ -54,13 +49,11 @@ fun PlayersSettingsScreen(
             }
         }
     }
-
     LaunchedEffect(Unit) {
         viewModel.sharedDismiss.collect {
             onBack()
         }
     }
-
     MKBaseScreen(title = R.string.joueurs, state = bottomSheetState, sheetContent = {
         MKBottomSheet(
             trackIndex = null,

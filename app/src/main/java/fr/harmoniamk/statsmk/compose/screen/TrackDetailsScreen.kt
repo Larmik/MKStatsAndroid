@@ -26,24 +26,20 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterialApi::class)
 fun TrackDetailsScreen(warId: String, warTrackId: String, onBack: () -> Unit) {
     val viewModel: TrackDetailsViewModel = viewModel(warId = warId, warTrackId = warTrackId)
-
     val war = viewModel.sharedWar.collectAsState()
     val currentTrack = viewModel.sharedCurrentTrack.collectAsState()
     val positions = viewModel.sharedPositions.collectAsState()
     val shocks = viewModel.sharedShocks.collectAsState()
     val buttonsVisible = viewModel.sharedButtonsVisible.collectAsState()
     val currentState = viewModel.sharedBottomSheetValue.collectAsState()
-
     val bottomSheetState =
         rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
     val coroutineScope = rememberCoroutineScope()
-
     val buttons = listOf(
         Pair(R.string.editer_circuit, viewModel::onEditTrack),
         Pair(R.string.editer_positions, viewModel::onEditPositions),
         Pair(R.string.editer_shocks, viewModel::onEditShocks),
     )
-
     LaunchedEffect(Unit) {
         viewModel.sharedBottomSheetValue.collect {
             when (it) {
@@ -70,7 +66,6 @@ fun TrackDetailsScreen(warId: String, warTrackId: String, onBack: () -> Unit) {
                 onDismiss = { trackIndex?.let { viewModel.dismissBottomSheet(it) } },
                 onEditPosition = {},
                 onEditTrack = {}
-
             )
         },
         content = {
@@ -81,11 +76,8 @@ fun TrackDetailsScreen(warId: String, warTrackId: String, onBack: () -> Unit) {
                     MKPlayerItem(
                         position = it,
                         shockVisible = false,
-                        shockCount = shocks.value?.singleOrNull { shock -> shock.playerId == it.player?.mid }?.count
-                            ?: 0
-                    ) {
-
-                    }
+                        shockCount = shocks.value?.singleOrNull { shock -> shock.playerId == it.player?.mid }?.count ?: 0
+                    ) {}
                 }
             }
             currentTrack.value?.let { MKScoreView(track = it) }

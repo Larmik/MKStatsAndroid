@@ -50,7 +50,6 @@ class LoginViewModel @Inject constructor(
     val sharedDialogValue = _sharedDialogValue.asStateFlow()
     val sharedBottomSheetValue = _sharedBottomSheetValue.asStateFlow()
 
-
     fun onConnect(email: String, password: String) {
         _sharedDialogValue.value = MKDialogState.Loading(R.string.connexion_en_cours)
         val connectUser =  authenticationRepository.signIn(email, password)
@@ -83,7 +82,6 @@ class LoginViewModel @Inject constructor(
             .flatMapLatest {  databaseRepository.writeWars(it) }
             .onEach { _sharedNext.value = Unit }.launchIn(viewModelScope)
 
-
         connectUser
             .mapNotNull { (it as? AuthUserResponse.Error)?.message }
             .onEach { _sharedDialogValue.value = null }
@@ -97,6 +95,5 @@ class LoginViewModel @Inject constructor(
     fun dismissBottomSheet() {
         _sharedBottomSheetValue.value = null
     }
-
 
 }

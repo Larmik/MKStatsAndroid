@@ -15,32 +15,29 @@ import fr.harmoniamk.statsmk.model.firebase.Penalty
 
 @Composable
 fun MKPenaltyView(modifier: Modifier = Modifier, penalties: List<Penalty>?) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier) {
+        penalties?.takeIf { it.isNotEmpty() }?.let {
+            MKText(
+                text = R.string.p_nalit_s,
+                font = R.font.montserrat_bold,
 
-        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier) {
-            penalties?.takeIf { it.isNotEmpty() }?.let {
-                MKText(
-                    text = R.string.p_nalit_s,
-                    font = R.font.montserrat_bold,
-
-                    modifier = Modifier.padding(bottom = 10.dp),
-                    fontSize = 12
-                )
-                penalties.forEach {
-                    Row(
-                        horizontalArrangement = Arrangement.SpaceEvenly,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        MKText(text = it.teamName.orEmpty(), fontSize = 12)
-                        MKText(
-                            text = String.format(
-                                stringResource(id = R.string.minus_placeholder),
-                                it.amount.toString()
-                            ), fontSize = 12
-                        )
-                    }
+                modifier = Modifier.padding(bottom = 10.dp),
+                fontSize = 12
+            )
+            penalties.forEach {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    MKText(text = it.teamName.orEmpty(), fontSize = 12)
+                    MKText(
+                        text = String.format(
+                            stringResource(id = R.string.minus_placeholder),
+                            it.amount.toString()
+                        ), fontSize = 12
+                    )
                 }
             }
         }
-
-
+    }
 }

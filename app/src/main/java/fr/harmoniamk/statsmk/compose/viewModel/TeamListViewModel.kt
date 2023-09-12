@@ -30,11 +30,9 @@ class TeamListViewModel @Inject constructor(
 ): ViewModel() {
 
     private val _sharedTeams = MutableStateFlow<List<Team>?>( null)
-    private val _sharedTeamSelected = MutableSharedFlow<Team>()
     private val _sharedAddTeam = MutableSharedFlow<Unit>()
 
     val sharedTeams = _sharedTeams.asStateFlow()
-    val sharedTeamSelected = _sharedTeamSelected.asSharedFlow()
     val sharedAddTeam = _sharedAddTeam.asSharedFlow()
 
     private val teams = mutableListOf<Team>()
@@ -57,8 +55,7 @@ class TeamListViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
-    fun bind(onTeamClick: Flow<Team>, onSearch: Flow<String>, onAddTeam: Flow<Unit>) {
-        onTeamClick.bind(_sharedTeamSelected, viewModelScope)
+    fun bind(onAddTeam: Flow<Unit>) {
         onAddTeam.bind(_sharedAddTeam, viewModelScope)
     }
 

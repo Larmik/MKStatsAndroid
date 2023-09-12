@@ -69,17 +69,15 @@ class StatsRankingViewModel @Inject constructor(
     private val _sharedUserId = MutableStateFlow("")
     private val _sharedGoToStats = MutableSharedFlow<RankingItemViewModel?>()
     private val _sharedBottomsheetValue = MutableStateFlow<MKBottomSheetState?>(null)
+    private var _sharedIndivEnabled = MutableStateFlow(false)
 
     val sharedGoToStats = _sharedGoToStats.asSharedFlow()
     val sharedList = _sharedList.asStateFlow()
     val sharedBottomSheetValue = _sharedBottomsheetValue.asStateFlow()
     val sharedUserId = _sharedUserId.asStateFlow()
-
-    private val warList = mutableListOf<MKWar>()
-
-    private var _sharedIndivEnabled = MutableStateFlow(false)
     val sharedIndivEnabled = _sharedIndivEnabled.asStateFlow()
 
+    private val warList = mutableListOf<MKWar>()
     private var sortType: SortType? = null
     private val onlyIndiv = preferencesRepository.currentTeam?.mid == null
 

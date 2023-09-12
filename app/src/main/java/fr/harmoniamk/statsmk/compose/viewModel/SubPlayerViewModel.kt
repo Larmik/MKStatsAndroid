@@ -24,16 +24,14 @@ import javax.inject.Inject
 class SubPlayerViewModel @Inject constructor(
     private val firebaseRepository: FirebaseRepositoryInterface,
     private val preferencesRepository: PreferencesRepositoryInterface,
-    private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
+    databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
 
     private val _sharedPlayers = MutableStateFlow<List<UserSelector>>(listOf())
     private val _sharedTitle = MutableStateFlow(R.string.joueur_sortant)
-    private val _sharedDismissDialog = MutableSharedFlow<Unit>()
     private val _sharedBack = MutableSharedFlow<Unit>()
     private val _sharedPlayerSelected = MutableStateFlow<User?>(null)
 
     val sharedPlayers = _sharedPlayers.asStateFlow()
-    val sharedDismissDialog = _sharedDismissDialog.asSharedFlow()
     val sharedPlayerSelected = _sharedPlayerSelected.asStateFlow()
     val sharedTitle = _sharedTitle.asStateFlow()
     val sharedBack = _sharedBack.asSharedFlow()
@@ -81,7 +79,6 @@ class SubPlayerViewModel @Inject constructor(
                 .flatMapLatest { firebaseRepository.writeUser(it) }
                 .bind(_sharedBack, viewModelScope)
         }
-
     }
 
     fun onBack() {
@@ -102,6 +99,5 @@ class SubPlayerViewModel @Inject constructor(
             else -> _sharedPlayers.value = playersList.filter { it.user?.name?.toLowerCase(Locale.ROOT)?.contains(searched.toLowerCase(Locale.ROOT)).isTrue }
         }
     }
-
 
 }

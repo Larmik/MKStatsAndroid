@@ -44,7 +44,7 @@ import kotlinx.coroutines.flow.onEach
 class WarDetailsViewModel  @AssistedInject constructor(
     @Assisted private val id: String,
     private val firebaseRepository: FirebaseRepositoryInterface,
-    private val authenticationRepository: AuthenticationRepositoryInterface,
+    authenticationRepository: AuthenticationRepositoryInterface,
     private val databaseRepository: DatabaseRepositoryInterface,
     private val networkRepository: NetworkRepositoryInterface
 ) : ViewModel() {
@@ -79,13 +79,6 @@ class WarDetailsViewModel  @AssistedInject constructor(
     private val _sharedWar = MutableStateFlow<MKWar?>(null)
     private val _sharedWarPlayers = MutableStateFlow<List<CurrentPlayerModel>?>(null)
     private val _sharedTracks = MutableStateFlow<List<MKWarTrack>?>(null)
-
-    val sharedWar = _sharedWar.asStateFlow()
-    val sharedTracks = _sharedTracks.asStateFlow()
-    val sharedWarPlayers = _sharedWarPlayers.asStateFlow()
-
-
-
     private val _sharedBestTrack = MutableSharedFlow<MKWarTrack>()
     private val _sharedWorstTrack = MutableSharedFlow<MKWarTrack>()
     private val _sharedTrackClick = MutableSharedFlow<Int>()
@@ -95,6 +88,9 @@ class WarDetailsViewModel  @AssistedInject constructor(
     private val _sharedShockCount = MutableSharedFlow<String?>()
     private val _sharedPenalties = MutableSharedFlow<List<Penalty>?>()
 
+    val sharedWar = _sharedWar.asStateFlow()
+    val sharedTracks = _sharedTracks.asStateFlow()
+    val sharedWarPlayers = _sharedWarPlayers.asStateFlow()
     val sharedBestTrack = _sharedBestTrack.asSharedFlow()
     val sharedWorstTrack = _sharedWorstTrack.asSharedFlow()
     val sharedTrackClick = _sharedTrackClick.asSharedFlow()

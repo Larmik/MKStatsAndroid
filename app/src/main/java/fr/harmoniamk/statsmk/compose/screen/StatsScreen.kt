@@ -29,7 +29,6 @@ import fr.harmoniamk.statsmk.model.local.Stats
 fun StatsScreen(viewModel: StatsViewModel = hiltViewModel(), type: StatsType) {
     val stats = viewModel.sharedStats.collectAsState()
     val subtitle = viewModel.sharedSubtitle.collectAsState()
-
     viewModel.init(type)
 
     MKBaseScreen(title = type.title, subTitle = subtitle.value) {
@@ -47,7 +46,6 @@ fun StatsScreen(viewModel: StatsViewModel = hiltViewModel(), type: StatsType) {
             type.takeIf { it is StatsType.IndivStats || it is StatsType.TeamStats ||it is StatsType.PeriodicStats }?.let {
                 (stats.value as? Stats) ?.let {
                     MKTeamStatsView(stats = it)
-
                 }
             }
             stats.value?.let { MKTeamScoreStatView(stats = it) }

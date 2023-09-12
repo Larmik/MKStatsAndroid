@@ -28,7 +28,6 @@ class EditUserViewModel @Inject constructor(
 ): ViewModel() {
 
     private val _sharedDismiss = MutableSharedFlow<Unit>()
-
     val sharedDismiss = _sharedDismiss.asSharedFlow()
 
     fun onValidate(isEmail: Boolean, value: String) {

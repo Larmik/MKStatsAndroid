@@ -22,10 +22,10 @@ import kotlinx.coroutines.FlowPreview
 fun MKWinTieLossCell(stats: MKStats?) {
     val warStats = (stats as? Stats)?.warStats
     val mapStats = stats as? MapStats
-
     val win = warStats?.warsWon ?: mapStats?.trackWon
     val tie = warStats?.warsTied ?: mapStats?.trackTie
     val loss = warStats?.warsLoss ?: mapStats?.trackLoss
+    
     Card {
         Row {
             Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {

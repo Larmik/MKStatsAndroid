@@ -27,18 +27,15 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 @Composable
 fun PenaltyScreen(viewModel: PenaltyViewModel = hiltViewModel(), onDismiss: () -> Unit) {
     val amountValue = remember { mutableStateOf(TextFieldValue("")) }
-
     val team1 = viewModel.sharedTeam1.collectAsState()
     val team2 = viewModel.sharedTeam2.collectAsState()
 
     BackHandler { onDismiss() }
-
     LaunchedEffect(Unit) {
         viewModel.sharedDismiss.collect {
             onDismiss()
         }
     }
-
     MKBaseScreen(title = R.string.p_nalit) {
         MKSegmentedSelector(buttons = listOf(
             Pair(team1.value?.name.orEmpty()) { viewModel.onSelectTeam(team1.value?.mid) },
@@ -61,5 +58,4 @@ fun PenaltyScreen(viewModel: PenaltyViewModel = hiltViewModel(), onDismiss: () -
             viewModel.onPenaltyAdded()
         }
     }
-
 }

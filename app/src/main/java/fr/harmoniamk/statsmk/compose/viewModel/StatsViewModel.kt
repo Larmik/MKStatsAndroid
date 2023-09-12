@@ -46,12 +46,11 @@ import javax.inject.Inject
 
 sealed class StatsType(val title: Int) {
     class IndivStats(val userId: String) : StatsType(R.string.statistiques_du_joueur)
-    class TeamStats() : StatsType(R.string.statistiques_de_l_quipe)
+    class TeamStats : StatsType(R.string.statistiques_de_l_quipe)
     class OpponentStats(
         val teamId: String?,
         val isIndiv: Boolean
     ) : StatsType(R.string.statistiques_de_l_quipe)
-
     class MapStats(
         val userId: String? = null,
         val teamId: String? = null,
@@ -61,8 +60,7 @@ sealed class StatsType(val title: Int) {
         val isMonth: Boolean = false,
         val trackIndex: Int
     ) : StatsType(R.string.statistiques_circuit)
-
-    class PeriodicStats() : StatsType(R.string.statistiques_hebdomadaires)
+    class PeriodicStats : StatsType(R.string.statistiques_hebdomadaires)
 }
 
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
@@ -100,7 +98,6 @@ class StatsViewModel @Inject constructor(
     private val wars = mutableListOf<MKWar>()
     private var item: Stats? = null
     var onlyIndiv =  preferencesRepository.currentTeam?.mid == null
-
 
     fun init(type: StatsType) {
 
@@ -152,15 +149,12 @@ class StatsViewModel @Inject constructor(
                             }
                         }
                     }
-                    val temp = positions
+                    positions
                         .groupBy { it.first }
                         .map { Pair(it.key, it.value.map { it.second }.sum()) }
                         .filter { it.first?.mid == authenticationRepository.user?.uid }
                         .map { Pair(it.second, war.war?.createdDate) }
-
-                    temp.forEach { pair ->
-                        finalList.add(pair)
-                    }
+                        .forEach { pair -> finalList.add(pair) }
                 }
                 _sharedStats.emit(it.apply {
                     this.highestPlayerScore = finalList.maxByOrNull { it.first }
@@ -203,8 +197,7 @@ class StatsViewModel @Inject constructor(
                 mostPlayedTeam = it.getOrNull(0)
                 mostDefeatedTeam = it.getOrNull(1)
                 lessDefeatedTeam = it.getOrNull(2)
-            }
-            .launchIn(viewModelScope)
+            }.launchIn(viewModelScope)
 
         warFlow
             .filter { type is StatsType.MapStats }
@@ -262,8 +255,6 @@ class StatsViewModel @Inject constructor(
         onMostDefeatedTeamClick: Flow<Unit>,
         onLessDefeatedTeamClick: Flow<Unit>
     ) {
-
-
         flowOf(
             onBestClick.mapNotNull { bestMap },
             onWorstClick.mapNotNull { worstMap },
@@ -272,7 +263,6 @@ class StatsViewModel @Inject constructor(
             .map { Maps.values().indexOf(it.map) }
         //  .map { Pair(authenticationRepository.user?.uid, it) }
         // .bind(_sharedTrackClick, viewModelScope)
-
         flowOf(
             onVictoryClick.mapNotNull { highestVicory },
             onDefeatClick.mapNotNull { loudestDefeat },

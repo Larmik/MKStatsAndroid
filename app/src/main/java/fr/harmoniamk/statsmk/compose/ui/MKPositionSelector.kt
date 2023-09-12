@@ -24,23 +24,23 @@ fun MKPositionSelector(position: Int, modifier: Modifier = Modifier, isVisible: 
 @Preview
 @Composable
 fun MKPositionPreview() {
-    Column() {
-        Row() {
+    Column {
+        Row {
             MKPositionSelector(position = 1, modifier = Modifier.weight(1f)) {}
             MKPositionSelector(position = 2, modifier = Modifier.weight(1f), isVisible = false) {}
             MKPositionSelector(position = 3, modifier = Modifier.weight(1f)) {}
         }
-        Row() {
+        Row {
             MKPositionSelector(position = 4, modifier = Modifier.weight(1f)) {}
             MKPositionSelector(position = 5, modifier = Modifier.weight(1f)) {}
             MKPositionSelector(position = 6, modifier = Modifier.weight(1f)) {}
         }
-        Row() {
+        Row {
             MKPositionSelector(position = 7, modifier = Modifier.weight(1f)) {}
             MKPositionSelector(position = 8, modifier = Modifier.weight(1f)) {}
             MKPositionSelector(position = 9, modifier = Modifier.weight(1f)) {}
         }
-        Row() {
+        Row {
             MKPositionSelector(position = 10, modifier = Modifier.weight(1f)) {}
             MKPositionSelector(position = 11, modifier = Modifier.weight(1f)) {}
             MKPositionSelector(position = 12, modifier = Modifier.weight(1f)) {}

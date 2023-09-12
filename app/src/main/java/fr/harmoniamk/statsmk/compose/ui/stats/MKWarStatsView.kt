@@ -22,7 +22,6 @@ import kotlinx.coroutines.FlowPreview
 fun MKWarStatsView(mkStats: MKStats) {
     val stats = mkStats as? Stats
     val mapStats = mkStats as? MapStats
-
     val totalPlayed = stats?.warStats?.warsPlayed ?: mapStats?.trackPlayed
     val totalPlayedLabel = when (mkStats) {
         is Stats -> R.string.wars_jou_es
@@ -42,7 +41,4 @@ fun MKWarStatsView(mkStats: MKStats) {
             MKPieChart(Modifier.weight(1f), stats = mkStats)
         }
     }
-
-
-
 }

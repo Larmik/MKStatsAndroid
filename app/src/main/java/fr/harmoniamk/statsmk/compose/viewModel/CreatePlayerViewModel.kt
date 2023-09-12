@@ -28,7 +28,6 @@ class CreatePlayerViewModel @Inject constructor(
     private val _sharedDismiss = MutableSharedFlow<Unit>()
     val sharedDismiss = _sharedDismiss.asSharedFlow()
 
-
     fun onPlayerCreated(name: String, addToTeam: Boolean) {
         databaseRepository.getUsers()
             .filterNot { it.map { player -> player.name?.lowercase() }.contains(name.lowercase()) }
@@ -44,7 +43,6 @@ class CreatePlayerViewModel @Inject constructor(
             .onEach {  }
             .flatMapLatest { firebaseRepository.writeUser(it) }
             .bind(_sharedDismiss, viewModelScope)
-
     }
 
 }

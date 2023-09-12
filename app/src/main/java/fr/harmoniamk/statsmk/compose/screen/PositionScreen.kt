@@ -30,9 +30,7 @@ fun PositionScreen(
     onBack: () -> Unit,
     onNext: (Int) -> Unit
 ) {
-
     val viewModel = viewModel(index = trackIndex, editing = editing)
-
     val war = viewModel.sharedWar.collectAsState()
     val map = viewModel.sharedCurrentMap.collectAsState()
     val selectedPositions = viewModel.sharedSelectedPositions.collectAsState()
@@ -50,7 +48,6 @@ fun PositionScreen(
     LaunchedEffect(Unit) {
         viewModel.sharedGoToResult.filterNotNull().collect { onNext(trackIndex) }
     }
-
     MKBaseScreen(
         title = war.value?.name.orEmpty(),
         subTitle = trackIndexRes.value?.let { stringResource(id = it) }) {
@@ -60,7 +57,6 @@ fun PositionScreen(
                 track = war.value?.warTracks?.getOrNull(trackIndex),
                 modifier = Modifier.padding(vertical = 10.dp)
             )
-
             else -> MKScoreView(war = war.value, modifier = Modifier.padding(vertical = 10.dp))
         }
         MKText(

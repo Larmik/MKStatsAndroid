@@ -23,16 +23,12 @@ fun ResetPasswordScreen(viewModel: ResetPasswordViewModel = hiltViewModel(), onD
     val emailState = remember { mutableStateOf(TextFieldValue("")) }
     val dialogState = viewModel.sharedDialogValue.collectAsState()
 
-    dialogState.value?.let {
-        MKDialog(state = it)
-    }
-
+    dialogState.value?.let { MKDialog(state = it) }
     LaunchedEffect(Unit) {
         viewModel.sharedDismiss.collect {
             onDismiss()
         }
     }
-
     MKBaseScreen(title = R.string.mot_de_passe_oubli) {
         MKTextField(
             value = emailState.value,

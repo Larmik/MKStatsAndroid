@@ -79,21 +79,16 @@ class TrackDetailsViewModel @AssistedInject constructor(
     private val _sharedWar = MutableStateFlow<MKWar?>(null)
     private val _sharedCurrentTrack = MutableStateFlow<MKWarTrack?>(null)
     private val _sharedBottomSheetValue = MutableStateFlow<MKBottomSheetState?>(null)
+    private val _sharedShocks = MutableStateFlow<List<Shock>?>(null)
 
     val sharedPositions = _sharedPositions.asStateFlow()
     val sharedButtonsVisible = _sharedButtonsVisible.asStateFlow()
     val sharedWar = _sharedWar.asStateFlow()
     val sharedCurrentTrack = _sharedCurrentTrack.asStateFlow()
     val sharedBottomSheetValue = _sharedBottomSheetValue.asStateFlow()
-
-
-
-
-    private val _sharedShocks = MutableStateFlow<List<Shock>?>(null)
-
     val sharedShocks = _sharedShocks.asStateFlow()
 
-    var index = 0
+    private var index = 0
     private val users = mutableListOf<User>()
 
     init {
@@ -137,8 +132,6 @@ class TrackDetailsViewModel @AssistedInject constructor(
             }.launchIn(viewModelScope)
     }
 
-
-
     fun onEditTrack() {
         _sharedBottomSheetValue.value = MKBottomSheetState.EditTrack()
     }
@@ -166,17 +159,12 @@ class TrackDetailsViewModel @AssistedInject constructor(
                     shocks.add(Shock(shock.playerId, shock.count))
                 }
                 _sharedShocks.value = shocks
-
             }.launchIn(viewModelScope)
     }
-
 
     fun dismissBottomSheet(trackIndex: Int) {
         _sharedBottomSheetValue.value = null
         refresh(trackIndex)
     }
-
-
-
 
 }

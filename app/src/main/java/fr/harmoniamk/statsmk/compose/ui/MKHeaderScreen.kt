@@ -1,4 +1,4 @@
-package fr.harmoniamk.statsmk.compose.ui
+ package fr.harmoniamk.statsmk.compose.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -39,5 +39,4 @@ fun MKHeaderScreen(title: Any?, subTitle: Any? = null, verticalArrangement: Arra
         }
         content()
     }
-
 }

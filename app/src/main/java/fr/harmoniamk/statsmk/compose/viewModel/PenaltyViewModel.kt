@@ -25,19 +25,15 @@ class PenaltyViewModel @Inject constructor(
 
     private val _sharedTeam1 = MutableStateFlow<Team?>(null)
     private val _sharedTeam2 = MutableStateFlow<Team?>(null)
-    private val _sharedTeam1Selected = MutableStateFlow(true)
     private val _sharedDismiss = MutableSharedFlow<Unit>()
-    private val _sharedButtonEnable = MutableStateFlow(false)
 
     val sharedTeam1 = _sharedTeam1.asStateFlow()
     val sharedTeam2 = _sharedTeam2.asStateFlow()
-    val sharedTeam1Selected = _sharedTeam1Selected.asStateFlow()
     val sharedDismiss = _sharedDismiss.asSharedFlow()
-    val sharedButtonEnable = _sharedButtonEnable.asStateFlow()
 
-    var teamSelected: String? = null
-
+    private var teamSelected: String? = null
     private var amount: Int? = null
+
     init {
         preferencesRepository.currentWar
             ?.withName(databaseRepository)
@@ -52,13 +48,10 @@ class PenaltyViewModel @Inject constructor(
 
     fun onSelectTeam(team: String?) {
         teamSelected = team
-        _sharedTeam1Selected.value = team == preferencesRepository.currentWar?.teamHost
-        _sharedButtonEnable.value = this.amount != null
     }
 
     fun onAmount(amount: String) {
         this.amount = amount.toIntOrNull()
-        _sharedButtonEnable.value = teamSelected != null && this.amount != null
     }
 
     fun onPenaltyAdded() {
@@ -73,9 +66,6 @@ class PenaltyViewModel @Inject constructor(
                     ?.launchIn(viewModelScope)
                 }
             }
-
         }
-
-
 
 }

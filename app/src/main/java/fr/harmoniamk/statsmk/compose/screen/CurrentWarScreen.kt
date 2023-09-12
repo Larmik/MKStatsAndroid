@@ -51,17 +51,13 @@ fun CurrentWarScreen(
     onTrackClick: (String) -> Unit,
     onRedirectToResume: (String) -> Unit
 ) {
-
     val war = viewModel.sharedCurrentWar.collectAsState()
     val players = viewModel.sharedWarPlayers.collectAsState()
     val tracks = viewModel.sharedTracks.collectAsState()
     val buttonVisible = viewModel.sharedButtonVisible.collectAsState()
     val currentState = viewModel.sharedBottomSheetValue.collectAsState()
     val dialogState = viewModel.sharedDialogValue.collectAsState()
-    val bottomSheetState =
-        rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
-
-
+    val bottomSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
     val buttons = listOf(
         Pair(R.string.remplacement, viewModel::onSubPlayer),
         Pair(R.string.p_nalit, viewModel::onPenalty),

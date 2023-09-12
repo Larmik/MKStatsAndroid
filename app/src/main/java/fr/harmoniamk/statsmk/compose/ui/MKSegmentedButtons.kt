@@ -46,7 +46,6 @@ fun MKSegmentedButtons(buttons: List<Pair<Int, () -> Unit>>) {
                             .fillMaxHeight())
             }
         }
-
 }
 
 @Preview

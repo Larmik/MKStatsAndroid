@@ -67,7 +67,6 @@ fun MKTeamItem(team: Team? = null, teamToManage: Team? = null, teamRanking: Oppo
                         }
                     }
                 }
-
             else -> Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(10.dp)) {
                 finalTeam?.picture?.let { AsyncImage(model = it, contentDescription = null, modifier = Modifier.size(50.dp))}
                 Spacer(Modifier.height(10.dp))
@@ -87,6 +86,4 @@ fun MKTeamItemPreview() {
             shortName = "HR"
         )
     ).apply { this.picture = "https://firebasestorage.googleapis.com/v0/b/stats-mk.appspot.com/o/1643723546718?alt=media&token=901e95bd-5d15-4ef4-a541-bdbf28d3bfca" })
-
-
 }

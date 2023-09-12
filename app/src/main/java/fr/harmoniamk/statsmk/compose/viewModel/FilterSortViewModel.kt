@@ -23,7 +23,6 @@ sealed class Filter(val list: List<FilterType>) {
     class None : Filter(listOf())
 }
 
-
 @HiltViewModel
 class FilterSortViewModel @Inject constructor() : ViewModel() {
 
@@ -34,7 +33,6 @@ class FilterSortViewModel @Inject constructor() : ViewModel() {
     val filterState = _filterState.asStateFlow()
 
     private val filters = mutableListOf<FilterType>()
-
 
     fun setSortType(sortType: SortType?) {
         _sortState.value = sortType
@@ -55,7 +53,5 @@ class FilterSortViewModel @Inject constructor() : ViewModel() {
         }
         _filterState.value = new
     }
-
-
 
 }

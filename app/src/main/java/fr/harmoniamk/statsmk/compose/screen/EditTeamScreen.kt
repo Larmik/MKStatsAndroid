@@ -35,7 +35,6 @@ fun EditTeamScreen(
     val team = viewModel.sharedTeam.collectAsState()
     val nameState = remember { mutableStateOf(TextFieldValue("")) }
     val tagState = remember { mutableStateOf(TextFieldValue("")) }
-
     val enabled = nameState.value.text.isNotEmpty() && tagState.value.text.isNotEmpty()
             && (nameState.value.text.lowercase() != team.value?.name?.lowercase()
             || tagState.value.text.lowercase() != team.value?.shortName?.lowercase())
@@ -65,7 +64,6 @@ fun EditTeamScreen(
         ) { viewModel.onTeamEdited(nameState.value.text, tagState.value.text) }
     }
 }
-
 
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 @Preview

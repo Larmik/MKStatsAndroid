@@ -28,10 +28,8 @@ class OpponentSettingsViewModel @Inject constructor(private val preferencesRepos
     private val _sharedShowDialog = MutableSharedFlow<Boolean>()
     private val _sharedBottomSheetValue = MutableStateFlow<MKBottomSheetState?>(null)
 
-
     val sharedTeams = _sharedTeams.asStateFlow()
     val sharedBottomSheetValue = _sharedBottomSheetValue.asStateFlow()
-
 
     private val teams = mutableListOf<Team>()
 
@@ -79,38 +77,7 @@ class OpponentSettingsViewModel @Inject constructor(private val preferencesRepos
                         ?.contains(searched.toLowerCase(Locale.ROOT)).isTrue || it.name?.toLowerCase(
                         Locale.ROOT)?.contains(searched.toLowerCase(Locale.ROOT)) ?: true
                 }
-            }
-            .bind(_sharedTeams, viewModelScope)
-    }
-
-    fun bindDialog(onTeamEdit: Flow<Team>, onTeamDelete: Flow<Team>) {
-        onTeamDelete
-            .flatMapLatest { firebaseRepository.deleteTeam(it) }
-            .flatMapLatest { databaseRepository.getTeams() }
-            .onEach {
-                _sharedShowDialog.emit(false)
-                _sharedTeams.emit(it.filterNot { vm -> vm.mid == preferencesRepository.currentTeam?.mid })
-            }.launchIn(viewModelScope)
-
-        onTeamEdit
-            .onEach {
-                if (it.mid == preferencesRepository.currentTeam?.mid)
-                    preferencesRepository.currentTeam = it
-            }
-            .flatMapLatest { firebaseRepository.writeTeam(it) }
-            .flatMapLatest {  databaseRepository.getTeams() }
-            .map { list -> list.sortedBy { it.name } }
-            .onEach {
-                _sharedShowDialog.emit(false)
-                _sharedTeams.emit(it.filterNot { vm -> vm.mid == preferencesRepository.currentTeam?.mid })
-            }.launchIn(viewModelScope)
-    }
-
-    fun bindAddDialog(onTeamAdded: Flow<Unit>) {
-        onTeamAdded
-            .flatMapLatest {  databaseRepository.getTeams() }
-            .map { list -> list.sortedBy { it.name }.filterNot { vm -> vm.mid == preferencesRepository.currentTeam?.mid } }
-            .bind(_sharedTeams, viewModelScope)
+            }.bind(_sharedTeams, viewModelScope)
     }
 
 }

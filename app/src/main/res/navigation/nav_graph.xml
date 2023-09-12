@@ -33,55 +33,6 @@
             app:popEnterAnim="@anim/enter_from_left"
             app:popExitAnim="@anim/exit_to_right"/>
 
-        <action
-            android:id="@+id/to_indiv_stats"
-            app:destination="@id/indivStatsFragment"
-            app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right"/>
-
-        <action
-            android:id="@+id/to_team_stats"
-            app:destination="@id/teamStatsFragment"
-            app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right"/>
-
-        <action
-            android:id="@+id/to_periodic_stats"
-            app:destination="@id/periodicStatsFragment"
-            app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right"/>
-
-        <action
-            android:id="@+id/to_player_ranking"
-            app:destination="@id/playerRankingFragment"
-            app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right"/>
-
-        <action
-            android:id="@+id/to_opponent_ranking"
-            app:destination="@id/opponentRankingFragment"
-            app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right"/>
-
-        <action
-            android:id="@+id/to_map_ranking"
-            app:destination="@id/mapRankingFragment"
-            app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right"/>
-
-
     </fragment>
 
 
@@ -258,61 +209,6 @@
 
 
     </fragment>
-
-    <fragment
-        android:id="@+id/opponentRankingFragment"
-        android:name="fr.harmoniamk.statsmk.fragment.stats.opponentRanking.OpponentRankingFragment"
-        tools:layout="@layout/fragment_opponent_ranking"
-        android:label="OpponentRankingFragment">
-
-        <action
-            android:id="@+id/to_opponent_stats"
-            app:destination="@id/opponentStatsFragment"
-            app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right">
-
-            <argument
-                android:name="stats"
-                app:argType="fr.harmoniamk.statsmk.fragment.stats.opponentRanking.OpponentRankingItemViewModel"/>
-
-            <argument
-                android:name="userId"
-                app:argType="string"
-                app:nullable="true"/>
-
-            <argument
-                android:name="isIndiv"
-                app:argType="boolean"
-                android:defaultValue="true"/>
-
-        </action>
-
-    </fragment>
-
-    <fragment
-        android:id="@+id/playerRankingFragment"
-        android:name="fr.harmoniamk.statsmk.fragment.stats.playerRanking.PlayerRankingFragment"
-        tools:layout="@layout/fragment_player_ranking"
-        android:label="PlayerRankingFragment">
-
-        <action
-            android:id="@+id/to_player_stats"
-            app:destination="@id/playerStatsFragment"
-            app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right">
-
-            <argument
-                android:name="stats"
-                app:argType="fr.harmoniamk.statsmk.fragment.stats.playerRanking.PlayerRankingItemViewModel"/>
-
-        </action>
-
-    </fragment>
-
 
 
 
@@ -567,41 +463,5 @@
 
     </fragment>
 
-    <fragment
-        android:id="@+id/mapRankingFragment"
-        android:name="fr.harmoniamk.statsmk.fragment.stats.mapRanking.MapRankingFragment"
-        tools:layout="@layout/fragment_map_ranking"
-        android:label="MapRankingFragment">
-
-        <action android:id="@+id/to_map_stats"
-            app:destination="@id/mapStatsFragment"
-            app:enterAnim="@anim/enter_from_right"
-            app:exitAnim="@anim/exit_to_left"
-            app:popEnterAnim="@anim/enter_from_left"
-            app:popExitAnim="@anim/exit_to_right">
-
-            <argument
-                android:name="trackId"
-                app:argType="integer"
-                app:nullable="false"/>
-
-            <argument
-                android:name="userId"
-                app:argType="string"
-                app:nullable="true"/>
-
-            <argument
-                android:name="isIndiv"
-                app:argType="boolean"
-                android:defaultValue="true"/>
-
-            <argument
-                android:name="mode"
-                android:defaultValue="map"
-                app:argType="string"/>
-
-        </action>
-
-    </fragment>
 
 </navigation>

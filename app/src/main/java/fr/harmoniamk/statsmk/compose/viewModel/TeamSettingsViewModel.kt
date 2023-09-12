@@ -53,27 +53,15 @@ class TeamSettingsViewModel @Inject constructor(
 
 
     private val _sharedPlayers = MutableStateFlow<SnapshotStateList<ManagePlayersItemViewModel>>(SnapshotStateList())
-    private val _sharedAddPlayer = MutableSharedFlow<Unit>()
-    private val _sharedAddPlayerVisibility = MutableSharedFlow<Int>()
-    private val _sharedEdit = MutableSharedFlow<User>()
     private val _sharedRedirectToSettings = MutableSharedFlow<Unit>()
     private val _sharedTeamName = MutableStateFlow<String?>(null)
-    private val _sharedTeamEdit = MutableSharedFlow<Team>()
-    private val _sharedEditPicture = MutableSharedFlow<Unit>()
     private val _sharedManageVisible = MutableSharedFlow<Boolean>()
     private val _sharedPictureLoaded = MutableStateFlow<String?>(null)
     private val _sharedBottomSheetValue = MutableStateFlow<MKBottomSheetState?>(null)
 
     val sharedPlayers = _sharedPlayers.asStateFlow()
-    val sharedAddPlayer = _sharedAddPlayer.asSharedFlow()
-    val sharedEditTeamVisibility = _sharedAddPlayerVisibility.asSharedFlow()
-    val sharedEdit = _sharedEdit.asSharedFlow()
-    val sharedRedirectToSettings = _sharedRedirectToSettings.asSharedFlow()
     val sharedTeamName = _sharedTeamName.asStateFlow()
-    val sharedTeamEdit = _sharedTeamEdit.asSharedFlow()
-    val sharedEditPicture =_sharedEditPicture.asSharedFlow()
     val sharedPictureLoaded =_sharedPictureLoaded.asStateFlow()
-    val sharedManageVisible =_sharedManageVisible.asSharedFlow()
     val sharedBottomSheetValue = _sharedBottomSheetValue.asSharedFlow()
 
     private val players = SnapshotStateList<ManagePlayersItemViewModel>()
@@ -125,7 +113,6 @@ class TeamSettingsViewModel @Inject constructor(
                 .onEach { _sharedPictureLoaded.emit(url) }
                 .launchIn(viewModelScope)
         }
-
     }
 
     fun onSearch(searched: String) {
@@ -187,8 +174,6 @@ class TeamSettingsViewModel @Inject constructor(
         }
         emit(players)
     }
-
-
 
     private fun writeFormerTeams(user: User): Flow<User> = flow {
         val formerTeams = mutableListOf<String?>()

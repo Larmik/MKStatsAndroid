@@ -66,7 +66,6 @@ fun MKBottomSheet(
                     onNext = onEditPosition
                 )
             }
-
         }
         is MKBottomSheetState.EditShocks -> {
             trackIndex?.let {
@@ -110,6 +109,4 @@ fun MKBottomSheet(
         }
         else -> {}
     }
-
-
 }

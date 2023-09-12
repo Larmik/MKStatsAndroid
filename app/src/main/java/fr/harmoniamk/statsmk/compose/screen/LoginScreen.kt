@@ -37,21 +37,17 @@ fun LoginScreen(
     onSignup: () -> Unit,
     onBack: () -> Unit
 ) {
-
     val emailValue = remember { mutableStateOf(TextFieldValue("")) }
     val loadingState = viewModel.sharedDialogValue.collectAsState()
     val passwordValue = remember { mutableStateOf(TextFieldValue("")) }
-
     val currentState = viewModel.sharedBottomSheetValue.collectAsState()
-    val bottomSheetState =
-        rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+    val bottomSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
 
     LaunchedEffect(Unit) {
         viewModel.sharedNext.filterNotNull().collect {
             onNext()
         }
     }
-
     LaunchedEffect(Unit) {
         viewModel.sharedBottomSheetValue.collect {
             when (it) {
@@ -60,13 +56,8 @@ fun LoginScreen(
             }
         }
     }
-
     BackHandler { onBack() }
-
-    loadingState.value?.let {
-        MKDialog(state = it)
-    }
-
+    loadingState.value?.let { MKDialog(state = it) }
     MKBaseScreen(
         title = stringResource(id = R.string.connexion),
         verticalArrangement = Arrangement.SpaceBetween,
@@ -109,5 +100,4 @@ fun LoginScreen(
             MKButton(text = R.string.nouveau_sur_l_appli, hasBackground = false, onClick = onSignup)
         }
     }
-
 }

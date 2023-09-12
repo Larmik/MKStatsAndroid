@@ -43,7 +43,6 @@ class PlayerListViewModel @AssistedInject constructor(
     private val firebaseRepository: FirebaseRepositoryInterface
 ): ViewModel() {
 
-
     private val _sharedPlayers = MutableStateFlow<List<UserSelector>?>(null)
     private val _sharedUsersSelected = MutableStateFlow<List<User>?>(null)
     private val _sharedOfficial = MutableSharedFlow<Boolean>()
@@ -56,7 +55,6 @@ class PlayerListViewModel @AssistedInject constructor(
     val sharedUsersSelected = _sharedUsersSelected.asStateFlow()
     val sharedOfficial = _sharedOfficial.asSharedFlow()
 
-
     private val _sharedStarted = MutableSharedFlow<Unit>()
     private val _sharedTeamSelected = MutableSharedFlow<String?>()
     private val _sharedAlreadyCreated = MutableSharedFlow<Unit>()
@@ -67,10 +65,7 @@ class PlayerListViewModel @AssistedInject constructor(
     val sharedAlreadyCreated = _sharedAlreadyCreated.asSharedFlow()
     val sharedLoading = _sharedLoading.asSharedFlow()
 
-    val usersSelected = mutableListOf<User>()
     val date = SimpleDateFormat("dd/MM/yyyy - HH'h'mm", Locale.FRANCE).format(Date())
-
-
 
     companion object {
         @Suppress("UNCHECKED_CAST")

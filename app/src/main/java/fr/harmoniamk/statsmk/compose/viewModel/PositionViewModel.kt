@@ -79,10 +79,10 @@ class PositionViewModel @AssistedInject constructor(
     private val _sharedCurrentMap = MutableStateFlow<Maps?>(null)
     private val _sharedWar = MutableStateFlow<MKWar?>(null)
     private val _sharedPlayerLabel = MutableStateFlow<String?>(null)
-    private val _sharedPos = MutableStateFlow<Int?>(null)
     private val _sharedSelectedPositions = MutableStateFlow<List<Int>?>(null)
     private val _sharedGoToResult = MutableStateFlow<String?>(null)
     private val _sharedTrackNumber = MutableStateFlow<Int?>(null)
+    private val _sharedQuit = MutableSharedFlow<Unit>()
 
     val sharedCurrentMap = _sharedCurrentMap.asStateFlow()
     val sharedWar = _sharedWar.asStateFlow()
@@ -90,17 +90,11 @@ class PositionViewModel @AssistedInject constructor(
     val sharedSelectedPositions = _sharedSelectedPositions.asStateFlow()
     val sharedGoToResult = _sharedGoToResult.asStateFlow()
     val sharedTrackNumber = _sharedTrackNumber.asStateFlow()
-
-    private val _validateTrack = MutableSharedFlow<Unit>()
-    private val _sharedQuit = MutableSharedFlow<Unit>()
-    private val _sharedWarName = MutableSharedFlow<String?>()
-
-    val validateTrack = _validateTrack.asSharedFlow()
     val sharedQuit = _sharedQuit.asSharedFlow()
 
-    var currentUser: User? = null
-    var currentUsers: List<User> = listOf()
-    val positions = mutableListOf<NewWarPositions>()
+    private var currentUser: User? = null
+    private var currentUsers: List<User> = listOf()
+    private val positions = mutableListOf<NewWarPositions>()
 
     fun onPositionClick(position: Int) {
        val pos = NewWarPositions(mid = System.currentTimeMillis().toString(), position = position, playerId = currentUser?.mid)
@@ -132,7 +126,6 @@ class PositionViewModel @AssistedInject constructor(
                     }
                     else -> _sharedGoToResult.value = newTrack.mid
                 }
-
             }
         }
         else {
@@ -162,7 +155,6 @@ class PositionViewModel @AssistedInject constructor(
             else -> index
         }
         val currentTrack = preferencesRepository.currentWar?.warTracks?.getOrNull(index) ?: preferencesRepository.currentWarTrack
-
         _sharedCurrentMap.value = Maps.values()[currentTrack?.trackIndex ?: trackIndexInMapList]
         preferencesRepository.currentWar
             ?.withName(databaseRepository)

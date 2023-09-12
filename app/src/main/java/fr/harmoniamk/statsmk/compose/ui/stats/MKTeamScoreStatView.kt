@@ -23,7 +23,6 @@ import kotlinx.coroutines.FlowPreview
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @Composable
 fun MKTeamScoreStatView(stats: MKStats) {
-
     val warVictory = (stats as? Stats)?.warStats?.highestVictory
     val warDefeat = (stats as? Stats)?.warStats?.loudestDefeat
     val trackVictory = (stats as? MapStats)?.highestVictory

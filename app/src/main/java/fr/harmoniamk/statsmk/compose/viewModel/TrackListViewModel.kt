@@ -68,6 +68,7 @@ class TrackListViewModel @AssistedInject constructor(@Assisted private val editi
     val sharedSearchedItems = _sharedSearchedItems.asStateFlow()
     val sharedQuit = _sharedQuit.asSharedFlow()
     val sharedCurrentWar = _sharedCurrentWar.asStateFlow()
+
     init {
         firebaseRepository.takeIf { editing }?.listenToCurrentWar()?.bind(_sharedCurrentWar, viewModelScope)
     }

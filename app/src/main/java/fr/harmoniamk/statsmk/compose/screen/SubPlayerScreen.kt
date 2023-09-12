@@ -24,21 +24,16 @@ import kotlinx.coroutines.FlowPreview
 @OptIn(ExperimentalMaterialApi::class, FlowPreview::class, ExperimentalCoroutinesApi::class)
 @Composable
 fun SubPlayerScreen(viewModel: SubPlayerViewModel = hiltViewModel(), onDismiss: () -> Unit) {
-
     val currentPlayers = viewModel.sharedPlayers.collectAsState()
     val playerSelected = viewModel.sharedPlayerSelected.collectAsState()
     val title = viewModel.sharedTitle.collectAsState()
 
-    BackHandler() {
-        viewModel.onBack()
-    }
+    BackHandler { viewModel.onBack() }
     LaunchedEffect(Unit) {
         viewModel.sharedBack.collect {
             onDismiss()
         }
     }
-
-
     MKBaseScreen(title = title.value) {
         LazyColumn(Modifier.height(500.dp)) {
             items(currentPlayers.value) {
@@ -53,12 +48,9 @@ fun SubPlayerScreen(viewModel: SubPlayerViewModel = hiltViewModel(), onDismiss: 
                                 null -> viewModel.onOldPlayerSelect(user)
                                 else -> viewModel.onNewPlayerSelect(user)
                             }
-
                         }
                     }
-                ) {
-
-                }
+                ) {}
             }
         }
         playerSelected.value?.let {
@@ -68,6 +60,5 @@ fun SubPlayerScreen(viewModel: SubPlayerViewModel = hiltViewModel(), onDismiss: 
                 onClick = viewModel::onSubClick
             )
         }
-
     }
 }

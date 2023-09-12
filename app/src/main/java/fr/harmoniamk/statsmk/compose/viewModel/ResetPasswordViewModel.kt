@@ -17,29 +17,10 @@ import javax.inject.Inject
 class ResetPasswordViewModel @Inject constructor(private val authenticationRepository: AuthenticationRepositoryInterface) : ViewModel() {
 
     private val _sharedDismiss = MutableSharedFlow<Unit>()
-    private val _sharedToast = MutableSharedFlow<String>()
     private val _sharedDialogValue = MutableStateFlow<MKDialogState?>(null)
 
     val sharedDismiss = _sharedDismiss.asSharedFlow()
-    val sharedToast = _sharedToast.asSharedFlow()
     val sharedDialogValue = _sharedDialogValue.asStateFlow()
-
-    fun bind(onEmail: Flow<String>, onReset: Flow<Unit>, onBack: Flow<Unit>) {
-        var email: String? = null
-        onEmail.onEach {
-            email = it
-        }.launchIn(viewModelScope)
-
-        onReset
-            .mapNotNull { email }
-            .flatMapLatest { authenticationRepository.resetPassword(it) }
-            .onEach {
-                _sharedToast.emit(it.message)
-                if (it is ResetPasswordResponse.Success) _sharedDismiss.emit(Unit)
-            }.launchIn(viewModelScope)
-
-        onBack.bind(_sharedDismiss, viewModelScope)
-    }
 
     fun onReset(email: String) {
         authenticationRepository.resetPassword(email)

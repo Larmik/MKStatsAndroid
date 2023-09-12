@@ -30,11 +30,8 @@ import kotlinx.coroutines.FlowPreview
 fun OpponentSettingsScreen(viewModel: OpponentSettingsViewModel = hiltViewModel()) {
     val searchState = remember { mutableStateOf(TextFieldValue("")) }
     val teams = viewModel.sharedTeams.collectAsState()
-
-    val bottomSheetState =
-        rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+    val bottomSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
     val currentState = viewModel.sharedBottomSheetValue.collectAsState(null)
-
     LaunchedEffect(Unit) {
         viewModel.sharedBottomSheetValue.collect {
             when (it) {
@@ -43,7 +40,6 @@ fun OpponentSettingsScreen(viewModel: OpponentSettingsViewModel = hiltViewModel(
             }
         }
     }
-
     MKBaseScreen(title = R.string.adversaires, state = bottomSheetState, sheetContent = {
         MKBottomSheet(
             trackIndex = null,
@@ -73,5 +69,4 @@ fun OpponentSettingsScreen(viewModel: OpponentSettingsViewModel = hiltViewModel(
             }
         }
     }
-
 }

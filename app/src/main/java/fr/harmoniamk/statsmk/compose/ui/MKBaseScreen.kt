@@ -20,5 +20,4 @@ fun MKBaseScreen(title: Any, subTitle: Any? = null, verticalArrangement: Arrange
            MKHeaderScreen(title, subTitle, verticalArrangement) { content() }
        }
    }
-
 }

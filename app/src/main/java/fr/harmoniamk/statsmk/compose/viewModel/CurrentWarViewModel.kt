@@ -178,23 +178,20 @@ class CurrentWarViewModel @Inject constructor(
                         }
                     }
                 }
-
                 val temp = positions.groupBy { it.first }
                     .map { Pair(it.key, it.value.map { it.second }.sum()) }
                     .sortedByDescending { it.second }
-
                 temp.forEach { pair ->
                     val isOld = pair.first?.currentWar == "-1"
                     val isNew =
                         trackList.size > trackList.filter { track -> track.hasPlayer(pair.first?.mid) }.size && pair.first?.currentWar == preferencesRepository.currentWar?.mid
                     finalList.add(CurrentPlayerModel(pair.first, pair.second, isOld, isNew))
                 }
-
                 players.filter {
                     it.currentWar == preferencesRepository.currentWar?.mid && !finalList.map { it.player?.mid }
                         .contains(it.mid)
                 }.forEach { finalList.add(CurrentPlayerModel(it, 0, isNew = true)) }
-
                 finalList
             }
+
 }

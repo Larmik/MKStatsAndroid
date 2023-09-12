@@ -8,9 +8,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 @HiltViewModel
-class StatsMenuViewModel @Inject constructor(private val authenticationRepository: AuthenticationRepositoryInterface): ViewModel() {
-
+class StatsMenuViewModel @Inject constructor(authenticationRepository: AuthenticationRepositoryInterface): ViewModel() {
     private val _sharedId = MutableStateFlow(authenticationRepository.user?.uid)
     val sharedId = _sharedId.asStateFlow()
-
 }

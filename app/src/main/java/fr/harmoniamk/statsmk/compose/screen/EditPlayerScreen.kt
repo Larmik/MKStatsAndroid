@@ -53,12 +53,10 @@ fun EditPlayerScreen(
                     options = UserRole.values().filterNot { it == UserRole.GOD },
                     onSelected = { player?.role = it }
                 )
-
                 MKButton(text = R.string.enregistrer) {
                     viewModel.onPlayerEdited(player?.name.orEmpty(), player?.role)
                 }
             }
-
             else -> {
                 MKTextField(
                     value = nameState.value,
@@ -70,12 +68,10 @@ fun EditPlayerScreen(
                 }
             }
         }
-
         if (leaveTeamVisible.value)
             MKButton(text = R.string.retirer_ce_joueur_de_l_quipe, hasBackground = false) {
                 viewModel.onRemoveFromTeam(player)
             }
-
     }
 }
 

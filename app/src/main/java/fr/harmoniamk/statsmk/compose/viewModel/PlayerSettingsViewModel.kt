@@ -44,7 +44,6 @@ class PlayerSettingsViewModel @Inject constructor(
     private val networkRepository: NetworkRepositoryInterface
 ) : ViewModel() {
 
-
     private val _sharedPlayers = MutableStateFlow<SnapshotStateList<ManagePlayersItemViewModel>>(SnapshotStateList())
     private val _sharedDismiss = MutableSharedFlow<Unit>()
     private val _sharedRedirectToSettings = MutableSharedFlow<Unit>()
@@ -54,7 +53,6 @@ class PlayerSettingsViewModel @Inject constructor(
     val sharedPlayers = _sharedPlayers.asStateFlow()
     val sharedDismiss = _sharedDismiss.asSharedFlow()
     val sharedBottomSheetValue = _sharedBottomSheetValue.asStateFlow()
-
 
     init {
         databaseRepository.getUsers()
@@ -78,8 +76,6 @@ class PlayerSettingsViewModel @Inject constructor(
         }
     }
 
-
-
     fun onCreatePlayer() {
         _sharedBottomSheetValue.value = MKBottomSheetState.CreatePlayer()
     }
@@ -87,7 +83,6 @@ class PlayerSettingsViewModel @Inject constructor(
     fun dismissBottomSheet() {
         _sharedBottomSheetValue.value = null
     }
-
 
     fun bindEditDialog(onPlayerEdited: Flow<User>, onTeamLeft: Flow<User>) {
 
@@ -113,7 +108,6 @@ class PlayerSettingsViewModel @Inject constructor(
             .flatMapLatest {  databaseRepository.getUsers() }
             .flatMapLatest { createPlayersList(list = it) }
             .bind(_sharedPlayers, viewModelScope)
-
     }
 
     private fun createPlayersList(list: List<User>? = null): Flow<SnapshotStateList<ManagePlayersItemViewModel>> = flow {
@@ -137,7 +131,6 @@ class PlayerSettingsViewModel @Inject constructor(
         }
         emit(newPlayers)
     }
-
 
     fun onEditPlayer(player: User) {
         _sharedBottomSheetValue.value = MKBottomSheetState.EditPlayer(player.mid)

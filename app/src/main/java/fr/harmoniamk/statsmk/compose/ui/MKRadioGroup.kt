@@ -39,5 +39,4 @@ fun MKRadioGroup(defaultOption: Any, options: List<Any>, onSelected: (Int) -> Un
             }
         }
     }
-
 }

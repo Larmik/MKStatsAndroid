@@ -40,7 +40,6 @@ fun FilterSortScreen(viewModel: FilterSortViewModel = hiltViewModel(), sort: Sor
     }
 
     MKBaseScreen(title = R.string.options_de_tri) {
-
         sort.list.takeIf { it.isNotEmpty() }?.let { list ->
             MKText(
                 text = "Trier",
@@ -77,15 +76,12 @@ fun FilterSortScreen(viewModel: FilterSortViewModel = hiltViewModel(), sort: Sor
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 MKText(text = it.resId, textColor = textColor)
-
                             }
-
                     }
                     Spacer(Modifier.width(1.dp))
                 }
             }
         }
-
         filter.list.takeIf { it.isNotEmpty() }?.let {
             MKText(
                 text = "Filtrer",
@@ -112,21 +108,17 @@ fun FilterSortScreen(viewModel: FilterSortViewModel = hiltViewModel(), sort: Sor
                         elevation = 0.dp,
                         backgroundColor = colorResource(id = bgColor)
                     ) {
-
                             Row(
                                 Modifier.wrapContentWidth(),
                                 horizontalArrangement = Arrangement.Center,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 MKText(text = it.resId, textColor = textColor)
-
                             }
                         }
                     Spacer(Modifier.width(1.dp))
-
                 }
             }
         }
     }
-
 }

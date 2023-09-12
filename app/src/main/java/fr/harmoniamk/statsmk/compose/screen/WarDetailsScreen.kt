@@ -29,11 +29,9 @@ import fr.harmoniamk.statsmk.compose.viewModel.WarDetailsViewModel.Companion.vie
 @OptIn(ExperimentalMaterialApi::class)
 fun WarDetailsScreen(id: String?, onTrackClick: (String) -> Unit) {
     val viewModel = viewModel(id = id)
-
     val war = viewModel.sharedWar.collectAsState()
     val players = viewModel.sharedWarPlayers.collectAsState()
     val tracks = viewModel.sharedTracks.collectAsState()
-
     val bestTrack = tracks.value?.maxByOrNull { track -> track.teamScore }
     val worstTrack = tracks.value?.minByOrNull { track -> track.teamScore }
 
@@ -48,10 +46,8 @@ fun WarDetailsScreen(id: String?, onTrackClick: (String) -> Unit) {
             MKScoreView(modifier = Modifier.weight(1.2f), war = war.value)
             MKShockView(modifier = Modifier.weight(0.8f), tracks = war.value?.warTracks)
         }
-        players.value?.let {
-            MKPlayerList(players = it)
-        }
-        Row() {
+        players.value?.let { MKPlayerList(players = it) }
+        Row {
             Column(
                 Modifier
                     .weight(1f)
@@ -87,6 +83,5 @@ fun WarDetailsScreen(id: String?, onTrackClick: (String) -> Unit) {
                 }
             }
         }
-
     }
 }
