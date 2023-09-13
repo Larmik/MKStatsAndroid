@@ -66,7 +66,8 @@ class StatsRankingViewModel @Inject constructor(
     ) : ViewModel() {
 
     private val _sharedList = MutableStateFlow<List<RankingItemViewModel>>(listOf())
-    private val _sharedUserId = MutableStateFlow("")
+    private val _sharedUserId = MutableStateFlow<String?>(null)
+    private val _sharedTeamId = MutableStateFlow<String?>(null)
     private val _sharedGoToStats = MutableSharedFlow<RankingItemViewModel?>()
     private val _sharedBottomsheetValue = MutableStateFlow<MKBottomSheetState?>(null)
     private var _sharedIndivEnabled = MutableStateFlow(false)
@@ -75,6 +76,7 @@ class StatsRankingViewModel @Inject constructor(
     val sharedList = _sharedList.asStateFlow()
     val sharedBottomSheetValue = _sharedBottomsheetValue.asStateFlow()
     val sharedUserId = _sharedUserId.asStateFlow()
+    val sharedTeamId = _sharedTeamId.asStateFlow()
     val sharedIndivEnabled = _sharedIndivEnabled.asStateFlow()
 
     private val warList = mutableListOf<MKWar>()
@@ -119,7 +121,8 @@ class StatsRankingViewModel @Inject constructor(
                     }.launchIn(viewModelScope)
             }
             is StatsRankingState.MapsRankingState -> {
-                _sharedUserId.value = authenticationRepository.user?.uid.orEmpty()
+                _sharedTeamId.value = preferencesRepository.currentTeam?.mid
+                _sharedUserId.value = authenticationRepository.user?.uid?.takeIf { indivEnabled }
                 databaseRepository.getWars()
                     .filter {
                         (!onlyIndiv && it.mapNotNull { war -> war.war?.teamHost}.contains(preferencesRepository.currentTeam?.mid)

@@ -45,13 +45,14 @@ import kotlinx.coroutines.flow.filterNotNull
 fun StatsRankingScreen(
     viewModel: StatsRankingViewModel = hiltViewModel(),
     state: StatsRankingState,
-    goToStats: (RankingItemViewModel, String) -> Unit
+    goToStats: (RankingItemViewModel, String?, String?) -> Unit
 ) {
 
     val searchState = remember { mutableStateOf(TextFieldValue("")) }
     val currentState = viewModel.sharedBottomSheetValue.collectAsState()
     val indiv = viewModel.sharedIndivEnabled.collectAsState()
     val userId = viewModel.sharedUserId.collectAsState()
+    val teamId = viewModel.sharedTeamId.collectAsState()
     val bottomSheetState =
         rememberModalBottomSheetState(
             initialValue = ModalBottomSheetValue.Hidden,
@@ -70,7 +71,7 @@ fun StatsRankingScreen(
     }
     LaunchedEffect(Unit) {
         viewModel.sharedGoToStats.filterNotNull().collect {
-           goToStats(it,  userId.value)
+           goToStats(it,  userId.value, teamId.value)
         }
     }
 

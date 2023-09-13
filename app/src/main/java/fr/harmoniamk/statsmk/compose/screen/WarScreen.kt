@@ -64,9 +64,8 @@ fun WarScreen(
                     MKWarItem(war = it, onClick = onWarClick)
                 }
             }
-        }
-        if (currentWar.value == null)
             MKButton(text = R.string.voir_toutes_les_wars, onClick = onAllWarsClick)
+        }
     }
 }
 

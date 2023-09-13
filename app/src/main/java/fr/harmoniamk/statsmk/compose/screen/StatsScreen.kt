@@ -28,7 +28,6 @@ import fr.harmoniamk.statsmk.compose.viewModel.StatsType
 import fr.harmoniamk.statsmk.compose.viewModel.StatsViewModel
 import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.model.local.Stats
-import kotlinx.coroutines.flow.filterNotNull
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -39,7 +38,7 @@ fun StatsScreen(viewModel: StatsViewModel = hiltViewModel(), type: StatsType, on
     viewModel.init(type, true)
 
     LaunchedEffect(Unit) {
-        viewModel.sharedDetailsClick.filterNotNull().collect {
+        viewModel.sharedDetailsClick.collect {
             onDetailsClick(type)
         }
     }

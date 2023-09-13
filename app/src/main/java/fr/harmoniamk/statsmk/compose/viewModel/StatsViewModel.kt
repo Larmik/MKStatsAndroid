@@ -54,8 +54,6 @@ sealed class StatsType(val title: Int) {
     class MapStats(
         val userId: String? = null,
         val teamId: String? = null,
-        val mode: String = "map",
-        val indiv: Boolean = false,
         val isWeek: Boolean = false,
         val isMonth: Boolean = false,
         val trackIndex: Int
@@ -204,13 +202,11 @@ class StatsViewModel @Inject constructor(
         warFlow
             .filter { type is StatsType.MapStats }
             .map {
-                onlyIndiv = (type as StatsType.MapStats).indiv || preferencesRepository.currentTeam?.mid == null
-                when (type.mode) {
-                    "indiv" -> wars.filter { war -> war.hasPlayer(authenticationRepository.user?.uid) }
-                    "player" -> wars.filter { war -> war.hasPlayer(type.userId) }
-                    "team", "periodic" -> wars.filter { war -> war.hasTeam(preferencesRepository.currentTeam?.mid) }
-                    "opponent" -> wars.filter { war -> war.hasTeam(type.teamId) }
-                    else -> wars
+                onlyIndiv = (type as StatsType.MapStats).userId != null || preferencesRepository.currentTeam?.mid == null
+                when {
+                    onlyIndiv -> wars.filter { war -> war.hasPlayer(type.userId ?: authenticationRepository.user?.uid) }
+                    type.userId != null && type.teamId != null -> wars.filter { war -> war.hasPlayer(authenticationRepository.user?.uid) && war.hasTeam(type.teamId) }
+                    else -> wars.filter { war -> war.hasTeam(type.teamId ?: preferencesRepository.currentTeam?.mid) }
                 }
             }
             .filter {

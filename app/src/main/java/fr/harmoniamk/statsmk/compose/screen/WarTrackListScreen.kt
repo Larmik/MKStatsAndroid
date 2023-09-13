@@ -27,15 +27,14 @@ import fr.harmoniamk.statsmk.compose.ui.MKTrackItem
 import fr.harmoniamk.statsmk.compose.ui.MKWarTrackItem
 import fr.harmoniamk.statsmk.compose.viewModel.WarTrackListViewModel
 import fr.harmoniamk.statsmk.enums.Maps
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 
-@OptIn(ExperimentalMaterialApi::class, FlowPreview::class, ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun WarTrackListScreen(viewModel: WarTrackListViewModel = hiltViewModel(),trackIndex: Int, isIndiv: Boolean) {
+fun WarTrackListScreen(viewModel: WarTrackListViewModel = hiltViewModel(), trackIndex: Int, userId: String? = null, teamId: String? = null) {
 
     val stats = viewModel.sharedMapStats.collectAsState()
     val searchState = remember { mutableStateOf(TextFieldValue("")) }
+    viewModel.init(trackIndex, teamId, userId)
 
     MKBaseScreen(title = R.string.d_tails) {
         Maps.values().getOrNull(trackIndex)?.let {
@@ -64,8 +63,8 @@ fun WarTrackListScreen(viewModel: WarTrackListViewModel = hiltViewModel(),trackI
             )
         }
         LazyColumn {
-            items(items = stats.value?.list.orEmpty()) {
-                MKWarTrackItem(details = it, isIndiv = isIndiv)
+            items(items = stats.value.orEmpty()) {
+                MKWarTrackItem(details = it, isIndiv = userId != null)
             }
         }
     }
