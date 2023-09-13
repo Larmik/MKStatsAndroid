@@ -20,46 +20,30 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import fr.harmoniamk.statsmk.R
-import fr.harmoniamk.statsmk.model.local.RankingItemViewModel
 import fr.harmoniamk.statsmk.compose.ui.MKBaseScreen
 import fr.harmoniamk.statsmk.compose.ui.MKBottomSheet
-import fr.harmoniamk.statsmk.compose.ui.MKPlayerItem
-import fr.harmoniamk.statsmk.compose.ui.MKSegmentedSelector
-import fr.harmoniamk.statsmk.compose.ui.MKTeamItem
 import fr.harmoniamk.statsmk.compose.ui.MKTextField
-import fr.harmoniamk.statsmk.compose.ui.MKTrackItem
-import fr.harmoniamk.statsmk.compose.viewModel.StatsRankingState
-import fr.harmoniamk.statsmk.compose.viewModel.StatsRankingViewModel
-import fr.harmoniamk.statsmk.fragment.stats.opponentRanking.OpponentRankingItemViewModel
-import fr.harmoniamk.statsmk.fragment.stats.playerRanking.PlayerRankingItemViewModel
-import fr.harmoniamk.statsmk.model.local.TrackStats
-import kotlinx.coroutines.flow.filterNotNull
+import fr.harmoniamk.statsmk.compose.ui.MKWarItem
+import fr.harmoniamk.statsmk.compose.viewModel.WarListViewModel
+import fr.harmoniamk.statsmk.enums.WarSortType
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun StatsRankingScreen(
-    viewModel: StatsRankingViewModel = hiltViewModel(),
-    state: StatsRankingState,
-    goToStats: (RankingItemViewModel, String) -> Unit
-) {
+fun WarListScreen(viewModel: WarListViewModel = hiltViewModel(), userId: String? = null, teamId: String? = null, onWarClick: (String) -> Unit) {
 
+    val wars = viewModel.sharedWars.collectAsState()
     val searchState = remember { mutableStateOf(TextFieldValue("")) }
     val currentState = viewModel.sharedBottomSheetValue.collectAsState()
-    val indiv = viewModel.sharedIndivEnabled.collectAsState()
-    val userId = viewModel.sharedUserId.collectAsState()
     val bottomSheetState =
         rememberModalBottomSheetState(
             initialValue = ModalBottomSheetValue.Hidden,
             confirmValueChange = { it == ModalBottomSheetValue.Expanded || it == ModalBottomSheetValue.HalfExpanded })
-    val list = viewModel.sharedList.collectAsState()
 
-    viewModel.init(state, indiv.value)
-
+    viewModel.init(userId, teamId, WarSortType.DATE, listOf())
     LaunchedEffect(Unit) {
         viewModel.sharedBottomSheetValue.collect {
             when (it) {
@@ -68,13 +52,7 @@ fun StatsRankingScreen(
             }
         }
     }
-    LaunchedEffect(Unit) {
-        viewModel.sharedGoToStats.filterNotNull().collect {
-           goToStats(it,  userId.value)
-        }
-    }
-
-    MKBaseScreen(title = state.title,
+    MKBaseScreen(title = R.string.toutes_les_wars_en_quipe,
         state = bottomSheetState,
         sheetContent = {
             MKBottomSheet(
@@ -83,21 +61,10 @@ fun StatsRankingScreen(
                 onDismiss = viewModel::dismissBottomSheet,
                 onEditPosition = {},
                 onEditTrack = {},
-                onSorted = { viewModel.onSorted(state, it) }
+                onSorted = { viewModel.onSorted(it) },
+                onFiltered = { viewModel.onFiltered(it) }
             )
         }) {
-        state.takeIf { it !is StatsRankingState.PlayerRankingState }?.let {
-            MKSegmentedSelector(
-                buttons = listOf(
-                    Pair(stringResource(id = R.string.equipe)) { viewModel.init(it, false) },
-                    Pair(stringResource(id = R.string.individuel)) { viewModel.init(it, true) }
-                ),
-                indexSelected = when (indiv.value) {
-                    true -> 1
-                    else -> 0
-                }
-            )
-        }
         Row(
             Modifier
                 .padding(10.dp)
@@ -111,37 +78,24 @@ fun StatsRankingScreen(
                 onValueChange = {
                     searchState.value = it
                 },
-                placeHolderRes = state.placeholderRes
+                placeHolderRes = R.string.rechercher_un_advsersaire
             )
             Image(modifier = Modifier
                 .size(30.dp)
-                .clickable { viewModel.onClickOptions(state) },
+                .clickable { viewModel.onClickOptions() },
                 painter = painterResource(id = R.drawable.listoption),
                 contentDescription = null
             )
         }
         LazyColumn {
-            items(list.value) { rankingItem ->
-                when (rankingItem) {
-                    is PlayerRankingItemViewModel -> {
-                        MKPlayerItem(playerRanking = rankingItem, onRootClick = { viewModel.onItemClick(rankingItem) }, onEditClick = {} )
+            items(items = wars.value) { war ->
+                MKWarItem(war = war, onClick = {
+                    war.war?.mid?.let {
+                        onWarClick(it)
                     }
-
-                    is OpponentRankingItemViewModel -> {
-                        MKTeamItem(teamRanking = rankingItem, onClick = { viewModel.onItemClick(rankingItem) }, isVertical = false) {}
-                    }
-
-                    is TrackStats -> {
-                        MKTrackItem(
-                            modifier = Modifier.padding(bottom = 5.dp),
-                            trackRanking = rankingItem,
-                            onClick = {
-                                viewModel.onItemClick(rankingItem)
-                            }
-                        )
-                    }
-                }
+                })
             }
         }
     }
+
 }

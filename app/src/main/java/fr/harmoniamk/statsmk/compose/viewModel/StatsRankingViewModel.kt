@@ -97,7 +97,7 @@ class StatsRankingViewModel @Inject constructor(
                     .onEach {
                         val temp = mutableListOf<PlayerRankingItemViewModel>()
                         it.forEach { user ->
-                            val stats = warList.filter { war -> war.hasPlayer(user.mid) }.withFullStats(databaseRepository, userId = user.mid, isIndiv = true).first()
+                            val stats = warList.filter { war -> war.hasPlayer(user.mid) }.withFullStats(databaseRepository, userId = user.mid).first()
                             temp.add(PlayerRankingItemViewModel(user, stats))
                         }
                         _sharedList.value = sortPlayers(sortType, temp)
@@ -112,8 +112,8 @@ class StatsRankingViewModel @Inject constructor(
                     .flatMapLatest { databaseRepository.getTeams() }
                     .map { it.filterNot { team -> team.mid == preferencesRepository.currentTeam?.mid } }
                     .mapNotNull { it.sortedBy { it.name } }
-                    .flatMapLatest { it.withFullTeamStats(warList, databaseRepository, authenticationRepository.user?.uid, isIndiv = indivEnabled.isTrue) }
-                    .mapNotNull { it.filter { vm -> (!vm.isIndiv && vm.stats.warStats.list.any { war -> war.hasTeam(preferencesRepository.currentTeam?.mid) }) || vm.isIndiv } }
+                    .flatMapLatest { it.withFullTeamStats(warList, databaseRepository, authenticationRepository.user?.uid.takeIf { indivEnabled.isTrue }) }
+                    .mapNotNull { it.filter { vm -> (vm.userId == null && vm.stats.warStats.list.any { war -> war.hasTeam(preferencesRepository.currentTeam?.mid) }) || vm.userId != null } }
                     .onEach {
                         _sharedList.value = sortTeams(sortType, it)
                     }.launchIn(viewModelScope)

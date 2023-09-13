@@ -7,7 +7,7 @@ import fr.harmoniamk.statsmk.model.local.Stats
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class OpponentRankingItemViewModel(val team: Team?, override val stats: Stats, val userId: String? = null, val isIndiv: Boolean = false) : Parcelable, RankingItemViewModel {
+data class OpponentRankingItemViewModel(val team: Team?, override val stats: Stats, val userId: String? = null) : Parcelable, RankingItemViewModel {
 
 
     val teamName: String?
@@ -21,13 +21,13 @@ data class OpponentRankingItemViewModel(val team: Team?, override val stats: Sta
         }
 
     val averageLabel: String
-        get() = when (userId != null && isIndiv) {
+        get() = when (userId != null) {
             true -> stats.averagePoints.toString()
             else -> stats.averagePointsLabel
         }
 
     val averageMapLabel: String
-        get() = when (userId != null && isIndiv) {
+        get() = when (userId != null) {
             true -> stats.averagePlayerPosition.toString()
             else -> stats.averageMapPointsLabel
         }

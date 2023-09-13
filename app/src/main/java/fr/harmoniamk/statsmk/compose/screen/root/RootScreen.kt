@@ -22,6 +22,7 @@ import fr.harmoniamk.statsmk.compose.screen.TeamSettingsScreen
 import fr.harmoniamk.statsmk.compose.screen.TrackDetailsScreen
 import fr.harmoniamk.statsmk.compose.screen.TrackListScreen
 import fr.harmoniamk.statsmk.compose.screen.WarDetailsScreen
+import fr.harmoniamk.statsmk.compose.screen.WarListScreen
 import fr.harmoniamk.statsmk.compose.screen.WarTrackResultScreen
 import fr.harmoniamk.statsmk.compose.viewModel.StatsRankingState
 import fr.harmoniamk.statsmk.compose.viewModel.StatsType
@@ -58,7 +59,8 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
                 onCurrentWarClick = { navController.navigate("Home/War/Current") },
                 onWarClick = { navController.navigate(route = "Home/War/$it") },
                 onCreateWarClick = { navController.navigate("Home/War/AddWar") },
-                onSettingsItemClick = { navController.navigate(it) }
+                onSettingsItemClick = { navController.navigate(it) },
+                onAllWarsClick = { navController.navigate("Home/War/AllWars") }
             )
         }
         composable(route = "Home/War/Current") {
@@ -66,7 +68,8 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
                 onNextTrack = { navController.navigate("Home/War/Current/AddTrack") },
                 onBack = { navController.popBackStack("Home", inclusive = false) },
                 onTrackClick = { navController.navigate("Home/War/Current/TrackDetails/$it") },
-                onRedirectToResume = {  navController.navigate(route = "Home/War/$it") {
+                onRedirectToResume = {
+                    navController.navigate(route = "Home/War/$it") {
                         popUpTo("Home/War/Current") {
                             inclusive = true
                         }
@@ -160,45 +163,100 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
             })
         }
         composable("Home/Stats/Players") {
-            StatsRankingScreen(state = StatsRankingState.PlayerRankingState()) { item, _, _ ->
+            StatsRankingScreen(state = StatsRankingState.PlayerRankingState()) { item,  _ ->
                 navController.navigate("Home/Stats/Players/${(item as? PlayerRankingItemViewModel)?.user?.mid.orEmpty()}")
             }
         }
         composable("Home/Stats/Opponents") {
-            StatsRankingScreen(state = StatsRankingState.OpponentRankingState()) { item, _, _ ->
-                navController.navigate("Home/Stats/Opponents/${(item as? OpponentRankingItemViewModel)?.team?.mid.orEmpty()}/${(item as? OpponentRankingItemViewModel)?.isIndiv.isTrue}")
+            StatsRankingScreen(state = StatsRankingState.OpponentRankingState()) { item,  _ ->
+                navController.navigate("Home/Stats/Opponents/${(item as? OpponentRankingItemViewModel)?.team?.mid.orEmpty()}/${(item as? OpponentRankingItemViewModel)?.userId.orEmpty()}")
             }
         }
         composable("Home/Stats/Maps") {
-            StatsRankingScreen(state = StatsRankingState.MapsRankingState()) { item, isIndiv, userId ->
-                navController.navigate("Home/Stats/Maps/${(item as? TrackStats)?.trackIndex}/$isIndiv/$userId")
+            StatsRankingScreen(state = StatsRankingState.MapsRankingState()) { item, userId ->
+                navController.navigate("Home/Stats/Maps/${(item as? TrackStats)?.trackIndex}/$userId")
             }
+        }
+        composable("Home/Stats/Periodic") {
+            StatsScreen(type = StatsType.PeriodicStats(), onDetailsClick = {})
         }
         composable(
             route = "Home/Stats/Players/{id}",
             arguments = listOf(
                 navArgument("id") { type = NavType.StringType },
-            )) {
-                StatsScreen(type = StatsType.IndivStats(userId = it.arguments?.getString("id").orEmpty()))
-            }
+            )
+        ) {
+            StatsScreen(type = StatsType.IndivStats(
+                userId = it.arguments?.getString("id").orEmpty()
+            ),
+                onDetailsClick = { navController.navigate("Home/War/AllWars/Player/${(it as? StatsType.IndivStats)?.userId}") })
+        }
         composable(
-            route = "Home/Stats/Opponents/{id}/{isIndiv}",
+            route = "Home/Stats/Opponents/{teamId}/{userId}",
             arguments = listOf(
-                navArgument("id") { type = NavType.StringType },
-                navArgument("isIndiv") { type = NavType.BoolType },
-            )) {
-                StatsScreen(type = StatsType.OpponentStats(teamId = it.arguments?.getString("id").orEmpty(), isIndiv = it.arguments?.getBoolean("isIndiv").isTrue))
-            }
-            composable("Home/Stats/Maps/{trackId}/{isIndiv}/{userId}" , arguments = listOf(
+                navArgument("teamId") { type = NavType.StringType },
+                navArgument("userId") { type = NavType.StringType },
+            )
+        ) {
+            StatsScreen(
+                type = StatsType.OpponentStats(
+                    teamId = it.arguments?.getString("teamId").orEmpty(),
+                    userId = it.arguments?.getString("userId").orEmpty()
+                ), onDetailsClick = {
+                    navController.navigate("Home/War/AllWars/${(it as? StatsType.OpponentStats)?.teamId}/${(it as? StatsType.OpponentStats)?.userId}")
+                })
+        }
+        composable(
+            route = "Home/Stats/Opponents/{teamId}/",
+            arguments = listOf(
+                navArgument("teamId") { type = NavType.StringType }
+            )
+        ) {
+            StatsScreen(
+                type = StatsType.OpponentStats(
+                    teamId = it.arguments?.getString("teamId").orEmpty()
+                ), onDetailsClick = {
+                    navController.navigate("Home/War/AllWars/${(it as? StatsType.OpponentStats)?.teamId}")
+                })
+        }
+        composable(
+            "Home/Stats/Maps/{trackId}/{isIndiv}/{userId}", arguments = listOf(
                 navArgument("trackId") { type = NavType.IntType },
                 navArgument("isIndiv") { type = NavType.BoolType },
                 navArgument("userId") { type = NavType.StringType },
-            )) {
-                StatsScreen(type = StatsType.MapStats(trackIndex = it.arguments?.getInt("trackId") ?: 0, indiv = it.arguments?.getBoolean("isIndiv").isTrue, userId = it.arguments?.getString("userId").orEmpty()))
-            }
+            )
+        ) {
+            StatsScreen(
+                type = StatsType.MapStats(
+                    trackIndex = it.arguments?.getInt("trackId") ?: 0,
+                    indiv = it.arguments?.getBoolean("isIndiv").isTrue,
+                    userId = it.arguments?.getString("userId").orEmpty()
+                ), onDetailsClick = {
+
+                })
+        }
+        composable(route = "Home/Stats/Team") {
+            StatsScreen(type = StatsType.TeamStats(), onDetailsClick = {
+                navController.navigate("Home/War/AllWars")
+            })
+        }
         composable(
-            route = "Home/Stats/Team") {
-                StatsScreen(type = StatsType.TeamStats())
-            }
+            route = "Home/War/AllWars/Team/{teamId}",
+            arguments = listOf(
+                navArgument("teamId") { type = NavType.StringType },
+            )
+        ) {
+            WarListScreen(
+                teamId = it.arguments?.getString("teamId")) { navController.navigate("Home/War/$it") }
+        }
+        composable(
+            route = "Home/War/AllWars/Player/{userId}",
+            arguments = listOf(
+                navArgument("userId") { type = NavType.StringType },
+            )
+        ) {
+            WarListScreen(
+                userId = it.arguments?.getString("userId")) { navController.navigate("Home/War/$it") }
+        }
     }
 }

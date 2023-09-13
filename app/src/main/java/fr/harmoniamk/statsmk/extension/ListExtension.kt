@@ -23,14 +23,13 @@ fun List<MapDetails>.getVictory() = this.maxByOrNull { it.warTrack.teamScore }?.
 fun List<MapDetails>.getDefeat() = this.minByOrNull { it.warTrack.teamScore }?.takeIf { it.warTrack.displayedDiff.contains('-') }
 
 
-fun List<MKWar>.withFullStats(databaseRepository: DatabaseRepositoryInterface, userId: String? = null, teamId: String? = null, isIndiv: Boolean = false) = flow {
-    Log.d("MKDebugOnly", "ListExtension withFullStats: userId = $userId, teamId = $teamId, isIndiv= $isIndiv")
+fun List<MKWar>.withFullStats(databaseRepository: DatabaseRepositoryInterface, userId: String? = null, teamId: String? = null) = flow {
     val maps = mutableListOf<TrackStats>()
     val warScores = mutableListOf<WarScore>()
     val averageForMaps = mutableListOf<TrackStats>()
     val wars = when  {
-        isIndiv && userId != null && teamId != null -> this@withFullStats.filter { it.hasPlayer(userId) && it.hasTeam(teamId) }
-        isIndiv && userId != null -> this@withFullStats.filter { it.hasPlayer(userId) }
+        userId != null && teamId != null -> this@withFullStats.filter { it.hasPlayer(userId) && it.hasTeam(teamId) }
+        userId != null -> this@withFullStats.filter { it.hasPlayer(userId) }
         teamId != null -> this@withFullStats.filter { it.hasTeam(teamId) }
         else -> this@withFullStats
     }
@@ -63,12 +62,12 @@ fun List<MKWar>.withFullStats(databaseRepository: DatabaseRepositoryInterface, u
                 track.track?.warPositions?.map { it.position.positionToPoints() }?.forEach {
                     teamScoreForTrack += it
                 }
-                currentPoints += when (isIndiv) {
+                currentPoints += when (userId != null) {
                     true -> playerScoreForTrack
                     else -> teamScoreForTrack
                 }
                 var shockCount = 0
-                track.track?.shocks?.filter { (!isIndiv || userId == null) || it.playerId == userId }?.map { it.count }?.forEach {
+                track.track?.shocks?.filter { userId == null || it.playerId == userId }?.map { it.count }?.forEach {
                     shockCount += it
                 }
                 maps.add(TrackStats(trackIndex = track.track?.trackIndex, teamScore = teamScoreForTrack, playerScore = playerScoreForTrack, shockCount = shockCount))
@@ -122,17 +121,16 @@ fun List<MKWar?>.withName(databaseRepository: DatabaseRepositoryInterface) = flo
     emit(temp)
 }
 
-fun List<Team>.withFullTeamStats(wars: List<MKWar>?, databaseRepository: DatabaseRepositoryInterface, userId: String? = null, weekOnly: Boolean = false, monthOnly: Boolean = false, isIndiv: Boolean = false) = flow {
+fun List<Team>.withFullTeamStats(wars: List<MKWar>?, databaseRepository: DatabaseRepositoryInterface, userId: String? = null, weekOnly: Boolean = false, monthOnly: Boolean = false) = flow {
     val temp = mutableListOf<OpponentRankingItemViewModel>()
-    Log.d("MKDebugOnly", "ListExtension withFullTeamStats:  wars = ${wars?.map { it.name }}, weekOnly = $weekOnly, monthOnly = $monthOnly, isIndiv= $isIndiv")
     this@withFullTeamStats.forEach { team ->
         wars
             ?.filter { (weekOnly && it.isThisWeek) || !weekOnly }
             ?.filter { (monthOnly && it.isThisMonth) || !monthOnly }
-            ?.withFullStats(databaseRepository, teamId = team.mid, userId = userId, isIndiv = isIndiv)?.first()
+            ?.withFullStats(databaseRepository, teamId = team.mid, userId = userId)?.first()
             ?.let {
                 if (it.warStats.list.isNotEmpty())
-                    temp.add(OpponentRankingItemViewModel(team, it, userId, isIndiv))
+                    temp.add(OpponentRankingItemViewModel(team, it, userId))
             }
     }
     emit(temp)
@@ -182,7 +180,7 @@ fun Team.withFullTeamStats(wars: List<MKWar>?, databaseRepository: DatabaseRepos
         wars
             ?.filter { (weekOnly && it.isThisWeek) || !weekOnly }
             ?.filter { (monthOnly && it.isThisMonth) || !monthOnly }
-            ?.withFullStats(databaseRepository, teamId = this@withFullTeamStats.mid, userId = userId, isIndiv = isIndiv)?.first()
+            ?.withFullStats(databaseRepository, teamId = this@withFullTeamStats.mid, userId = userId)?.first()
             ?.takeIf { it.warStats.list.isNotEmpty() }
             ?.let { emit(it) }
 }

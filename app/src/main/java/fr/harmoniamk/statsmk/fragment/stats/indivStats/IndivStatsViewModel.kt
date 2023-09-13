@@ -64,7 +64,7 @@ class IndivStatsViewModel @Inject constructor(
                  .map { it.filter { war -> war.hasPlayer(authenticationRepository.user?.uid)  } }
                  .filterNot { it.isEmpty() }
                  .onEach { list.addAll(it) }
-                 .flatMapLatest { it.withFullStats(databaseRepository, authenticationRepository.user?.uid, isIndiv = true) }
+                 .flatMapLatest { it.withFullStats(databaseRepository, authenticationRepository.user?.uid) }
                  .onEach { stats ->
                     bestMap = stats.bestPlayerMap
                     worstMap = stats.worstPlayerMap
@@ -77,7 +77,7 @@ class IndivStatsViewModel @Inject constructor(
                          stats.mostPlayedTeam?.team,
                          stats.mostDefeatedTeam?.team,
                          stats.lessDefeatedTeam?.team
-                     ).withFullTeamStats(list, databaseRepository, authenticationRepository.user?.uid, isIndiv = true).first()
+                     ).withFullTeamStats(list, databaseRepository, authenticationRepository.user?.uid).first()
                      mostPlayedTeam = teamStats.getOrNull(0)
                      mostDefeatedTeam = teamStats.getOrNull(1)
                      lessDefeatedTeam = teamStats.getOrNull(2)

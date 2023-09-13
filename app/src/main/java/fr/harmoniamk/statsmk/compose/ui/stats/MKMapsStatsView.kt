@@ -12,12 +12,11 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKText
 import fr.harmoniamk.statsmk.compose.ui.MKTrackItem
 import fr.harmoniamk.statsmk.compose.viewModel.StatsType
-import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.model.local.Stats
 
 @Composable
 fun MKMapsStatsView(stats: Stats, type: StatsType) {
-    val isIndiv = type is StatsType.IndivStats || (type as? StatsType.OpponentStats)?.isIndiv.isTrue
+    val isIndiv = type is StatsType.IndivStats || (type as? StatsType.OpponentStats)?.userId != null
 
     val bestMap = when (isIndiv) {
         true -> stats.bestPlayerMap
@@ -32,11 +31,11 @@ fun MKMapsStatsView(stats: Stats, type: StatsType) {
         MKText(text = "Circuits", font = R.font.montserrat_bold, fontSize = 16)
         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(bottom = 10.dp)) {
             MKText(text = R.string.circuit_le_plus_jou, fontSize = 12, modifier = Modifier.offset(y = 10.dp))
-            MKTrackItem(trackRanking = stats.mostPlayedMap, isVertical = true, isIndiv = type is StatsType.IndivStats || (type as? StatsType.OpponentStats)?.isIndiv.isTrue)
+            MKTrackItem(trackRanking = stats.mostPlayedMap, isVertical = true, isIndiv = type is StatsType.IndivStats || (type as? StatsType.OpponentStats)?.userId != null)
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
                     MKText(text = R.string.meilleur_circuit, fontSize = 12, modifier = Modifier.offset(y = 10.dp))
-                    MKTrackItem(trackRanking = bestMap, isVertical = true, isIndiv = type is StatsType.IndivStats || (type as? StatsType.OpponentStats)?.isIndiv.isTrue)
+                    MKTrackItem(trackRanking = bestMap, isVertical = true, isIndiv = type is StatsType.IndivStats || (type as? StatsType.OpponentStats)?.userId != null)
                 }
                 Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
                     MKText(text = R.string.pire_circuit, fontSize = 12, modifier = Modifier.offset(y = 10.dp))

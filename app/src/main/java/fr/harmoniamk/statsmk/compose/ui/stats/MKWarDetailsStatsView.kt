@@ -34,7 +34,7 @@ fun MKWarDetailsStatsView(mkStats: MKStats, type: StatsType) {
     val mapStats = mkStats as? MapStats
 
     val diffColor = when {
-        type is StatsType.IndivStats || (type as? StatsType.OpponentStats)?.isIndiv.isTrue -> R.color.black
+        type is StatsType.IndivStats || (type as? StatsType.OpponentStats)?.userId != null -> R.color.black
         stats?.averagePointsLabel?.contains("+").isTrue || mapStats?.teamScore?.trackScoreToDiff()?.contains("+").isTrue -> R.color.luigi
         stats?.averagePointsLabel?.contains("-").isTrue || mapStats?.teamScore?.trackScoreToDiff()?.contains("-").isTrue -> R.color.lose
         else -> R.color.black
@@ -68,7 +68,7 @@ fun MKWarDetailsStatsView(mkStats: MKStats, type: StatsType) {
                     text = when  {
                         type is StatsType.MapStats -> mapStats?.teamScore?.trackScoreToDiff().toString()
                         type is StatsType.IndivStats -> stats?.averagePoints.toString()
-                        (type as? StatsType.OpponentStats)?.isIndiv.isTrue -> stats?.averagePoints.toString()
+                        (type as? StatsType.OpponentStats)?.userId != null -> stats?.averagePoints.toString()
                         else -> stats?.averagePointsLabel.toString()
                     }, font = R.font.orbitron_semibold, fontSize = 20, textColor = diffColor)
             }
@@ -86,23 +86,23 @@ fun MKWarDetailsStatsView(mkStats: MKStats, type: StatsType) {
             Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
                 MKText(
                     text = when {
-                        type is StatsType.IndivStats || type is StatsType.MapStats || (type as? StatsType.OpponentStats)?.isIndiv.isTrue -> R.string.position_moyenne
+                        type is StatsType.IndivStats || type is StatsType.MapStats || (type as? StatsType.OpponentStats)?.userId != null -> R.string.position_moyenne
                         else -> R.string.moyenne_map
                     }, fontSize = 12
                 )
                 MKText(
                     text = when {
-                        type is StatsType.IndivStats || (type as? StatsType.OpponentStats)?.isIndiv.isTrue -> stats?.averagePlayerPosition.toString()
+                        type is StatsType.IndivStats || (type as? StatsType.OpponentStats)?.userId != null -> stats?.averagePlayerPosition.toString()
                         type is StatsType.MapStats -> mapStats?.playerPosition.toString()
                         else -> stats?.averageMapPointsLabel.toString()
                     }, font = when {
-                        type is StatsType.IndivStats || type is StatsType.MapStats || (type as? StatsType.OpponentStats)?.isIndiv.isTrue -> R.font.mk_position
+                        type is StatsType.IndivStats || type is StatsType.MapStats || (type as? StatsType.OpponentStats)?.userId != null -> R.font.mk_position
                         else -> R.font.orbitron_semibold
                     }, fontSize = when {
-                        type is StatsType.IndivStats || type is StatsType.MapStats || (type as? StatsType.OpponentStats)?.isIndiv.isTrue -> 26
+                        type is StatsType.IndivStats || type is StatsType.MapStats || (type as? StatsType.OpponentStats)?.userId != null -> 26
                         else -> 20
                     }, textColor = when {
-                        type is StatsType.IndivStats || (type as? StatsType.OpponentStats)?.isIndiv.isTrue -> stats?.averagePlayerPosition.positionColor()
+                        type is StatsType.IndivStats || (type as? StatsType.OpponentStats)?.userId != null -> stats?.averagePlayerPosition.positionColor()
                         type is StatsType.MapStats -> mapStats?.playerPosition?.pointsToPosition().positionColor()
                         else -> when {
                             stats?.averageMapPointsLabel?.contains("+").isTrue -> R.color.luigi

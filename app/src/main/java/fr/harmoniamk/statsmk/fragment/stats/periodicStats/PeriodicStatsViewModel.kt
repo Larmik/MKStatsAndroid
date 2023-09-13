@@ -106,7 +106,7 @@ class PeriodicStatsViewModel @Inject constructor(
                     stats.mostPlayedTeam?.team,
                     stats.mostDefeatedTeam?.team,
                     stats.lessDefeatedTeam?.team
-                ).withFullTeamStats(warList, databaseRepository, authenticationRepository.user?.uid, isIndiv = true).first()
+                ).withFullTeamStats(warList, databaseRepository, authenticationRepository.user?.uid).first()
                 mostPlayedTeam = teamStats.getOrNull(0)
                 mostDefeatedTeam = teamStats.getOrNull(1)
                 lessDefeatedTeam = teamStats.getOrNull(2)

@@ -20,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import fr.harmoniamk.statsmk.R
+import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.mock.mock
@@ -30,7 +31,9 @@ fun MKWarItem(war: MKWar, isForStats: Boolean = false, onClick: (String?) -> Uni
         true -> R.color.transparent
         else -> R.color.white_alphaed
     }
-    Card(backgroundColor = colorResource(id = bgColor), modifier = Modifier.padding(bottom = 5.dp).clickable { onClick(war.war?.mid) }, elevation = 0.dp) {
+    Card(backgroundColor = colorResource(id = bgColor), modifier = Modifier
+        .padding(bottom = 5.dp)
+        .clickable { onClick(war.war?.mid) }, elevation = 0.dp) {
         when (isForStats) {
             true -> Column(Modifier.padding(10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 war.name?.let { MKText(text = it,  font = R.font.montserrat_bold) }
@@ -47,6 +50,9 @@ fun MKWarItem(war: MKWar, isForStats: Boolean = false, onClick: (String?) -> Uni
                     .fillMaxWidth()
                     .padding(10.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                     Image(painter = painterResource(id = pin), contentDescription = null, modifier = Modifier.size(15.dp))
+                    war.war?.isOfficial?.takeIf { it.isTrue }?.let {
+                        Image(painter = painterResource(id = R.drawable.mku_logo), contentDescription = null, modifier = Modifier.size(25.dp))
+                    }
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         war.name?.let { MKText(text = it, fontSize = 16, font = R.font.montserrat_bold) }
                         war.war?.createdDate?.let { MKText(text = it) }

@@ -13,6 +13,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKBaseScreen
+import fr.harmoniamk.statsmk.compose.ui.MKButton
 import fr.harmoniamk.statsmk.compose.ui.MKCurrentWarCell
 import fr.harmoniamk.statsmk.compose.ui.MKLifecycleEvent
 import fr.harmoniamk.statsmk.compose.ui.MKSegmentedButtons
@@ -28,7 +29,8 @@ fun WarScreen(
     viewModel: WarViewModel = hiltViewModel(),
     onCurrentWarClick: () -> Unit,
     onWarClick: (String?) -> Unit,
-    onCreateWarClick: () -> Unit
+    onCreateWarClick: () -> Unit,
+    onAllWarsClick: () -> Unit
 ) {
     val currentWar = viewModel.sharedCurrentWar.collectAsState()
     val lastWars = viewModel.sharedLastWars.collectAsState()
@@ -63,11 +65,13 @@ fun WarScreen(
                 }
             }
         }
+        if (currentWar.value == null)
+            MKButton(text = R.string.voir_toutes_les_wars, onClick = onAllWarsClick)
     }
 }
 
 @Preview
 @Composable
 fun WarScreenPreview() {
-    WarScreen(onCurrentWarClick = {}, onWarClick = {}) {}
+    WarScreen(onCurrentWarClick = {}, onWarClick = {}, onAllWarsClick = {}, onCreateWarClick = {})
 }

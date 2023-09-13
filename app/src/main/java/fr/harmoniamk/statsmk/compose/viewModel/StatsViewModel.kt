@@ -42,15 +42,15 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 sealed class StatsType(val title: Int) {
     class IndivStats(val userId: String) : StatsType(R.string.statistiques_du_joueur)
     class TeamStats : StatsType(R.string.statistiques_de_l_quipe)
     class OpponentStats(
-        val teamId: String?,
-        val isIndiv: Boolean
-    ) : StatsType(R.string.statistiques_de_l_quipe)
+        val teamId: String,
+        val userId: String? = null) : StatsType(R.string.statistiques_de_l_quipe)
     class MapStats(
         val userId: String? = null,
         val teamId: String? = null,
@@ -60,7 +60,7 @@ sealed class StatsType(val title: Int) {
         val isMonth: Boolean = false,
         val trackIndex: Int
     ) : StatsType(R.string.statistiques_circuit)
-    class PeriodicStats : StatsType(R.string.statistiques_hebdomadaires)
+    class PeriodicStats : StatsType(R.string.statistiques_p_riodiques)
 }
 
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
@@ -76,12 +76,14 @@ class StatsViewModel @Inject constructor(
     private val _sharedTeamClick = MutableSharedFlow<Pair<String?, OpponentRankingItemViewModel>>()
     private val _sharedStats = MutableStateFlow<MKStats?>(null)
     private val _sharedSubtitle = MutableStateFlow<String?>(null)
+    private val _sharedDetailsClick = MutableSharedFlow<Unit>()
 
     val sharedTrackClick = _sharedTrackClick.asSharedFlow()
     val sharedWarClick = _sharedWarClick.asSharedFlow()
     val sharedTeamClick = _sharedTeamClick.asSharedFlow()
     val sharedStats = _sharedStats.asStateFlow()
     val sharedSubtitle = _sharedSubtitle.asStateFlow()
+    val sharedDetailsClick = _sharedDetailsClick.asSharedFlow()
 
     private var bestMap: TrackStats? = null
     private var worstMap: TrackStats? = null
@@ -99,8 +101,7 @@ class StatsViewModel @Inject constructor(
     private var item: Stats? = null
     var onlyIndiv =  preferencesRepository.currentTeam?.mid == null
 
-    fun init(type: StatsType) {
-
+    fun init(type: StatsType, isWeek: Boolean) {
         val warFlow = databaseRepository.getUsers()
             .onEach {
                 users.clear()
@@ -111,8 +112,10 @@ class StatsViewModel @Inject constructor(
                 when  {
                     type is StatsType.IndivStats -> it.filter { war -> war.hasPlayer(type.userId) }
                     type is StatsType.TeamStats -> it.filter { war -> war.hasTeam(preferencesRepository.currentTeam?.mid) }
-                    (type as? StatsType.OpponentStats)?.isIndiv.isTrue -> it.filter { war -> war.hasTeam((type as? StatsType.OpponentStats)?.teamId) && war.hasPlayer(authenticationRepository.user?.uid) }
+                    (type as? StatsType.OpponentStats)?.userId != null -> it.filter { war -> war.hasTeam((type as? StatsType.OpponentStats)?.teamId) && war.hasPlayer(authenticationRepository.user?.uid) }
                     type is StatsType.OpponentStats -> it.filter { war -> war.hasTeam((type as? StatsType.OpponentStats)?.teamId) }
+                    type is StatsType.PeriodicStats && isWeek -> it.filter { war -> war.hasTeam(preferencesRepository.currentTeam?.mid) && war.isThisWeek  }
+                    type is StatsType.PeriodicStats -> it.filter { war -> war.hasTeam(preferencesRepository.currentTeam?.mid) && war.isThisMonth  }
                     else -> it
                 }
             }
@@ -123,9 +126,8 @@ class StatsViewModel @Inject constructor(
             }
             .flatMapLatest {
                 when {
-                    type is StatsType.IndivStats -> it.withFullStats(databaseRepository, type.userId, isIndiv = true)
-                    (type as? StatsType.OpponentStats)?.isIndiv.isTrue -> databaseRepository.getTeam((type as StatsType.OpponentStats).teamId).filterNotNull().flatMapLatest { it.withFullTeamStats(wars, databaseRepository, authenticationRepository.user?.uid, isIndiv = true) }
-                    type is StatsType.OpponentStats -> databaseRepository.getTeam(type.teamId).filterNotNull().flatMapLatest { it.withFullTeamStats(wars, databaseRepository) }
+                    type is StatsType.IndivStats -> it.withFullStats(databaseRepository, type.userId)
+                    type is StatsType.OpponentStats -> databaseRepository.getTeam(type.teamId).filterNotNull().flatMapLatest { it.withFullTeamStats(wars, databaseRepository, type.userId, isIndiv = true) }
                     else -> it.withFullStats(databaseRepository)
                 }
             }
@@ -166,7 +168,7 @@ class StatsViewModel @Inject constructor(
             .launchIn(viewModelScope)
 
         warFlow
-            .filter { type is StatsType.IndivStats || type is StatsType.TeamStats }
+            .filter { type is StatsType.IndivStats || type is StatsType.TeamStats || type is StatsType.PeriodicStats }
             .onEach {
                 bestMap = it.bestPlayerMap
                 worstMap = it.worstPlayerMap
@@ -185,7 +187,7 @@ class StatsViewModel @Inject constructor(
                         it.mostPlayedTeam?.team,
                         it.mostDefeatedTeam?.team,
                         it.lessDefeatedTeam?.team
-                    ).withFullTeamStats(wars, databaseRepository, type.userId, isIndiv = true)
+                    ).withFullTeamStats(wars, databaseRepository, type.userId)
                     else -> listOfNotNull(
                         it.mostPlayedTeam?.team,
                         it.mostDefeatedTeam?.team,
@@ -241,6 +243,12 @@ class StatsViewModel @Inject constructor(
                 )
                 _sharedStats.value = MapStats(mapDetailsList, onlyIndiv && (type as StatsType.MapStats).userId != null, (type as StatsType.MapStats).userId)
             }.launchIn(viewModelScope)
+    }
+
+    fun onDetailsClick() {
+        viewModelScope.launch {
+            _sharedDetailsClick.emit(Unit)
+        }
     }
 
     fun bind(

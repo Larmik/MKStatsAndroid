@@ -62,7 +62,7 @@ class PlayerStatsViewModel @Inject constructor(private val databaseRepository: D
                     itemVM.stats.mostPlayedTeam?.team,
                     itemVM.stats.mostDefeatedTeam?.team,
                     itemVM.stats.lessDefeatedTeam?.team
-                ).withFullTeamStats(warList, databaseRepository, itemVM.user.mid, isIndiv = true).first()
+                ).withFullTeamStats(warList, databaseRepository, itemVM.user.mid).first()
                 mostPlayedTeam = teamStats.getOrNull(0)
                 mostDefeatedTeam = teamStats.getOrNull(1)
                 lessDefeatedTeam = teamStats.getOrNull(2)

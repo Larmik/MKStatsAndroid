@@ -20,6 +20,7 @@ fun StatsMenuScreen(viewModel: StatsMenuViewModel = hiltViewModel(), onItemClick
             MenuItems.PlayerStats(),
             MenuItems.OpponentStats(),
             MenuItems.MapStats(),
+            MenuItems.PeriodicStats(),
         ).forEach {
             MKListItem(item = it, separator = true, onNavigate = onItemClick) {}
         }

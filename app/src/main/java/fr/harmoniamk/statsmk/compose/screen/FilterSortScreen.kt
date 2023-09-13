@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -13,6 +12,7 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,18 +25,25 @@ import fr.harmoniamk.statsmk.compose.ui.MKText
 import fr.harmoniamk.statsmk.compose.viewModel.Filter
 import fr.harmoniamk.statsmk.compose.viewModel.FilterSortViewModel
 import fr.harmoniamk.statsmk.compose.viewModel.Sort
+import fr.harmoniamk.statsmk.enums.FilterType
 import fr.harmoniamk.statsmk.enums.SortType
 import fr.harmoniamk.statsmk.extension.isTrue
+import kotlinx.coroutines.flow.filterNotNull
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun FilterSortScreen(viewModel: FilterSortViewModel = hiltViewModel(), sort: Sort, filter: Filter, onDismiss: () -> Unit, onSorted: (SortType) -> Unit) {
+fun FilterSortScreen(viewModel: FilterSortViewModel = hiltViewModel(), sort: Sort, filter: Filter, onDismiss: () -> Unit, onSorted: (SortType) -> Unit, onFiltered: (List<FilterType>) -> Unit) {
 
     val sortState = viewModel.sortState.collectAsState()
     val filterState = viewModel.filterState.collectAsState()
 
     BackHandler {
         onDismiss()
+    }
+    LaunchedEffect(Unit) {
+        viewModel.filterState.filterNotNull().collect {
+            onFiltered(it)
+        }
     }
 
     MKBaseScreen(title = R.string.options_de_tri) {
