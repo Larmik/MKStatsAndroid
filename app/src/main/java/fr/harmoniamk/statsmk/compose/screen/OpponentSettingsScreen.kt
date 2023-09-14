@@ -56,7 +56,10 @@ fun OpponentSettingsScreen(viewModel: OpponentSettingsViewModel = hiltViewModel(
         )
         MKTextField(
             value = searchState.value,
-            onValueChange = { searchState.value = it },
+            onValueChange = {
+                searchState.value = it
+                viewModel.onSearch(it.text)
+            },
             placeHolderRes = R.string.rechercher_un_advsersaire
         )
         LazyColumn(Modifier.padding(10.dp)) {

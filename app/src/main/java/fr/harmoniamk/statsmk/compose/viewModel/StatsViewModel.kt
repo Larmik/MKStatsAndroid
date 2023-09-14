@@ -58,7 +58,7 @@ sealed class StatsType(val title: Int) {
         val isMonth: Boolean = false,
         val trackIndex: Int
     ) : StatsType(R.string.statistiques_circuit)
-    class PeriodicStats : StatsType(R.string.statistiques_p_riodiques)
+    class PeriodicStats(val isWeek: Boolean = true) : StatsType(R.string.statistiques_p_riodiques)
 }
 
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
@@ -75,12 +75,14 @@ class StatsViewModel @Inject constructor(
     private val _sharedStats = MutableStateFlow<MKStats?>(null)
     private val _sharedSubtitle = MutableStateFlow<String?>(null)
     private val _sharedDetailsClick = MutableSharedFlow<Unit>()
+    private var _sharedWeekEnabled = MutableStateFlow(true)
 
     val sharedTrackClick = _sharedTrackClick.asSharedFlow()
     val sharedWarClick = _sharedWarClick.asSharedFlow()
     val sharedTeamClick = _sharedTeamClick.asSharedFlow()
     val sharedStats = _sharedStats.asStateFlow()
     val sharedSubtitle = _sharedSubtitle.asStateFlow()
+    val sharedWeekEnabled = _sharedWeekEnabled.asStateFlow()
     val sharedDetailsClick = _sharedDetailsClick.asSharedFlow()
 
     private var bestMap: TrackStats? = null
@@ -100,6 +102,7 @@ class StatsViewModel @Inject constructor(
     var onlyIndiv =  preferencesRepository.currentTeam?.mid == null
 
     fun init(type: StatsType, isWeek: Boolean) {
+        _sharedWeekEnabled.value = isWeek
         val warFlow = databaseRepository.getUsers()
             .onEach {
                 users.clear()

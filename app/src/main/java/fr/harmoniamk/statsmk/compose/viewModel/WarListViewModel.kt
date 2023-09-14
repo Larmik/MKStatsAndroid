@@ -9,6 +9,7 @@ import fr.harmoniamk.statsmk.enums.SortType
 import fr.harmoniamk.statsmk.enums.WarFilterType
 import fr.harmoniamk.statsmk.enums.WarSortType
 import fr.harmoniamk.statsmk.extension.isTrue
+import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
@@ -19,8 +20,9 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
@@ -37,6 +39,7 @@ class WarListViewModel @Inject constructor(
     private val _sharedSortTypeSelected = MutableStateFlow<SortType>(WarSortType.DATE)
     private val _sharedUserId = MutableStateFlow<String?>(null)
     private val _sharedTeamId = MutableStateFlow<String?>(null)
+    private val _sharedIsWeek = MutableStateFlow<Boolean?>(null)
     private val _sharedFilterList = MutableStateFlow<List<FilterType>>(listOf())
     private val _sharedBottomsheetValue = MutableStateFlow<MKBottomSheetState?>(null)
 
@@ -44,29 +47,43 @@ class WarListViewModel @Inject constructor(
     val sharedWarClick = _sharedWarClick.asSharedFlow()
     val sharedBottomSheetValue = _sharedBottomsheetValue.asStateFlow()
 
-    fun init(userId: String? = null, teamId: String? = null, sort: SortType, filterType: List<FilterType>) {
+    private val wars = mutableListOf<MKWar>()
+    private val teams = mutableListOf<Team>()
+
+    fun init(userId: String? = null, teamId: String? = null, isWeek: Boolean? = null, sort: SortType, filterType: List<FilterType>) {
         _sharedSortTypeSelected.value = sort
         _sharedFilterList.value = filterType
+        _sharedIsWeek.value = isWeek
         _sharedUserId.value = userId
         _sharedTeamId.value = teamId
-        databaseRepository.getWars()
-            .mapNotNull { list ->
-                when  {
-                    userId != null && teamId != null -> list.filter { war -> war.hasPlayer(userId) && war.hasTeam(teamId)}
-                    userId != null -> list.filter { war -> war.hasPlayer(userId)}
-                    teamId != null -> list.filter { war -> war.hasTeam(teamId)}
-                    else -> list.filter { war -> war.war?.teamHost == preferencesRepository.currentTeam?.mid}
-                }.sortedByDescending { it.war?.mid } }
+        databaseRepository.getTeams()
             .onEach {
-                val filteredWars = applyFilters(it, filterType)
-                _sharedWars.emit(when (sort) {
-                    WarSortType.DATE -> filteredWars.sortedByDescending { it.war?.mid }
-                    WarSortType.SCORE -> filteredWars.sortedByDescending { it.scoreHost }
-                    WarSortType.TEAM -> filteredWars.sortedBy { it.name }
-                    else -> filteredWars
-                })
+                teams.clear()
+                teams.addAll(it)
+            }
+            .flatMapLatest { databaseRepository.getWars() }
+            .onEach {
+                wars.clear()
+                wars.addAll(it)
+            }.flatMapLatest { createWarList(it) }
+            .onEach {
+                _sharedWars.value = it
                 _sharedFilterList.emit(filterType)
             }.launchIn(viewModelScope)
+    }
+
+    fun onSearch(search: String) {
+        val filteredWars = mutableListOf<MKWar>()
+        when (search.isNotEmpty()) {
+            true -> teams
+                .filter { it.name?.lowercase()?.contains(search.lowercase()).isTrue || it.shortName?.lowercase()?.contains(search.lowercase()).isTrue }
+                .mapNotNull { it.shortName }
+                .forEach { tag -> filteredWars.addAll(wars.filter { it.name?.lowercase()?.contains(tag.lowercase()).isTrue }) }
+            else -> filteredWars.addAll(wars)
+        }
+        createWarList(filteredWars)
+            .onEach { _sharedWars.value = it }
+            .launchIn(viewModelScope)
     }
 
     private fun applyFilters(list: List<MKWar>, filters: List<FilterType>): List<MKWar> {
@@ -78,6 +95,29 @@ class WarListViewModel @Inject constructor(
         return filtered
     }
 
+    private fun createWarList(list: List<MKWar>) = flow {
+        val userId = _sharedUserId.value
+        val teamId = _sharedTeamId.value
+        val isWeek = _sharedIsWeek.value
+        val filters = _sharedFilterList.value
+        val sort = _sharedSortTypeSelected.value
+       val wars =  when  {
+            userId != null && teamId != null -> list.filter { war -> war.hasPlayer(userId) && war.hasTeam(teamId)}
+            userId != null -> list.filter { war -> war.hasPlayer(userId)}
+            teamId != null -> list.filter { war -> war.hasTeam(teamId)}
+            isWeek.isTrue -> list.filter { war -> war.war?.teamHost == preferencesRepository.currentTeam?.mid && war.isThisWeek }
+            isWeek == false ->  list.filter { war -> war.war?.teamHost == preferencesRepository.currentTeam?.mid && war.isThisMonth }
+            else -> list.filter { war -> war.war?.teamHost == preferencesRepository.currentTeam?.mid}
+        }.sortedByDescending { it.war?.mid }
+        val filteredWars = applyFilters(list = wars, filters)
+        emit(when (sort) {
+            WarSortType.DATE -> filteredWars.sortedByDescending { it.war?.mid }
+            WarSortType.SCORE -> filteredWars.sortedByDescending { it.scoreHost }
+            WarSortType.TEAM -> filteredWars.sortedBy { it.name }
+            else -> filteredWars
+        })
+    }
+
     fun onClickOptions() {
         _sharedBottomsheetValue.value = MKBottomSheetState.FilterSort(Sort.WarSort(), Filter.WarFilter())
     }
@@ -87,10 +127,10 @@ class WarListViewModel @Inject constructor(
     }
 
     fun onSorted(sort: SortType) {
-        init(_sharedUserId.value, _sharedTeamId.value, sort, _sharedFilterList.value)
+        init(_sharedUserId.value, _sharedTeamId.value, _sharedIsWeek.value, sort, _sharedFilterList.value)
     }
 
     fun onFiltered(filters: List<FilterType>) {
-        init(_sharedUserId.value, _sharedTeamId.value, _sharedSortTypeSelected.value, filters)
+        init(_sharedUserId.value, _sharedTeamId.value, _sharedIsWeek.value, _sharedSortTypeSelected.value, filters)
     }
 }

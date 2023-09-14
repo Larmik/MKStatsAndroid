@@ -33,7 +33,7 @@ import fr.harmoniamk.statsmk.enums.WarSortType
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun WarListScreen(viewModel: WarListViewModel = hiltViewModel(), userId: String? = null, teamId: String? = null, onWarClick: (String) -> Unit) {
+fun WarListScreen(viewModel: WarListViewModel = hiltViewModel(), userId: String? = null, teamId: String? = null, isWeek: Boolean? = null, onWarClick: (String) -> Unit) {
 
     val wars = viewModel.sharedWars.collectAsState()
     val searchState = remember { mutableStateOf(TextFieldValue("")) }
@@ -43,7 +43,7 @@ fun WarListScreen(viewModel: WarListViewModel = hiltViewModel(), userId: String?
             initialValue = ModalBottomSheetValue.Hidden,
             confirmValueChange = { it == ModalBottomSheetValue.Expanded || it == ModalBottomSheetValue.HalfExpanded })
 
-    viewModel.init(userId, teamId, WarSortType.DATE, listOf())
+    viewModel.init(userId, teamId, isWeek, WarSortType.DATE, listOf())
     LaunchedEffect(Unit) {
         viewModel.sharedBottomSheetValue.collect {
             when (it) {
@@ -77,6 +77,7 @@ fun WarListScreen(viewModel: WarListViewModel = hiltViewModel(), userId: String?
                 value = searchState.value,
                 onValueChange = {
                     searchState.value = it
+                    viewModel.onSearch(it.text)
                 },
                 placeHolderRes = R.string.rechercher_un_advsersaire
             )

@@ -9,6 +9,7 @@ import fr.harmoniamk.statsmk.model.local.ManagePlayersItemViewModel
 import fr.harmoniamk.statsmk.compose.ui.MKBottomSheetState
 import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.extension.bind
+import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.firebase.PictureResponse
 import fr.harmoniamk.statsmk.model.firebase.Team
@@ -23,7 +24,6 @@ import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import fr.harmoniamk.statsmk.repository.StorageRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -65,14 +65,15 @@ class TeamSettingsViewModel @Inject constructor(
     val sharedBottomSheetValue = _sharedBottomSheetValue.asSharedFlow()
 
     private val players = SnapshotStateList<ManagePlayersItemViewModel>()
-    private val allPlayers = mutableListOf<ManagePlayersItemViewModel>()
+    private val allPlayers = mutableListOf<User>()
 
     init {
         databaseRepository.getUsers()
-            .onEach { delay(100) }
+            .onEach {
+                allPlayers.clear()
+                allPlayers.addAll(it) }
             .flatMapLatest { createPlayersList(list = it) }
             .onEach {
-                allPlayers.addAll(it)
                 _sharedTeamName.emit(preferencesRepository.currentTeam?.name)
                 _sharedPlayers.emit(it)
             }
@@ -116,7 +117,14 @@ class TeamSettingsViewModel @Inject constructor(
     }
 
     fun onSearch(searched: String) {
-
+        createPlayersList(
+            when (searched.isNotEmpty()) {
+                true -> allPlayers.filter { it.name?.lowercase()?.contains(searched.lowercase()).isTrue }
+                else -> allPlayers
+            }
+        ).onEach {
+            _sharedPlayers.value = it
+        }.launchIn(viewModelScope)
     }
 
     fun dismissBottomSheet() {
@@ -160,7 +168,7 @@ class TeamSettingsViewModel @Inject constructor(
 
     private fun createPlayersList(list: List<User>? = null): Flow<SnapshotStateList<ManagePlayersItemViewModel>> = flow {
         players.clear()
-        list?.forEach { player ->
+        list?.sortedBy { it.name }?.forEach { player ->
             authenticationRepository.userRole.map {
                 authenticationRepository.user?.uid != player.mid
                         && networkRepository.networkAvailable

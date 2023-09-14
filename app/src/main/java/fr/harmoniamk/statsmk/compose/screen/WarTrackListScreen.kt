@@ -52,6 +52,7 @@ fun WarTrackListScreen(viewModel: WarTrackListViewModel = hiltViewModel(), track
                 value = searchState.value,
                 onValueChange = {
                     searchState.value = it
+                    viewModel.onSearch(it.text)
                 },
                 placeHolderRes = R.string.rechercher_un_advsersaire
             )

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.R
+import fr.harmoniamk.statsmk.application.MainApplication
 import fr.harmoniamk.statsmk.model.local.RankingItemViewModel
 import fr.harmoniamk.statsmk.compose.ui.MKBottomSheetState
 import fr.harmoniamk.statsmk.enums.Maps
@@ -82,6 +83,10 @@ class StatsRankingViewModel @Inject constructor(
     private val warList = mutableListOf<MKWar>()
     private var sortType: SortType? = null
     private val onlyIndiv = preferencesRepository.currentTeam?.mid == null
+
+    private val players = mutableListOf<PlayerRankingItemViewModel>()
+    private val opponents = mutableListOf<OpponentRankingItemViewModel>()
+    private val maps = mutableListOf<TrackStats>()
 
     fun init(state: StatsRankingState?, indivEnabled: Boolean, type: SortType? = null) {
         _sharedIndivEnabled.value = indivEnabled
@@ -164,6 +169,27 @@ class StatsRankingViewModel @Inject constructor(
         }
     }
 
+    fun onSearch(state: StatsRankingState, search: String) {
+        (state as? StatsRankingState.PlayerRankingState)?.let {
+            when (search.isNotEmpty()) {
+                true ->  _sharedList.value = players.filter { it.user.name?.lowercase()?.contains(search.lowercase()).isTrue }
+                else -> _sharedList.value = players
+            }
+        }
+        (state as? StatsRankingState.OpponentRankingState)?.let {
+            when (search.isNotEmpty()) {
+                true ->  _sharedList.value = opponents.filter { it.team?.name?.lowercase()?.contains(search.lowercase()).isTrue || it.team?.shortName?.lowercase()?.contains(search.lowercase()).isTrue }
+                else -> _sharedList.value = opponents
+            }
+        }
+        (state as? StatsRankingState.MapsRankingState)?.let {
+            when (search.isNotEmpty()) {
+                true ->  _sharedList.value = maps.filter {it.map?.name?.lowercase()?.contains(search.lowercase()).isTrue ||  MainApplication.instance?.applicationContext?.getString(it.map?.label ?: -1 )?.lowercase()?.contains(search.lowercase()).isTrue }
+                else -> _sharedList.value = maps
+            }
+        }
+    }
+
     private fun sortTracks(type: SortType?, list: List<NewWarTrack>, indivEnabled: Boolean): List<TrackStats> {
         val pairList =  when (type) {
             TrackSortType.TOTAL_WIN -> list
@@ -182,14 +208,18 @@ class StatsRankingViewModel @Inject constructor(
                 .filter { !indivEnabled || (indivEnabled && MKWarTrack(it).hasPlayer(authenticationRepository.user?.uid)) }
                 .groupBy { it.trackIndex }.toList()
                 .sortedByDescending { it.second.size }
+        }.map {
+            TrackStats(
+                stats = null,
+                map = Maps.values()[it.first ?: -1],
+                trackIndex = it.first,
+                totalPlayed = it.second.size,
+                winRate = (it.second.filter { MKWarTrack(it).displayedDiff.contains('+') }.size * 100) / it.second.size
+            )
         }
-        return pairList.map { TrackStats(
-            stats = null,
-            map = Maps.values()[it.first ?: -1],
-            trackIndex = it.first,
-            totalPlayed = it.second.size,
-            winRate = (it.second.filter { MKWarTrack(it).displayedDiff.contains('+') }.size * 100) / it.second.size)
-        }
+        maps.clear()
+        maps.addAll(pairList)
+        return pairList
     }
 
     private fun sortPlayers(type: SortType?, list: List<PlayerRankingItemViewModel>) : List<PlayerRankingItemViewModel> {
@@ -199,7 +229,10 @@ class StatsRankingViewModel @Inject constructor(
             PlayerSortType.AVERAGE -> list.sortedByDescending { it.stats.averagePoints }
             else -> list.sortedBy { it.user.name }
         }
-        return pairList.filter { it.stats.warStats.warsPlayed > 0 }
+        val playerList =  pairList.filter { it.stats.warStats.warsPlayed > 0 }
+        players.clear()
+        players.addAll(playerList)
+        return playerList
     }
 
     private fun sortTeams(type: SortType?, list: List<OpponentRankingItemViewModel>): List<OpponentRankingItemViewModel>  {
@@ -208,8 +241,10 @@ class StatsRankingViewModel @Inject constructor(
             PlayerSortType.TOTAL_WIN -> list.sortedByDescending { it.stats.warStats.warsPlayed }
             PlayerSortType.AVERAGE -> list.sortedByDescending { it.stats.averagePoints }
             else -> list.sortedBy { it.team?.name }
-        }
-        return pairList.filter { vm -> vm.stats.warStats.warsPlayed > 1 }
+        }.filter { vm -> vm.stats.warStats.warsPlayed > 1 }
+        opponents.clear()
+        opponents.addAll(pairList)
+        return pairList
     }
 
 }

@@ -1,6 +1,7 @@
 package fr.harmoniamk.statsmk.compose.viewModel
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -18,6 +19,7 @@ import fr.harmoniamk.statsmk.extension.positionToPoints
 import fr.harmoniamk.statsmk.extension.sum
 import fr.harmoniamk.statsmk.extension.withTeamName
 import fr.harmoniamk.statsmk.model.firebase.Penalty
+import fr.harmoniamk.statsmk.model.firebase.Shock
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarPosition
@@ -119,6 +121,7 @@ class WarDetailsViewModel  @AssistedInject constructor(
             .onEach {
                 val positions = mutableListOf<Pair<User?, Int>>()
                 val players = databaseRepository.getUsers().firstOrNull()
+                val shocks = mutableStateListOf<Shock>()
                 _sharedTracks.emit(it)
                 _sharedBestTrack.emit(it.maxByOrNull { track -> track.teamScore }!!)
                 _sharedWorstTrack.emit(it.minByOrNull { track -> track.teamScore }!!)
@@ -131,15 +134,17 @@ class WarDetailsViewModel  @AssistedInject constructor(
                         trackPositions.groupBy { it.player }.entries.forEach { entry ->
                             positions.add(Pair(entry.key, entry.value.map { pos -> pos.position.position.positionToPoints() }.sum()))
                         }
+                        shocks.addAll(it.track.shocks?.takeIf { it.isNotEmpty() }.orEmpty())
                     }
                 }
                 val temp = positions.groupBy { it.first }.map { Pair(it.key, it.value.map { it.second }.sum()) }.sortedByDescending { it.second }
                 val finalList = mutableListOf<CurrentPlayerModel>()
                 temp.forEach { pair ->
+                    val shockCount = shocks.filter { it.playerId == pair.first?.mid }.map { it.count }.sum()
                     val isSubPlayer = it.size > it.filter { track -> track.hasPlayer(pair.first?.mid) }.size
                     val isOld = isSubPlayer && it.firstOrNull()?.hasPlayer(pair.first?.mid).isTrue
                     val isNew = isSubPlayer && it.lastOrNull()?.hasPlayer(pair.first?.mid).isTrue
-                    finalList.add(CurrentPlayerModel(pair.first, pair.second, isOld, isNew))
+                    finalList.add(CurrentPlayerModel(pair.first, pair.second, isOld, isNew, shockCount = shockCount))
                 }
                 _sharedWarPlayers.emit(finalList)
             }

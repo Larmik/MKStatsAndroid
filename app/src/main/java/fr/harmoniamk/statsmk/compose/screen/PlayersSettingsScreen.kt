@@ -70,7 +70,10 @@ fun PlayersSettingsScreen(
         )
         MKTextField(
             value = searchState.value,
-            onValueChange = { searchState.value = it },
+            onValueChange = {
+                searchState.value = it
+                viewModel.onSearch(it.text)
+            },
             placeHolderRes = R.string.rechercher_un_joueur
         )
         LazyColumn(Modifier.padding(10.dp)) {

@@ -1,6 +1,7 @@
 package fr.harmoniamk.statsmk.compose.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
@@ -15,6 +16,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import fr.harmoniamk.statsmk.R
@@ -45,14 +47,29 @@ fun MKPlayerList(players: List<CurrentPlayerModel>) {
                         else -> 0f
                     }
                     Row(Modifier.padding(vertical = 1.5.dp), verticalAlignment = Alignment.CenterVertically) {
-                        Image(
-                            painter = painterResource(id = R.drawable.arrow),
-                            contentDescription = null,
-                            colorFilter = colorFilter,
-                            modifier = Modifier.size(11.dp).rotate(rotation)
-                        )
-                        MKText(text = it.player?.name ?: "", modifier = Modifier.defaultMinSize(minWidth = 120.dp))
+                        Row(
+                            modifier = Modifier.defaultMinSize(minWidth = 120.dp),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.arrow),
+                                contentDescription = null,
+                                colorFilter = colorFilter,
+                                modifier = Modifier
+                                    .size(11.dp)
+                                    .rotate(rotation)
+                            )
+                            MKText(modifier = Modifier.padding(horizontal = 5.dp),text = it.player?.name ?: "")
+
+                        }
                         MKText(text = it.score.toString(), font = R.font.montserrat_bold)
+                        it.shockCount.takeIf { it > 0 }?.let {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Image(painter = painterResource(id = R.drawable.shock), contentDescription = null, modifier = Modifier.size(15.dp))
+                                if (it > 1) MKText(text = String.format(stringResource(id = R.string.shock_count_placeholder), it.toString()), fontSize = 12)
+                            }
+                        }
                     }
                 }
             }
@@ -70,14 +87,29 @@ fun MKPlayerList(players: List<CurrentPlayerModel>) {
                         else -> 0f
                     }
                     Row(Modifier.padding(vertical = 1.5.dp), verticalAlignment = Alignment.CenterVertically) {
-                        Image(
-                            painter = painterResource(id = R.drawable.arrow),
-                            contentDescription = null,
-                            colorFilter = colorFilter,
-                            modifier = Modifier.size(11.dp).rotate(rotation)
-                        )
-                        MKText(text = it.player?.name ?: "", modifier = Modifier.defaultMinSize(minWidth = 120.dp))
+                        Row(
+                            modifier = Modifier.defaultMinSize(minWidth = 120.dp),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Image(
+                                painter = painterResource(id = R.drawable.arrow),
+                                contentDescription = null,
+                                colorFilter = colorFilter,
+                                modifier = Modifier
+                                    .size(11.dp)
+                                    .rotate(rotation)
+                            )
+                            MKText(modifier = Modifier.padding(horizontal = 5.dp),text = it.player?.name ?: "")
+
+                        }
                         MKText(text = it.score.toString(), font = R.font.montserrat_bold)
+                        it.shockCount.takeIf { it > 0 }?.let {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Image(painter = painterResource(id = R.drawable.shock), contentDescription = null, modifier = Modifier.size(15.dp))
+                                if (it > 1) MKText(text = String.format(stringResource(id = R.string.shock_count_placeholder), it.toString()), fontSize = 12)
+                            }
+                        }
                     }
                 }
             }

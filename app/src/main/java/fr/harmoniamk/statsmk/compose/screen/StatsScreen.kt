@@ -31,15 +31,16 @@ import fr.harmoniamk.statsmk.model.local.Stats
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun StatsScreen(viewModel: StatsViewModel = hiltViewModel(), type: StatsType, onDetailsClick: (StatsType) -> Unit) {
+fun StatsScreen(viewModel: StatsViewModel = hiltViewModel(), type: StatsType, onDetailsClick: (StatsType, Boolean?) -> Unit) {
     val stats = viewModel.sharedStats.collectAsState()
     val subtitle = viewModel.sharedSubtitle.collectAsState()
+    val isWeek = viewModel.sharedWeekEnabled.collectAsState()
 
-    viewModel.init(type, true)
+    viewModel.init(type, isWeek.value)
 
     LaunchedEffect(Unit) {
         viewModel.sharedDetailsClick.collect {
-            onDetailsClick(type)
+            onDetailsClick(type, isWeek.value)
         }
     }
     MKBaseScreen(title = type.title, subTitle = subtitle.value) {
@@ -50,7 +51,10 @@ fun StatsScreen(viewModel: StatsViewModel = hiltViewModel(), type: StatsType, on
             MKSegmentedSelector(buttons = listOf(
                 Pair(stringResource(id = R.string.hebdo)) { viewModel.init(type, true) },
                 Pair(stringResource(id = R.string.mensuel)) { viewModel.init(type, false) },
-            ))
+            ), indexSelected = when (isWeek.value) {
+                true -> 0
+                else -> 1
+            })
         }
         Column(modifier = Modifier
             .verticalScroll(rememberScrollState())
@@ -69,7 +73,7 @@ fun StatsScreen(viewModel: StatsViewModel = hiltViewModel(), type: StatsType, on
             type.takeIf { it !is StatsType.MapStats }?.let {
                 (stats.value as? Stats) ?.let { MKMapsStatsView(stats = it, type = type) }
             }
-            stats.value?.takeIf { type is StatsType.IndivStats || type is StatsType.OpponentStats || type is StatsType.MapStats }?.let {
+            stats.value?.let {
                 MKButton(text = R.string.voir_le_d_tail) {
                     viewModel.onDetailsClick()
                 }

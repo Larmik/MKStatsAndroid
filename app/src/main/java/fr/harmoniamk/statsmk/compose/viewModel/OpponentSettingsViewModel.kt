@@ -35,6 +35,7 @@ class OpponentSettingsViewModel @Inject constructor(private val preferencesRepos
 
     init {
         databaseRepository.getTeams()
+            .map { it.sortedBy { it.name } }
             .map {
                 teams.clear()
                 teams.addAll(it.filterNot { team -> team.mid == preferencesRepository.currentTeam?.mid }); teams.sortedBy { it.name }
@@ -61,6 +62,13 @@ class OpponentSettingsViewModel @Inject constructor(private val preferencesRepos
 
     fun dismissBottomSheet() {
         _sharedBottomSheetValue.value = null
+    }
+
+    fun onSearch(search: String) {
+        _sharedTeams.value = when (search.isNotEmpty()) {
+            true -> teams.filter { it.name?.lowercase()?.contains(search).isTrue || it.shortName?.lowercase()?.contains(search).isTrue }
+            else -> teams
+        }
     }
 
     fun bind(onAddTeam: Flow<Unit>, onEditClick: Flow<Team>, onSearch: Flow<String>) {

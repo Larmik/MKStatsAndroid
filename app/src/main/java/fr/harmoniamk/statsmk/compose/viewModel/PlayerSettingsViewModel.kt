@@ -8,6 +8,7 @@ import fr.harmoniamk.statsmk.model.local.ManagePlayersItemViewModel
 import fr.harmoniamk.statsmk.compose.ui.MKBottomSheetState
 import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.extension.bind
+import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.MKWar
@@ -54,8 +55,14 @@ class PlayerSettingsViewModel @Inject constructor(
     val sharedDismiss = _sharedDismiss.asSharedFlow()
     val sharedBottomSheetValue = _sharedBottomSheetValue.asStateFlow()
 
+    private val players = mutableListOf<User>()
+
     init {
         databaseRepository.getUsers()
+            .onEach {
+                players.clear()
+                players.addAll(it)
+            }
             .flatMapLatest { createPlayersList(it) }
             .onEach { _sharedPlayers.value = it }
             .launchIn(viewModelScope)
@@ -66,7 +73,14 @@ class PlayerSettingsViewModel @Inject constructor(
     }
 
     fun onSearch(searched: String) {
-
+        createPlayersList(
+            when (searched.isNotEmpty()) {
+                true -> players.filter { it.name?.lowercase()?.contains(searched.lowercase()).isTrue }
+                else -> players
+            }
+        ).onEach {
+            _sharedPlayers.value = it
+        }.launchIn(viewModelScope)
     }
 
     fun onAddToTeam(player: User?) {
@@ -112,7 +126,7 @@ class PlayerSettingsViewModel @Inject constructor(
 
     private fun createPlayersList(list: List<User>? = null): Flow<SnapshotStateList<ManagePlayersItemViewModel>> = flow {
         val newPlayers = SnapshotStateList<ManagePlayersItemViewModel>()
-        list?.forEach { player ->
+        list?.sortedBy { it.name }?.forEach { player ->
             authenticationRepository.userRole.map {
                 val isUser = authenticationRepository.user?.uid == player.mid
                 val hasAccount = player.mid.toLongOrNull() == null

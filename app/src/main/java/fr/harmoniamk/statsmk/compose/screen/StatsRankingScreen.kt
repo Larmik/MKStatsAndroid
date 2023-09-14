@@ -111,6 +111,7 @@ fun StatsRankingScreen(
                 value = searchState.value,
                 onValueChange = {
                     searchState.value = it
+                    viewModel.onSearch(state, it.text)
                 },
                 placeHolderRes = state.placeholderRes
             )

@@ -171,6 +171,12 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
             })
         }
 
+        /** Opponent stats navigation **/
+        composable("Home/Stats/Opponents") {
+            StatsRankingScreen(state = StatsRankingState.OpponentRankingState()) { item, _, _ ->
+                navController.navigate("Home/Stats/Opponents/${(item as? OpponentRankingItemViewModel)?.team?.mid.orEmpty()}/${(item as? OpponentRankingItemViewModel)?.userId.orEmpty()}")
+            }
+        }
         /** Players stats navigation **/
         composable("Home/Stats/Players") {
             StatsRankingScreen(state = StatsRankingState.PlayerRankingState()) { item, _, _ ->
@@ -186,20 +192,16 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
             StatsScreen(type = StatsType.IndivStats(
                 userId = it.arguments?.getString("id").orEmpty()
             ),
-                onDetailsClick = { navController.navigate("Home/War/AllWars/Player/${(it as? StatsType.IndivStats)?.userId}") })
+                onDetailsClick = {type, _ -> navController.navigate("Home/War/AllWars/Player/${(type as? StatsType.IndivStats)?.userId}") })
         }
 
         /** Team stats navigation **/
         composable(route = "Home/Stats/Team") {
-            StatsScreen(type = StatsType.TeamStats(), onDetailsClick = { })
+            StatsScreen(type = StatsType.TeamStats(), onDetailsClick = { _, _ ->
+                navController.navigate("Home/War/AllWars")
+            })
         }
 
-        /** Opponent stats navigation **/
-        composable("Home/Stats/Opponents") {
-            StatsRankingScreen(state = StatsRankingState.OpponentRankingState()) { item, _, _ ->
-                navController.navigate("Home/Stats/Opponents/${(item as? OpponentRankingItemViewModel)?.team?.mid.orEmpty()}/${(item as? OpponentRankingItemViewModel)?.userId.orEmpty()}")
-            }
-        }
         composable(
             route = "Home/Stats/Opponents/{teamId}/",
             arguments = listOf(
@@ -209,8 +211,8 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
             StatsScreen(
                 type = StatsType.OpponentStats(
                     teamId = it.arguments?.getString("teamId").orEmpty()
-                ), onDetailsClick = {
-                    navController.navigate("Home/War/AllWars/Team/${(it as? StatsType.OpponentStats)?.teamId}")
+                ), onDetailsClick = {type, _ ->
+                    navController.navigate("Home/War/AllWars/Team/${(type as? StatsType.OpponentStats)?.teamId}")
                 })
         }
         composable(
@@ -224,8 +226,8 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
                 type = StatsType.OpponentStats(
                     teamId = it.arguments?.getString("teamId").orEmpty(),
                     userId = it.arguments?.getString("userId").orEmpty()
-                ), onDetailsClick = {
-                    navController.navigate("Home/War/AllWars/Team/${(it as? StatsType.OpponentStats)?.teamId}/${(it as? StatsType.OpponentStats)?.userId}")
+                ), onDetailsClick = { type, _ ->
+                    navController.navigate("Home/War/AllWars/Team/${(type as? StatsType.OpponentStats)?.teamId}/${(type as? StatsType.OpponentStats)?.userId}")
                 })
         }
 
@@ -248,9 +250,8 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
                 type = StatsType.MapStats(
                     trackIndex = it.arguments?.getInt("trackId") ?: 0,
                     userId = it.arguments?.getString("userId").orEmpty()
-                ), onDetailsClick = {
-                    val type = it as? StatsType.MapStats
-                    type?.userId?.let {
+                ), onDetailsClick = {type, _ ->
+                    (type as? StatsType.MapStats)?.userId?.let {
                         navController.navigate("Home/Stats/Maps/${type.trackIndex}/User/${type.userId}/Details")
                     }
                 })
@@ -265,9 +266,8 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
                 type = StatsType.MapStats(
                     trackIndex = it.arguments?.getInt("trackId") ?: 0,
                     teamId = it.arguments?.getString("teamId").orEmpty()
-                ), onDetailsClick = {
-                    val type = it as? StatsType.MapStats
-                    type?.teamId?.let {
+                ), onDetailsClick = { type, _ ->
+                    (type as? StatsType.MapStats)?.teamId?.let {
                         navController.navigate("Home/Stats/Maps/${type.trackIndex}/Team/${type.teamId}/Details")
                     }
 
@@ -303,10 +303,16 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
 
         /** Periodic stats navigation **/
         composable("Home/Stats/Periodic") {
-            StatsScreen(type = StatsType.PeriodicStats(), onDetailsClick = {})
+            StatsScreen(type = StatsType.PeriodicStats(), onDetailsClick = {_, isWeek ->
+                navController.navigate("Home/War/AllWars/Periodic/$isWeek")
+            })
         }
 
         /** War list navigation **/
+        composable(
+            route = "Home/War/AllWars") {
+            WarListScreen() { navController.navigate("Home/War/$it") }
+        }
         composable(
             route = "Home/War/AllWars/Team/{teamId}",
             arguments = listOf(
@@ -316,7 +322,8 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
             WarListScreen(
                 teamId = it.arguments?.getString("teamId")
             ) { navController.navigate("Home/War/$it") }
-        }
+        }  /** War list navigation **/
+
         composable(
             route = "Home/War/AllWars/Team/{teamId}/{userId}",
             arguments = listOf(
@@ -338,6 +345,16 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
         ) {
             WarListScreen(
                 userId = it.arguments?.getString("userId")
+            ) { navController.navigate("Home/War/$it") }
+        }
+        composable(
+            route = "Home/War/AllWars/Periodic/{isWeek}",
+            arguments = listOf(
+                navArgument("isWeek") { type = NavType.BoolType },
+            )
+        ) {
+            WarListScreen(
+                isWeek = it.arguments?.getBoolean("isWeek")
             ) { navController.navigate("Home/War/$it") }
         }
     }

@@ -36,9 +36,8 @@ fun WarScreen(
     val lastWars = viewModel.sharedLastWars.collectAsState()
     val team = viewModel.sharedTeam.collectAsState()
     val dispos = viewModel.sharedDispos.collectAsState()
-    val createWarEnabled = viewModel.sharedCreateManualWarEnabled.collectAsState()
     val buttons = listOf(
-        Pair(R.string.cr_er_une_war, onCreateWarClick).takeIf { createWarEnabled.value },
+        Pair(R.string.cr_er_une_war, onCreateWarClick).takeIf { currentWar.value == null },
         Pair(R.string.ajouter_les_dispos, {}).takeIf { !dispos.value.isNullOrEmpty() },
     ).filterNotNull()
 
@@ -64,7 +63,6 @@ fun WarScreen(
                     MKWarItem(war = it, onClick = onWarClick)
                 }
             }
-            MKButton(text = R.string.voir_toutes_les_wars, onClick = onAllWarsClick)
         }
     }
 }

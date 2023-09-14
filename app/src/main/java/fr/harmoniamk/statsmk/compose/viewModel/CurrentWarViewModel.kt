@@ -1,5 +1,6 @@
 package fr.harmoniamk.statsmk.compose.viewModel
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,6 +15,7 @@ import fr.harmoniamk.statsmk.extension.positionToPoints
 import fr.harmoniamk.statsmk.extension.sum
 import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.extension.withTeamName
+import fr.harmoniamk.statsmk.model.firebase.Shock
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarPosition
@@ -157,6 +159,7 @@ class CurrentWarViewModel @Inject constructor(
             .map { players ->
                 val finalList = mutableListOf<CurrentPlayerModel>()
                 val positions = mutableListOf<Pair<User?, Int>>()
+                val shocks = mutableStateListOf<Shock>()
                 trackList.forEach {
                     it.track?.warPositions?.let { warPositions ->
                         val trackPositions = mutableListOf<MKWarPosition>()
@@ -176,16 +179,18 @@ class CurrentWarViewModel @Inject constructor(
                                 )
                             )
                         }
+                        shocks.addAll(it.track.shocks?.takeIf { it.isNotEmpty() }.orEmpty())
                     }
                 }
                 val temp = positions.groupBy { it.first }
                     .map { Pair(it.key, it.value.map { it.second }.sum()) }
                     .sortedByDescending { it.second }
                 temp.forEach { pair ->
+                    val shockCount = shocks.filter { it.playerId == pair.first?.mid }.map { it.count }.sum()
                     val isOld = pair.first?.currentWar == "-1"
                     val isNew =
                         trackList.size > trackList.filter { track -> track.hasPlayer(pair.first?.mid) }.size && pair.first?.currentWar == preferencesRepository.currentWar?.mid
-                    finalList.add(CurrentPlayerModel(pair.first, pair.second, isOld, isNew))
+                    finalList.add(CurrentPlayerModel(pair.first, pair.second, isOld, isNew, shockCount))
                 }
                 players.filter {
                     it.currentWar == preferencesRepository.currentWar?.mid && !finalList.map { it.player?.mid }
