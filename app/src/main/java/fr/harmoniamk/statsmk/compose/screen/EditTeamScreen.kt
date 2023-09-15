@@ -16,7 +16,6 @@ import fr.harmoniamk.statsmk.compose.ui.MKBaseScreen
 import fr.harmoniamk.statsmk.compose.ui.MKButton
 import fr.harmoniamk.statsmk.compose.ui.MKTextField
 import fr.harmoniamk.statsmk.compose.viewModel.EditTeamViewModel
-import fr.harmoniamk.statsmk.repository.mock.AuthenticationRepositoryMock
 import fr.harmoniamk.statsmk.repository.mock.DatabaseRepositoryMock
 import fr.harmoniamk.statsmk.repository.mock.FirebaseRepositoryMock
 import fr.harmoniamk.statsmk.repository.mock.PreferencesRepositoryMock
@@ -73,8 +72,7 @@ fun EditTeamPreview() {
         viewModel = EditTeamViewModel(
             firebaseRepository = FirebaseRepositoryMock(),
             databaseRepository = DatabaseRepositoryMock(),
-            preferencesRepository = PreferencesRepositoryMock(),
-            authenticationRepository = AuthenticationRepositoryMock()
+            preferencesRepository = PreferencesRepositoryMock()
         ), teamId = "12345"
     ) {
 

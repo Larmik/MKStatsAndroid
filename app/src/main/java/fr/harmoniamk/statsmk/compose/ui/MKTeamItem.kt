@@ -15,6 +15,7 @@ import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -25,13 +26,13 @@ import fr.harmoniamk.statsmk.fragment.stats.opponentRanking.OpponentRankingItemV
 import fr.harmoniamk.statsmk.model.firebase.Team
 
 @Composable
-fun MKTeamItem(team: Team? = null, teamToManage: Team? = null, teamRanking: OpponentRankingItemViewModel? = null, isVertical: Boolean = false, onClick: (String) -> Unit, onEditClick: (String) -> Unit) {
+fun MKTeamItem(team: Team? = null, teamToManage: Team? = null, editVisible: Boolean = false, teamRanking: OpponentRankingItemViewModel? = null, isVertical: Boolean = false, onClick: (String) -> Unit, onEditClick: (String) -> Unit) {
     val finalTeam = team ?: teamToManage ?: teamRanking?.team
     val teamId = team?.mid ?: teamRanking?.team?.mid
     Card(
         Modifier
             .padding(5.dp)
-            .clickable { teamId?.let { onClick(it) } }) {
+            .clickable { teamId?.let { onClick(it) } }, backgroundColor = colorResource(id = R.color.white_alphaed)) {
         when (isVertical) {
             false ->
                 Row(modifier = Modifier
@@ -42,7 +43,7 @@ fun MKTeamItem(team: Team? = null, teamToManage: Team? = null, teamRanking: Oppo
                         finalTeam?.name?.let { MKText(text = it, font = R.font.montserrat_bold, fontSize = 18) }
                         finalTeam?.shortName?.let { MKText(text = it, fontSize = 16, font = R.font.montserrat_regular) }
                     }
-                    teamToManage?.let {
+                    teamToManage?.takeIf { editVisible }?.let {
                         Image(
                             painter = painterResource(id = R.drawable.edit),
                             contentDescription = null,

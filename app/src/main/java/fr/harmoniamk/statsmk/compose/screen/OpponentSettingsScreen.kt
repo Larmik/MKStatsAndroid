@@ -30,6 +30,7 @@ import kotlinx.coroutines.FlowPreview
 fun OpponentSettingsScreen(viewModel: OpponentSettingsViewModel = hiltViewModel()) {
     val searchState = remember { mutableStateOf(TextFieldValue("")) }
     val teams = viewModel.sharedTeams.collectAsState()
+    val addTeamVisible = viewModel.sharedAddTeamVisibility.collectAsState()
     val bottomSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
     val currentState = viewModel.sharedBottomSheetValue.collectAsState(null)
     LaunchedEffect(Unit) {
@@ -49,11 +50,13 @@ fun OpponentSettingsScreen(viewModel: OpponentSettingsViewModel = hiltViewModel(
             onEditTrack = {}
         )
     }) {
-        MKSegmentedButtons(
-            buttons = listOf(
-                Pair(R.string.ajouter_une_quipe, viewModel::onAddTeam)
+        addTeamVisible.value.takeIf { it }?.let {
+            MKSegmentedButtons(
+                buttons = listOf(
+                    Pair(R.string.ajouter_une_quipe, viewModel::onAddTeam)
+                )
             )
-        )
+        }
         MKTextField(
             value = searchState.value,
             onValueChange = {
@@ -66,6 +69,7 @@ fun OpponentSettingsScreen(viewModel: OpponentSettingsViewModel = hiltViewModel(
             items(items = teams.value) {
                 MKTeamItem(
                     teamToManage = it,
+                    editVisible = addTeamVisible.value,
                     onClick = {},
                     onEditClick = viewModel::onEditTeam
                 )

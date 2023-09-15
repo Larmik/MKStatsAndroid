@@ -38,6 +38,7 @@ fun PlayersSettingsScreen(
     val searchState = remember { mutableStateOf(TextFieldValue("")) }
     val currentState = viewModel.sharedBottomSheetValue.collectAsState(null)
     val players by viewModel.sharedPlayers.collectAsState()
+    val addPlayerVisible = viewModel.sharedAddPlayerVisibility.collectAsState()
     val bottomSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
 
     BackHandler { onBack() }
@@ -63,11 +64,13 @@ fun PlayersSettingsScreen(
             onEditTrack = {}
         )
     }) {
-        MKSegmentedButtons(
-            buttons = listOf(
-                Pair(R.string.cr_er_un_joueur, viewModel::onCreatePlayer)
+        addPlayerVisible.value.takeIf { it }?.let {
+            MKSegmentedButtons(
+                buttons = listOf(
+                    Pair(R.string.cr_er_un_joueur, viewModel::onCreatePlayer)
+                )
             )
-        )
+        }
         MKTextField(
             value = searchState.value,
             onValueChange = {

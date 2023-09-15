@@ -1,6 +1,5 @@
 package fr.harmoniamk.statsmk.compose.viewModel
 
-import android.view.View
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,7 +12,6 @@ import fr.harmoniamk.statsmk.repository.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.*
-import java.util.*
 import javax.inject.Inject
 
 @FlowPreview
@@ -22,11 +20,12 @@ import javax.inject.Inject
 class OpponentSettingsViewModel @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val firebaseRepository: FirebaseRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface, private val networkRepository: NetworkRepositoryInterface): ViewModel() {
 
     private val _sharedTeams = MutableStateFlow<List<Team>>(listOf())
-    private val _sharedAddTeamVisibility = MutableSharedFlow<Int>()
+    private val _sharedAddTeamVisibility = MutableStateFlow(false)
     private val _sharedBottomSheetValue = MutableStateFlow<MKBottomSheetState?>(null)
 
     val sharedTeams = _sharedTeams.asStateFlow()
     val sharedBottomSheetValue = _sharedBottomSheetValue.asStateFlow()
+    val sharedAddTeamVisibility = _sharedAddTeamVisibility.asStateFlow()
 
     private val teams = mutableListOf<Team>()
 
@@ -39,14 +38,11 @@ class OpponentSettingsViewModel @Inject constructor(private val preferencesRepos
             }
             .bind(_sharedTeams, viewModelScope)
 
-        authenticationRepository.userRole
-            .mapNotNull { it >= UserRole.ADMIN.ordinal && networkRepository.networkAvailable}
-            .mapNotNull {
-                when (it) {
-                    true -> View.VISIBLE
-                    else -> View.GONE
-                }
-            }.bind(_sharedAddTeamVisibility, viewModelScope)
+        authenticationRepository.takeIf { preferencesRepository.currentTeam != null }
+            ?.userRole
+            ?.mapNotNull { it >= UserRole.ADMIN.ordinal && networkRepository.networkAvailable}
+            ?.onEach { _sharedAddTeamVisibility.value = it }
+            ?.launchIn(viewModelScope)
     }
 
     fun onAddTeam() {

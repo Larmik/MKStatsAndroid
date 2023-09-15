@@ -3,10 +3,10 @@ package fr.harmoniamk.statsmk.compose.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.extension.formatToDate
-import fr.harmoniamk.statsmk.extension.get
+import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.extension.safeSubList
-import fr.harmoniamk.statsmk.extension.withLineUpAndOpponent
 import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.model.firebase.WarDispo
@@ -16,18 +16,17 @@ import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.NetworkRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
-import fr.harmoniamk.statsmk.repository.RemoteConfigRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import java.util.Calendar
-import java.util.Date
 import javax.inject.Inject
 
 @FlowPreview
@@ -44,18 +43,18 @@ class WarViewModel @Inject constructor(
     private val _sharedCurrentWar = MutableStateFlow<MKWar?>(null)
     private val _sharedLastWars = MutableStateFlow<List<MKWar>?>(null)
     private val _sharedTeam = MutableStateFlow<Team?>(null)
+    private val _sharedCreateWarVisible = MutableStateFlow(false)
 
     val sharedCurrentWar = _sharedCurrentWar.asStateFlow()
     val sharedLastWars = _sharedLastWars.asStateFlow()
     val sharedTeam = _sharedTeam.asStateFlow()
+    val sharedCreateWarVisible = _sharedCreateWarVisible.asStateFlow()
 
     //A faire plus tard
     private val _sharedDispos = MutableStateFlow<List<WarDispo>?>(null)
-    val sharedDispos = _sharedDispos.asStateFlow()
     private val _sharedNextScheduledWar = MutableSharedFlow<WarDispo>()
-
-
-    private var currentWar: MKWar? = null
+    val sharedDispos = _sharedDispos.asStateFlow()
+    val sharedNextScheduledWar = _sharedNextScheduledWar.asSharedFlow()
     private var scheduledWar: WarDispo? = null
     private val dispoList = mutableListOf<WarDispo>()
 
@@ -67,16 +66,19 @@ class WarViewModel @Inject constructor(
             ?.onEach { current ->
                 firebaseRepository.getNewWars(preferencesRepository.currentTeam?.mid ?: "")
                     .flatMapLatest { it.map { MKWar(it) }.withName(databaseRepository) }
-                    .onEach { databaseRepository.writeWars(it) }
-                    .firstOrNull()
-                    ?.filter { war -> war.war?.teamHost == preferencesRepository.currentTeam?.mid }
-                    ?.sortedByDescending { it.war?.createdDate?.formatToDate() }
-                    ?.safeSubList(0, 5)
-                    ?.let {
-                        _sharedLastWars.emit(it)
-                        currentWar = current.takeIf { networkRepository.networkAvailable }
-                        _sharedCurrentWar.value = currentWar
-                    }
+                    .onEach {
+                        val isUserAdmin =  authenticationRepository.takeIf { preferencesRepository.currentTeam != null }?.userRole?.map { it >= UserRole.ADMIN.ordinal }?.firstOrNull().isTrue
+                        it.filter { war -> war.war?.teamHost == preferencesRepository.currentTeam?.mid }
+                        .sortedByDescending { it.war?.createdDate?.formatToDate() }
+                        .safeSubList(0, 5)
+                        .let {
+                            _sharedLastWars.emit(it)
+                            if (networkRepository.networkAvailable) {
+                                _sharedCurrentWar.value = current
+                                _sharedCreateWarVisible.value = current == null && isUserAdmin
+                            }
+                        }
+                    }.launchIn(viewModelScope)
             }?.launchIn(viewModelScope)
 
         /*firebaseRepository.getDispos()

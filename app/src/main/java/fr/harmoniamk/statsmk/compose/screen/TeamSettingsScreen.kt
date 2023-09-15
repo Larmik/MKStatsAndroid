@@ -40,6 +40,7 @@ fun TeamSettingsScreen(viewModel: TeamSettingsViewModel = hiltViewModel()) {
     val players by viewModel.sharedPlayers.collectAsState()
     val currentState = viewModel.sharedBottomSheetValue.collectAsState(null)
     val bottomSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+    val manageVisible = viewModel.sharedManageVisible.collectAsState()
     val launcher = rememberLauncherForActivityResult(
         ActivityResultContracts.PickVisualMedia(),
         onResult = viewModel::onPictureEdited
@@ -77,7 +78,7 @@ fun TeamSettingsScreen(viewModel: TeamSettingsViewModel = hiltViewModel()) {
             )
         }
     ) {
-        MKSegmentedButtons(buttons = buttons)
+        manageVisible.value.takeIf { it }?.let { MKSegmentedButtons(buttons = buttons) }
         AsyncImage(
             model = picture.value,
             contentDescription = null,

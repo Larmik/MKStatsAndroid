@@ -34,11 +34,12 @@ fun WarScreen(
     val currentWar = viewModel.sharedCurrentWar.collectAsState()
     val lastWars = viewModel.sharedLastWars.collectAsState()
     val team = viewModel.sharedTeam.collectAsState()
+    val createWarVisible = viewModel.sharedCreateWarVisible.collectAsState()
     val dispos = viewModel.sharedDispos.collectAsState()
-    val buttons = listOf(
-        Pair(R.string.cr_er_une_war, onCreateWarClick).takeIf { currentWar.value == null },
+    val buttons = listOfNotNull(
+        Pair(R.string.cr_er_une_war, onCreateWarClick).takeIf { createWarVisible.value },
         Pair(R.string.ajouter_les_dispos, {}).takeIf { !dispos.value.isNullOrEmpty() },
-    ).filterNotNull()
+    )
 
     MKLifecycleEvent {
         if (it == Lifecycle.Event.ON_RESUME)
@@ -46,20 +47,25 @@ fun WarScreen(
     }
 
     MKBaseScreen(title = R.string.team_war, subTitle = team.value?.name) {
-        MKSegmentedButtons(buttons)
-        currentWar.value?.let {
-            MKText(text = R.string.war_en_cours, font = R.font.montserrat_bold)
-            MKCurrentWarCell(it, onCurrentWarClick)
-        }
-        lastWars.value?.let {
-            MKText(
-                text = R.string.derni_res_wars,
-                modifier = Modifier.padding(top = 10.dp),
-                font = R.font.montserrat_bold
-            )
-            LazyColumn(Modifier.padding(10.dp)) {
-                items(items = it) {
-                    MKWarItem(war = it, onClick = onWarClick)
+        when (team.value) {
+            null -> MKText(text = R.string.no_team, modifier = Modifier.padding(vertical = 30.dp))
+            else -> {
+                MKSegmentedButtons(buttons)
+                currentWar.value?.let {
+                    MKText(text = R.string.war_en_cours, font = R.font.montserrat_bold)
+                    MKCurrentWarCell(it, onCurrentWarClick)
+                }
+                lastWars.value?.let {
+                    MKText(
+                        text = R.string.derni_res_wars,
+                        modifier = Modifier.padding(top = 10.dp),
+                        font = R.font.montserrat_bold
+                    )
+                    LazyColumn(Modifier.padding(10.dp)) {
+                        items(items = it) {
+                            MKWarItem(war = it, onClick = onWarClick)
+                        }
+                    }
                 }
             }
         }

@@ -51,18 +51,17 @@ class TeamSettingsViewModel @Inject constructor(
     private val networkRepository: NetworkRepositoryInterface
 ) : ViewModel() {
 
-    private val _sharedManageVisible = MutableSharedFlow<Boolean>()
-
-
     private val _sharedPlayers = MutableStateFlow<SnapshotStateList<ManagePlayersItemViewModel>>(SnapshotStateList())
     private val _sharedTeamName = MutableStateFlow<String?>(null)
     private val _sharedPictureLoaded = MutableStateFlow<String?>(null)
     private val _sharedBottomSheetValue = MutableStateFlow<MKBottomSheetState?>(null)
+    private val _sharedManageVisible = MutableStateFlow(false)
 
     val sharedPlayers = _sharedPlayers.asStateFlow()
     val sharedTeamName = _sharedTeamName.asStateFlow()
     val sharedPictureLoaded =_sharedPictureLoaded.asStateFlow()
     val sharedBottomSheetValue = _sharedBottomSheetValue.asSharedFlow()
+    val sharedManageVisible = _sharedManageVisible.asStateFlow()
 
     private val players = SnapshotStateList<ManagePlayersItemViewModel>()
     private val allPlayers = mutableListOf<User>()
@@ -83,7 +82,8 @@ class TeamSettingsViewModel @Inject constructor(
 
         authenticationRepository.userRole
             .mapNotNull { it >= UserRole.LEADER.ordinal && networkRepository.networkAvailable }
-            .bind(_sharedManageVisible, viewModelScope)
+            .onEach { _sharedManageVisible.value = it }
+            .launchIn(viewModelScope)
     }
 
     fun onEditTeam() {

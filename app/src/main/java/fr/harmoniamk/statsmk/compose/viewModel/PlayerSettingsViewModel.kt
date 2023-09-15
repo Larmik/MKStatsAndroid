@@ -45,16 +45,15 @@ class PlayerSettingsViewModel @Inject constructor(
     private val networkRepository: NetworkRepositoryInterface
 ) : ViewModel() {
 
-    private val _sharedManageVisible = MutableSharedFlow<Boolean>()
-
-
     private val _sharedPlayers = MutableStateFlow<SnapshotStateList<ManagePlayersItemViewModel>>(SnapshotStateList())
     private val _sharedDismiss = MutableSharedFlow<Unit>()
     private val _sharedBottomSheetValue = MutableStateFlow<MKBottomSheetState?>(null)
+    private val _sharedAddPlayerVisibility = MutableStateFlow(false)
 
     val sharedPlayers = _sharedPlayers.asStateFlow()
     val sharedDismiss = _sharedDismiss.asSharedFlow()
     val sharedBottomSheetValue = _sharedBottomSheetValue.asStateFlow()
+    val sharedAddPlayerVisibility = _sharedAddPlayerVisibility.asStateFlow()
 
     private val players = mutableListOf<User>()
 
@@ -68,9 +67,11 @@ class PlayerSettingsViewModel @Inject constructor(
             .onEach { _sharedPlayers.value = it }
             .launchIn(viewModelScope)
 
-        authenticationRepository.userRole
-            .mapNotNull { it >= UserRole.LEADER.ordinal && networkRepository.networkAvailable }
-            .bind(_sharedManageVisible, viewModelScope)
+        authenticationRepository.takeIf { preferencesRepository.currentTeam != null }
+            ?.userRole
+            ?.mapNotNull { it >= UserRole.ADMIN.ordinal && networkRepository.networkAvailable}
+            ?.onEach { _sharedAddPlayerVisibility.value = it }
+            ?.launchIn(viewModelScope)
     }
 
     fun onSearch(searched: String) {
@@ -99,7 +100,6 @@ class PlayerSettingsViewModel @Inject constructor(
         _sharedBottomSheetValue.value = null
     }
 
-
     private fun createPlayersList(list: List<User>? = null): Flow<SnapshotStateList<ManagePlayersItemViewModel>> = flow {
         val newPlayers = SnapshotStateList<ManagePlayersItemViewModel>()
         list?.sortedBy { it.name }?.forEach { player ->
@@ -107,11 +107,11 @@ class PlayerSettingsViewModel @Inject constructor(
                 val isUser = authenticationRepository.user?.uid == player.mid
                 val hasAccount = player.mid.toLongOrNull() == null
                 val isUserAdmin = it >= UserRole.ADMIN.ordinal
-                val isUserLeader = it >= UserRole.LEADER.ordinal
-                val isInTeam = player.team == preferencesRepository.currentTeam?.mid
                 networkRepository.networkAvailable
                         && !isUser
-                        && ((!hasAccount && isUserAdmin) || (hasAccount && isInTeam && isUserLeader) || (!hasAccount && !isInTeam) )
+                        && !hasAccount
+                        && isUserAdmin
+                        && preferencesRepository.currentTeam != null
 
             }.onEach { canEdit ->
                 player.takeIf { it.team == "-1" }?.let {
