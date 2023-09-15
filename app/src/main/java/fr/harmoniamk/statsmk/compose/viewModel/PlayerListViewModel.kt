@@ -44,26 +44,16 @@ class PlayerListViewModel @AssistedInject constructor(
 ): ViewModel() {
 
     private val _sharedPlayers = MutableStateFlow<List<UserSelector>?>(null)
-    private val _sharedUsersSelected = MutableStateFlow<List<User>?>(null)
-    private val _sharedOfficial = MutableSharedFlow<Boolean>()
-    private val _sharedButtonEnabled = MutableSharedFlow<Boolean>()
     private val _sharedWarName = MutableStateFlow<String?>(null)
 
-    val sharedButtonEnabled = _sharedButtonEnabled.asSharedFlow()
     val sharedPlayers = _sharedPlayers.asStateFlow()
     val sharedWarName = _sharedWarName.asStateFlow()
-    val sharedUsersSelected = _sharedUsersSelected.asStateFlow()
-    val sharedOfficial = _sharedOfficial.asSharedFlow()
 
     private val _sharedStarted = MutableSharedFlow<Unit>()
-    private val _sharedTeamSelected = MutableSharedFlow<String?>()
     private val _sharedAlreadyCreated = MutableSharedFlow<Unit>()
-    private val _sharedLoading = MutableStateFlow<Boolean>(false)
 
     val sharedStarted = _sharedStarted.asSharedFlow()
-    val sharedTeamSelected = _sharedTeamSelected.asSharedFlow()
     val sharedAlreadyCreated = _sharedAlreadyCreated.asSharedFlow()
-    val sharedLoading = _sharedLoading.asSharedFlow()
 
     val date = SimpleDateFormat("dd/MM/yyyy - HH'h'mm", Locale.FRANCE).format(Date())
 
@@ -107,7 +97,6 @@ class PlayerListViewModel @AssistedInject constructor(
     }
 
     fun createWar() {
-        _sharedLoading.value = true
         val war =  NewWar(
             mid = System.currentTimeMillis().toString(),
             teamHost = preferencesRepository.currentTeam?.mid,
@@ -129,17 +118,9 @@ class PlayerListViewModel @AssistedInject constructor(
 
     init {
         databaseRepository.getUsers()
-            .map { list ->
-                val temp = mutableListOf<UserSelector>()
-               // temp.add(UserSelector(isCategory = true))
-                temp.addAll(list.filter { user -> user.team == preferencesRepository.currentTeam?.mid }
+            .map { it.filter { user -> user.team == preferencesRepository.currentTeam?.mid }
                     .sortedBy { it.name?.toLowerCase(Locale.ROOT) }
-                    .map { UserSelector(it, false) })
-               // temp.add(UserSelector(isCategory = true))
-                //temp.addAll(list.filterNot { user -> user.team == preferencesRepository.currentTeam?.mid }
-                  //  .sortedBy { it.name?.toLowerCase(Locale.ROOT) }
-                   // .map { UserSelector(it, false) })
-                temp
+                    .map { UserSelector(it, false) }
             }.bind(_sharedPlayers, viewModelScope)
 
         databaseRepository.getTeam(id)

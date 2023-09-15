@@ -15,9 +15,15 @@ import fr.harmoniamk.statsmk.compose.viewModel.StatsType
 import fr.harmoniamk.statsmk.model.local.Stats
 
 @Composable
-fun MKMapsStatsView(stats: Stats, type: StatsType) {
+fun MKMapsStatsView(
+    stats: Stats,
+    type: StatsType,
+    ownTeamId: String?,
+    onMostPlayedClick: (Int, String?, String?) -> Unit,
+    onBestClick: (Int, String?, String?) -> Unit,
+    onWorstClick: (Int, String?, String?) -> Unit
+) {
     val isIndiv = type is StatsType.IndivStats || (type as? StatsType.OpponentStats)?.userId != null
-
     val bestMap = when (isIndiv) {
         true -> stats.bestPlayerMap
         else -> stats.bestMap
@@ -26,20 +32,50 @@ fun MKMapsStatsView(stats: Stats, type: StatsType) {
         true -> stats.worstPlayerMap
         else -> stats.worstMap
     }
+    val userId =
+        (type as? StatsType.IndivStats)?.userId ?: (type as? StatsType.OpponentStats)?.userId
+    val teamId = (type as? StatsType.OpponentStats)?.teamId ?: ownTeamId
 
     Column {
         MKText(text = "Circuits", font = R.font.montserrat_bold, fontSize = 16)
-        Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(bottom = 10.dp)) {
-            MKText(text = R.string.circuit_le_plus_jou, fontSize = 12, modifier = Modifier.offset(y = 10.dp))
-            MKTrackItem(trackRanking = stats.mostPlayedMap, isVertical = true, isIndiv = type is StatsType.IndivStats || (type as? StatsType.OpponentStats)?.userId != null)
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(bottom = 10.dp)
+        ) {
+            MKText(
+                text = R.string.circuit_le_plus_jou,
+                fontSize = 12,
+                modifier = Modifier.offset(y = 10.dp)
+            )
+            MKTrackItem(
+                trackRanking = stats.mostPlayedMap,
+                isVertical = true,
+                isIndiv = type is StatsType.IndivStats || (type as? StatsType.OpponentStats)?.userId != null,
+                onClick = { onMostPlayedClick(it, teamId, userId) })
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
-                    MKText(text = R.string.meilleur_circuit, fontSize = 12, modifier = Modifier.offset(y = 10.dp))
-                    MKTrackItem(trackRanking = bestMap, isVertical = true, isIndiv = type is StatsType.IndivStats || (type as? StatsType.OpponentStats)?.userId != null)
+                    MKText(
+                        text = R.string.meilleur_circuit,
+                        fontSize = 12,
+                        modifier = Modifier.offset(y = 10.dp)
+                    )
+                    MKTrackItem(
+                        trackRanking = bestMap,
+                        isVertical = true,
+                        isIndiv = type is StatsType.IndivStats || (type as? StatsType.OpponentStats)?.userId != null,
+                        onClick = { onBestClick(it, teamId, userId) })
                 }
                 Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
-                    MKText(text = R.string.pire_circuit, fontSize = 12, modifier = Modifier.offset(y = 10.dp))
-                    MKTrackItem(trackRanking = worstMap, isVertical = true, isIndiv =  isIndiv)
+                    MKText(
+                        text = R.string.pire_circuit,
+                        fontSize = 12,
+                        modifier = Modifier.offset(y = 10.dp)
+                    )
+                    MKTrackItem(
+                        trackRanking = worstMap,
+                        isVertical = true,
+                        isIndiv = type is StatsType.IndivStats || (type as? StatsType.OpponentStats)?.userId != null,
+                        onClick = { onWorstClick(it, teamId, userId) })
                 }
             }
         }

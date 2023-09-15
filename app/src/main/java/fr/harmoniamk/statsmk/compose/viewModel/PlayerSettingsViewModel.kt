@@ -45,10 +45,11 @@ class PlayerSettingsViewModel @Inject constructor(
     private val networkRepository: NetworkRepositoryInterface
 ) : ViewModel() {
 
+    private val _sharedManageVisible = MutableSharedFlow<Boolean>()
+
+
     private val _sharedPlayers = MutableStateFlow<SnapshotStateList<ManagePlayersItemViewModel>>(SnapshotStateList())
     private val _sharedDismiss = MutableSharedFlow<Unit>()
-    private val _sharedRedirectToSettings = MutableSharedFlow<Unit>()
-    private val _sharedManageVisible = MutableSharedFlow<Boolean>()
     private val _sharedBottomSheetValue = MutableStateFlow<MKBottomSheetState?>(null)
 
     val sharedPlayers = _sharedPlayers.asStateFlow()
@@ -98,31 +99,6 @@ class PlayerSettingsViewModel @Inject constructor(
         _sharedBottomSheetValue.value = null
     }
 
-    fun bindEditDialog(onPlayerEdited: Flow<User>, onTeamLeft: Flow<User>) {
-
-        onPlayerEdited
-            .flatMapLatest { firebaseRepository.writeUser(it) }
-            .flatMapLatest {  databaseRepository.getUsers() }
-            .flatMapLatest { createPlayersList(list = it) }
-            .bind(_sharedPlayers, viewModelScope)
-
-        onTeamLeft
-            .filter { it.mid == authenticationRepository.user?.uid }
-            .flatMapLatest { writeFormerTeams(it) }
-            .flatMapLatest { firebaseRepository.writeUser(it) }
-            .onEach {
-                preferencesRepository.currentTeam = null
-                _sharedRedirectToSettings.emit(Unit)
-            }.launchIn(viewModelScope)
-
-        onTeamLeft
-            .filter { it.mid != authenticationRepository.user?.uid }
-            .flatMapLatest { writeFormerTeams(it) }
-            .flatMapLatest { firebaseRepository.writeUser(it) }
-            .flatMapLatest {  databaseRepository.getUsers() }
-            .flatMapLatest { createPlayersList(list = it) }
-            .bind(_sharedPlayers, viewModelScope)
-    }
 
     private fun createPlayersList(list: List<User>? = null): Flow<SnapshotStateList<ManagePlayersItemViewModel>> = flow {
         val newPlayers = SnapshotStateList<ManagePlayersItemViewModel>()

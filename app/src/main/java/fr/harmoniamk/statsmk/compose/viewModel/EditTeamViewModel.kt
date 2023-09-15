@@ -25,13 +25,11 @@ import javax.inject.Inject
 @ExperimentalCoroutinesApi
 @HiltViewModel
 class EditTeamViewModel @Inject constructor(
-    private val authenticationRepository: AuthenticationRepositoryInterface,
     private val preferencesRepository: PreferencesRepositoryInterface,
     private val databaseRepository: DatabaseRepositoryInterface,
     private val firebaseRepository: FirebaseRepositoryInterface): ViewModel() {
 
     private val _sharedTeam = MutableStateFlow<Team?>(null)
-    private val _sharedDeleteVisible = MutableStateFlow(false)
     private val _sharedDismiss = MutableSharedFlow<Unit>()
 
     val sharedTeam = _sharedTeam.asStateFlow()
@@ -39,10 +37,8 @@ class EditTeamViewModel @Inject constructor(
 
     fun refresh(teamId: String) {
         databaseRepository.getTeam(teamId)
-            .zip(authenticationRepository.userRole) { team, role ->
-                _sharedTeam.value = team
-                _sharedDeleteVisible.value = role == UserRole.GOD.ordinal
-            }.launchIn(viewModelScope)
+            .onEach { _sharedTeam.value = it }
+            .launchIn(viewModelScope)
     }
 
     fun onTeamEdited(name: String, tag: String) {

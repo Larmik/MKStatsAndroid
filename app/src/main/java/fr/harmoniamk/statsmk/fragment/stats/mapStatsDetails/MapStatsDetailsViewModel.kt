@@ -20,11 +20,6 @@ class MapStatsDetailsViewModel @Inject constructor(private val authenticationRep
     private val _sharedSortTypeSelected = MutableStateFlow(WarSortType.DATE)
     private val _sharedFilterList = MutableSharedFlow<List<WarFilterType>>()
 
-    val sharedTrackClick = _sharedTrackClick.asSharedFlow()
-    val sharedSortTypeSelected = _sharedSortTypeSelected.asStateFlow()
-    val sharedFilterList = _sharedFilterList.asSharedFlow()
-    val sharedTracks = _sharedTracks.asSharedFlow()
-
     private val mapDetails = mutableListOf<MapDetails>()
     private val filters = mutableListOf<WarFilterType>()
 

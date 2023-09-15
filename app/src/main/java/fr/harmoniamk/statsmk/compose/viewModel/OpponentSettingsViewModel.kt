@@ -22,10 +22,7 @@ import javax.inject.Inject
 class OpponentSettingsViewModel @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val firebaseRepository: FirebaseRepositoryInterface, private val authenticationRepository: AuthenticationRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface, private val networkRepository: NetworkRepositoryInterface): ViewModel() {
 
     private val _sharedTeams = MutableStateFlow<List<Team>>(listOf())
-    private val _sharedAddTeam = MutableSharedFlow<Unit>()
     private val _sharedAddTeamVisibility = MutableSharedFlow<Int>()
-    private val _sharedOnEditClick = MutableSharedFlow<Team>()
-    private val _sharedShowDialog = MutableSharedFlow<Boolean>()
     private val _sharedBottomSheetValue = MutableStateFlow<MKBottomSheetState?>(null)
 
     val sharedTeams = _sharedTeams.asStateFlow()
@@ -71,21 +68,5 @@ class OpponentSettingsViewModel @Inject constructor(private val preferencesRepos
         }
     }
 
-    fun bind(onAddTeam: Flow<Unit>, onEditClick: Flow<Team>, onSearch: Flow<String>) {
-        onAddTeam.bind(_sharedAddTeam, viewModelScope)
-        onEditClick.onEach {
-            _sharedOnEditClick.emit(it)
-            _sharedShowDialog.emit(true)
-        }.launchIn(viewModelScope)
-
-        onSearch
-            .map { searched ->
-                teams.filter {
-                    it.shortName?.toLowerCase(Locale.ROOT)
-                        ?.contains(searched.toLowerCase(Locale.ROOT)).isTrue || it.name?.toLowerCase(
-                        Locale.ROOT)?.contains(searched.toLowerCase(Locale.ROOT)) ?: true
-                }
-            }.bind(_sharedTeams, viewModelScope)
-    }
 
 }

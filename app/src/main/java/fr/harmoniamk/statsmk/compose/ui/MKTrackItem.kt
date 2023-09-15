@@ -50,7 +50,7 @@ fun MKTrackItem(
         trackRanking != null && isVertical -> R.color.transparent
         else -> R.color.white_alphaed
     }
-    val trackIndex = map?.ordinal ?: trackRanking?.trackIndex
+    val trackIndex = map?.ordinal ?: trackRanking?.trackIndex ?: trackRanking?.map?.ordinal
 
     Card(
         elevation = 0.dp,

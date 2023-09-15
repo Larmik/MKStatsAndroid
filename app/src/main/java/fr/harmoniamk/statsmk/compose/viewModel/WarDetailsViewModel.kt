@@ -45,10 +45,7 @@ import kotlinx.coroutines.flow.onEach
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class WarDetailsViewModel  @AssistedInject constructor(
     @Assisted private val id: String,
-    private val firebaseRepository: FirebaseRepositoryInterface,
-    authenticationRepository: AuthenticationRepositoryInterface,
-    private val databaseRepository: DatabaseRepositoryInterface,
-    private val networkRepository: NetworkRepositoryInterface
+    private val databaseRepository: DatabaseRepositoryInterface
 ) : ViewModel() {
 
     companion object {
@@ -81,41 +78,15 @@ class WarDetailsViewModel  @AssistedInject constructor(
     private val _sharedWar = MutableStateFlow<MKWar?>(null)
     private val _sharedWarPlayers = MutableStateFlow<List<CurrentPlayerModel>?>(null)
     private val _sharedTracks = MutableStateFlow<List<MKWarTrack>?>(null)
-    private val _sharedBestTrack = MutableSharedFlow<MKWarTrack>()
-    private val _sharedWorstTrack = MutableSharedFlow<MKWarTrack>()
-    private val _sharedTrackClick = MutableSharedFlow<Int>()
-    private val _sharedWarDeleted = MutableSharedFlow<Unit>()
-    private val _sharedDeleteWarVisible = MutableSharedFlow<Boolean>()
-    private val _sharedPlayerHost = MutableSharedFlow<String>()
-    private val _sharedShockCount = MutableSharedFlow<String?>()
-    private val _sharedPenalties = MutableSharedFlow<List<Penalty>?>()
 
     val sharedWar = _sharedWar.asStateFlow()
     val sharedTracks = _sharedTracks.asStateFlow()
     val sharedWarPlayers = _sharedWarPlayers.asStateFlow()
-    val sharedBestTrack = _sharedBestTrack.asSharedFlow()
-    val sharedWorstTrack = _sharedWorstTrack.asSharedFlow()
-    val sharedTrackClick = _sharedTrackClick.asSharedFlow()
-    val sharedWarDeleted = _sharedWarDeleted.asSharedFlow()
-    val sharedDeleteWarVisible = _sharedDeleteWarVisible.asSharedFlow()
-    val sharedPlayerHost = _sharedPlayerHost.asSharedFlow()
-    val sharedPenalties = _sharedPenalties.asSharedFlow()
-    val sharedShockCount = _sharedShockCount.asSharedFlow()
 
     init {
-
-        databaseRepository.getUser(authenticationRepository.user?.uid)
-            .mapNotNull { it?.role }
-            .mapNotNull { it > UserRole.LEADER.ordinal && networkRepository.networkAvailable }
-            .bind(_sharedDeleteWarVisible, viewModelScope)
-
         databaseRepository.getWar(id)
             .onEach { war ->
-                _sharedPlayerHost.emit(databaseRepository.getUser(war?.war?.playerHostId).firstOrNull()?.name ?: "")
                 _sharedWar.value = war
-                war?.war?.penalties?.let { penalty ->
-                    _sharedPenalties.emit(penalty.withTeamName(databaseRepository).firstOrNull())
-                }
             }
             .mapNotNull { it?.warTracks }
             .onEach {
@@ -123,8 +94,6 @@ class WarDetailsViewModel  @AssistedInject constructor(
                 val players = databaseRepository.getUsers().firstOrNull()
                 val shocks = mutableStateListOf<Shock>()
                 _sharedTracks.emit(it)
-                _sharedBestTrack.emit(it.maxByOrNull { track -> track.teamScore }!!)
-                _sharedWorstTrack.emit(it.minByOrNull { track -> track.teamScore }!!)
                 it.forEach {
                     val trackPositions = mutableListOf<MKWarPosition>()
                     it.track?.warPositions?.let { warPositions ->
@@ -155,19 +124,8 @@ class WarDetailsViewModel  @AssistedInject constructor(
                         count += it
                     }
                 }
-                count.takeIf { it > 0 }?.let {
-                    _sharedShockCount.emit("x$it")
-                }
             }
             .launchIn(viewModelScope)
-    }
-
-    fun bind(war: MKWar?, onTrackClick: Flow<Int>, onDeleteWar: Flow<Unit>) {
-        onTrackClick.bind(_sharedTrackClick, viewModelScope)
-        onDeleteWar
-            .mapNotNull { war }
-            .flatMapLatest { firebaseRepository.deleteNewWar(it) }
-            .bind(_sharedWarDeleted, viewModelScope)
     }
 
 }

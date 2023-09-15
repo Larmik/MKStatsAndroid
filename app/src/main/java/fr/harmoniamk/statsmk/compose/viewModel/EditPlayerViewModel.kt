@@ -38,10 +38,8 @@ class EditPlayerViewModel @Inject constructor(
     private val firebaseRepository: FirebaseRepositoryInterface
 ): ViewModel() {
 
-    private val _sharedPlayerIsMember = MutableStateFlow(false)
     private val _sharedPlayer = MutableStateFlow<User?>(null)
     private val _sharedPlayerHasAccount = MutableStateFlow(false)
-    private val _sharedEditRoleVisibility = MutableStateFlow(View.INVISIBLE)
     private val _sharedLeaveTeamVisibility = MutableStateFlow(false)
     private val _sharedDismiss = MutableSharedFlow<Unit>()
 
@@ -58,13 +56,8 @@ class EditPlayerViewModel @Inject constructor(
             .zip(authenticationRepository.userRole) { player, userRole ->
                 _sharedPlayer.value = player
                 _sharedPlayerHasAccount.value = player.mid.toLongOrNull() == null
-                _sharedPlayerIsMember.value = player.team == preferencesRepository.currentTeam?.mid
                 val role = player.role ?: 0
                 _sharedLeaveTeamVisibility.value = player.team == preferencesRepository.currentTeam?.mid && player.mid != authenticationRepository.user?.uid && role < UserRole.LEADER.ordinal
-                _sharedEditRoleVisibility.emit(when (userRole >= UserRole.LEADER.ordinal) {
-                    true -> View.VISIBLE
-                    else -> View.INVISIBLE
-                })
             }.launchIn(viewModelScope)
     }
 

@@ -35,7 +35,6 @@ fun HomeScreen(
     onCurrentWarClick: () -> Unit,
     onWarClick: (String?) -> Unit,
     onCreateWarClick: () -> Unit,
-    onAllWarsClick: () -> Unit,
     onSettingsItemClick: (String) -> Unit
 ) {
     val navController = rememberNavController()
@@ -93,8 +92,7 @@ fun HomeScreen(
                 WarScreen(
                     onCurrentWarClick = onCurrentWarClick,
                     onWarClick = onWarClick,
-                    onCreateWarClick = onCreateWarClick,
-                    onAllWarsClick = onAllWarsClick
+                    onCreateWarClick = onCreateWarClick
                 )
             }
             composable(route = "Home/Stats") {
@@ -110,5 +108,5 @@ fun HomeScreen(
 @Preview
 @Composable
 fun HomeScreenPreview() {
-    HomeScreen(onBack = {}, onCurrentWarClick = {}, onWarClick = {}, onCreateWarClick = { }, onSettingsItemClick = {}, onAllWarsClick = {})
+    HomeScreen(onBack = {}, onCurrentWarClick = {}, onWarClick = {}, onCreateWarClick = { }, onSettingsItemClick = {})
 }

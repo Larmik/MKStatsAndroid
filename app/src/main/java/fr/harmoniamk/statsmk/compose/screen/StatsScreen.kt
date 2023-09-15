@@ -31,10 +31,19 @@ import fr.harmoniamk.statsmk.model.local.Stats
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun StatsScreen(viewModel: StatsViewModel = hiltViewModel(), type: StatsType, onDetailsClick: (StatsType, Boolean?) -> Unit) {
+fun StatsScreen(
+    viewModel: StatsViewModel = hiltViewModel(),
+    type: StatsType,
+    onDetailsClick: (StatsType, Boolean?) -> Unit,
+    goToWarDetails: (String?) -> Unit,
+    goToOpponentStats: (String?, String?) -> Unit,
+    goToMapStats: (Int, String?, String?) -> Unit
+
+) {
     val stats = viewModel.sharedStats.collectAsState()
     val subtitle = viewModel.sharedSubtitle.collectAsState()
     val isWeek = viewModel.sharedWeekEnabled.collectAsState()
+    val ownTeamId = viewModel.sharedOwnTeamId.collectAsState()
 
     viewModel.init(type, isWeek.value)
 
@@ -61,17 +70,17 @@ fun StatsScreen(viewModel: StatsViewModel = hiltViewModel(), type: StatsType, on
             .padding(10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             stats.value?.let { MKWarStatsView(mkStats = it) }
             type.takeIf { it is StatsType.IndivStats || (it as? StatsType.OpponentStats)?.userId != null }?.let {
-                (stats.value as? Stats) ?.let { MKPlayerScoreStatsView(stats = it) }
+                (stats.value as? Stats) ?.let { MKPlayerScoreStatsView(stats = it, onHighestClick = goToWarDetails, onLowestClick = goToWarDetails) }
             }
             stats.value?.let { MKWarDetailsStatsView(mkStats = it, type = type) }
             type.takeIf { it is StatsType.IndivStats || it is StatsType.TeamStats ||it is StatsType.PeriodicStats }?.let {
                 (stats.value as? Stats) ?.let {
-                    MKTeamStatsView(stats = it)
+                    MKTeamStatsView(stats = it, userId = (type as? StatsType.IndivStats)?.userId, onLessDefeatedClick = goToOpponentStats, onMostDefeatedClick = goToOpponentStats, onMostPlayedClick = goToOpponentStats)
                 }
             }
-            stats.value?.let { MKTeamScoreStatView(stats = it) }
+            stats.value?.let { MKTeamScoreStatView(stats = it, onHighestClick = goToWarDetails, onLoudestClick = goToWarDetails) }
             type.takeIf { it !is StatsType.MapStats }?.let {
-                (stats.value as? Stats) ?.let { MKMapsStatsView(stats = it, type = type) }
+                (stats.value as? Stats) ?.let { MKMapsStatsView(stats = it, type = type, ownTeamId = ownTeamId.value, onMostPlayedClick = goToMapStats, onBestClick = goToMapStats, onWorstClick = goToMapStats) }
             }
             stats.value?.let {
                 MKButton(text = R.string.voir_le_d_tail) {

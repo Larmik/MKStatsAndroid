@@ -22,7 +22,11 @@ import kotlinx.coroutines.FlowPreview
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @Composable
-fun MKTeamScoreStatView(stats: MKStats) {
+fun MKTeamScoreStatView(
+    stats: MKStats,
+    onHighestClick: (String?) -> Unit,
+    onLoudestClick: (String?) -> Unit)
+{
     val warVictory = (stats as? Stats)?.warStats?.highestVictory
     val warDefeat = (stats as? Stats)?.warStats?.loudestDefeat
     val trackVictory = (stats as? MapStats)?.highestVictory
@@ -35,13 +39,13 @@ fun MKTeamScoreStatView(stats: MKStats) {
                 color = colorResource(id = R.color.transparent_white),
                 shape = RoundedCornerShape(5.dp)
             )) {
-        warVictory?.let {
+        warVictory?.let { war ->
             Column(
                 Modifier
                     .weight(1f)
                     .padding(top = 10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 MKText(text = R.string.plus_large_victoire, fontSize = 12)
-                MKWarItem(war = it, onClick = { }, isForStats = true)
+                MKWarItem(war = war, onClick = onHighestClick, isForStats = true)
             }
         }
         trackVictory?.let {
@@ -59,7 +63,7 @@ fun MKTeamScoreStatView(stats: MKStats) {
                     .weight(1f)
                     .padding(top = 10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                 MKText(text = R.string.plus_lourde_d_faite, fontSize = 12)
-                MKWarItem(war = it, onClick = { }, isForStats = true)
+                MKWarItem(war = it, onClick = onLoudestClick, isForStats = true)
             }
         }
         trackDefeat?.let {

@@ -29,8 +29,7 @@ fun WarScreen(
     viewModel: WarViewModel = hiltViewModel(),
     onCurrentWarClick: () -> Unit,
     onWarClick: (String?) -> Unit,
-    onCreateWarClick: () -> Unit,
-    onAllWarsClick: () -> Unit
+    onCreateWarClick: () -> Unit
 ) {
     val currentWar = viewModel.sharedCurrentWar.collectAsState()
     val lastWars = viewModel.sharedLastWars.collectAsState()
@@ -70,5 +69,5 @@ fun WarScreen(
 @Preview
 @Composable
 fun WarScreenPreview() {
-    WarScreen(onCurrentWarClick = {}, onWarClick = {}, onAllWarsClick = {}, onCreateWarClick = {})
+    WarScreen(onCurrentWarClick = {}, onWarClick = {}, onCreateWarClick = {})
 }

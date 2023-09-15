@@ -41,12 +41,10 @@ class LoginViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _sharedNext = MutableStateFlow<Unit?>(null)
-    private val _sharedToast = MutableSharedFlow<String>()
     private val _sharedDialogValue = MutableStateFlow<MKDialogState?>(null)
     private val _sharedBottomSheetValue = MutableStateFlow<MKBottomSheetState?>(null)
 
     val sharedNext = _sharedNext.asSharedFlow()
-    val sharedToast = _sharedToast.asSharedFlow()
     val sharedDialogValue = _sharedDialogValue.asStateFlow()
     val sharedBottomSheetValue = _sharedBottomSheetValue.asStateFlow()
 
@@ -87,7 +85,7 @@ class LoginViewModel @Inject constructor(
             .onEach { _sharedDialogValue.value = MKDialogState.ChangePassword(it) {
                 _sharedDialogValue.value = null
             } }
-            .bind(_sharedToast, viewModelScope)
+            .launchIn(viewModelScope)
     }
 
     fun onForgotPassword() {
