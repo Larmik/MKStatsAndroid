@@ -1,6 +1,7 @@
 package fr.harmoniamk.statsmk.compose.ui.stats
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -35,6 +36,7 @@ fun MKTeamScoreStatView(
     Row(
         Modifier
             .padding(bottom = 20.dp)
+            .border(1.dp, colorResource(id = R.color.harmonia_dark), RoundedCornerShape(5.dp))
             .background(
                 color = colorResource(id = R.color.transparent_white),
                 shape = RoundedCornerShape(5.dp)

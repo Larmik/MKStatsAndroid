@@ -2,6 +2,7 @@ package fr.harmoniamk.statsmk.compose.ui.stats
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -43,6 +44,7 @@ fun MKWarDetailsStatsView(mkStats: MKStats, type: StatsType) {
     Column(
         modifier = Modifier
             .padding(bottom = 20.dp)
+            .border(1.dp, colorResource(id = R.color.harmonia_dark), RoundedCornerShape(5.dp))
             .background(
                 color = colorResource(id = R.color.transparent_white),
                 shape = RoundedCornerShape(5.dp)

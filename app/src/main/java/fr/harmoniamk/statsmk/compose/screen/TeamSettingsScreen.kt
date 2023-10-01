@@ -3,6 +3,8 @@ package fr.harmoniamk.statsmk.compose.screen
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -79,11 +81,13 @@ fun TeamSettingsScreen(viewModel: TeamSettingsViewModel = hiltViewModel()) {
         }
     ) {
         manageVisible.value.takeIf { it }?.let { MKSegmentedButtons(buttons = buttons) }
+        Spacer(modifier = Modifier.height(10.dp))
         AsyncImage(
             model = picture.value,
             contentDescription = null,
             modifier = Modifier.size(100.dp)
         )
+        Spacer(modifier = Modifier.height(10.dp))
         MKTextField(
             value = searchState.value,
             onValueChange = {

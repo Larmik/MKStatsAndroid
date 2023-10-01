@@ -1,6 +1,8 @@
 package fr.harmoniamk.statsmk.compose.screen
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
@@ -10,6 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKBaseScreen
 import fr.harmoniamk.statsmk.compose.ui.MKBottomSheet
@@ -70,7 +74,10 @@ fun TrackDetailsScreen(warId: String, warTrackId: String, onBack: () -> Unit) {
         },
         content = {
             currentTrack.value?.index?.let { MKTrackItem(map = Maps.values()[it]) }
-            buttonsVisible.value.takeIf { it }?.let { MKSegmentedButtons(buttons = buttons) }
+            when (buttonsVisible.value) {
+                true -> MKSegmentedButtons(buttons = buttons)
+                else -> Spacer(modifier = Modifier.height(10.dp))
+            }
             LazyColumn {
                 items(items = positions.value.orEmpty()) {
                     MKPlayerItem(

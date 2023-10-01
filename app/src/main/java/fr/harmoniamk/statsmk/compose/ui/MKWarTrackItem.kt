@@ -2,6 +2,7 @@ package fr.harmoniamk.statsmk.compose.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,7 +22,7 @@ import fr.harmoniamk.statsmk.model.local.MapDetails
 
 @Composable
 fun MKWarTrackItem(details: MapDetails, isIndiv: Boolean) {
-    val bgColor = when {
+    val borderColor = when {
         isIndiv -> R.color.white_alphaed
         details.warTrack.displayedDiff.contains("+") -> R.color.win_alphaed
         details.warTrack.displayedDiff.contains("-") -> R.color.lose_alphaed
@@ -32,7 +33,11 @@ fun MKWarTrackItem(details: MapDetails, isIndiv: Boolean) {
             .fillMaxWidth()
             .padding(horizontal = 10.dp)
             .padding(bottom = 5.dp)
-            .background(color = colorResource(id = bgColor), shape = RoundedCornerShape(5.dp)), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+            .border(1.dp, color = colorResource(id = borderColor), shape = RoundedCornerShape(5.dp))
+            .background(
+                color = colorResource(id = R.color.white_alphaed),
+                shape = RoundedCornerShape(5.dp)
+            ), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(10.dp)) {
             MKText(text = details.war.name.orEmpty(), font = R.font.montserrat_bold)
             MKText(text = details.war.war?.createdDate.orEmpty(), fontSize = 12)

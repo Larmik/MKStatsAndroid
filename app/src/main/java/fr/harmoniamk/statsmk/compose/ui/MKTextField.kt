@@ -91,7 +91,7 @@ fun MKTextField(
                 placeholder = {
                     MKText(
                         text = stringResource(id = placeHolderRes),
-                        textColor = R.color.boo,
+                        textColor = R.color.hint,
                     fontSize = 13
                     )
                 },

@@ -1,5 +1,6 @@
 package fr.harmoniamk.statsmk.compose.ui
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -54,7 +55,8 @@ fun MKTrackItem(
 
     Card(
         elevation = 0.dp,
-        backgroundColor = colorResource(track?.backgroundColor ?: bgColor),
+        backgroundColor = colorResource(bgColor),
+        border = BorderStroke((1.5).dp, colorResource(id = track?.backgroundColor ?: bgColor)),
         modifier = modifier.clickable {
             trackIndex?.let { onClick(it) }
             track?.track?.mid?.let { goToDetails(it) }
@@ -84,7 +86,6 @@ fun MKTrackItem(
                             font = R.font.montserrat_bold,
                             maxLines = 1
                         )
-                        Spacer(modifier = Modifier.height(5.dp))
                         MKText(
                             text = when (trackRanking) {
                                 null -> finalMap.name
@@ -94,6 +95,7 @@ fun MKTrackItem(
                                 )
                             }, fontSize = 12
                         )
+                        Spacer(modifier = Modifier.height(5.dp))
                         track?.let {
                             MKScoreView(
                                 track = it, isSmaller = true, colored = false, modifier = Modifier

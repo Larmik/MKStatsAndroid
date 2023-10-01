@@ -56,6 +56,7 @@ class PlayerListViewModel @AssistedInject constructor(
     val sharedAlreadyCreated = _sharedAlreadyCreated.asSharedFlow()
 
     val date = SimpleDateFormat("dd/MM/yyyy - HH'h'mm", Locale.FRANCE).format(Date())
+    var official: Boolean = false
 
     companion object {
         @Suppress("UNCHECKED_CAST")
@@ -96,6 +97,10 @@ class PlayerListViewModel @AssistedInject constructor(
         _sharedPlayers.value = temp
     }
 
+    fun toggleOfficial(official: Boolean) {
+        this.official = official
+    }
+
     fun createWar() {
         val war =  NewWar(
             mid = System.currentTimeMillis().toString(),
@@ -103,7 +108,7 @@ class PlayerListViewModel @AssistedInject constructor(
             playerHostId = authenticationRepository.user?.uid,
             teamOpponent = id,
             createdDate = date,
-            isOfficial = false
+            isOfficial = official
         )
         viewModelScope.launch {
             _sharedPlayers.value?.filter { it.isSelected.isTrue }?.mapNotNull { it.user }?.forEach { user ->

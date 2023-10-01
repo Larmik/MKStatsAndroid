@@ -3,9 +3,9 @@ package fr.harmoniamk.statsmk.compose.ui
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Card
@@ -48,7 +48,7 @@ fun MKPlayerList(players: List<CurrentPlayerModel>) {
                     }
                     Row(Modifier.padding(vertical = 1.5.dp), verticalAlignment = Alignment.CenterVertically) {
                         Row(
-                            modifier = Modifier.defaultMinSize(minWidth = 120.dp),
+                            modifier = Modifier.width(120.dp),
                             horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
@@ -88,7 +88,7 @@ fun MKPlayerList(players: List<CurrentPlayerModel>) {
                     }
                     Row(Modifier.padding(vertical = 1.5.dp), verticalAlignment = Alignment.CenterVertically) {
                         Row(
-                            modifier = Modifier.defaultMinSize(minWidth = 120.dp),
+                            modifier = Modifier.width(120.dp),
                             horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
@@ -126,7 +126,7 @@ fun MKPlayerListPreview() {
         CurrentPlayerModel(User(mid = "mid", name ="name4"), 17),
         CurrentPlayerModel(User(mid = "mid", name ="name8"), 17),
         CurrentPlayerModel(User(mid = "mid", name ="name3"), 17),
-        CurrentPlayerModel(User(mid = "mid", name ="tototititot"), 17),
+        CurrentPlayerModel(User(mid = "mid", name ="Larimaisavecunnomsilongquilnecon"), 17),
         CurrentPlayerModel(User(mid = "mid", name ="name5"), 17, isOld = true),
         CurrentPlayerModel(User(mid = "mid", name ="name6"), 17)
     ))

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -58,9 +59,9 @@ fun MKPlayerItem(
         Row(modifier = Modifier
             .padding(10.dp)
             .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            finalPlayer?.picture?.let { AsyncImage(model = it, contentDescription = null, modifier = Modifier.size(50.dp)) }
+            finalPlayer?.picture?.let { AsyncImage(model = it, contentDescription = null, modifier = Modifier.size(40.dp)) }
             Row(Modifier.weight(1f), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
-                finalPlayer?.name?.let { MKText(text = it, font = R.font.montserrat_bold, textColor = textColor) }
+                finalPlayer?.name?.let { MKText(modifier = Modifier.widthIn(0.dp, 120.dp), text = it, font = R.font.montserrat_bold, textColor = textColor) }
                 shockCount.takeIf { it > 0 }?.let {
                     Image(painter = painterResource(id = R.drawable.shock), contentDescription = null, modifier = Modifier
                         .size(25.dp)

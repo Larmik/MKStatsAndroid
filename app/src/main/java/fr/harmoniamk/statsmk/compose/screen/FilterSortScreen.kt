@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKBaseScreen
+import fr.harmoniamk.statsmk.compose.ui.MKButton
 import fr.harmoniamk.statsmk.compose.ui.MKText
 import fr.harmoniamk.statsmk.compose.viewModel.Filter
 import fr.harmoniamk.statsmk.compose.viewModel.FilterSortViewModel
@@ -127,5 +128,6 @@ fun FilterSortScreen(viewModel: FilterSortViewModel = hiltViewModel(), sort: Sor
                 }
             }
         }
+        MKButton(text = R.string.valider, onClick = onDismiss)
     }
 }

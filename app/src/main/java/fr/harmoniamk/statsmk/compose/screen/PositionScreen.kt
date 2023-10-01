@@ -4,6 +4,8 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -65,7 +67,7 @@ fun PositionScreen(
                 playerName.value
             )
         )
-        Column {
+        Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
             Row {
                 MKPositionSelector(
                     position = 1,

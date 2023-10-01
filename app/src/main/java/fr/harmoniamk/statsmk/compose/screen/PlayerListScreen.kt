@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.dp
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKBaseScreen
 import fr.harmoniamk.statsmk.compose.ui.MKButton
+import fr.harmoniamk.statsmk.compose.ui.MKCheckBox
 import fr.harmoniamk.statsmk.compose.ui.MKPlayerItem
 import fr.harmoniamk.statsmk.compose.ui.MKText
 import fr.harmoniamk.statsmk.compose.viewModel.PlayerListViewModel
@@ -44,6 +45,7 @@ fun PlayerListScreen(teamId: String?, onWarStarted: () -> Unit) {
                 }
             }
         }
+        MKCheckBox(text = R.string.war_officielle, onValue = viewModel::toggleOfficial)
         MKButton(
             text = R.string.valider,
             enabled = players.value?.filter { it.isSelected.isTrue }?.size == 6,
