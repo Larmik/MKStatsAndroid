@@ -50,6 +50,10 @@ class FirebaseRepositoryMock(
         emit(listOf())
     }
 
+    override fun getCurrentWar(teamId: String): Flow<MKWar?> = flow {
+        emit(null)
+    }
+
     override fun getDispos(): Flow<List<WarDispo>> = flow {
         emit(listOf())
     }

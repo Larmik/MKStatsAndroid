@@ -10,7 +10,7 @@ import android.os.Build
 import android.widget.RemoteViews
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
-import fr.harmoniamk.statsmk.activity.splash.SplashScreenActivity
+import fr.harmoniamk.statsmk.activity.MainActivity
 import fr.harmoniamk.statsmk.datasource.TeamLocalDataSource
 import fr.harmoniamk.statsmk.datasource.TopicLocalDataSource
 import fr.harmoniamk.statsmk.datasource.UserLocalDataSource
@@ -88,7 +88,7 @@ class MKWidgetProvider : AppWidgetProvider(), CoroutineScope {
     }
 
     private fun launchApplication(context: Context?) {
-        val intent = Intent(context, SplashScreenActivity::class.java)
+        val intent = Intent(context, MainActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         intent.putExtra("openCurrentWar", true)
         context?.startActivity(intent)

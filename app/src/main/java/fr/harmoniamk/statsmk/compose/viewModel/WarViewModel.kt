@@ -27,6 +27,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.zip
 import javax.inject.Inject
 
 @FlowPreview
@@ -58,28 +59,36 @@ class WarViewModel @Inject constructor(
     private var scheduledWar: WarDispo? = null
     private val dispoList = mutableListOf<WarDispo>()
 
-    init { refresh() }
+    init {
+        refresh()
+        firebaseRepository.takeIf { preferencesRepository.currentTeam != null }?.listenToCurrentWar()
+            ?.zip( authenticationRepository.userRole.map { it >= UserRole.ADMIN.ordinal }) { war, isAdmin ->
+                if (networkRepository.networkAvailable) {
+                    _sharedCurrentWar.value = war
+                    _sharedCreateWarVisible.value = war == null && isAdmin
+                }
+            }?.launchIn(viewModelScope)
+    }
+
 
     fun refresh() {
         _sharedTeam.value = preferencesRepository.currentTeam
-        firebaseRepository.takeIf { preferencesRepository.currentTeam != null }?.listenToCurrentWar()
-            ?.onEach { current ->
-                firebaseRepository.getNewWars(preferencesRepository.currentTeam?.mid ?: "")
-                    .flatMapLatest { it.map { MKWar(it) }.withName(databaseRepository) }
-                    .onEach {
-                        val isUserAdmin =  authenticationRepository.takeIf { preferencesRepository.currentTeam != null }?.userRole?.map { it >= UserRole.ADMIN.ordinal }?.firstOrNull().isTrue
-                        it.filter { war -> war.war?.teamHost == preferencesRepository.currentTeam?.mid }
-                        .sortedByDescending { it.war?.createdDate?.formatToDate() }
-                        .safeSubList(0, 5)
-                        .let {
-                            _sharedLastWars.emit(it)
-                            if (networkRepository.networkAvailable) {
-                                _sharedCurrentWar.value = current
-                                _sharedCreateWarVisible.value = current == null && isUserAdmin
-                            }
-                        }
-                    }.launchIn(viewModelScope)
-            }?.launchIn(viewModelScope)
+        firebaseRepository.getNewWars(preferencesRepository.currentTeam?.mid ?: "")
+            .flatMapLatest { it.map { MKWar(it) }.withName(databaseRepository) }
+            .onEach {
+                it.filter { war -> war.war?.teamHost == preferencesRepository.currentTeam?.mid }
+                .sortedByDescending { it.war?.createdDate?.formatToDate() }
+                .safeSubList(0, 5)
+                .let { _sharedLastWars.emit(it) }
+            }.launchIn(viewModelScope)
+        firebaseRepository.getCurrentWar(preferencesRepository.currentTeam?.mid ?: "")
+            .zip( authenticationRepository.userRole.map { it >= UserRole.ADMIN.ordinal }) { war, isAdmin ->
+                if (networkRepository.networkAvailable) {
+                    _sharedCurrentWar.value = war
+                    _sharedCreateWarVisible.value = war == null && isAdmin
+                }
+            }.launchIn(viewModelScope)
+
 
         /*firebaseRepository.getDispos()
           .onEach {

@@ -12,15 +12,13 @@
             text color is colorAccent when background is
 
     -->
-
-    <style name="LaunchScreenTheme" parent="AppThemeWaluigi">
-        <item name="android:windowActionBarOverlay">false</item>
-        <item name="android:windowTranslucentStatus">false</item>
-        <item name="android:windowFullscreen">true</item>
-        <item name="windowActionBar">false</item>
+    <style name="SplashScreen" parent="Theme.SplashScreen">
+        <item name="android:windowSplashscreenContent" tools:targetApi="s">@drawable/newsplash</item>
+        <item name="splashScreenIconSize">100dp</item>
+        <item name="postSplashScreenTheme">@style/AppThemeWaluigi</item>
     </style>
 
-    <style name="AppThemeWaluigi" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    <style name="AppThemeWaluigi" parent="Theme.AppCompat.DayNight.NoActionBar">
         <item name="android:forceDarkAllowed" tools:targetApi="q"> false </item>
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/harmonia_clear</item>

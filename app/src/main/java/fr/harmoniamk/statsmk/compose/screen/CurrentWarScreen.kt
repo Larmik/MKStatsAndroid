@@ -25,6 +25,7 @@ import fr.harmoniamk.statsmk.compose.ui.MKBaseScreen
 import fr.harmoniamk.statsmk.compose.ui.MKBottomSheet
 import fr.harmoniamk.statsmk.compose.ui.MKButton
 import fr.harmoniamk.statsmk.compose.ui.MKDialog
+import fr.harmoniamk.statsmk.compose.ui.MKDialogState
 import fr.harmoniamk.statsmk.compose.ui.MKPenaltyView
 import fr.harmoniamk.statsmk.compose.ui.MKPlayerList
 import fr.harmoniamk.statsmk.compose.ui.MKScoreView
@@ -94,38 +95,41 @@ fun CurrentWarScreen(
                 onEditTrack = {}
             )
         }) {
-        if (buttonVisible.value)
-            MKSegmentedButtons(buttons = buttons)
-        else
-            Spacer(Modifier.height(20.dp))
-        Row(
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            MKPenaltyView(modifier = Modifier.weight(0.8f), penalties = war.value?.war?.penalties)
-            MKScoreView(modifier = Modifier.weight(1.2f), war = war.value)
-            MKShockView(modifier = Modifier.weight(0.8f), tracks = war.value?.warTracks)
-        }
-        players.value?.let { MKPlayerList(players = it) }
-        if (buttonVisible.value)
-            MKButton(text = when (war.value?.warTracks.orEmpty().size) {
-                12 -> R.string.validate_war
-                else -> R.string.prochaine_course
-            }, onClick = when (war.value?.warTracks.orEmpty().size) {
-                12 -> viewModel::onValidateWar
-                else -> onNextTrack
-            })
-        Spacer(modifier = Modifier.height(10.dp))
-        tracks.value?.takeIf { it.isNotEmpty() }?.let {
-            MKText(text = R.string.courses_jou_es, font = R.font.montserrat_bold)
-            LazyColumn(Modifier.padding(10.dp)) {
-                items(items = it) {
-                    MKTrackItem(
-                        modifier = Modifier.padding(bottom = 5.dp),
-                        track = it,
-                        isIndiv = false,
-                        goToDetails = { _ -> onTrackClick(it.track?.mid.orEmpty()) })
+
+        if (dialogState.value !is MKDialogState.Loading) {
+            if (buttonVisible.value)
+                MKSegmentedButtons(buttons = buttons)
+            else
+                Spacer(Modifier.height(20.dp))
+            Row(
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                MKPenaltyView(modifier = Modifier.weight(0.8f), penalties = war.value?.war?.penalties)
+                MKScoreView(modifier = Modifier.weight(1.2f), war = war.value)
+                MKShockView(modifier = Modifier.weight(0.8f), tracks = war.value?.warTracks)
+            }
+            players.value?.let { MKPlayerList(players = it) }
+            if (buttonVisible.value)
+                MKButton(text = when (war.value?.warTracks.orEmpty().size) {
+                    12 -> R.string.validate_war
+                    else -> R.string.prochaine_course
+                }, onClick = when (war.value?.warTracks.orEmpty().size) {
+                    12 -> viewModel::onValidateWar
+                    else -> onNextTrack
+                })
+            Spacer(modifier = Modifier.height(10.dp))
+            tracks.value?.takeIf { it.isNotEmpty() }?.let {
+                MKText(text = R.string.courses_jou_es, font = R.font.montserrat_bold)
+                LazyColumn(Modifier.padding(10.dp)) {
+                    items(items = it) {
+                        MKTrackItem(
+                            modifier = Modifier.padding(bottom = 5.dp),
+                            track = it,
+                            isIndiv = false,
+                            goToDetails = { _ -> onTrackClick(it.track?.mid.orEmpty()) })
+                    }
                 }
             }
         }

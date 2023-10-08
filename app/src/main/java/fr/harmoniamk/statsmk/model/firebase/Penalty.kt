@@ -7,4 +7,5 @@ import java.io.Serializable
 @Parcelize
 data class Penalty(val teamId: String, val amount: Int): Parcelable, Serializable {
     var teamName: String? = null
+    var teamShortName: String? = null
 }

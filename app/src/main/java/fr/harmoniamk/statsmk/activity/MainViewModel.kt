@@ -1,4 +1,4 @@
-package fr.harmoniamk.statsmk.activity.splash
+package fr.harmoniamk.statsmk.activity
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,7 +19,7 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class SplashScreenViewModel @Inject constructor(
+class MainViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepositoryInterface,
     private val authenticationRepository: AuthenticationRepositoryInterface,
     private val firebaseRepository: FirebaseRepositoryInterface,
@@ -126,10 +126,6 @@ class SplashScreenViewModel @Inject constructor(
                     }.launchIn(viewModelScope)
             }
             .launchIn(viewModelScope)
-
-
-
-
     }
 
 }

@@ -29,8 +29,8 @@
             android:permission="android.permission.BIND_JOB_SERVICE" />
         <activity
             android:name=".activity.MainActivity"
-            android:exported="true"/>
-        <activity android:name=".activity.splash.SplashScreenActivity" android:exported="true">
+            android:theme="@style/SplashScreen"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

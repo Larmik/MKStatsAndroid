@@ -109,6 +109,7 @@ class CurrentWarViewModel @Inject constructor(
     fun onCancelClick() {
         _sharedDialogValue.value = MKDialogState.CancelWar(
             onWarCancelled = {
+                _sharedDialogValue.value = MKDialogState.Loading(R.string.delete_war_in_progress)
                 databaseRepository.getUsers()
                     .map { list -> list.filter { user -> user.currentWar == preferencesRepository.currentWar?.mid } }
                     .onEach { list ->
@@ -140,7 +141,7 @@ class CurrentWarViewModel @Inject constructor(
                                 firebaseRepository.writeUser(new).first()
                             }
                         war.withName(databaseRepository)
-                            .mapNotNull { it.war?.mid }
+                            .mapNotNull { it?.war?.mid }
                             .onEach { _sharedDialogValue.value = null }
                             .bind(_sharedGoToWarResume, viewModelScope)
                     }

@@ -108,10 +108,15 @@ class PositionViewModel @AssistedInject constructor(
            warTrack?.let { newTrack ->
                if (!editing) preferencesRepository.currentWarTrack = newTrack
                 val tracks = mutableListOf<NewWarTrack>()
-                tracks.addAll(preferencesRepository.currentWar?.warTracks?.filterNot { tr -> tr.mid == newTrack.mid }.orEmpty())
                 when (editing) {
-                    true -> tracks.add(index, newTrack)
-                    else -> tracks.add(newTrack)
+                    true ->  {
+                        tracks.addAll(preferencesRepository.currentWar?.warTracks?.filterNot { tr -> tr.mid == newTrack.mid }.orEmpty())
+                        tracks.add(index, newTrack)
+                    }
+                    else -> {
+                        tracks.addAll(preferencesRepository.currentWar?.warTracks.orEmpty())
+                        tracks.add(newTrack)
+                    }
                 }
                 preferencesRepository.currentWar = preferencesRepository.currentWar.apply {
                     this?.warTracks = tracks
@@ -154,7 +159,10 @@ class PositionViewModel @AssistedInject constructor(
             true -> preferencesRepository.currentWar?.warTracks?.getOrNull(index)?.trackIndex ?: 0
             else -> index
         }
-        val currentTrack = preferencesRepository.currentWar?.warTracks?.getOrNull(index) ?: preferencesRepository.currentWarTrack
+        val currentTrack = when (editing) {
+            true -> preferencesRepository.currentWar?.warTracks?.getOrNull(index)
+            else -> preferencesRepository.currentWarTrack
+        }
         _sharedCurrentMap.value = Maps.values()[currentTrack?.trackIndex ?: trackIndexInMapList]
         preferencesRepository.currentWar
             ?.withName(databaseRepository)
@@ -162,7 +170,7 @@ class PositionViewModel @AssistedInject constructor(
                 _sharedWar.value = it
                     val trackIndexInWarTracks = when (editing) {
                         true -> index + 1
-                        else -> it.warTracks.orEmpty().size + 1
+                        else -> it?.warTracks.orEmpty().size + 1
                     }
                     _sharedTrackNumber.value = when (trackIndexInWarTracks) {
                         12 -> R.string.track_12

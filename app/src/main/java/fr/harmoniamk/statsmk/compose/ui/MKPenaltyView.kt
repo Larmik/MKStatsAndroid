@@ -29,7 +29,7 @@ fun MKPenaltyView(modifier: Modifier = Modifier, penalties: List<Penalty>?) {
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    MKText(text = it.teamName.orEmpty(), fontSize = 12)
+                    MKText(text = (it.teamShortName ?: it.teamName).orEmpty(), fontSize = 12)
                     MKText(
                         text = String.format(
                             stringResource(id = R.string.minus_placeholder),

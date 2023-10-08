@@ -62,7 +62,7 @@ android {
         release {
             minifyEnabled false
             buildConfigField "String", "FLAVOR_NAME", '" "'
-            debuggable false
+            debuggable true
             testCoverageEnabled = false
             manifestPlaceholders = [appLabel: "Mario Kart Stats"]
             proguardFile "proguard-rules.pro"
@@ -223,6 +223,8 @@ dependencies {
     implementation "androidx.hilt:hilt-navigation-compose:1.0.0"
     //Permission runtime compose
     implementation "com.google.accompanist:accompanist-permissions:0.31.1-alpha"
+    //Splashscreen
+    implementation "androidx.core:core-splashscreen:1.0.0"
 
 
 

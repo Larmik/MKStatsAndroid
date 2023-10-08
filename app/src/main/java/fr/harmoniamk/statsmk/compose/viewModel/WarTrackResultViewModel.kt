@@ -98,7 +98,11 @@ class WarTrackResultViewModel @AssistedInject constructor(
             true -> preferencesRepository.currentWar?.warTracks?.getOrNull(trackResultIndex)?.trackIndex ?: 0
             else -> trackResultIndex
         }
-        val currentTrack = preferencesRepository.currentWar?.warTracks?.getOrNull(trackResultIndex) ?: preferencesRepository.currentWarTrack
+        val currentTrack = when (editing)  {
+            true -> preferencesRepository.currentWar?.warTracks?.getOrNull(trackResultIndex)
+            else -> preferencesRepository.currentWarTrack
+
+        }
         _sharedCurrentMap.value = Maps.values()[currentTrack?.trackIndex ?: trackIndexInMapList]
         preferencesRepository.currentWar
             ?.withName(databaseRepository)
@@ -108,7 +112,7 @@ class WarTrackResultViewModel @AssistedInject constructor(
                 _sharedWar.value = it
                     val trackIndexInWarTracks = when (editing) {
                         true -> trackResultIndex + 1
-                        else -> it.warTracks.orEmpty().size
+                        else -> it?.warTracks.orEmpty().size
                     }
                     _sharedTrackNumber.value = when (trackIndexInWarTracks) {
                         12 -> R.string.track_12
@@ -165,7 +169,10 @@ class WarTrackResultViewModel @AssistedInject constructor(
 
     private fun refreshPos() {
         positions.clear()
-        val currentTrack = preferencesRepository.currentWar?.warTracks?.getOrNull(trackResultIndex) ?: preferencesRepository.currentWarTrack
+        val currentTrack = when (editing) {
+            true -> preferencesRepository.currentWar?.warTracks?.getOrNull(trackResultIndex)
+            else -> preferencesRepository.currentWarTrack
+        }
         currentTrack?.warPositions.orEmpty().sortedBy { it.position }.forEach { pos ->
             val shocksForPlayer = shocks[pos.playerId] ?: currentTrack?.shocks.orEmpty().singleOrNull { it.playerId == pos.playerId }?.count
             positions.add(MKWarPosition(pos, users.singleOrNull { it.mid == pos.playerId }))
@@ -181,7 +188,10 @@ class WarTrackResultViewModel @AssistedInject constructor(
         finalList.clear()
         shocks.forEach { finalList.add(Shock(it.key, it.value)) }
         val tracks = mutableListOf<NewWarTrack>()
-        val currentTrack = preferencesRepository.currentWar?.warTracks?.getOrNull(trackResultIndex) ?: preferencesRepository.currentWarTrack
+        val currentTrack = when (editing) {
+            true -> preferencesRepository.currentWar?.warTracks?.getOrNull(trackResultIndex)
+            else -> preferencesRepository.currentWarTrack
+        }
         tracks.addAll(preferencesRepository.currentWar?.warTracks?.filterNot { tr -> tr.mid == currentTrack?.mid }.orEmpty())
         currentTrack?.apply { this.shocks = finalList }?.let {
             when (editing) {

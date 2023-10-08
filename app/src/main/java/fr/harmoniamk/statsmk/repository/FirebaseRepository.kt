@@ -32,6 +32,7 @@ interface FirebaseRepositoryInterface{
     fun getUsers(): Flow<List<User>>
     fun getTeams(): Flow<List<Team>>
     fun getNewWars(teamId: String): Flow<List<NewWar>>
+    fun getCurrentWar(teamId: String): Flow<MKWar?>
     fun getDispos(): Flow<List<WarDispo>>
 
     //Firebase event listeners methods
@@ -158,6 +159,31 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
                 )
                 }
             if (isActive) trySend(wars)
+        }
+        awaitClose {  }
+    }
+
+    override fun getCurrentWar(teamId: String): Flow<MKWar?>  = callbackFlow {
+        Log.d("MKDebugOnly", "FirebaseRepository getNewWars")
+          database.child("currentWars").child(teamId).get().addOnSuccessListener { snapshot ->
+              (snapshot.value as? Map<*,*>)?.let { value ->
+                  launch {
+                      val war = NewWar(
+                          mid = value["mid"].toString(),
+                          playerHostId = value["playerHostId"].toString(),
+                          teamOpponent = value["teamOpponent"].toString(),
+                          teamHost = value["teamHost"].toString(),
+                          createdDate = value["createdDate"].toString(),
+                          warTracks = value["warTracks"].toMapList().parseTracks(),
+                          penalties = value["penalties"].toMapList().parsePenalties(),
+                          isOfficial = value["official"].toString().toBoolean()
+                      ).withName(databaseRepository).firstOrNull()
+                      if (isActive) trySend(war)
+
+
+                  }
+              } ?: if (isActive) trySend(null)
+
         }
         awaitClose {  }
     }

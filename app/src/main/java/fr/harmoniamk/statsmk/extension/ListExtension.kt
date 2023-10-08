@@ -139,8 +139,11 @@ fun List<Team>.withFullTeamStats(wars: List<MKWar>?, databaseRepository: Databas
 fun List<Penalty>.withTeamName(databaseRepository: DatabaseRepositoryInterface) = flow {
     val temp = mutableListOf<Penalty>()
     this@withTeamName.forEach {
-        val teamName = databaseRepository.getTeam(it.teamId).firstOrNull()?.name
-        temp.add(it.apply { this.teamName = teamName })
+        val team = databaseRepository.getTeam(it.teamId).firstOrNull()
+        temp.add(it.apply {
+             this.teamName = team?.name
+            this.teamShortName = team?.shortName
+        })
     }
     emit(temp)
 }
@@ -173,7 +176,7 @@ fun NewWar?.withName(databaseRepository: DatabaseRepositoryInterface) = flow {
         val hostName = databaseRepository.getTeam(it.teamHost).firstOrNull()?.shortName
         val opponentName = databaseRepository.getTeam(it.teamOpponent).firstOrNull()?.shortName
         emit(MKWar(it).apply { this.name = "$hostName - $opponentName" })
-    }
+    } ?: emit(null)
 }
 
 fun Team.withFullTeamStats(wars: List<MKWar>?, databaseRepository: DatabaseRepositoryInterface, userId: String? = null, weekOnly: Boolean = false, monthOnly: Boolean = false, isIndiv: Boolean = false) = flow {

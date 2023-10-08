@@ -23,10 +23,10 @@ import fr.harmoniamk.statsmk.model.local.MapDetails
 @Composable
 fun MKWarTrackItem(details: MapDetails, isIndiv: Boolean) {
     val borderColor = when {
-        isIndiv -> R.color.white_alphaed
-        details.warTrack.displayedDiff.contains("+") -> R.color.win_alphaed
-        details.warTrack.displayedDiff.contains("-") -> R.color.lose_alphaed
-        else -> R.color.white_alphaed
+        isIndiv -> R.color.transparent
+        details.warTrack.displayedDiff.contains("+") -> R.color.luigi
+        details.warTrack.displayedDiff.contains("-") -> R.color.lose
+        else -> R.color.transparent
     }
     Row(
         Modifier

@@ -81,6 +81,7 @@ fun MKDialog(state: MKDialogState) {
         ) {
             state.text?.let {
                 MKText(
+                    maxLines = Int.MAX_VALUE,
                     text = when (it) {
                         is String -> it
                         is Int -> stringResource(id = it)

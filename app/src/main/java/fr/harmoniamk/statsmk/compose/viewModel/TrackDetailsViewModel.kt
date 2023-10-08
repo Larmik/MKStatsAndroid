@@ -147,15 +147,15 @@ class TrackDetailsViewModel @AssistedInject constructor(
             .withName(databaseRepository)
             .onEach {
                 _sharedWar.value = it
-                val warTrack = it.warTracks?.getOrNull(trackIndex)
+                val warTrack = it?.warTracks?.getOrNull(trackIndex)
                 _sharedCurrentTrack.value = warTrack
                 val positions = mutableListOf<MKWarPosition>()
-                it.warTracks?.getOrNull(trackIndex)?.track?.warPositions?.forEach { pos ->
+                it?.warTracks?.getOrNull(trackIndex)?.track?.warPositions?.forEach { pos ->
                     positions.add(MKWarPosition(pos, users.singleOrNull{ it.mid == pos.playerId }))
                 }
                 _sharedPositions.value = positions.sortedBy { it.position.position }
                 val shocks = mutableListOf<Shock>()
-                it.warTracks?.getOrNull(trackIndex)?.track?.shocks?.forEach { shock ->
+                it?.warTracks?.getOrNull(trackIndex)?.track?.shocks?.forEach { shock ->
                     shocks.add(Shock(shock.playerId, shock.count))
                 }
                 _sharedShocks.value = shocks

@@ -37,7 +37,7 @@ class PenaltyViewModel @Inject constructor(
     init {
         preferencesRepository.currentWar
             ?.withName(databaseRepository)
-            ?.mapNotNull { it.war }
+            ?.mapNotNull { it?.war }
             ?.onEach {
                 teamSelected = it.teamHost
                 _sharedTeam1.value = databaseRepository.getTeam(it.teamHost).firstOrNull()
@@ -60,7 +60,7 @@ class PenaltyViewModel @Inject constructor(
                 val penalties = preferencesRepository.currentWar?.penalties?.toMutableList() ?: mutableListOf()
                 penalties.add(Penalty(team, amount))
                 preferencesRepository.currentWar?.apply { this.penalties = penalties }?.withName(databaseRepository)
-                    ?.mapNotNull { it.war }
+                    ?.mapNotNull { it?.war }
                     ?.flatMapLatest {  firebaseRepository.writeCurrentWar(it) }
                     ?.onEach { _sharedDismiss.emit(Unit) }
                     ?.launchIn(viewModelScope)

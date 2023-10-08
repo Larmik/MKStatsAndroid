@@ -1,6 +1,7 @@
 package fr.harmoniamk.statsmk.compose.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -41,19 +43,19 @@ fun MKWarItem(war: MKWar, isForStats: Boolean = false, onClick: (String?) -> Uni
                 MKScoreView(war = war, isSmaller = true, colored = true)
             }
             else -> {
-                val pin =  when (war.displayedDiff.first()) {
-                    '+' -> R.drawable.checked
-                    '0' -> R.drawable.circle_grey
-                    else -> R.drawable.close
+                val borderColor =  when (war.displayedDiff.first()) {
+                    '+' -> R.color.luigi
+                    '0' -> R.color.transparent
+                    else -> R.color.lose
                 }
                 Row(modifier = Modifier
                     .fillMaxWidth()
+                    .border(1.dp, color = colorResource(id = borderColor), shape = RoundedCornerShape(5.dp))
                     .padding(10.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                    Image(painter = painterResource(id = pin), contentDescription = null, modifier = Modifier.size(15.dp))
                     war.war?.isOfficial?.takeIf { it.isTrue }?.let {
                         Image(painter = painterResource(id = R.drawable.mku_logo), contentDescription = null, modifier = Modifier.size(25.dp))
                     }
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
                         war.name?.let { MKText(text = it, fontSize = 16, font = R.font.montserrat_bold) }
                         war.war?.createdDate?.let { MKText(text = it) }
                     }
