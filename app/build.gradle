@@ -62,7 +62,7 @@ android {
         release {
             minifyEnabled false
             buildConfigField "String", "FLAVOR_NAME", '" "'
-            debuggable true
+            debuggable false
             testCoverageEnabled = false
             manifestPlaceholders = [appLabel: "Mario Kart Stats"]
             proguardFile "proguard-rules.pro"
