@@ -109,6 +109,8 @@
     <string name="fruit">Coupe Fruit</string>
     <string name="feather">Coupe Plume</string>
     <string name="cherry">Coupe Cerises</string>
+    <string name="acorn">Coupe Gland</string>
+    <string name="spiny">Coupe à Epines</string>
     <string name="team_war">War en équipe</string>
     <string name="settings">Paramètres</string>
     <string name="stats">Statistiques</string>
@@ -379,4 +381,12 @@
     <string name="validate_war">Valider la war</string>
     <string name="joueur_sortant">Joueur sortant</string>
     <string name="joueur_entrant">Joueur entrant</string>
+    <string name="bra">Roma Romantica</string>
+    <string name="bdkm">Montagne DK</string>
+    <string name="bdcw">Circuit Daisy</string>
+    <string name="bppc">Ruines Plante Piranha</string>
+    <string name="briw">Monde glacé d\'Harmonie</string>
+    <string name="bbc3">Château Bowser 3</string>
+    <string name="brrw">Route Arc-en-ciel Wii</string>
+    <string name="bmd">Méandres madrilènes</string>
 </resources>

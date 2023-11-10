@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
@@ -62,14 +63,15 @@ class WarViewModel @Inject constructor(
     init {
         refresh()
         firebaseRepository.takeIf { preferencesRepository.currentTeam != null }?.listenToCurrentWar()
-            ?.zip( authenticationRepository.userRole.map { it >= UserRole.ADMIN.ordinal }) { war, isAdmin ->
+            ?.onEach {
                 if (networkRepository.networkAvailable) {
-                    _sharedCurrentWar.value = war
-                    _sharedCreateWarVisible.value = war == null && isAdmin
+                    val isAdmin =  authenticationRepository.userRole.map { it >= UserRole.ADMIN.ordinal }.first()
+                    _sharedCurrentWar.value = it
+                    preferencesRepository.currentWar = it?.war
+                    _sharedCreateWarVisible.value = it == null && isAdmin
                 }
             }?.launchIn(viewModelScope)
     }
-
 
     fun refresh() {
         _sharedTeam.value = preferencesRepository.currentTeam

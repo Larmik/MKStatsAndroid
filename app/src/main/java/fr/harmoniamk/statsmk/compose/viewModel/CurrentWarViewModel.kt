@@ -35,6 +35,9 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flattenMerge
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
@@ -72,7 +75,8 @@ class CurrentWarViewModel @Inject constructor(
     val sharedTrackClick = _sharedTrackClick.asSharedFlow()
 
     init {
-        firebaseRepository.listenToCurrentWar()
+        flowOf(firebaseRepository.getCurrentWar(preferencesRepository.currentTeam?.mid.orEmpty()), firebaseRepository.listenToCurrentWar())
+            .flattenMerge()
             .flatMapLatest { it?.war.withName(databaseRepository) }
             .filterNotNull()
             .onEach {
@@ -81,7 +85,7 @@ class CurrentWarViewModel @Inject constructor(
                     it.war?.copy(penalties = penalties).withName(databaseRepository).firstOrNull()
                 val isAdmin =
                     (authenticationRepository.userRole.firstOrNull() ?: 0) >= UserRole.ADMIN.ordinal
-                val players = databaseRepository.getUsers().first()
+                val players = firebaseRepository.getUsers().first()
                     .filter { it.currentWar == preferencesRepository.currentWar?.mid }
                     .sortedBy { it.name?.toLowerCase(Locale.ROOT) }
 
@@ -110,7 +114,7 @@ class CurrentWarViewModel @Inject constructor(
         _sharedDialogValue.value = MKDialogState.CancelWar(
             onWarCancelled = {
                 _sharedDialogValue.value = MKDialogState.Loading(R.string.delete_war_in_progress)
-                databaseRepository.getUsers()
+                firebaseRepository.getUsers()
                     .map { list -> list.filter { user -> user.currentWar == preferencesRepository.currentWar?.mid } }
                     .onEach { list ->
                         list.forEach {
@@ -156,7 +160,7 @@ class CurrentWarViewModel @Inject constructor(
     }
 
     private fun initPlayersList(trackList: List<MKWarTrack>): Flow<List<CurrentPlayerModel>> =
-        databaseRepository.getUsers()
+        firebaseRepository.getUsers()
             .map { players ->
                 val finalList = mutableListOf<CurrentPlayerModel>()
                 val positions = mutableListOf<Pair<User?, Int>>()

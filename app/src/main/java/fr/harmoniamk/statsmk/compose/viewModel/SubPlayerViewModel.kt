@@ -43,6 +43,7 @@ class SubPlayerViewModel @Inject constructor(
     var newPlayer: User? = null
 
     init {
+
         databaseRepository.getUsers()
             .onEach {
                 playersList.clear()
@@ -77,8 +78,18 @@ class SubPlayerViewModel @Inject constructor(
             firebaseRepository.writeUser(it)
                 .mapNotNull { newPlayer?.copy(currentWar = preferencesRepository.currentWar?.mid) }
                 .flatMapLatest { firebaseRepository.writeUser(it) }
+                .onEach {
+                    oldPlayer = null
+                    newPlayer = null
+                    playersList.clear()
+                    currentPlayersList.clear()
+                    _sharedPlayerSelected.value = null
+                    _sharedPlayers.value = currentPlayersList
+                    _sharedTitle.value = R.string.joueur_sortant
+                }
                 .bind(_sharedBack, viewModelScope)
         }
+
     }
 
     fun onBack() {

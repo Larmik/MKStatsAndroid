@@ -99,6 +99,8 @@
     <string name="propeller">Propeller Cup</string>
     <string name="rock">Rock Cup</string>
     <string name="moon">Moon Cup</string>
+    <string name="acorn">Acorn Cup</string>
+    <string name="spiny">Spiny Cup</string>
     <string name="team_war">Inter-Teams</string>
     <string name="settings">Settings</string>
     <string name="stats">Statistics</string>
@@ -192,6 +194,7 @@
     <string name="maps_jou_es">times played</string>
     <string name="diff_rence_quipe">Team diff.</string>
     <string name="position_joueur">Player position</string>
+    <string name="cr_er_un_joueur">New player</string>
     <string name="voir_le_d_tail">See more</string>
     <string name="d_tails">Details</string>
     <string name="statistiques_des_adversaires">Opponents stats</string>
@@ -351,4 +354,14 @@
     <string name="feather">Feather Cup</string>
     <string name="cherry">Cherry Cup</string>
     <string name="validate_war">Validate war</string>
+    <string name="joueur_sortant">Outcoming player</string>
+    <string name="joueur_entrant">Incoming player</string>
+    <string name="bra">Rome Avanti</string>
+    <string name="bdkm">DK Mountain</string>
+    <string name="bdcw">Daisy Circuit</string>
+    <string name="bppc">Piranha Plant Cove</string>
+    <string name="briw">Rosalina\'s Ice World</string>
+    <string name="bbc3">Bowser Castle 3</string>
+    <string name="brrw">Wii Rainbow Road</string>
+    <string name="bmd">Madrid Drive</string>
 </resources>

@@ -44,7 +44,7 @@ android {
         applicationId "fr.harmoniamk.statsmk"
         minSdk 23
         targetSdk 34
-        versionCode 28
+        versionCode 29
         versionName "2.0.1"
         multiDexEnabled true
         // read file from project root folder
@@ -62,7 +62,7 @@ android {
         release {
             minifyEnabled false
             buildConfigField "String", "FLAVOR_NAME", '" "'
-            debuggable false
+            debuggable true
             testCoverageEnabled = false
             manifestPlaceholders = [appLabel: "Mario Kart Stats"]
             proguardFile "proguard-rules.pro"
