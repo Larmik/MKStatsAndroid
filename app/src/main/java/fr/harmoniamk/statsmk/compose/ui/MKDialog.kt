@@ -63,6 +63,13 @@ sealed class MKDialogState(
         text = loadingText,
         isLoading = true
     )
+
+    class NeedsUpdate(onUpdate: () -> Unit, onDismiss: () -> Unit) : MKDialogState(
+        text = R.string.need_update,
+        positiveButtonText = R.string.update,
+        positiveButtonClick = onUpdate,
+        negativeButtonClick = onDismiss
+    )
 }
 
 @Composable

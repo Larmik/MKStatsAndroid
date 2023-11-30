@@ -1,5 +1,7 @@
 package fr.harmoniamk.statsmk.activity
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -9,6 +11,8 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.compose.screen.root.RootScreen
+import fr.harmoniamk.statsmk.compose.ui.MKDialog
+import fr.harmoniamk.statsmk.compose.ui.MKDialogState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -33,6 +37,16 @@ class MainActivity : AppCompatActivity() {
                 splashscreen.setKeepOnScreenCondition { false }
                 setContent { RootScreen(startDestination = it.name) { finish() } }
             }.launchIn(lifecycleScope)
+
+        viewModel.sharedShowUpdatePopup
+            .distinctUntilChanged()
+            .onEach {
+                setContent { MKDialog(MKDialogState.NeedsUpdate(
+                    onUpdate = { startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=$packageName"))) },
+                    onDismiss = { finish() }
+                )) }
+            }.launchIn(lifecycleScope)
+
     }
     
 }

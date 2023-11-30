@@ -3,6 +3,7 @@ package fr.harmoniamk.statsmk.activity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import fr.harmoniamk.statsmk.BuildConfig
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.enums.WelcomeScreen
 import fr.harmoniamk.statsmk.extension.bind
@@ -46,6 +47,10 @@ class MainViewModel @Inject constructor(
             .onEach { delay(100) }
             .shareIn(viewModelScope, SharingStarted.Lazily)
 
+        isConnected
+            .filter { BuildConfig.VERSION_CODE < remoteConfigRepository.minimumVersion }
+            .onEach { _sharedShowUpdatePopup.emit(Unit) }
+            .launchIn(viewModelScope)
 
         isConnected
             .filterNot { it }
@@ -63,7 +68,7 @@ class MainViewModel @Inject constructor(
         isConnected
             .filter { it }
             .flatMapLatest { databaseRepository.clearUsers() }
-            .flatMapLatest {  firebaseRepository.getUsers() }
+            .flatMapLatest { firebaseRepository.getUsers() }
             .flatMapLatest { databaseRepository.writeUsers(it) }
             .flatMapLatest { databaseRepository.clearTeams() }
             .flatMapLatest { firebaseRepository.getTeams() }
