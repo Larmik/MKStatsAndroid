@@ -5,9 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.extension.formatToDate
-import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.extension.safeSubList
-import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.model.firebase.WarDispo
 import fr.harmoniamk.statsmk.model.local.MKWar
@@ -18,13 +16,12 @@ import fr.harmoniamk.statsmk.repository.NetworkRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
@@ -61,7 +58,6 @@ class WarViewModel @Inject constructor(
     private val dispoList = mutableListOf<WarDispo>()
 
     init {
-        refresh()
         firebaseRepository.takeIf { preferencesRepository.currentTeam != null }?.listenToCurrentWar()
             ?.onEach {
                 if (networkRepository.networkAvailable) {
@@ -75,11 +71,10 @@ class WarViewModel @Inject constructor(
 
     fun refresh() {
         _sharedTeam.value = preferencesRepository.currentTeam
-        firebaseRepository.getNewWars(preferencesRepository.currentTeam?.mid ?: "")
-            .flatMapLatest { it.map { MKWar(it) }.withName(databaseRepository) }
+       databaseRepository.getWars()
             .onEach {
-                it.filter { war -> war.war?.teamHost == preferencesRepository.currentTeam?.mid }
-                .sortedByDescending { it.war?.createdDate?.formatToDate() }
+                delay(100)
+                it.sortedByDescending { it.war?.createdDate?.formatToDate() }
                 .safeSubList(0, 5)
                 .let { _sharedLastWars.emit(it) }
             }.launchIn(viewModelScope)
@@ -87,8 +82,8 @@ class WarViewModel @Inject constructor(
             .zip( authenticationRepository.userRole.map { it >= UserRole.ADMIN.ordinal }) { war, isAdmin ->
                 if (networkRepository.networkAvailable) {
                     _sharedCurrentWar.value = war
-                    _sharedCreateWarVisible.value = war == null && isAdmin
-                }
+                    preferencesRepository.currentWar = war?.war
+                    _sharedCreateWarVisible.value = war == null && isAdmin                }
             }.launchIn(viewModelScope)
 
 

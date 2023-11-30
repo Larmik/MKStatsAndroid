@@ -60,7 +60,7 @@ fun MKPlayerList(players: List<CurrentPlayerModel>) {
                                     .size(11.dp)
                                     .rotate(rotation)
                             )
-                            MKText(modifier = Modifier.padding(horizontal = 5.dp),text = it.player?.name ?: "")
+                            MKText(modifier = Modifier.padding(horizontal = 5.dp),text = it.player?.name ?: "", maxLines = 1)
 
                         }
                         MKText(text = it.score.toString(), font = R.font.montserrat_bold)
@@ -100,7 +100,7 @@ fun MKPlayerList(players: List<CurrentPlayerModel>) {
                                     .size(11.dp)
                                     .rotate(rotation)
                             )
-                            MKText(modifier = Modifier.padding(horizontal = 5.dp),text = it.player?.name ?: "")
+                            MKText(modifier = Modifier.padding(horizontal = 5.dp),text = it.player?.name ?: "", maxLines = 1)
 
                         }
                         MKText(text = it.score.toString(), font = R.font.montserrat_bold)

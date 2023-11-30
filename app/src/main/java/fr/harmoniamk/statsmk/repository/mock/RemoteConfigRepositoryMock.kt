@@ -9,6 +9,4 @@ class RemoteConfigRepositoryMock : RemoteConfigRepositoryInterface {
         get() = flow { emit(Unit) }
     override val minimumVersion: Int
         get() = 0
-    override val multiTeamEnabled: Boolean
-        get() =  true
 }

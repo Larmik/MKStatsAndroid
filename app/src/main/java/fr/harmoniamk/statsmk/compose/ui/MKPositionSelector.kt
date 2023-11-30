@@ -17,7 +17,7 @@ import fr.harmoniamk.statsmk.extension.positionColor
 @Composable
 fun MKPositionSelector(position: Int, modifier: Modifier = Modifier, isVisible: Boolean = true, onClick: (Int) -> Unit) {
     Card(backgroundColor = colorResource(id = R.color.white_alphaed), modifier = modifier.padding(5.dp).clickable { onClick(position) }.alpha(if (isVisible) 1f else 0f)) {
-        MKText(text = position.toString(), textColor = position.positionColor(), fontSize = 90, font = R.font.mk_position, modifier = Modifier.padding(10.dp))
+        MKText(text = position.toString(), textColor = position.positionColor(), fontSize = 80, font = R.font.mk_position, modifier = Modifier.padding(10.dp))
     }
 }
 

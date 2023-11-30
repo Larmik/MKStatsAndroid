@@ -68,7 +68,6 @@ class MainViewModel @Inject constructor(
             .flatMapLatest { databaseRepository.clearTeams() }
             .flatMapLatest { firebaseRepository.getTeams() }
             .flatMapLatest { databaseRepository.writeTeams(it) }
-            .flatMapLatest { databaseRepository.clearWars() }
             .onEach {
                 _sharedLoadingVisible.emit(R.string.auth)
                 flowOf(preferencesRepository.authEmail)
@@ -90,11 +89,16 @@ class MainViewModel @Inject constructor(
                     .onEach {
                         _sharedLoadingVisible.emit(R.string.retrieving_stats)
                         preferencesRepository.currentTeam?.mid?.let {
-                            val wars = firebaseRepository.getNewWars(it)
-                                .map { list -> list.map {  MKWar(it) } }
-                                .first()
-                            val finalList = wars.withName(databaseRepository).first()
-                            databaseRepository.writeWars(finalList).first()
+                            firebaseRepository.getNewWars(it).zip(databaseRepository.getWars()) { remoteDb, localDb ->
+                                when (localDb.size == remoteDb.size) {
+                                    true -> localDb
+                                    else -> remoteDb
+                                        .map { MKWar(it) }
+                                        .withName(databaseRepository)
+                                        .onEach { databaseRepository.writeWars(it).first() }
+                                        .first()
+                                }
+                            }.firstOrNull()
                         }
                         it?.formerTeams?.takeIf { it.isNotEmpty() }?.let {
                             it.forEach {

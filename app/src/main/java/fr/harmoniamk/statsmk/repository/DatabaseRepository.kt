@@ -1,5 +1,6 @@
 package fr.harmoniamk.statsmk.repository
 
+import android.util.Log
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -62,46 +63,109 @@ interface DatabaseRepositoryModule {
 class DatabaseRepository @Inject constructor(private val userDataSource: UserLocalDataSourceInterface, private val teamDataSource: TeamLocalDataSourceInterface, private val warDataSource: WarLocalDataSourceInterface, private val topicDataSource: TopicLocalDataSourceInterface) : DatabaseRepositoryInterface {
 
 
-    override fun getUsers(): Flow<List<User>> = userDataSource.getAll()
+    override fun getUsers(): Flow<List<User>> {
+        Log.d("MKDebugOnly", "DatabaseRepository getUsers")
+        return userDataSource.getAll()
+    }
 
-    override fun getTeams(): Flow<List<Team>> = teamDataSource.getAll()
+    override fun getTeams(): Flow<List<Team>> {
+        Log.d("MKDebugOnly", "DatabaseRepository getTeams")
+        return teamDataSource.getAll()
+    }
 
-    override fun getWars(): Flow<List<MKWar>>  = warDataSource.getAll()
+    override fun getWars(): Flow<List<MKWar>> {
+        Log.d("MKDebugOnly", "DatabaseRepository getWars")
+        return warDataSource.getAll()
+    }
 
-    override fun getTopics(): Flow<List<TopicEntity>> = topicDataSource.getAll()
+    override fun getTopics(): Flow<List<TopicEntity>> {
+        Log.d("MKDebugOnly", "DatabaseRepository getTopics")
+        return topicDataSource.getAll()
+    }
 
-    override fun getUser(id: String?): Flow<User?> = id?.let { userDataSource.getById(it) } ?: flowOf(null)
+    override fun getUser(id: String?): Flow<User?> = id?.let {
+        Log.d("MKDebugOnly", "DatabaseRepository getUser $id")
+        userDataSource.getById(it)
+    } ?: flowOf(null)
 
-    override fun getTeam(id: String?): Flow<Team?> = id?.let { teamDataSource.getById(it) } ?: flowOf(null)
+    override fun getTeam(id: String?): Flow<Team?> = id?.let {
+        Log.d("MKDebugOnly", "DatabaseRepository getTeam $id")
+        teamDataSource.getById(it)
+    } ?: flowOf(null)
 
-    override fun getWar(id: String?): Flow<MKWar?> = id?.let { warDataSource.getById(it) } ?: flowOf(null)
+    override fun getWar(id: String?): Flow<MKWar?> = id?.let {
+        Log.d("MKDebugOnly", "DatabaseRepository getWar $id")
+        warDataSource.getById(it)
+    } ?: flowOf(null)
 
-    override fun writeUsers(list: List<User>) = userDataSource.insert(list)
+    override fun writeUsers(list: List<User>) : Flow<Unit> {
+        Log.d("MKDebugOnly", "DatabaseRepository writeUsers")
+        return userDataSource.insert(list)
+    }
 
-    override fun writeTeams(list: List<Team>) = teamDataSource.insert(list)
+    override fun writeTeams(list: List<Team>) : Flow<Unit> {
+        Log.d("MKDebugOnly", "DatabaseRepository writeTeams")
+        return teamDataSource.insert(list)
+    }
 
-    override fun writeWars(list: List<MKWar>): Flow<Unit> = warDataSource.insert(list)
+    override fun writeWars(list: List<MKWar>): Flow<Unit>  {
+        Log.d("MKDebugOnly", "DatabaseRepository writeWars")
+        return warDataSource.insert(list)
+    }
 
-    override fun writeUser(user: User): Flow<Unit> = userDataSource.insert(user)
+    override fun writeUser(user: User): Flow<Unit> {
+        Log.d("MKDebugOnly", "DatabaseRepository writeUser ${user.name}")
+        return userDataSource.insert(user)
+    }
 
-    override fun writeTeam(team: Team): Flow<Unit> = teamDataSource.insert(team)
+    override fun writeTeam(team: Team): Flow<Unit> {
+        Log.d("MKDebugOnly", "DatabaseRepository writeTeam ${team.name}")
+        return teamDataSource.insert(team)
+    }
 
-    override fun writeWar(war: MKWar): Flow<Unit> = warDataSource.insert(war)
+    override fun writeWar(war: MKWar): Flow<Unit> {
+        Log.d("MKDebugOnly", "DatabaseRepository writeWar ${war.name}")
+        return warDataSource.insert(war)
+    }
 
-    override fun writeTopic(topic: TopicEntity): Flow<Unit> = topicDataSource.insert(topic)
+    override fun writeTopic(topic: TopicEntity): Flow<Unit> {
+        Log.d("MKDebugOnly", "DatabaseRepository writeTopic ${topic.topic}")
+        return topicDataSource.insert(topic)
+    }
 
-    override fun deleteUser(user: User): Flow<Unit> = userDataSource.delete(user)
+    override fun deleteUser(user: User): Flow<Unit> {
+        Log.d("MKDebugOnly", "DatabaseRepository deleteUser ${user.name}")
+        return userDataSource.delete(user)
+    }
 
-    override fun deleteTeam(team: Team): Flow<Unit> = teamDataSource.delete(team)
+    override fun deleteTeam(team: Team): Flow<Unit> {
+        Log.d("MKDebugOnly", "DatabaseRepository deleteTeam ${team.name}")
+        return teamDataSource.delete(team)
+    }
 
-    override fun deleteWar(war: MKWar): Flow<Unit> = warDataSource.delete(war)
+    override fun deleteWar(war: MKWar): Flow<Unit> {
+        Log.d("MKDebugOnly", "DatabaseRepository deleteWar ${war.name}")
+        return warDataSource.delete(war)
+    }
 
-    override fun deleteTopic(topic: String): Flow<Unit> = topicDataSource.delete(topic)
+    override fun deleteTopic(topic: String): Flow<Unit> {
+        Log.d("MKDebugOnly", "DatabaseRepository delete topic $topic")
+        return topicDataSource.delete(topic)
+    }
 
-    override fun clearWars(): Flow<Unit> = warDataSource.clear()
+    override fun clearWars(): Flow<Unit> {
+        Log.d("MKDebugOnly", "DatabaseRepository clearWars")
+        return warDataSource.clear()
+    }
 
-    override fun clearUsers(): Flow<Unit> = userDataSource.clear()
+    override fun clearUsers(): Flow<Unit> {
+        Log.d("MKDebugOnly", "DatabaseRepository clearUsers")
+        return userDataSource.clear()
+    }
 
-    override fun clearTeams(): Flow<Unit> = teamDataSource.clear()
+    override fun clearTeams(): Flow<Unit> {
+        Log.d("MKDebugOnly", "DatabaseRepository clearTeams")
+        return teamDataSource.clear()
+    }
 
 }

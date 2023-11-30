@@ -13,8 +13,7 @@
 
     -->
     <style name="SplashScreen" parent="Theme.SplashScreen">
-        <item name="android:windowSplashscreenContent" tools:targetApi="s">@drawable/newsplash</item>
-        <item name="splashScreenIconSize">100dp</item>
+        <item name="windowSplashScreenBackground">@color/harmonia_clear</item>
         <item name="postSplashScreenTheme">@style/AppThemeWaluigi</item>
     </style>
 

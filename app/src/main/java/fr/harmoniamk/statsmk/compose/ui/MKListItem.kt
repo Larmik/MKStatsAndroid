@@ -23,7 +23,7 @@ fun MKListItem(item: MenuItems, separator: Boolean = true, onNavigate: (String) 
             else -> onNavigate(item.route)
         }
     }) {
-        MKText(text = item.titleRes, modifier = Modifier.padding(vertical = if (separator) 20.dp else 15.dp))
+        MKText(text = item.titleRes, modifier = Modifier.padding(vertical = if (separator) 20.dp else 15.dp), maxLines = 1)
         if (separator)
             Spacer(
                 Modifier

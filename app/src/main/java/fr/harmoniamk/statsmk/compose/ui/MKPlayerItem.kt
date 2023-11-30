@@ -61,7 +61,7 @@ fun MKPlayerItem(
             .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             finalPlayer?.picture?.let { AsyncImage(model = it, contentDescription = null, modifier = Modifier.size(40.dp)) }
             Row(Modifier.weight(1f), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
-                finalPlayer?.name?.let { MKText(modifier = Modifier.widthIn(0.dp, 120.dp), text = it, font = R.font.montserrat_bold, textColor = textColor) }
+                finalPlayer?.name?.let { MKText(modifier = Modifier.widthIn(0.dp, 120.dp), text = it, font = R.font.montserrat_bold, textColor = textColor, maxLines = 1) }
                 shockCount.takeIf { it > 0 }?.let {
                     Image(painter = painterResource(id = R.drawable.shock), contentDescription = null, modifier = Modifier
                         .size(25.dp)
