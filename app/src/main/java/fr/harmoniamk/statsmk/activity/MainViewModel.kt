@@ -1,5 +1,6 @@
 package fr.harmoniamk.statsmk.activity
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -91,11 +92,20 @@ class MainViewModel @Inject constructor(
                             else -> preferencesRepository.currentTeam = databaseRepository.getTeam(team).firstOrNull()
                         }
                     }
-                    .onEach {
+                    .onEach {user ->
                         _sharedLoadingVisible.emit(R.string.retrieving_stats)
                         preferencesRepository.currentTeam?.mid?.let {
                             firebaseRepository.getNewWars(it).zip(databaseRepository.getWars()) { remoteDb, localDb ->
-                                when (localDb.size == remoteDb.size) {
+                                val finalLocalDb = localDb.filter { it.war?.teamHost == preferencesRepository.currentTeam?.mid }
+                                Log.d("MKDebugOnly", "local db size: ${finalLocalDb.size}")
+                                Log.d("MKDebugOnly", "remote db size: ${remoteDb.size}")
+                                user?.formerTeams?.takeIf { it.isNotEmpty() }?.let {
+                                    it.forEach {
+                                        val wars = remoteDb.map {  MKWar(it)  }.withName(databaseRepository).first()
+                                        databaseRepository.writeWars(wars).first()
+                                    }
+                                }
+                                when (finalLocalDb.size == remoteDb.size) {
                                     true -> localDb
                                     else -> remoteDb
                                         .map { MKWar(it) }
@@ -103,16 +113,8 @@ class MainViewModel @Inject constructor(
                                         .onEach { databaseRepository.writeWars(it).first() }
                                         .first()
                                 }
+
                             }.firstOrNull()
-                        }
-                        it?.formerTeams?.takeIf { it.isNotEmpty() }?.let {
-                            it.forEach {
-                                val wars = firebaseRepository.getNewWars(it)
-                                    .map { list -> list.map {  MKWar(it) } }
-                                    .first()
-                                val finalList = wars.withName(databaseRepository).first()
-                                databaseRepository.writeWars(finalList).first()
-                            }
                         }
                         _sharedWelcomeScreen.emit(WelcomeScreen.Home)
                     }

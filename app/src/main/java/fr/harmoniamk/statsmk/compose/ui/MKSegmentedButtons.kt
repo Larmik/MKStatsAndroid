@@ -22,13 +22,13 @@ import androidx.compose.ui.unit.dp
 import fr.harmoniamk.statsmk.R
 
 @Composable
-fun MKSegmentedButtons(buttons: List<Pair<Int, () -> Unit>>) {
+fun MKSegmentedButtons(modifier: Modifier = Modifier, buttons: List<Pair<Int, () -> Unit>>) {
     if (buttons.isNotEmpty())
         Row(
-            Modifier
+            modifier
                 .fillMaxWidth()
-                .height(45.dp)
-                .padding(bottom = 15.dp)
+                .height(60.dp)
+                .padding(bottom = 10.dp)
                 .background(color = colorResource(id = R.color.transparent_white), shape = RoundedCornerShape(bottomStart = 5.dp, bottomEnd = 5.dp)), verticalAlignment = Alignment.CenterVertically) {
             buttons.forEach {
                 Box(contentAlignment = Alignment.Center, modifier = Modifier
@@ -51,7 +51,7 @@ fun MKSegmentedButtons(buttons: List<Pair<Int, () -> Unit>>) {
 @Preview
 @Composable
 fun MKSegmentedButtonsPreview() {
-    MKSegmentedButtons(listOf(
+    MKSegmentedButtons(buttons = listOf(
         Pair(R.string.cr_er_une_war, {}),
         Pair(R.string.le_coin_dispos, {}),
     ))

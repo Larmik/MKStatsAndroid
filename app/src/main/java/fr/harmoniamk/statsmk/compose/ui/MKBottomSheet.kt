@@ -1,6 +1,7 @@
 package fr.harmoniamk.statsmk.compose.ui
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import fr.harmoniamk.statsmk.compose.screen.CreatePlayerScreen
 import fr.harmoniamk.statsmk.compose.screen.CreateTeamScreen
 import fr.harmoniamk.statsmk.compose.screen.EditPlayerScreen
@@ -28,7 +29,7 @@ sealed class MKBottomSheetState {
     class SubPlayer : MKBottomSheetState()
     class Penalty : MKBottomSheetState()
     class CreatePlayer : MKBottomSheetState()
-    class AddPlayer : MKBottomSheetState()
+    class AddPlayer(val ally: Boolean) : MKBottomSheetState()
     class EditPlayer(val playerId: String) : MKBottomSheetState()
     class EditUser(val emailEditing: Boolean) : MKBottomSheetState()
     class CreateTeam: MKBottomSheetState()
@@ -86,7 +87,7 @@ fun MKBottomSheet(
             PenaltyScreen(onDismiss = onDismiss)
         }
         is MKBottomSheetState.AddPlayer -> {
-            PlayersSettingsScreen(onBack = onDismiss, canAdd = true)
+            PlayersSettingsScreen(onBack = onDismiss, canAdd = true, ally = state.ally)
         }
         is MKBottomSheetState.EditTeam -> {
             EditTeamScreen(teamId = state.teamId, onDismiss = onDismiss)

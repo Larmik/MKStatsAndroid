@@ -64,7 +64,7 @@ fun WarScreen(
                 }
             }
             else -> {
-                MKSegmentedButtons(buttons)
+                MKSegmentedButtons(buttons = buttons)
                 currentWar.value?.let {
                     MKText(modifier = Modifier.padding(top = 10.dp), text = R.string.war_en_cours, font = R.font.montserrat_bold)
                     MKCurrentWarCell(it, onCurrentWarClick)

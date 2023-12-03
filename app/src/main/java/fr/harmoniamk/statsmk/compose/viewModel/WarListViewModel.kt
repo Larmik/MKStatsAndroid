@@ -38,7 +38,9 @@ class WarListViewModel @Inject constructor(
     private val _sharedWarClick = MutableSharedFlow<MKWar>()
     private val _sharedSortTypeSelected = MutableStateFlow<SortType>(WarSortType.DATE)
     private val _sharedUserId = MutableStateFlow<String?>(null)
+    private val _sharedUserName = MutableStateFlow<String?>(null)
     private val _sharedTeamId = MutableStateFlow<String?>(null)
+    private val _sharedTeamName = MutableStateFlow<String?>(null)
     private val _sharedIsWeek = MutableStateFlow<Boolean?>(null)
     private val _sharedFilterList = MutableStateFlow<List<FilterType>>(listOf())
     private val _sharedBottomsheetValue = MutableStateFlow<MKBottomSheetState?>(null)
@@ -46,6 +48,8 @@ class WarListViewModel @Inject constructor(
     val sharedWars = _sharedWars.asStateFlow()
     val sharedWarClick = _sharedWarClick.asSharedFlow()
     val sharedBottomSheetValue = _sharedBottomsheetValue.asStateFlow()
+    val sharedUserName = _sharedUserName.asStateFlow()
+    val sharedTeamName = _sharedTeamName.asStateFlow()
 
     private val wars = mutableListOf<MKWar>()
     private val teams = mutableListOf<Team>()
@@ -56,6 +60,12 @@ class WarListViewModel @Inject constructor(
         _sharedIsWeek.value = isWeek
         _sharedUserId.value = userId
         _sharedTeamId.value = teamId
+        databaseRepository.getTeam(teamId)
+            .onEach { _sharedTeamName.value = it?.name }
+            .launchIn(viewModelScope)
+        databaseRepository.getUser(userId)
+            .onEach { _sharedUserName.value = it?.name }
+            .launchIn(viewModelScope)
         databaseRepository.getTeams()
             .onEach {
                 teams.clear()

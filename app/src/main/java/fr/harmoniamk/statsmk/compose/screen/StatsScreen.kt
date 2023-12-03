@@ -1,6 +1,9 @@
 package fr.harmoniamk.statsmk.compose.screen
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -34,7 +37,8 @@ import fr.harmoniamk.statsmk.model.local.Stats
 fun StatsScreen(
     viewModel: StatsViewModel = hiltViewModel(),
     type: StatsType,
-    onDetailsClick: (StatsType, Boolean?) -> Unit,
+    onWarDetailsClick: (StatsType, Boolean?) -> Unit,
+    onTrackDetailsClick: (String?, String?) -> Unit,
     goToWarDetails: (String?) -> Unit,
     goToOpponentStats: (String?, String?) -> Unit,
     goToMapStats: (Int, String?, String?) -> Unit
@@ -48,8 +52,15 @@ fun StatsScreen(
     viewModel.init(type, isWeek.value)
 
     LaunchedEffect(Unit) {
-        viewModel.sharedDetailsClick.collect {
-            onDetailsClick(type, isWeek.value)
+        viewModel.sharedWarDetailsClick.collect {
+            onWarDetailsClick(type, isWeek.value)
+        }
+    }
+    LaunchedEffect(Unit) {
+        viewModel.sharedTrackDetailsClick.collect {
+            val userId = (type as? StatsType.IndivStats)?.userId
+            val teamId = (type as? StatsType.OpponentStats)?.teamId
+            onTrackDetailsClick(userId, teamId)
         }
     }
     MKBaseScreen(title = type.title, subTitle = subtitle.value) {
@@ -83,9 +94,18 @@ fun StatsScreen(
                 (stats.value as? Stats) ?.let { MKMapsStatsView(stats = it, type = type, ownTeamId = ownTeamId.value, onMostPlayedClick = goToMapStats, onBestClick = goToMapStats, onWorstClick = goToMapStats) }
             }
             stats.value?.let {
-                MKButton(text = R.string.voir_le_d_tail) {
-                    viewModel.onDetailsClick()
-                }
+
+               Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround) {
+
+                   MKButton(text = R.string.voir_le_d_tail) {
+                       viewModel.onDetailsWarClick()
+                   }
+                   if (type !is StatsType.MapStats)
+                       MKButton(text = R.string.voir_le_d_tail_map) {
+                           viewModel.onDetailsTrackClick()
+                       }
+               }
+
             }
         }
     }

@@ -26,7 +26,7 @@ fun MKSegmentedSelector(buttons: List<Pair<String, () -> Unit>>, indexSelected: 
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier
                     .weight(1f)
-                    .height(30.dp)
+                    .height(60.dp)
                     .background(
                         color = colorResource(
                             id = when (selectedIndex.value == index) {

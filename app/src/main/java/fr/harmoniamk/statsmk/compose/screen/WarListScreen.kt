@@ -36,6 +36,8 @@ import fr.harmoniamk.statsmk.enums.WarSortType
 fun WarListScreen(viewModel: WarListViewModel = hiltViewModel(), userId: String? = null, teamId: String? = null, isWeek: Boolean? = null, onWarClick: (String) -> Unit) {
 
     val wars = viewModel.sharedWars.collectAsState()
+    val userName = viewModel.sharedUserName.collectAsState()
+    val teamName = viewModel.sharedTeamName.collectAsState()
     val searchState = remember { mutableStateOf(TextFieldValue("")) }
     val currentState = viewModel.sharedBottomSheetValue.collectAsState()
     val bottomSheetState =
@@ -53,6 +55,7 @@ fun WarListScreen(viewModel: WarListViewModel = hiltViewModel(), userId: String?
         }
     }
     MKBaseScreen(title = R.string.toutes_les_wars_en_quipe,
+        subTitle = userName.value ?: teamName.value,
         state = bottomSheetState,
         sheetContent = {
             MKBottomSheet(

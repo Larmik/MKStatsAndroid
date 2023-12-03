@@ -24,6 +24,8 @@ fun List<MapDetails>.getDefeat() = this.minByOrNull { it.warTrack.teamScore }?.t
 
 
 fun List<MKWar>.withFullStats(databaseRepository: DatabaseRepositoryInterface, userId: String? = null, teamId: String? = null) = flow {
+    Log.d("MKDebugOnly", "ListExtension withFullStats: for list")
+
     val maps = mutableListOf<TrackStats>()
     val warScores = mutableListOf<WarScore>()
     val averageForMaps = mutableListOf<TrackStats>()
@@ -110,7 +112,7 @@ fun List<MKWar>.withFullStats(databaseRepository: DatabaseRepositoryInterface, u
 }
 fun List<MKWar?>.withName(databaseRepository: DatabaseRepositoryInterface) = flow {
     val temp = mutableListOf<MKWar>()
-    Log.d("MKDebugOnly", "ListExtension withName: ")
+    Log.d("MKDebugOnly", "ListExtension withName: for list")
     this@withName.forEach { war ->
         war?.let {
             val hostName = databaseRepository.getTeam(it.war?.teamHost).firstOrNull()?.shortName
@@ -123,6 +125,7 @@ fun List<MKWar?>.withName(databaseRepository: DatabaseRepositoryInterface) = flo
 
 fun List<Team>.withFullTeamStats(wars: List<MKWar>?, databaseRepository: DatabaseRepositoryInterface, userId: String? = null, weekOnly: Boolean = false, monthOnly: Boolean = false) = flow {
     val temp = mutableListOf<OpponentRankingItemViewModel>()
+    Log.d("MKDebugOnly", "ListExtension withFullTeamStats")
     this@withFullTeamStats.forEach { team ->
         wars
             ?.filter { (weekOnly && it.isThisWeek) || !weekOnly }
@@ -137,6 +140,7 @@ fun List<Team>.withFullTeamStats(wars: List<MKWar>?, databaseRepository: Databas
 }
 
 fun List<Penalty>.withTeamName(databaseRepository: DatabaseRepositoryInterface) = flow {
+    Log.d("MKDebugOnly", "ListExtension withTeamName: for list")
     val temp = mutableListOf<Penalty>()
     this@withTeamName.forEach {
         val team = databaseRepository.getTeam(it.teamId).firstOrNull()
@@ -149,6 +153,7 @@ fun List<Penalty>.withTeamName(databaseRepository: DatabaseRepositoryInterface) 
 }
 
 fun WarDispo.withLineUpAndOpponent(databaseRepository: DatabaseRepositoryInterface) = flow {
+    Log.d("MKDebugOnly", "ListExtension withLineUpAndOpponent")
     this@withLineUpAndOpponent.opponentId?.takeIf { it != "null" }.let { id ->
         val opponentName = databaseRepository.getTeam(id).firstOrNull()?.name
         val lineupNames = mutableListOf<String?>()
@@ -172,6 +177,7 @@ fun WarDispo.withLineUpAndOpponent(databaseRepository: DatabaseRepositoryInterfa
 }
 
 fun NewWar?.withName(databaseRepository: DatabaseRepositoryInterface) = flow {
+    Log.d("MKDebugOnly", "ListExtension withName: for war")
     this@withName?.let {
         val hostName = databaseRepository.getTeam(it.teamHost).firstOrNull()?.shortName
         val opponentName = databaseRepository.getTeam(it.teamOpponent).firstOrNull()?.shortName
@@ -180,7 +186,8 @@ fun NewWar?.withName(databaseRepository: DatabaseRepositoryInterface) = flow {
 }
 
 fun Team.withFullTeamStats(wars: List<MKWar>?, databaseRepository: DatabaseRepositoryInterface, userId: String? = null, weekOnly: Boolean = false, monthOnly: Boolean = false, isIndiv: Boolean = false) = flow {
-        wars
+    Log.d("MKDebugOnly", "ListExtension withFullTeamStats: for team")
+    wars
             ?.filter { (weekOnly && it.isThisWeek) || !weekOnly }
             ?.filter { (monthOnly && it.isThisMonth) || !monthOnly }
             ?.withFullStats(databaseRepository, teamId = this@withFullTeamStats.mid, userId = userId)?.first()

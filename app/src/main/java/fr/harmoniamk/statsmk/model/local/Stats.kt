@@ -87,6 +87,7 @@ class MapStats(
     private val isIndiv: Boolean,
     val userId: String? = null
 ) : MKStats {
+
     private val playerScoreList = list
         .filter { pair -> pair.war.war?.warTracks?.any { MKWarTrack(it).hasPlayer(userId) }.isTrue }
         .mapNotNull { it.warTrack.track?.warPositions }
@@ -111,8 +112,37 @@ class MapStats(
         }
     val teamScore = list.map { pair -> pair.warTrack }.map { it.teamScore }.sum() / list.size
     val playerPosition = playerScoreList.takeIf { it.isNotEmpty() }?.let {  (playerScoreList.sum() / playerScoreList.size).pointsToPosition() } ?: 0
-    val highestVictory = list.filter { !isIndiv || (isIndiv && it.war.war?.warTracks?.any { MKWarTrack(it).hasPlayer(userId) }.isTrue) }.getVictory()
-    val loudestDefeat = list.filter { !isIndiv || (isIndiv && it.war.hasPlayer(userId)) }.getDefeat()
+    val topsTable = listOf(
+        Pair("Top 6", list.filter { !isIndiv &&  it.warTrack.track?.warPositions?.mapNotNull { it.position }?.filter { it <= 6 }?.size == 6 }.size),
+        Pair("Top 5", list.filter { !isIndiv && it.warTrack.track?.warPositions?.mapNotNull { it.position }?.filter { it <= 5 }?.size == 5 }.size),
+        Pair("Top 4", list.filter { !isIndiv && it.warTrack.track?.warPositions?.mapNotNull { it.position }?.filter { it <= 4 }?.size == 4 }.size),
+        Pair("Top 3", list.filter { !isIndiv && it.warTrack.track?.warPositions?.mapNotNull { it.position }?.filter { it <= 3 }?.size == 3 }.size),
+        Pair("Top 2", list.filter { !isIndiv && it.warTrack.track?.warPositions?.mapNotNull { it.position }?.filter { it <= 2 }?.size == 2 }.size),
+    )
+    val bottomsTable = listOf(
+        Pair("Bot 6", list.filter { !isIndiv && it.warTrack.track?.warPositions?.mapNotNull { it.position }?.filter { it >= 7 }?.size == 6 }.size),
+        Pair("Bot 5", list.filter { !isIndiv && it.warTrack.track?.warPositions?.mapNotNull { it.position }?.filter { it >= 8 }?.size == 5 }.size),
+        Pair("Bot 4", list.filter { !isIndiv && it.warTrack.track?.warPositions?.mapNotNull { it.position }?.filter { it >= 9  }?.size == 4 }.size),
+        Pair("Bot 3", list.filter { !isIndiv && it.warTrack.track?.warPositions?.mapNotNull { it.position }?.filter { it >= 10 }?.size == 3 }.size),
+        Pair("Bot 2", list.filter { !isIndiv && it.warTrack.track?.warPositions?.mapNotNull { it.position }?.filter { it >= 11 }?.size == 2 }.size),
+    )
+
+    val indivTopsTable = listOf(
+        Pair("1", list.filter { isIndiv && it.warTrack.track?.warPositions?.singleOrNull { it.position == 1 }?.playerId == userId }.size),
+        Pair("2", list.filter {isIndiv && it.warTrack.track?.warPositions?.singleOrNull { it.position == 2 }?.playerId == userId}.size),
+        Pair("3", list.filter { isIndiv && it.warTrack.track?.warPositions?.singleOrNull { it.position == 3 }?.playerId == userId }.size),
+        Pair("4", list.filter { isIndiv && it.warTrack.track?.warPositions?.singleOrNull { it.position == 4 }?.playerId == userId }.size),
+        Pair("5", list.filter { isIndiv && it.warTrack.track?.warPositions?.singleOrNull { it.position == 5 }?.playerId == userId }.size),
+        Pair("6", list.filter { isIndiv && it.warTrack.track?.warPositions?.singleOrNull { it.position == 6 }?.playerId == userId }.size),
+    )
+    val indivBottomsTable = listOf(
+        Pair("7", list.filter { isIndiv && it.warTrack.track?.warPositions?.singleOrNull { it.position == 7 }?.playerId == userId }.size),
+        Pair("8", list.filter { isIndiv && it.warTrack.track?.warPositions?.singleOrNull { it.position == 8 }?.playerId == userId }.size),
+        Pair("9", list.filter { isIndiv && it.warTrack.track?.warPositions?.singleOrNull { it.position == 9 }?.playerId == userId }.size),
+        Pair("10", list.filter { isIndiv && it.warTrack.track?.warPositions?.singleOrNull { it.position == 10 }?.playerId == userId }.size),
+        Pair("11", list.filter { isIndiv && it.warTrack.track?.warPositions?.singleOrNull { it.position == 11 }?.playerId == userId }.size),
+        Pair("12", list.filter { isIndiv && it.warTrack.track?.warPositions?.singleOrNull { it.position == 12 }?.playerId == userId }.size),
+    )
     val shockCount = list.map { it.warTrack.track?.shocks?.filter { !isIndiv || (isIndiv && it.playerId == userId) }?.map { it.count }.sum() }.sum()
 
 }

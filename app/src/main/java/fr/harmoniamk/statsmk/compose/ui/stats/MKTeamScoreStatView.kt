@@ -15,6 +15,7 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKScoreView
 import fr.harmoniamk.statsmk.compose.ui.MKText
 import fr.harmoniamk.statsmk.compose.ui.MKWarItem
+import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.model.local.MKStats
 import fr.harmoniamk.statsmk.model.local.MapStats
 import fr.harmoniamk.statsmk.model.local.Stats
@@ -30,8 +31,10 @@ fun MKTeamScoreStatView(
 {
     val warVictory = (stats as? Stats)?.warStats?.highestVictory
     val warDefeat = (stats as? Stats)?.warStats?.loudestDefeat
-    val trackVictory = (stats as? MapStats)?.highestVictory
-    val trackDefeat = (stats as? MapStats)?.loudestDefeat
+    val tops = (stats as? MapStats)?.topsTable
+    val bottoms = (stats as? MapStats)?.bottomsTable
+    val indivTops = (stats as? MapStats)?.indivTopsTable
+    val indivBottoms = (stats as? MapStats)?.indivBottomsTable
 
     Row(
         Modifier
@@ -50,15 +53,6 @@ fun MKTeamScoreStatView(
                 MKWarItem(war = war, onClick = onHighestClick, isForStats = true)
             }
         }
-        trackVictory?.let {
-            Column(
-                Modifier
-                    .weight(1f)
-                    .padding(top = 10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                MKText(text = R.string.plus_large_victoire, fontSize = 12)
-                MKScoreView(track = it.warTrack, modifier = Modifier.padding(bottom = 10.dp))
-            }
-        }
         warDefeat?.let {
             Column(
                 Modifier
@@ -68,14 +62,12 @@ fun MKTeamScoreStatView(
                 MKWarItem(war = it, onClick = onLoudestClick, isForStats = true)
             }
         }
-        trackDefeat?.let {
-            Column(
-                Modifier
-                    .weight(1f)
-                    .padding(top = 10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-                MKText(text = R.string.plus_lourde_d_faite, fontSize = 12)
-                MKScoreView(track = it.warTrack, modifier = Modifier.padding(bottom = 10.dp))
-            }
+        if (tops.takeIf { it?.any { it.second > 0 }.isTrue } != null && bottoms.takeIf { it?.any { it.second > 0 }.isTrue } != null) {
+            MKTopBottomView(false, tops, bottoms)
         }
+        if (indivTops.takeIf { it?.any { it.second > 0 }.isTrue } != null && indivTops.takeIf { it?.any { it.second > 0 }.isTrue } != null) {
+            MKTopBottomView(true, indivTops, indivBottoms)
+        }
+
     }
 }

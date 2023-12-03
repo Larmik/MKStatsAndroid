@@ -28,6 +28,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 fun CreatePlayerScreen(viewModel: CreatePlayerViewModel = hiltViewModel(), onDismiss: () -> Unit) {
     val nameState = remember { mutableStateOf(TextFieldValue("")) }
     val addToTeam = remember { mutableStateOf(false) }
+    val addAlly = remember { mutableStateOf(false) }
 
     BackHandler { onDismiss() }
 
@@ -47,8 +48,12 @@ fun CreatePlayerScreen(viewModel: CreatePlayerViewModel = hiltViewModel(), onDis
             Checkbox(checked = addToTeam.value, onCheckedChange = { addToTeam.value = it })
             MKText(text = R.string.int_grer_ce_joueur_l_quipe)
         }
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Checkbox(checked = addAlly.value, onCheckedChange = { addAlly.value = it })
+            MKText(text = R.string.ajouter_en_tant_qu_ally)
+        }
         MKButton(text = R.string.valider, enabled = nameState.value.text.isNotEmpty()) {
-            viewModel.onPlayerCreated(nameState.value.text, addToTeam.value)
+            viewModel.onPlayerCreated(nameState.value.text, addToTeam.value, addAlly.value)
         }
     }
 }

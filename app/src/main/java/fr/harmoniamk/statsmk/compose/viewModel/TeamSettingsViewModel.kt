@@ -52,29 +52,31 @@ class TeamSettingsViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _sharedPlayers = MutableStateFlow<SnapshotStateList<ManagePlayersItemViewModel>>(SnapshotStateList())
+    private val _sharedAllies = MutableStateFlow<SnapshotStateList<ManagePlayersItemViewModel>>(SnapshotStateList())
     private val _sharedTeamName = MutableStateFlow<String?>(null)
     private val _sharedPictureLoaded = MutableStateFlow<String?>(null)
     private val _sharedBottomSheetValue = MutableStateFlow<MKBottomSheetState?>(null)
     private val _sharedManageVisible = MutableStateFlow(false)
 
     val sharedPlayers = _sharedPlayers.asStateFlow()
+    val sharedAllies = _sharedAllies.asStateFlow()
     val sharedTeamName = _sharedTeamName.asStateFlow()
     val sharedPictureLoaded =_sharedPictureLoaded.asStateFlow()
     val sharedBottomSheetValue = _sharedBottomSheetValue.asSharedFlow()
     val sharedManageVisible = _sharedManageVisible.asStateFlow()
 
     private val players = SnapshotStateList<ManagePlayersItemViewModel>()
+    private val allys = SnapshotStateList<ManagePlayersItemViewModel>()
     private val allPlayers = mutableListOf<User>()
 
     init {
         databaseRepository.getUsers()
             .onEach {
-                allPlayers.clear()
-                allPlayers.addAll(it) }
-            .flatMapLatest { createPlayersList(list = it) }
-            .onEach {
                 _sharedTeamName.emit(preferencesRepository.currentTeam?.name)
-                _sharedPlayers.emit(it)
+                allPlayers.clear()
+                allPlayers.addAll(it)
+                _sharedPlayers.emit(createPlayersList(list = it).first())
+                _sharedAllies.emit(createAllyList(list = it).first())
             }
             .flatMapLatest { storageRepository.getPicture(preferencesRepository.currentTeam?.mid) }
             .onEach { _sharedPictureLoaded.emit((it as? PictureResponse.Success)?.url) }
@@ -92,8 +94,8 @@ class TeamSettingsViewModel @Inject constructor(
         }
     }
 
-    fun onAddPlayer() {
-        _sharedBottomSheetValue.value = MKBottomSheetState.AddPlayer()
+    fun onAddPlayer(ally: Boolean) {
+        _sharedBottomSheetValue.value = MKBottomSheetState.AddPlayer(ally)
     }
 
     fun onEditPlayer(player: User) {
@@ -149,6 +151,22 @@ class TeamSettingsViewModel @Inject constructor(
             }.launchIn(viewModelScope)
         }
         emit(players)
+    }
+    private fun createAllyList(list: List<User>? = null): Flow<SnapshotStateList<ManagePlayersItemViewModel>> = flow {
+        allys.clear()
+        list?.sortedBy { it.name }?.forEach { player ->
+            authenticationRepository.userRole.map {
+                authenticationRepository.user?.uid != player.mid
+                        && networkRepository.networkAvailable
+                        && ((player.mid.toLongOrNull() != null && it >= UserRole.ADMIN.ordinal)
+                        || it >= UserRole.LEADER.ordinal)
+            }.onEach { canEdit ->
+                player.takeIf { it.allyTeams?.contains(preferencesRepository.currentTeam?.mid.orEmpty()).isTrue }?.let {
+                    allys.add(ManagePlayersItemViewModel(player = it, canEdit = canEdit))
+                }
+            }.launchIn(viewModelScope)
+        }
+        emit(allys)
     }
 
     private fun writeFormerTeams(user: User): Flow<User> = flow {

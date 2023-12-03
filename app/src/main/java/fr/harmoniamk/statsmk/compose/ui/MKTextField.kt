@@ -62,7 +62,6 @@ fun MKTextField(
     BasicTextField(
         value = value,
         modifier = modifier
-            .padding(vertical = 5.dp)
             .background(colors.backgroundColor(true).value, RoundedCornerShape(5.dp))
             .indicatorLine(true, false, interactionSource, colors)
             .defaultMinSize(

@@ -5,6 +5,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import fr.harmoniamk.statsmk.compose.viewModel.PlayerListViewModel
 import fr.harmoniamk.statsmk.compose.viewModel.PositionViewModel
+import fr.harmoniamk.statsmk.compose.viewModel.StatsRankingViewModel
 import fr.harmoniamk.statsmk.compose.viewModel.TrackDetailsViewModel
 import fr.harmoniamk.statsmk.compose.viewModel.TrackListViewModel
 import fr.harmoniamk.statsmk.compose.viewModel.WarDetailsViewModel
@@ -23,4 +24,5 @@ interface ViewModelFactoryProvider {
     val trackDetailsViewModel: TrackDetailsViewModel.Factory
     val trackListViewModel: TrackListViewModel.Factory
     val warTrackResultViewModel: WarTrackResultViewModel.Factory
+    val statsRankingViewModel: StatsRankingViewModel.Factory
 }

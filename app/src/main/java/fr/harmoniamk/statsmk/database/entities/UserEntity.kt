@@ -15,6 +15,7 @@ data class UserEntity
     @ColumnInfo(name = "team") val team: String?,
     @ColumnInfo(name = "picture") val picture: String?,
     @ColumnInfo(name = "formerTeams") val formerTeams: List<String>?,
+    @ColumnInfo(name = "allyTeams") val allyTeams: List<String>?,
     @ColumnInfo(name = "friendCode") val friendCode: String?,
     @ColumnInfo(name = "discordId") val discordId: String?
     )

@@ -195,7 +195,8 @@
     <string name="diff_rence_quipe">Team diff.</string>
     <string name="position_joueur">Player position</string>
     <string name="cr_er_un_joueur">New player</string>
-    <string name="voir_le_d_tail">See more</string>
+    <string name="voir_le_d_tail">See war details</string>
+    <string name="voir_le_d_tail_map">See track details</string>
     <string name="d_tails">Details</string>
     <string name="statistiques_des_adversaires">Opponents stats</string>
     <string name="score_moyen">Average score</string>

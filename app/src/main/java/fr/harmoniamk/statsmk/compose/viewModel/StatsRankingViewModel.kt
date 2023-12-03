@@ -1,10 +1,18 @@
 package fr.harmoniamk.statsmk.compose.viewModel
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
+import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.application.MainApplication
+import fr.harmoniamk.statsmk.compose.ViewModelFactoryProvider
 import fr.harmoniamk.statsmk.model.local.RankingItemViewModel
 import fr.harmoniamk.statsmk.compose.ui.MKBottomSheetState
 import fr.harmoniamk.statsmk.enums.Maps
@@ -31,6 +39,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
@@ -59,12 +68,43 @@ sealed class StatsRankingState(val title: Int, val placeholderRes: Int, val sort
 }
 
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
-@HiltViewModel
-class StatsRankingViewModel @Inject constructor(
+class StatsRankingViewModel @AssistedInject constructor(
+    @Assisted("userId") val userId: String?,
+    @Assisted("teamId") val teamId: String?,
     private val databaseRepository: DatabaseRepositoryInterface,
     private val preferencesRepository: PreferencesRepositoryInterface,
     private val authenticationRepository: AuthenticationRepositoryInterface
     ) : ViewModel() {
+
+    companion object {
+        @Suppress("UNCHECKED_CAST")
+        fun provideFactory(
+            assistedFactory: Factory,
+            userId: String?,
+            teamId: String?
+        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return assistedFactory.create(userId, teamId) as T
+            }
+        }
+
+        @Composable
+        fun viewModel(userId: String?, teamId: String?): StatsRankingViewModel {
+            val factory: Factory = EntryPointAccessors.fromApplication<ViewModelFactoryProvider>(context = LocalContext.current).statsRankingViewModel
+            return androidx.lifecycle.viewmodel.compose.viewModel(
+                factory = provideFactory(
+                    assistedFactory = factory,
+                   userId = userId,
+                    teamId = teamId
+                )
+            )
+        }
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(@Assisted("userId") userId: String?, @Assisted("teamId") teamId: String?): StatsRankingViewModel
+    }
 
     private val _sharedList = MutableStateFlow<List<RankingItemViewModel>>(listOf())
     private val _sharedUserId = MutableStateFlow<String?>(null)
@@ -72,6 +112,7 @@ class StatsRankingViewModel @Inject constructor(
     private val _sharedGoToStats = MutableSharedFlow<RankingItemViewModel?>()
     private val _sharedBottomsheetValue = MutableStateFlow<MKBottomSheetState?>(null)
     private var _sharedIndivEnabled = MutableStateFlow(false)
+    private val _sharedUserName = MutableStateFlow<String?>(null)
 
     val sharedGoToStats = _sharedGoToStats.asSharedFlow()
     val sharedList = _sharedList.asStateFlow()
@@ -79,10 +120,11 @@ class StatsRankingViewModel @Inject constructor(
     val sharedUserId = _sharedUserId.asStateFlow()
     val sharedTeamId = _sharedTeamId.asStateFlow()
     val sharedIndivEnabled = _sharedIndivEnabled.asStateFlow()
+    val sharedUserName =_sharedUserName.asStateFlow()
 
     private val warList = mutableListOf<MKWar>()
     private var sortType: SortType? = null
-    private val onlyIndiv = preferencesRepository.currentTeam?.mid == null
+    private val onlyIndiv = preferencesRepository.currentTeam?.mid == null || userId != null
 
     private val players = mutableListOf<PlayerRankingItemViewModel>()
     private val opponents = mutableListOf<OpponentRankingItemViewModel>()
@@ -126,24 +168,38 @@ class StatsRankingViewModel @Inject constructor(
                     }.launchIn(viewModelScope)
             }
             is StatsRankingState.MapsRankingState -> {
-                _sharedTeamId.value = preferencesRepository.currentTeam?.mid
-                _sharedUserId.value = authenticationRepository.user?.uid?.takeIf { indivEnabled }
+                val finalTeamId = teamId ?: preferencesRepository.currentTeam?.mid
+                val finalUserId = userId ?: authenticationRepository.user?.uid?.takeIf { indivEnabled }
+                _sharedTeamId.value =  finalTeamId
+                _sharedUserId.value = finalUserId
+
+                databaseRepository.getUser(userId)
+                    .filterNotNull()
+                    .onEach { _sharedUserName.value = it.name }
+                    .launchIn(viewModelScope)
+
+                databaseRepository.getTeam(teamId)
+                    .filterNotNull()
+                    .onEach { _sharedUserName.value = it.name }
+                    .launchIn(viewModelScope)
+
                 databaseRepository.getWars()
                     .filter {
-                        (!onlyIndiv && it.mapNotNull { war -> war.war?.teamHost}.contains(preferencesRepository.currentTeam?.mid)
-                                || it.map {war -> war.war?.teamOpponent}.contains(preferencesRepository.currentTeam?.mid))
+                        (!onlyIndiv
+                                && it.map { war -> war.war?.teamHost }.contains(finalTeamId)
+                                || it.map { war -> war.war?.teamOpponent }.contains(finalTeamId))
                                 || onlyIndiv
                     }
-                    .mapNotNull { list -> list.filter { ((onlyIndiv && it.hasPlayer(authenticationRepository.user?.uid)) || !onlyIndiv) && ((!indivEnabled.isTrue && it.hasTeam(preferencesRepository.currentTeam?.mid)) || indivEnabled.isTrue)} }
+                    .mapNotNull { list -> list.filter { ((onlyIndiv && it.hasPlayer(finalUserId)) || !onlyIndiv) && ((!indivEnabled.isTrue && it.hasTeam(finalTeamId)) || (indivEnabled.isTrue && it.hasPlayer(finalUserId) && it.hasTeam(finalTeamId)))} }
                     .map { list ->
                         val allTracksPlayed = mutableListOf<NewWarTrack>()
-                        list.mapNotNull { it.war?.warTracks }.forEach {
+                        list.filter { teamId == null || it.hasTeam(teamId) }.mapNotNull { it.war?.warTracks }.forEach {
                             allTracksPlayed.addAll(it)
                         }
                         allTracksPlayed
                     }
                     .map {
-                        _sharedList.value = sortTracks(sortType, it, indivEnabled.isTrue)
+                        _sharedList.value = sortTracks(sortType, it, indivEnabled.isTrue, finalUserId.orEmpty())
                     }
                     .launchIn(viewModelScope)
             }
@@ -190,22 +246,22 @@ class StatsRankingViewModel @Inject constructor(
         }
     }
 
-    private fun sortTracks(type: SortType?, list: List<NewWarTrack>, indivEnabled: Boolean): List<TrackStats> {
+    private fun sortTracks(type: SortType?, list: List<NewWarTrack>, indivEnabled: Boolean, userId: String): List<TrackStats> {
         val pairList =  when (type) {
             TrackSortType.TOTAL_WIN -> list
-                .filter { !indivEnabled || (indivEnabled && MKWarTrack(it).hasPlayer(authenticationRepository.user?.uid)) }
+                .filter { !indivEnabled || (indivEnabled && MKWarTrack(it).hasPlayer(userId)) }
                 .groupBy { it.trackIndex }.toList()
                 .sortedByDescending { it.second.filter { MKWarTrack(it).displayedDiff.contains('+') }.size }
             TrackSortType.WINRATE -> list
-                .filter { !indivEnabled || (indivEnabled && MKWarTrack(it).hasPlayer(authenticationRepository.user?.uid)) }
+                .filter { !indivEnabled || (indivEnabled && MKWarTrack(it).hasPlayer(userId)) }
                 .groupBy { it.trackIndex }.toList()
                 .sortedByDescending { it.second.filter { MKWarTrack(it).displayedDiff.contains('+') }.size * 100 / it.second.size }
             TrackSortType.AVERAGE_DIFF -> list
-                .filter { !indivEnabled || (indivEnabled && MKWarTrack(it).hasPlayer(authenticationRepository.user?.uid)) }
+                .filter { !indivEnabled || (indivEnabled && MKWarTrack(it).hasPlayer(userId)) }
                 .groupBy { it.trackIndex }.toList()
                 .sortedByDescending { it.second.map { MKWarTrack(it).diffScore }.sum() / it.second.size }
             else -> list
-                .filter { !indivEnabled || (indivEnabled && MKWarTrack(it).hasPlayer(authenticationRepository.user?.uid)) }
+                .filter { !indivEnabled || (indivEnabled && MKWarTrack(it).hasPlayer(userId)) }
                 .groupBy { it.trackIndex }.toList()
                 .sortedByDescending { it.second.size }
         }.map {
@@ -227,7 +283,7 @@ class StatsRankingViewModel @Inject constructor(
             PlayerSortType.WINRATE -> list.sortedByDescending { (it.stats.warStats.warsWon*100)/it.stats.warStats.warsPlayed}
             PlayerSortType.TOTAL_WIN -> list.sortedByDescending { it.stats.warStats.warsPlayed }
             PlayerSortType.AVERAGE -> list.sortedByDescending { it.stats.averagePoints }
-            else -> list.sortedBy { it.user.name }
+            else -> list.sortedBy { it.user.name?.lowercase() }
         }
         val playerList =  pairList.filter { it.stats.warStats.warsPlayed > 0 }
         players.clear()

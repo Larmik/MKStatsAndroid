@@ -24,53 +24,70 @@ import javax.inject.Inject
 class SubPlayerViewModel @Inject constructor(
     private val firebaseRepository: FirebaseRepositoryInterface,
     private val preferencesRepository: PreferencesRepositoryInterface,
-    databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
+    private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
 
     private val _sharedPlayers = MutableStateFlow<List<UserSelector>>(listOf())
+    private val _sharedAllies = MutableStateFlow<List<UserSelector>>(listOf())
     private val _sharedTitle = MutableStateFlow(R.string.joueur_sortant)
     private val _sharedBack = MutableSharedFlow<Unit>()
     private val _sharedPlayerSelected = MutableStateFlow<User?>(null)
 
     val sharedPlayers = _sharedPlayers.asStateFlow()
+    val sharedAllies = _sharedAllies.asStateFlow()
     val sharedPlayerSelected = _sharedPlayerSelected.asStateFlow()
     val sharedTitle = _sharedTitle.asStateFlow()
     val sharedBack = _sharedBack.asSharedFlow()
 
     private val playersList = mutableListOf<UserSelector>()
+    private val allyList = mutableListOf<UserSelector>()
     private val currentPlayersList = mutableListOf<UserSelector>()
 
     var oldPlayer: User? = null
     var newPlayer: User? = null
 
-    init {
-
+    fun refresh() {
         databaseRepository.getUsers()
             .onEach {
                 playersList.clear()
+                allyList.clear()
                 currentPlayersList.clear()
-                playersList.addAll(it.filter { user -> user.currentWar == "-1" }.map { UserSelector(user = it, isSelected = false) })
+
+                playersList.addAll(it.filter { user -> user.currentWar == "-1" && user.team == preferencesRepository.currentTeam?.mid }.map { UserSelector(user = it, isSelected = false) })
+                allyList.addAll(it.filter { user -> user.currentWar == "-1" &&  user.allyTeams?.contains(preferencesRepository.currentTeam?.mid).isTrue }.map { UserSelector(user = it, isSelected = false) })
                 currentPlayersList.addAll(it.filter { user -> user.currentWar == preferencesRepository.currentWar?.mid }.map { UserSelector(user = it, isSelected = false) } )
-                _sharedPlayers.emit(currentPlayersList)
+
+                _sharedPlayers.value = currentPlayersList
+                _sharedTitle.value = R.string.joueur_sortant
             }.launchIn(viewModelScope)
     }
 
     fun onOldPlayerSelect(user : User) {
         oldPlayer = user
         _sharedPlayers.value = playersList
+        _sharedAllies.value = allyList
         _sharedTitle.value = R.string.joueur_entrant
+
         _sharedPlayerSelected.value = user
     }
 
     fun onNewPlayerSelect(user: User) {
         newPlayer = user
         val playerListWithSelected = mutableListOf<UserSelector>()
+        val allyListWithSelected = mutableListOf<UserSelector>()
         playersList.forEach {
             when (it.user?.mid == user.mid) {
                 true -> playerListWithSelected.add(it.copy(isSelected = true))
                 else -> playerListWithSelected.add(it)
             }
         }
+        allyList.forEach {
+            when (it.user?.mid == user.mid) {
+                true -> allyListWithSelected.add(it.copy(isSelected = true))
+                else -> allyListWithSelected.add(it)
+            }
+        }
         _sharedPlayers.value = playerListWithSelected
+        _sharedAllies.value = allyListWithSelected
     }
 
     fun onSubClick() {
@@ -82,10 +99,9 @@ class SubPlayerViewModel @Inject constructor(
                     oldPlayer = null
                     newPlayer = null
                     playersList.clear()
+                    allyList.clear()
                     currentPlayersList.clear()
                     _sharedPlayerSelected.value = null
-                    _sharedPlayers.value = currentPlayersList
-                    _sharedTitle.value = R.string.joueur_sortant
                 }
                 .bind(_sharedBack, viewModelScope)
         }
@@ -106,8 +122,14 @@ class SubPlayerViewModel @Inject constructor(
 
     fun onSearch(searched: String) {
         when (searched.isEmpty()) {
-            true -> _sharedPlayers.value = playersList
-            else -> _sharedPlayers.value = playersList.filter { it.user?.name?.toLowerCase(Locale.ROOT)?.contains(searched.toLowerCase(Locale.ROOT)).isTrue }
+            true -> {
+                _sharedPlayers.value = playersList
+                _sharedAllies.value = allyList
+            }
+            else -> {
+                _sharedPlayers.value = playersList.filter { it.user?.name?.toLowerCase(Locale.ROOT)?.contains(searched.toLowerCase(Locale.ROOT)).isTrue }
+                _sharedAllies.value = allyList.filter { it.user?.name?.toLowerCase(Locale.ROOT)?.contains(searched.toLowerCase(Locale.ROOT)).isTrue }
+            }
         }
     }
 

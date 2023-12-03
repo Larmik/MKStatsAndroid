@@ -50,72 +50,76 @@ fun MKWarDetailsStatsView(mkStats: MKStats, type: StatsType) {
                 shape = RoundedCornerShape(5.dp)
             )
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(top = 10.dp)
-        ) {
-            Column(
-                Modifier
-                    .weight(1f)
-                    .padding(bottom = 10.dp), horizontalAlignment = Alignment.CenterHorizontally
+        type.takeIf { it !is StatsType.MapStats }?.let {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.padding(top = 10.dp)
             ) {
-                MKText(
-                    text = when (type) {
-                        is StatsType.MapStats -> R.string.diff_rence_quipe
-                        is StatsType.IndivStats -> R.string.score_moyen
-                        else -> R.string.moyenne_war
-                    }, fontSize = 12
-                )
-                MKText(
-                    text = when  {
-                        type is StatsType.MapStats -> mapStats?.teamScore?.trackScoreToDiff().toString()
-                        type is StatsType.IndivStats -> stats?.averagePoints.toString()
-                        (type as? StatsType.OpponentStats)?.userId != null -> stats?.averagePoints.toString()
-                        else -> stats?.averagePointsLabel.toString()
-                    }, font = R.font.orbitron_semibold, fontSize = 20, textColor = diffColor)
-            }
-            type.takeIf { it is StatsType.PeriodicStats || it is StatsType.OpponentStats }?.let {
-                Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
-                    MKText(text = R.string.maps_gagn_es, fontSize = 12)
-                    MKText(text = stats?.mapsWon.toString(), fontSize = 16, font = R.font.montserrat_bold)
+                Column(
+                    Modifier
+                        .weight(1f), horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    MKText(
+                        text = when (type) {
+                            is StatsType.MapStats -> R.string.diff_rence_quipe
+                            is StatsType.IndivStats -> R.string.score_moyen
+                            else -> R.string.moyenne_war
+                        }, fontSize = 12
+                    )
+                    MKText(
+                        text = when  {
+                            type is StatsType.MapStats -> mapStats?.teamScore?.trackScoreToDiff().toString()
+                            type is StatsType.IndivStats -> stats?.averagePoints.toString()
+                            (type as? StatsType.OpponentStats)?.userId != null -> stats?.averagePoints.toString()
+                            else -> stats?.averagePointsLabel.toString()
+                        }, font = R.font.orbitron_semibold, fontSize = 20, textColor = diffColor)
+                }
+                type.takeIf { it is StatsType.PeriodicStats || it is StatsType.OpponentStats }?.let {
+                    Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
+                        MKText(text = R.string.maps_gagn_es, fontSize = 12)
+                        MKText(text = stats?.mapsWon.toString(), fontSize = 16, font = R.font.montserrat_bold)
+                    }
                 }
             }
         }
+
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(bottom = 10.dp)
+            modifier = Modifier.padding(vertical = 10.dp)
         ) {
             Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
                 MKText(
                     text = when {
-                        type is StatsType.IndivStats || type is StatsType.MapStats || (type as? StatsType.OpponentStats)?.userId != null -> R.string.position_moyenne
+                        type is StatsType.IndivStats || (type as? StatsType.OpponentStats)?.userId != null || (type as? StatsType.MapStats)?.userId != null -> R.string.position_moyenne
                         else -> R.string.moyenne_map
                     }, fontSize = 12
                 )
                 MKText(
                     text = when {
-                        type is StatsType.IndivStats || (type as? StatsType.OpponentStats)?.userId != null -> stats?.averagePlayerPosition.toString()
-                        type is StatsType.MapStats -> mapStats?.playerPosition.toString()
-                        else -> stats?.averageMapPointsLabel.toString()
+                        type is StatsType.IndivStats ||  (type as? StatsType.MapStats)?.userId != null || (type as? StatsType.OpponentStats)?.userId != null -> (stats?.averagePlayerPosition ?: mapStats?.playerPosition).toString()
+                        else -> (stats?.averageMapPointsLabel ?: mapStats?.teamScore?.trackScoreToDiff()).toString()
                     }, font = when {
-                        type is StatsType.IndivStats || type is StatsType.MapStats || (type as? StatsType.OpponentStats)?.userId != null -> R.font.mk_position
+                        type is StatsType.IndivStats || (type as? StatsType.MapStats)?.userId != null || (type as? StatsType.OpponentStats)?.userId != null -> R.font.mk_position
                         else -> R.font.orbitron_semibold
                     }, fontSize = when {
-                        type is StatsType.IndivStats || type is StatsType.MapStats || (type as? StatsType.OpponentStats)?.userId != null -> 26
+                        type is StatsType.IndivStats || (type as? StatsType.MapStats)?.userId != null || (type as? StatsType.OpponentStats)?.userId != null -> 26
                         else -> 20
                     }, textColor = when {
-                        type is StatsType.IndivStats || (type as? StatsType.OpponentStats)?.userId != null -> stats?.averagePlayerPosition.positionColor()
-                        type is StatsType.MapStats -> mapStats?.playerPosition?.pointsToPosition().positionColor()
-                        else -> when {
-                            stats?.averageMapPointsLabel?.contains("+").isTrue -> R.color.luigi
-                            stats?.averageMapPointsLabel?.contains("-").isTrue -> R.color.lose
-                            else -> R.color.black
-                        }
+                        type is StatsType.IndivStats || (type as? StatsType.MapStats)?.userId != null  || (type as? StatsType.OpponentStats)?.userId != null  -> (stats?.averagePlayerPosition ?: mapStats?.playerPosition).positionColor()
+                        else -> diffColor
                     }
                 )
             }
             Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
-                MKText(text = R.string.shocks_rapport_s, fontSize = 12)
+                val shockLabel = when (stats) {
+                    null ->  R.string.shocks_rapport_s
+                    else -> R.string.shocks_war
+                }
+                val shockCount = when (stats) {
+                    null ->  mapStats?.shockCount
+                    else -> stats.shockCount / stats.warStats.warsPlayed
+                }
+                MKText(text = shockLabel, fontSize = 12)
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
@@ -126,7 +130,7 @@ fun MKWarDetailsStatsView(mkStats: MKStats, type: StatsType) {
                         modifier = Modifier.size(30.dp)
                     )
                     MKText(
-                        text = (stats?.shockCount ?: mapStats?.shockCount).toString(),
+                        text = shockCount.toString(),
                         fontSize = 16,
                         font = R.font.orbitron_semibold
                     )

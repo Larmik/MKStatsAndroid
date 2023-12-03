@@ -43,16 +43,17 @@ import kotlinx.coroutines.flow.filterNotNull
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun StatsRankingScreen(
-    viewModel: StatsRankingViewModel = hiltViewModel(),
+    userId: String? = null,
+    teamId: String? = null,
     state: StatsRankingState,
     goToStats: (RankingItemViewModel, String?, String?) -> Unit
 ) {
-
+    val viewModel: StatsRankingViewModel = StatsRankingViewModel.viewModel(userId, teamId)
     val searchState = remember { mutableStateOf(TextFieldValue("")) }
     val currentState = viewModel.sharedBottomSheetValue.collectAsState()
     val indiv = viewModel.sharedIndivEnabled.collectAsState()
-    val userId = viewModel.sharedUserId.collectAsState()
-    val teamId = viewModel.sharedTeamId.collectAsState()
+    val newUserId = viewModel.sharedUserId.collectAsState()
+    val newTeamId = viewModel.sharedTeamId.collectAsState()
     val bottomSheetState =
         rememberModalBottomSheetState(
             initialValue = ModalBottomSheetValue.Hidden,
@@ -71,11 +72,12 @@ fun StatsRankingScreen(
     }
     LaunchedEffect(Unit) {
         viewModel.sharedGoToStats.filterNotNull().collect {
-           goToStats(it,  userId.value, teamId.value)
+           goToStats(it,  userId ?: newUserId.value, teamId ?: newTeamId.value)
         }
     }
 
     MKBaseScreen(title = state.title,
+        subTitle = viewModel.sharedUserName.collectAsState().value,
         state = bottomSheetState,
         sheetContent = {
             MKBottomSheet(
@@ -88,16 +90,17 @@ fun StatsRankingScreen(
             )
         }) {
         state.takeIf { it !is StatsRankingState.PlayerRankingState }?.let {
-            MKSegmentedSelector(
-                buttons = listOf(
-                    Pair(stringResource(id = R.string.equipe)) { viewModel.init(it, false) },
-                    Pair(stringResource(id = R.string.individuel)) { viewModel.init(it, true) }
-                ),
-                indexSelected = when (indiv.value) {
-                    true -> 1
-                    else -> 0
-                }
-            )
+            if (userId == null)
+                MKSegmentedSelector(
+                    buttons = listOf(
+                        Pair(stringResource(id = R.string.equipe)) { viewModel.init(it, false) },
+                        Pair(stringResource(id = R.string.individuel)) { viewModel.init(it, true) }
+                    ),
+                    indexSelected = when (indiv.value) {
+                        true -> 1
+                        else -> 0
+                    }
+                )
         }
         Row(
             Modifier

@@ -225,7 +225,8 @@
     <string name="diff_rence_quipe">Différence équipe</string>
     <string name="position_joueur">Position joueur</string>
     <string name="cr_er_un_joueur">Créer un joueur</string>
-    <string name="voir_le_d_tail">Voir le détail</string>
+    <string name="voir_le_d_tail">Détail des wars</string>
+    <string name="voir_le_d_tail_map">Détail des circuits</string>
     <string name="d_tails">Détails</string>
     <string name="statistiques_des_adversaires">Statistiques des adversaires</string>
     <string name="score_moyen">Score moyen</string>
@@ -389,4 +390,7 @@
     <string name="bbc3">Château Bowser 3</string>
     <string name="brrw">Route Arc-en-ciel Wii</string>
     <string name="bmd">Méandres madrilènes</string>
+    <string name="ajouter_en_tant_qu_ally">Ajouter en tant qu\'ally</string>
+    <string name="ajouter_un_ally">Ajouter un ally</string>
+    <string name="shocks_war">Shocks/War</string>
 </resources>

@@ -36,6 +36,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.shareIn
+import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -64,14 +65,16 @@ class StatsViewModel @Inject constructor(
 
     private val _sharedStats = MutableStateFlow<MKStats?>(null)
     private val _sharedSubtitle = MutableStateFlow<String?>(null)
-    private val _sharedDetailsClick = MutableSharedFlow<Unit>()
+    private val _sharedWarDetailsClick = MutableSharedFlow<Unit>()
+    private val _sharedTrackDetailsClick = MutableSharedFlow<Unit>()
     private val _sharedOwnTeamId = MutableStateFlow<String?>(null)
     private var _sharedWeekEnabled = MutableStateFlow(true)
 
     val sharedStats = _sharedStats.asStateFlow()
     val sharedSubtitle = _sharedSubtitle.asStateFlow()
     val sharedWeekEnabled = _sharedWeekEnabled.asStateFlow()
-    val sharedDetailsClick = _sharedDetailsClick.asSharedFlow()
+    val sharedWarDetailsClick = _sharedWarDetailsClick.asSharedFlow()
+    val sharedTrackDetailsClick = _sharedTrackDetailsClick.asSharedFlow()
     val sharedOwnTeamId = _sharedOwnTeamId.asStateFlow()
 
     private var bestMap: TrackStats? = null
@@ -229,12 +232,26 @@ class StatsViewModel @Inject constructor(
 
                 )
                 _sharedStats.value = MapStats(mapDetailsList, onlyIndiv && (type as StatsType.MapStats).userId != null, (type as StatsType.MapStats).userId)
-            }.launchIn(viewModelScope)
+            }
+            .flatMapLatest { databaseRepository.getUser((type as? StatsType.MapStats)?.userId).zip(databaseRepository.getTeam((type as? StatsType.MapStats)?.teamId)) { user, team ->
+                _sharedSubtitle.value = when {
+                    user != null && team != null -> "${user.name} vs ${team.name}"
+                    user != null  -> user.name
+                    team != null -> team.name
+                    else -> null
+                }
+            } }
+            .launchIn(viewModelScope)
     }
 
-    fun onDetailsClick() {
+    fun onDetailsWarClick() {
         viewModelScope.launch {
-            _sharedDetailsClick.emit(Unit)
+            _sharedWarDetailsClick.emit(Unit)
+        }
+    }
+    fun onDetailsTrackClick() {
+        viewModelScope.launch {
+            _sharedTrackDetailsClick.emit(Unit)
         }
     }
 

@@ -1,5 +1,6 @@
 package fr.harmoniamk.statsmk.compose.viewModel
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
@@ -44,9 +45,11 @@ class PlayerListViewModel @AssistedInject constructor(
 ): ViewModel() {
 
     private val _sharedPlayers = MutableStateFlow<List<UserSelector>?>(null)
+    private val _sharedAllies = MutableStateFlow<List<UserSelector>?>(null)
     private val _sharedWarName = MutableStateFlow<String?>(null)
 
     val sharedPlayers = _sharedPlayers.asStateFlow()
+    val sharedAllies = _sharedAllies.asStateFlow()
     val sharedWarName = _sharedWarName.asStateFlow()
 
     private val _sharedStarted = MutableSharedFlow<Unit>()
@@ -97,6 +100,17 @@ class PlayerListViewModel @AssistedInject constructor(
         _sharedPlayers.value = temp
     }
 
+    fun selectAlly(user: UserSelector) {
+        val temp = mutableListOf<UserSelector>()
+        _sharedAllies.value?.forEach {
+            when (it.user?.mid == user.user?.mid) {
+                true -> temp.add(user)
+                else -> temp.add(it)
+            }
+        }
+        _sharedAllies.value = temp
+    }
+
     fun toggleOfficial(official: Boolean) {
         this.official = official
     }
@@ -113,6 +127,12 @@ class PlayerListViewModel @AssistedInject constructor(
         viewModelScope.launch {
             _sharedPlayers.value?.filter { it.isSelected.isTrue }?.mapNotNull { it.user }?.forEach { user ->
                 val new = user.apply { this.currentWar = war.mid }
+                Log.d("MKDebugOnly", "createWar: write player")
+                firebaseRepository.writeUser(new).first()
+            }
+            _sharedAllies.value?.filter { it.isSelected.isTrue }?.mapNotNull { it.user }?.forEach { user ->
+                val new = user.apply { this.currentWar = war.mid }
+                Log.d("MKDebugOnly", "createWar: write ally")
                 firebaseRepository.writeUser(new).first()
             }
             preferencesRepository.currentWar = war
@@ -123,10 +143,15 @@ class PlayerListViewModel @AssistedInject constructor(
 
     init {
         databaseRepository.getUsers()
-            .map { it.filter { user -> user.team == preferencesRepository.currentTeam?.mid }
+            .onEach {
+                _sharedPlayers.value =  it.filter { user -> user.team == preferencesRepository.currentTeam?.mid  }
                     .sortedBy { it.name?.toLowerCase(Locale.ROOT) }
                     .map { UserSelector(it, false) }
-            }.bind(_sharedPlayers, viewModelScope)
+                _sharedAllies.value =  it.filter { user -> user.allyTeams?.contains(preferencesRepository.currentTeam?.mid.orEmpty()).isTrue }
+                    .sortedBy { it.name?.toLowerCase(Locale.ROOT) }
+                    .map { UserSelector(it, false) }
+            }
+            .launchIn(viewModelScope)
 
         databaseRepository.getTeam(id)
             .onEach {
