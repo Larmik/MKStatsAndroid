@@ -69,16 +69,26 @@ fun WarScreen(
                     MKText(modifier = Modifier.padding(top = 10.dp), text = R.string.war_en_cours, font = R.font.montserrat_bold)
                     MKCurrentWarCell(it, onCurrentWarClick)
                 }
-                MKText(
-                    text = R.string.derni_res_wars,
-                    modifier = Modifier.padding(top = 10.dp),
-                    font = R.font.montserrat_bold
-                )
-                LazyColumn(Modifier.padding(10.dp)) {
-                    items(items = lastWars.value.orEmpty()) {
-                        MKWarItem(war = it, onClick = onWarClick)
+                when (lastWars.value.isNullOrEmpty()) {
+                    true -> MKText(
+                        text = R.string.jouez_d_abord_des_wars_afin_de_les_voir_appara_tre_ici,
+                        modifier = Modifier.padding(top = 10.dp),
+                        font = R.font.montserrat_bold
+                    )
+                    else -> {
+                        MKText(
+                            text = R.string.derni_res_wars,
+                            modifier = Modifier.padding(top = 10.dp),
+                            font = R.font.montserrat_bold
+                        )
+                        LazyColumn(Modifier.padding(10.dp)) {
+                            items(items = lastWars.value.orEmpty()) {
+                                MKWarItem(war = it, onClick = onWarClick)
+                            }
+                        }
                     }
                 }
+
             }
         }
     }

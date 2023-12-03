@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
@@ -72,13 +73,14 @@ class WarViewModel @Inject constructor(
     fun refresh() {
         _sharedTeam.value = preferencesRepository.currentTeam
        databaseRepository.getWars()
+           .map { it.filter { war -> war.hasTeam(preferencesRepository.currentTeam?.mid) } }
             .onEach {
                 delay(100)
                 it.sortedByDescending { it.war?.createdDate?.formatToDate() }
                 .safeSubList(0, 5)
                 .let { _sharedLastWars.emit(it) }
             }.launchIn(viewModelScope)
-        firebaseRepository.getCurrentWar(preferencesRepository.currentTeam?.mid ?: "")
+        firebaseRepository.getCurrentWar(preferencesRepository.currentTeam?.mid.orEmpty())
             .zip( authenticationRepository.userRole.map { it >= UserRole.ADMIN.ordinal }) { war, isAdmin ->
                 if (networkRepository.networkAvailable) {
                     _sharedCurrentWar.value = war

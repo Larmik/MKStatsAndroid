@@ -69,7 +69,7 @@ class TeamSettingsViewModel @Inject constructor(
     private val allys = SnapshotStateList<ManagePlayersItemViewModel>()
     private val allPlayers = mutableListOf<User>()
 
-    init {
+    fun init() {
         databaseRepository.getUsers()
             .onEach {
                 _sharedTeamName.emit(preferencesRepository.currentTeam?.name)
@@ -158,6 +158,7 @@ class TeamSettingsViewModel @Inject constructor(
             authenticationRepository.userRole.map {
                 authenticationRepository.user?.uid != player.mid
                         && networkRepository.networkAvailable
+                        && player.mid.toLongOrNull() != null
                         && ((player.mid.toLongOrNull() != null && it >= UserRole.ADMIN.ordinal)
                         || it >= UserRole.LEADER.ordinal)
             }.onEach { canEdit ->

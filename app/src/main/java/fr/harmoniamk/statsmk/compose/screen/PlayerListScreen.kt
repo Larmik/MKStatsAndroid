@@ -1,12 +1,9 @@
 package fr.harmoniamk.statsmk.compose.screen
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -38,60 +35,91 @@ fun PlayerListScreen(teamId: String?, onWarStarted: () -> Unit) {
     val players = viewModel.sharedPlayers.collectAsState()
     val allies = viewModel.sharedAllies.collectAsState()
     val warName = viewModel.sharedWarName.collectAsState()
+    val allPlayersSize = players.value?.size ?: 0
+    val allAlliesSize = allies.value?.size ?: 0
     LaunchedEffect(Unit) {
         viewModel.sharedStarted.filterNotNull().collect {
             onWarStarted()
         }
     }
     MKBaseScreen(title = R.string.cr_er_une_war, subTitle = warName.value) {
-        MKText(
-            text = R.string.s_lectionnez_les_six_joueurs_de_votre_quipe,
-            modifier = Modifier.padding(vertical = 10.dp)
-        )
 
-        LazyColumn(Modifier.weight(1f)) {
-            stickyHeader {
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth().height(40.dp)
-                        .background(color = colorResource(R.color.harmonia_dark))
-                ) {
-                    MKText(
-                        font = R.font.montserrat_bold,
-                        fontSize = 18,
-                        text = "Roster",
-                        textColor = R.color.white
-                    )
-                }
-            }
-            items(items = players.value.orEmpty()) {
-                MKPlayerItem(player = it.user, isSelected = it.isSelected.isTrue, onRootClick = {
-                    viewModel.selectUser(it.copy(isSelected = !it.isSelected.isTrue))
-                }) {
+        when (allPlayersSize + allAlliesSize >= 6) {
+            true -> {
+                MKText(
+                    text = R.string.s_lectionnez_les_six_joueurs_de_votre_quipe,
+                    modifier = Modifier.padding(vertical = 10.dp)
+                )
+                LazyColumn(Modifier.weight(1f)) {
+                    stickyHeader {
+                        Row(
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(40.dp)
+                                .background(color = colorResource(R.color.harmonia_dark))
+                        ) {
+                            MKText(
+                                font = R.font.montserrat_bold,
+                                fontSize = 18,
+                                text = "Roster",
+                                textColor = R.color.white
+                            )
+                        }
+                    }
+                    items(items = players.value.orEmpty()) {
+                        MKPlayerItem(
+                            player = it.user,
+                            isSelected = it.isSelected.isTrue,
+                            onRootClick = {
+                                viewModel.selectUser(it.copy(isSelected = !it.isSelected.isTrue))
+                            }) {
 
-                }
-            }
-            stickyHeader {
-                Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().height(40.dp).background(color = colorResource(R.color.harmonia_dark))) {
-                    MKText(font = R.font.montserrat_bold, fontSize = 18, text = "Allies", textColor = R.color.white)
-                } }
-            items(items = allies.value.orEmpty()) {
-                MKPlayerItem(player = it.user, isSelected = it.isSelected.isTrue, onRootClick = {
-                    viewModel.selectAlly(it.copy(isSelected = !it.isSelected.isTrue))
-                }) {
+                        }
+                    }
+                    stickyHeader {
+                        Row(
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(40.dp)
+                                .background(color = colorResource(R.color.harmonia_dark))
+                        ) {
+                            MKText(
+                                font = R.font.montserrat_bold,
+                                fontSize = 18,
+                                text = "Allies",
+                                textColor = R.color.white
+                            )
+                        }
+                    }
+                    items(items = allies.value.orEmpty()) {
+                        MKPlayerItem(
+                            player = it.user,
+                            isSelected = it.isSelected.isTrue,
+                            onRootClick = {
+                                viewModel.selectAlly(it.copy(isSelected = !it.isSelected.isTrue))
+                            }) {
 
+                        }
+                    }
                 }
+                MKCheckBox(text = R.string.war_officielle, onValue = viewModel::toggleOfficial)
+                val playersSize = (players.value?.filter { it.isSelected.isTrue }?.size) ?: 0
+                val alliesSize = (allies.value?.filter { it.isSelected.isTrue }?.size) ?: 0
+                MKButton(
+                    text = R.string.valider,
+                    enabled = playersSize + alliesSize == 6,
+                    onClick = viewModel::createWar
+                )
             }
+            else -> MKText(
+                text = R.string.no_players_enough,
+                modifier = Modifier.padding(top = 10.dp),
+                font = R.font.montserrat_bold
+            )
         }
-
-        MKCheckBox(text = R.string.war_officielle, onValue = viewModel::toggleOfficial)
-        val playersSize = (players.value?.filter { it.isSelected.isTrue }?.size) ?: 0
-        val alliesSize = (allies.value?.filter { it.isSelected.isTrue }?.size) ?: 0
-        MKButton(
-            text = R.string.valider,
-            enabled =  playersSize + alliesSize == 6,
-            onClick = viewModel::createWar
-        )
     }
 }

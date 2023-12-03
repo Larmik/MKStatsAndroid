@@ -270,7 +270,7 @@
     <string name="soyez_l_h_te_d_une_war_en_d_marrant_une_session_ci_dessous">Soyez l\'hôte d\'une war en démarrant une session ci-dessous.</string>
     <string name="cr_er_une_war">Créer une war</string>
     <string name="derni_res_wars">Dernières wars</string>
-    <string name="jouez_d_abord_des_wars_afin_de_les_voir_appara_tre_ici">Jouez d\'abord des wars afin de les voir apparaître ici.</string>
+    <string name="jouez_d_abord_des_wars_afin_de_les_voir_appara_tre_ici">Bienvenue dans MK Stats ! \n \n Votre équipe n\'a encore jamais joué de war sur cette application. Commencez par rentrer votre première war en cliquant sur le bouton ci-dessus.</string>
     <string name="voir_toutes_les_wars">Voir toutes les wars</string>
     <string name="tous_les_circuits">Tous les circuits :</string>
     <string name="supprimer_la_war">Supprimer la war</string>
@@ -393,4 +393,5 @@
     <string name="ajouter_en_tant_qu_ally">Ajouter en tant qu\'ally</string>
     <string name="ajouter_un_ally">Ajouter un ally</string>
     <string name="shocks_war">Shocks/War</string>
+    <string name="no_players_enough"><![CDATA[Votre équipe ne comporte pas assez de joueurs pour commencer une war. \n \n Vous pouvez aller dans Paramètres -> Mon équipe pour ajouter des joueurs.]]></string>
 </resources>

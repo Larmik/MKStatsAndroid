@@ -81,7 +81,7 @@ fun TeamSettingsScreen(viewModel: TeamSettingsViewModel = hiltViewModel()) {
         Pair(R.string.ajouter_un_joueur, { viewModel.onAddPlayer(false) }),
         Pair(R.string.ajouter_un_ally,{ viewModel.onAddPlayer(true) }),
     )
-
+    viewModel.init()
     LaunchedEffect(Unit) {
         viewModel.sharedBottomSheetValue.collect {
             when (it) {
@@ -132,7 +132,7 @@ fun TeamSettingsScreen(viewModel: TeamSettingsViewModel = hiltViewModel()) {
         placeHolderRes = R.string.rechercher_un_joueur
         )
 
-        LazyColumn {
+        LazyColumn(Modifier.offset(y = (-5).dp)) {
             players.takeIf { it.isNotEmpty() }?.let {
                 stickyHeader {
                     Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().height(40.dp).background(color = colorResource(R.color.harmonia_dark))) {

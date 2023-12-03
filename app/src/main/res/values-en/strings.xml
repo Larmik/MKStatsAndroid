@@ -365,4 +365,8 @@
     <string name="bbc3">Bowser Castle 3</string>
     <string name="brrw">Wii Rainbow Road</string>
     <string name="bmd">Madrid Drive</string>
+    <string name="ajouter_en_tant_qu_ally">Add as ally</string>
+    <string name="ajouter_un_ally">Add ally</string>
+    <string name="shocks_war">Shocks/War</string>
+    <string name="no_players_enough"><![CDATA[Your team has not enough players to play a war. Please go to Settings -> My Team to add players.]]></string>
 </resources>

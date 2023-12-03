@@ -33,6 +33,7 @@ import fr.harmoniamk.statsmk.compose.ui.MKSegmentedButtons
 import fr.harmoniamk.statsmk.compose.ui.MKText
 import fr.harmoniamk.statsmk.compose.ui.MKTextField
 import fr.harmoniamk.statsmk.compose.viewModel.PlayerSettingsViewModel
+import fr.harmoniamk.statsmk.extension.isTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 
@@ -52,6 +53,7 @@ fun PlayersSettingsScreen(
     val players by viewModel.sharedPlayers.collectAsState()
     val dummies by viewModel.sharedPlayersWithoutAccount.collectAsState()
     val addPlayerVisible = viewModel.sharedAddPlayerVisibility.collectAsState()
+    val teamId by viewModel.sharedTeamId.collectAsState()
     val bottomSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
 
     BackHandler { onBack() }
@@ -93,7 +95,7 @@ fun PlayersSettingsScreen(
             placeHolderRes = R.string.rechercher_un_joueur
         )
         LazyColumn(modifier = Modifier.padding(vertical = 10.dp)) {
-            players.takeIf { it.isNotEmpty() }?.let {
+            players.takeIf { it.isNotEmpty() }?.filter { !canAdd || (canAdd && it.player?.allyTeams?.contains(teamId).isTrue) }.let {
                 stickyHeader {
                     Row(
                         horizontalArrangement = Arrangement.Center,

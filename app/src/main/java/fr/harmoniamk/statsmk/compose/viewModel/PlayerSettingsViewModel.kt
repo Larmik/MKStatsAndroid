@@ -53,11 +53,13 @@ class PlayerSettingsViewModel @Inject constructor(
     private val _sharedDismiss = MutableSharedFlow<Unit>()
     private val _sharedBottomSheetValue = MutableStateFlow<MKBottomSheetState?>(null)
     private val _sharedAddPlayerVisibility = MutableStateFlow(false)
+    private val _sharedTeamId = MutableStateFlow<String?>(null)
 
     val sharedPlayers = _sharedPlayers.asStateFlow()
     val sharedPlayersWithoutAccount = _sharedPlayersWithoutAccount.asStateFlow()
     val sharedDismiss = _sharedDismiss.asSharedFlow()
     val sharedBottomSheetValue = _sharedBottomSheetValue.asStateFlow()
+    val sharedTeamId = _sharedTeamId.asStateFlow()
     val sharedAddPlayerVisibility = _sharedAddPlayerVisibility.asStateFlow()
 
     private val players = mutableListOf<User>()
@@ -74,6 +76,7 @@ class PlayerSettingsViewModel @Inject constructor(
                     _sharedPlayersWithoutAccount.value = dummies
                 }
             }
+            .onEach { _sharedTeamId.value = preferencesRepository.currentTeam?.mid }
             .launchIn(viewModelScope)
 
         authenticationRepository.takeIf { preferencesRepository.currentTeam != null }
