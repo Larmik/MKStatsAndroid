@@ -7,6 +7,7 @@ import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
+import fr.harmoniamk.statsmk.repository.MKCentralRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -26,7 +27,8 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class TeamListViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepositoryInterface,
-    private val databaseRepository: DatabaseRepositoryInterface
+    private val databaseRepository: DatabaseRepositoryInterface,
+    mkCentralRepository: MKCentralRepositoryInterface
 ): ViewModel() {
 
     private val _sharedTeams = MutableStateFlow<List<Team>?>( null)
@@ -46,7 +48,9 @@ class TeamListViewModel @Inject constructor(
     }
 
     init {
-        databaseRepository.getTeams()
+
+        mkCentralRepository.teams
+            .map { it.map { mkcTeam -> Team(mid = mkcTeam.team_id.toString(), name = mkcTeam.team_name, shortName = mkcTeam.team_tag, teamColor = mkcTeam.team_color) } }
             .onEach {
                 teams.clear()
                 teams.addAll(it.filterNot { team -> team.mid == preferencesRepository.currentTeam?.mid })

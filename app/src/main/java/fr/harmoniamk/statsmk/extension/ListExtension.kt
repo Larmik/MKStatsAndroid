@@ -5,6 +5,7 @@ import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.fragment.stats.opponentRanking.OpponentRankingItemViewModel
 import fr.harmoniamk.statsmk.model.firebase.*
 import fr.harmoniamk.statsmk.model.local.*
+import fr.harmoniamk.statsmk.model.network.MKCLightPlayer
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
@@ -18,10 +19,6 @@ fun <T> List<T>.safeSubList(from: Int, to: Int): List<T> = when {
     to < from -> listOf()
     else -> this.subList(from, to)
 }
-
-fun List<MapDetails>.getVictory() = this.maxByOrNull { it.warTrack.teamScore }?.takeIf { it.warTrack.displayedDiff.contains('+') }
-fun List<MapDetails>.getDefeat() = this.minByOrNull { it.warTrack.teamScore }?.takeIf { it.warTrack.displayedDiff.contains('-') }
-
 
 fun List<MKWar>.withFullStats(databaseRepository: DatabaseRepositoryInterface, userId: String? = null, teamId: String? = null) = flow {
     Log.d("MKDebugOnly", "ListExtension withFullStats: for list")
@@ -69,10 +66,18 @@ fun List<MKWar>.withFullStats(databaseRepository: DatabaseRepositoryInterface, u
                     else -> teamScoreForTrack
                 }
                 var shockCount = 0
-                track.track?.shocks?.filter { userId == null || it.playerId == userId }?.map { it.count }?.forEach {
+                track.track?.shocks?.filter { userId == null || it.playerId == userId }
+                    ?.map { it.count }?.forEach {
                     shockCount += it
                 }
-                maps.add(TrackStats(trackIndex = track.track?.trackIndex, teamScore = teamScoreForTrack, playerScore = playerScoreForTrack, shockCount = shockCount))
+                maps.add(
+                    TrackStats(
+                        trackIndex = track.track?.trackIndex,
+                        teamScore = teamScoreForTrack,
+                        playerScore = playerScoreForTrack,
+                        shockCount = shockCount
+                    )
+                )
             }
             warScores.add(WarScore(it.first, currentPoints))
             currentPoints = 0
@@ -82,8 +87,10 @@ fun List<MKWar>.withFullStats(databaseRepository: DatabaseRepositoryInterface, u
         .forEach { entry ->
             val stats = TrackStats(
                 map = Maps.values()[entry.key ?: -1],
-                teamScore = (entry.value.map { it.teamScore }.sum() / entry.value.map { it.teamScore }.count()),
-                playerScore = (entry.value.map { it.playerScore }.sum() / entry.value.map { it.playerScore }.count()),
+                teamScore = (entry.value.map { it.teamScore }
+                    .sum() / entry.value.map { it.teamScore }.count()),
+                playerScore = (entry.value.map { it.playerScore }
+                    .sum() / entry.value.map { it.playerScore }.count()),
                 totalPlayed = entry.value.size
             )
             averageForMaps.add(stats)
@@ -116,14 +123,21 @@ fun List<MKWar?>.withName(databaseRepository: DatabaseRepositoryInterface) = flo
     this@withName.forEach { war ->
         war?.let {
             val hostName = databaseRepository.getTeam(it.war?.teamHost).firstOrNull()?.shortName
-            val opponentName = databaseRepository.getTeam(it.war?.teamOpponent).firstOrNull()?.shortName
+            val opponentName =
+                databaseRepository.getTeam(it.war?.teamOpponent).firstOrNull()?.shortName
             temp.add(it.apply { this.name = "$hostName - $opponentName" })
         }
     }
     emit(temp)
 }
 
-fun List<Team>.withFullTeamStats(wars: List<MKWar>?, databaseRepository: DatabaseRepositoryInterface, userId: String? = null, weekOnly: Boolean = false, monthOnly: Boolean = false) = flow {
+fun List<Team>.withFullTeamStats(
+    wars: List<MKWar>?,
+    databaseRepository: DatabaseRepositoryInterface,
+    userId: String? = null,
+    weekOnly: Boolean = false,
+    monthOnly: Boolean = false
+) = flow {
     val temp = mutableListOf<OpponentRankingItemViewModel>()
     Log.d("MKDebugOnly", "ListExtension withFullTeamStats")
     this@withFullTeamStats.forEach { team ->
@@ -145,7 +159,7 @@ fun List<Penalty>.withTeamName(databaseRepository: DatabaseRepositoryInterface) 
     this@withTeamName.forEach {
         val team = databaseRepository.getTeam(it.teamId).firstOrNull()
         temp.add(it.apply {
-             this.teamName = team?.name
+            this.teamName = team?.name
             this.teamShortName = team?.shortName
         })
     }
@@ -163,9 +177,10 @@ fun WarDispo.withLineUpAndOpponent(databaseRepository: DatabaseRepositoryInterfa
             lineupNames.add(playerName)
         }
         this@withLineUpAndOpponent.host?.takeIf { it != "null" }?.let {
-             hostName = when (this@withLineUpAndOpponent.host?.contains("-")) {
+            hostName = when (this@withLineUpAndOpponent.host?.contains("-")) {
                 true -> this@withLineUpAndOpponent.host
-                else -> databaseRepository.getUser(this@withLineUpAndOpponent.host).firstOrNull()?.name
+                else -> databaseRepository.getUser(this@withLineUpAndOpponent.host)
+                    .firstOrNull()?.name
             }
         }
         emit(this@withLineUpAndOpponent.apply {
@@ -185,14 +200,22 @@ fun NewWar?.withName(databaseRepository: DatabaseRepositoryInterface) = flow {
     } ?: emit(null)
 }
 
-fun Team.withFullTeamStats(wars: List<MKWar>?, databaseRepository: DatabaseRepositoryInterface, userId: String? = null, weekOnly: Boolean = false, monthOnly: Boolean = false, isIndiv: Boolean = false) = flow {
+fun Team.withFullTeamStats(
+    wars: List<MKWar>?,
+    databaseRepository: DatabaseRepositoryInterface,
+    userId: String? = null,
+    weekOnly: Boolean = false,
+    monthOnly: Boolean = false,
+    isIndiv: Boolean = false
+) = flow {
     Log.d("MKDebugOnly", "ListExtension withFullTeamStats: for team")
     wars
-            ?.filter { (weekOnly && it.isThisWeek) || !weekOnly }
-            ?.filter { (monthOnly && it.isThisMonth) || !monthOnly }
-            ?.withFullStats(databaseRepository, teamId = this@withFullTeamStats.mid, userId = userId)?.first()
-            ?.takeIf { it.warStats.list.isNotEmpty() }
-            ?.let { emit(it) }
+        ?.filter { (weekOnly && it.isThisWeek) || !weekOnly }
+        ?.filter { (monthOnly && it.isThisMonth) || !monthOnly }
+        ?.withFullStats(databaseRepository, teamId = this@withFullTeamStats.mid, userId = userId)
+        ?.first()
+        ?.takeIf { it.warStats.list.isNotEmpty() }
+        ?.let { emit(it) }
 }
 
 fun List<Int?>?.sum(): Int {
@@ -203,9 +226,9 @@ fun List<Int?>?.sum(): Int {
 
 /** Parsing methods for firebase POJOs **/
 
-fun Any?.toMapList(): List<Map<*,*>>? = this as? List<Map<*,*>>
+fun Any?.toMapList(): List<Map<*, *>>? = this as? List<Map<*, *>>
 fun Any?.toStringList(): List<String>? = this as? List<String>
-fun List<Map<*,*>>?.parseTracks() : List<NewWarTrack>? =
+fun List<Map<*, *>>?.parseTracks(): List<NewWarTrack>? =
     this?.map { track ->
         NewWarTrack(
             mid = track["mid"].toString(),
@@ -227,28 +250,44 @@ fun List<Map<*,*>>?.parseTracks() : List<NewWarTrack>? =
                 }
         )
 
-}
+    }
 
-fun List<Map<*,*>>?.parsePenalties() : List<Penalty>? =
+fun List<Map<*, *>>?.parsePenalties(): List<Penalty>? =
     this?.map { item ->
         Penalty(
             teamId = item["teamId"].toString(),
             amount = item["amount"].toString().toInt()
         )
-}
+    }
 
-fun List<Map<*,*>>?.parsePlayerDispos() : List<PlayerDispo>? =
+fun List<Map<*, *>>?.parsePlayerDispos(): List<PlayerDispo>? =
     this?.map { item ->
         PlayerDispo(
             players = item["players"].toStringList(),
-            dispo =item["dispo"].toString().toInt()
+            dispo = item["dispo"].toString().toInt()
         )
-}
+    }
 
-fun List<Map<*,*>>?.parseLineUp() : List<LineUp>? =
+fun List<Map<*, *>>?.parseLineUp(): List<LineUp>? =
     this?.map { item ->
         LineUp(
             userId = item["userId"].toString(),
-            userDiscordId =item["userDiscordId"].toString()
+            userDiscordId = item["userDiscordId"].toString()
         )
-}
+    }
+
+fun List<Map<*, *>>?.parseRoster(): List<MKCLightPlayer>? =
+    this?.map { item ->
+        MKCLightPlayer(
+            player_id = item["player_id"].toString(),
+            display_name = item["display_name"].toString(),
+            custom_field_name = item["custom_field_name"].toString(),
+            custom_field = item["custom_field"].toString(),
+            player_status = item["player_status"].toString(),
+            registered_since = item["registered_since"].toString(),
+            country_code = item["country_code"].toString(),
+            registered_since_human = item["registered_since_human"].toString(),
+            country_name = item["country_name"].toString(),
+            team_leader = item["team_leader"].toString(),
+        )
+    }

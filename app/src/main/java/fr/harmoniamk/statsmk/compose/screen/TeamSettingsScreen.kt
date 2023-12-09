@@ -1,25 +1,18 @@
 package fr.harmoniamk.statsmk.compose.screen
 
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
@@ -41,6 +34,7 @@ import coil.compose.AsyncImage
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKBaseScreen
 import fr.harmoniamk.statsmk.compose.ui.MKBottomSheet
+import fr.harmoniamk.statsmk.compose.ui.MKCPlayerItem
 import fr.harmoniamk.statsmk.compose.ui.MKPlayerItem
 import fr.harmoniamk.statsmk.compose.ui.MKSegmentedButtons
 import fr.harmoniamk.statsmk.compose.ui.MKText
@@ -62,25 +56,11 @@ fun TeamSettingsScreen(viewModel: TeamSettingsViewModel = hiltViewModel()) {
     val currentState = viewModel.sharedBottomSheetValue.collectAsState(null)
     val bottomSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
     val manageVisible = viewModel.sharedManageVisible.collectAsState()
-    val launcher = rememberLauncherForActivityResult(
-        ActivityResultContracts.PickVisualMedia(),
-        onResult = viewModel::onPictureEdited
-    )
-    val topButtons = listOf(
-        Pair(R.string.modifier_l_quipe, viewModel::onEditTeam),
-        Pair(R.string.modifier_le_logo) {
-            launcher.launch(
-                PickVisualMediaRequest(
-                    mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
-                )
-            )
-        },
-    )
 
-    val bottomButtons = listOf(
-        Pair(R.string.ajouter_un_joueur, { viewModel.onAddPlayer(false) }),
+    val topButtons = listOf(
         Pair(R.string.ajouter_un_ally,{ viewModel.onAddPlayer(true) }),
     )
+
     viewModel.init()
     LaunchedEffect(Unit) {
         viewModel.sharedBottomSheetValue.collect {
@@ -119,9 +99,6 @@ fun TeamSettingsScreen(viewModel: TeamSettingsViewModel = hiltViewModel()) {
             )
         }
         Spacer(modifier = Modifier.height(10.dp))
-        manageVisible.value.takeIf { it }?.let {
-            MKSegmentedButtons(buttons = bottomButtons)
-        }
         MKTextField(
             modifier = Modifier.offset(y = (-7.5).dp).fillMaxWidth(),
                 value = searchState.value,
@@ -140,11 +117,7 @@ fun TeamSettingsScreen(viewModel: TeamSettingsViewModel = hiltViewModel()) {
                     }
                 }
                 items(items = players) {
-                    MKPlayerItem(
-                        player = it.player,
-                        editVisible = it.canEdit,
-                        onEditClick = viewModel::onEditPlayer
-                    )
+                    MKCPlayerItem(player = it)
                 }
             }
 

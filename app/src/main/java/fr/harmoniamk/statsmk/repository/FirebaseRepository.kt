@@ -134,7 +134,6 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
                     mid = it["mid"].toString(),
                     name = it["name"].toString(),
                     shortName = it["shortName"].toString(),
-                    hasLeader = it["hasLeader"].toString().toBoolean()
                 ) }
             if (isActive) trySend(teams)
         }

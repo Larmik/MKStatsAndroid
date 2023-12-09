@@ -37,7 +37,6 @@ class CreateTeamViewModel @Inject constructor(private val firebaseRepository: Fi
                     mid = id,
                     name = name,
                     shortName = shortName,
-                    picture = "https://firebasestorage.googleapis.com/v0/b/stats-mk.appspot.com/o/mk_stats_logo.png?alt=media&token=930c6fdb-9e42-4b23-a9de-3c069d2f982b"
                 )
                 if (teamWithLeader) preferencesRepository.currentTeam = team
                 team
@@ -54,7 +53,7 @@ class CreateTeamViewModel @Inject constructor(private val firebaseRepository: Fi
                         ?.equals(name.lowercase()).isTrue
                             || team.shortName?.lowercase()
                         ?.equals(shortName.lowercase()).isTrue
-                }?.takeIf { !it.hasLeader.isTrue }?.apply { this.hasLeader = true }
+                }
             }
             .onEach { preferencesRepository.currentTeam = it }
             .flatMapLatest { firebaseRepository.writeTeam(it) }
@@ -78,8 +77,6 @@ class CreateTeamViewModel @Inject constructor(private val firebaseRepository: Fi
                     mid = id,
                     name = name,
                     shortName = shortName,
-                    hasLeader = true,
-                    picture = "https://firebasestorage.googleapis.com/v0/b/stats-mk.appspot.com/o/mk_stats_logo.png?alt=media&token=930c6fdb-9e42-4b23-a9de-3c069d2f982b"
                 )
                 preferencesRepository.currentTeam = team
                 team

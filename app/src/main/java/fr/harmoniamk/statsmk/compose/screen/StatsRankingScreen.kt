@@ -133,7 +133,7 @@ fun StatsRankingScreen(
                     }
 
                     is OpponentRankingItemViewModel -> {
-                        MKTeamItem(teamRanking = rankingItem, onClick = { viewModel.onItemClick(rankingItem) }, isVertical = false) {}
+                        MKTeamItem(teamRanking = rankingItem, onClick = { viewModel.onItemClick(rankingItem) }) {}
                     }
 
                     is TrackStats -> {

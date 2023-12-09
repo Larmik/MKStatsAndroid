@@ -1,37 +1,31 @@
 package fr.harmoniamk.statsmk.compose.viewModel
 
-import android.net.Uri
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.harmoniamk.statsmk.model.local.ManagePlayersItemViewModel
 import fr.harmoniamk.statsmk.compose.ui.MKBottomSheetState
 import fr.harmoniamk.statsmk.enums.UserRole
-import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.extension.withName
-import fr.harmoniamk.statsmk.model.firebase.PictureResponse
-import fr.harmoniamk.statsmk.model.firebase.Team
-import fr.harmoniamk.statsmk.model.firebase.UploadPictureResponse
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.MKWar
+import fr.harmoniamk.statsmk.model.local.ManagePlayersItemViewModel
+import fr.harmoniamk.statsmk.model.network.MKCLightPlayer
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
+import fr.harmoniamk.statsmk.repository.MKCentralRepositoryInterface
 import fr.harmoniamk.statsmk.repository.NetworkRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import fr.harmoniamk.statsmk.repository.StorageRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
@@ -45,13 +39,13 @@ import javax.inject.Inject
 class TeamSettingsViewModel @Inject constructor(
     private val firebaseRepository: FirebaseRepositoryInterface,
     private val preferencesRepository: PreferencesRepositoryInterface,
-    private val storageRepository: StorageRepository,
     private val authenticationRepository: AuthenticationRepositoryInterface,
     private val databaseRepository: DatabaseRepositoryInterface,
+    private val mkCentralRepository: MKCentralRepositoryInterface,
     private val networkRepository: NetworkRepositoryInterface
 ) : ViewModel() {
 
-    private val _sharedPlayers = MutableStateFlow<SnapshotStateList<ManagePlayersItemViewModel>>(SnapshotStateList())
+    private val _sharedPlayers = MutableStateFlow<List<MKCLightPlayer>>(listOf())
     private val _sharedAllies = MutableStateFlow<SnapshotStateList<ManagePlayersItemViewModel>>(SnapshotStateList())
     private val _sharedTeamName = MutableStateFlow<String?>(null)
     private val _sharedPictureLoaded = MutableStateFlow<String?>(null)
@@ -70,28 +64,28 @@ class TeamSettingsViewModel @Inject constructor(
     private val allPlayers = mutableListOf<User>()
 
     fun init() {
+        mkCentralRepository.getTeam("874")
+            .onEach {
+                _sharedTeamName.emit(it.team_name)
+                _sharedPictureLoaded.emit(it.logoUrl)
+                _sharedPlayers.emit(it.rosterList.orEmpty())
+            }.launchIn(viewModelScope)
+
         databaseRepository.getUsers()
             .onEach {
-                _sharedTeamName.emit(preferencesRepository.currentTeam?.name)
+               // _sharedTeamName.emit(preferencesRepository.currentTeam?.name)
                 allPlayers.clear()
                 allPlayers.addAll(it)
-                _sharedPlayers.emit(createPlayersList(list = it).first())
+                //_sharedPlayers.emit(createPlayersList(list = it).first())
                 _sharedAllies.emit(createAllyList(list = it).first())
             }
-            .flatMapLatest { storageRepository.getPicture(preferencesRepository.currentTeam?.mid) }
-            .onEach { _sharedPictureLoaded.emit((it as? PictureResponse.Success)?.url) }
+
             .launchIn(viewModelScope)
 
         authenticationRepository.userRole
             .mapNotNull { it >= UserRole.LEADER.ordinal && networkRepository.networkAvailable }
             .onEach { _sharedManageVisible.value = it }
             .launchIn(viewModelScope)
-    }
-
-    fun onEditTeam() {
-        preferencesRepository.currentTeam?.mid?.let {
-            _sharedBottomSheetValue.value = MKBottomSheetState.EditTeam(it)
-        }
     }
 
     fun onAddPlayer(ally: Boolean) {
@@ -102,22 +96,6 @@ class TeamSettingsViewModel @Inject constructor(
         _sharedBottomSheetValue.value = MKBottomSheetState.EditPlayer(player.mid)
     }
 
-    fun onPictureEdited(pictureUri: Uri?) {
-        pictureUri?.let { uri ->
-            var url: String? = null
-            storageRepository.uploadPicture(preferencesRepository.currentTeam?.mid, uri)
-                .filter { it is UploadPictureResponse.Success }
-                .mapNotNull { preferencesRepository.currentTeam?.mid }
-                .flatMapLatest { storageRepository.getPicture(it) }
-                .mapNotNull { url = (it as? PictureResponse.Success)?.url; url }
-                .onEach { preferencesRepository.currentTeam = preferencesRepository.currentTeam?.apply { this.picture = url } }
-                .mapNotNull { preferencesRepository.currentTeam }
-                .flatMapLatest { firebaseRepository.writeTeam(it) }
-                .onEach { _sharedPictureLoaded.emit(url) }
-                .launchIn(viewModelScope)
-        }
-    }
-
     fun onSearch(searched: String) {
         createPlayersList(
             when (searched.isNotEmpty()) {
@@ -125,7 +103,7 @@ class TeamSettingsViewModel @Inject constructor(
                 else -> allPlayers
             }
         ).onEach {
-            _sharedPlayers.value = it
+            //_sharedPlayers.value = it
         }.launchIn(viewModelScope)
     }
 

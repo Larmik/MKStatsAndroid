@@ -99,12 +99,6 @@ class MainViewModel @Inject constructor(
                                 val finalLocalDb = localDb.filter { it.war?.teamHost == preferencesRepository.currentTeam?.mid }
                                 Log.d("MKDebugOnly", "local db size: ${finalLocalDb.size}")
                                 Log.d("MKDebugOnly", "remote db size: ${remoteDb.size}")
-                                user?.formerTeams?.takeIf { it.isNotEmpty() }?.let {
-                                    it.forEach {
-                                        val wars = remoteDb.map {  MKWar(it)  }.withName(databaseRepository).first()
-                                        databaseRepository.writeWars(wars).first()
-                                    }
-                                }
                                 when (finalLocalDb.size == remoteDb.size) {
                                     true -> localDb
                                     else -> remoteDb
@@ -113,7 +107,6 @@ class MainViewModel @Inject constructor(
                                         .onEach { databaseRepository.writeWars(it).first() }
                                         .first()
                                 }
-
                             }.firstOrNull()
                         }
                         _sharedWelcomeScreen.emit(WelcomeScreen.Home)
