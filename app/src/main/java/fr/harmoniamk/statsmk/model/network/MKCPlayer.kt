@@ -56,7 +56,9 @@ data class MKCLightPlayer(
     val country_code: String,
     val country_name: String,
     val team_leader: String
-)
+) {
+    val flag = "https://www.mariokartcentral.com/mkc/images/flags/${country_code.lowercase()}.png"
+}
 
 @Keep
 @JsonClass(generateAdapter = true)

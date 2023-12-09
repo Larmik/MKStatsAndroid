@@ -4,12 +4,15 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -20,14 +23,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
@@ -38,7 +38,6 @@ import fr.harmoniamk.statsmk.compose.ui.MKCPlayerItem
 import fr.harmoniamk.statsmk.compose.ui.MKPlayerItem
 import fr.harmoniamk.statsmk.compose.ui.MKSegmentedButtons
 import fr.harmoniamk.statsmk.compose.ui.MKText
-import fr.harmoniamk.statsmk.compose.ui.MKTextField
 import fr.harmoniamk.statsmk.compose.viewModel.TeamSettingsViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -49,17 +48,13 @@ import kotlinx.coroutines.FlowPreview
 @Composable
 fun TeamSettingsScreen(viewModel: TeamSettingsViewModel = hiltViewModel()) {
     val picture = viewModel.sharedPictureLoaded.collectAsState()
-    val teamName = viewModel.sharedTeamName.collectAsState()
-    val searchState = remember { mutableStateOf(TextFieldValue("")) }
+    val team = viewModel.sharedTeam.collectAsState()
     val players by viewModel.sharedPlayers.collectAsState()
     val allies by viewModel.sharedAllies.collectAsState()
     val currentState = viewModel.sharedBottomSheetValue.collectAsState(null)
     val bottomSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
     val manageVisible = viewModel.sharedManageVisible.collectAsState()
-
-    val topButtons = listOf(
-        Pair(R.string.ajouter_un_ally,{ viewModel.onAddPlayer(true) }),
-    )
+    val topButtons = listOf(Pair(R.string.ajouter_un_ally,{ viewModel.onAddPlayer(true) }),)
 
     viewModel.init()
     LaunchedEffect(Unit) {
@@ -71,7 +66,7 @@ fun TeamSettingsScreen(viewModel: TeamSettingsViewModel = hiltViewModel()) {
         }
     }
     MKBaseScreen(title = R.string.mon_quipe,
-        subTitle = teamName.value.orEmpty(),
+        subTitle = team.value?.team_name.orEmpty(),
         state = bottomSheetState,
         sheetContent = {
             MKBottomSheet(
@@ -86,28 +81,28 @@ fun TeamSettingsScreen(viewModel: TeamSettingsViewModel = hiltViewModel()) {
         manageVisible.value.takeIf { it }?.let {
             MKSegmentedButtons(buttons = topButtons)
         }
-        when (picture.value) {
-            null -> Image(
-                painter = painterResource(R.drawable.mk_stats_logo_picture),
-                contentDescription = null,
-                modifier = Modifier.size(100.dp).clip(CircleShape)
-            )
-            else ->  AsyncImage(
-                model = picture.value,
-                contentDescription = null,
-                modifier = Modifier.size(100.dp).clip(CircleShape)
-            )
+        Row(Modifier.fillMaxWidth().padding(10.dp), horizontalArrangement = Arrangement.SpaceAround) {
+            when (picture.value) {
+                null -> Image(
+                    painter = painterResource(R.drawable.mk_stats_logo_picture),
+                    contentDescription = null,
+                    modifier = Modifier.size(120.dp).clip(CircleShape)
+                )
+                else ->  AsyncImage(
+                    model = picture.value,
+                    contentDescription = null,
+                    modifier = Modifier.size(120.dp).clip(CircleShape)
+                )
+            }
+            Spacer(Modifier.width(10.dp))
+            Column(Modifier.height(120.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+                team.value?.createdDate?.let {
+                    MKText(text = String.format("Date de création : %s", it), fontSize = 12, font = R.font.montserrat_bold)
+                    Spacer(Modifier.height(10.dp))
+                }
+                MKText(text = team.value?.team_description.orEmpty(), fontSize = 10)
+            }
         }
-        Spacer(modifier = Modifier.height(10.dp))
-        MKTextField(
-            modifier = Modifier.offset(y = (-7.5).dp).fillMaxWidth(),
-                value = searchState.value,
-        onValueChange = {
-            searchState.value = it
-            viewModel.onSearch(it.text)
-        },
-        placeHolderRes = R.string.rechercher_un_joueur
-        )
 
         LazyColumn(Modifier.offset(y = (-5).dp)) {
             players.takeIf { it.isNotEmpty() }?.let {
@@ -135,7 +130,6 @@ fun TeamSettingsScreen(viewModel: TeamSettingsViewModel = hiltViewModel()) {
                     )
                 }
             }
-
         }
     }
 }

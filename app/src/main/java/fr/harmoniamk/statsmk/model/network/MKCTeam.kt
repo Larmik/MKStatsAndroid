@@ -2,6 +2,8 @@ package fr.harmoniamk.statsmk.model.network
 
 import androidx.annotation.Keep
 import com.squareup.moshi.JsonClass
+import fr.harmoniamk.statsmk.extension.displayedString
+import fr.harmoniamk.statsmk.extension.formatToDate
 import fr.harmoniamk.statsmk.extension.parseRoster
 
 @Keep
@@ -63,5 +65,6 @@ data class MKCFullTeam(
 
     val logoUrl = "https://www.mariokartcentral.com/mkc/storage/$team_logo"
     val rosterList = (((rosters as? Map<*,*>)?.get("150cc") as? Map<*,*>)?.get("members") as? List<Map<*, *>>).parseRoster()
+    val createdDate = founding_date.date.split(".").first().formatToDate("yyyy-MM-dd HH:mm:ss")?.displayedString("dd MMMM yyyy")
 
 }

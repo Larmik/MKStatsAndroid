@@ -72,6 +72,9 @@ fun Int.trackScoreToDiff() : String {
         else -> "0"
     }
 }
+
+fun Color.Companion.fromHex(hexa: String) = Color(android.graphics.Color.parseColor(hexa))
+
 fun Int?.toTeamColor()  = Color(android.graphics.Color.parseColor(when (this) {
     1 -> "#ef5350"
     2 -> "#ffa726"

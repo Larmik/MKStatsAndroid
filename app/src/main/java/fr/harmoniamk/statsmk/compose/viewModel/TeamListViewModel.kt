@@ -48,7 +48,6 @@ class TeamListViewModel @Inject constructor(
     }
 
     init {
-
         mkCentralRepository.teams
             .map { it.map { mkcTeam -> Team(mid = mkcTeam.team_id.toString(), name = mkcTeam.team_name, shortName = mkcTeam.team_tag, teamColor = mkcTeam.team_color) } }
             .onEach {

@@ -1,8 +1,6 @@
 package fr.harmoniamk.statsmk.datasource
 
 import android.util.Log
-import com.squareup.moshi.Moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -20,7 +18,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import retrofit2.Call
 import retrofit2.Callback
-import retrofit2.converter.moshi.MoshiConverterFactory
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -45,48 +42,28 @@ interface MKCentralNetworkDataSourceModule {
 class MKCentralNetworkDataSource @Inject constructor() : MKCentralNetworkDataSourceInterface {
 
     override val teams: Flow<List<MKCTeam>> = callbackFlow {
+        val call = RetrofitUtils.createRetrofit(apiClass = MKCentralAPI::class.java, url = MKCentralAPI.baseUrl,).getTeams()
+        call.enqueue(object : Callback<MKCTeamResponse> {
 
-            val builder = Moshi.Builder()
-                .add(KotlinJsonAdapterFactory())
-                .build()
+            override fun onResponse(
+                call: Call<MKCTeamResponse>,
+                response: retrofit2.Response<MKCTeamResponse>
+            ) {
+                Log.d("MKDebugOnly", "MKC teams onResponse: ")
+                val result = response.body()
+                trySend(result?.data.orEmpty())
+            }
 
-            val call = RetrofitUtils.createRetrofit(
-                apiClass = MKCentralAPI::class.java,
-                factory = MoshiConverterFactory.create(builder),
-                url = MKCentralAPI.baseUrl,
-            ).getTeams()
+            override fun onFailure(call: Call<MKCTeamResponse>, t: Throwable) {
+                Log.d("MKDebugOnly", "MKC team onFailure: ${t.message}")
+            }
 
-            call.enqueue(object : Callback<MKCTeamResponse> {
-
-                override fun onResponse(
-                    call: Call<MKCTeamResponse>,
-                    response: retrofit2.Response<MKCTeamResponse>
-                ) {
-                    Log.d("MKDebugOnly", "MKC teams onResponse: ")
-                    val result = response.body()
-                    trySend(result?.data.orEmpty())
-                }
-
-                override fun onFailure(call: Call<MKCTeamResponse>, t: Throwable) {
-                    Log.d("MKDebugOnly", "MKC team onFailure: ${t.message}")
-                }
-
-            })
-            awaitClose { call.cancel() }
-        }
+        })
+        awaitClose { call.cancel() }
+    }
 
     override fun getTeam(id: String): Flow<MKCFullTeam>  = callbackFlow {
-
-        val builder = Moshi.Builder()
-            .add(KotlinJsonAdapterFactory())
-            .build()
-
-        val call = RetrofitUtils.createRetrofit(
-            apiClass = MKCentralAPI::class.java,
-            factory = MoshiConverterFactory.create(builder),
-            url = MKCentralAPI.baseUrl,
-        ).getTeam(id)
-
+        val call = RetrofitUtils.createRetrofit(apiClass = MKCentralAPI::class.java, url = MKCentralAPI.baseUrl,).getTeam(id)
         call.enqueue(object : Callback<MKCFullTeam> {
 
             override fun onResponse(
@@ -109,17 +86,7 @@ class MKCentralNetworkDataSource @Inject constructor() : MKCentralNetworkDataSou
 
 
     override fun getPlayer(id: String): Flow<MKCFullPlayer>  = callbackFlow {
-
-        val builder = Moshi.Builder()
-            .add(KotlinJsonAdapterFactory())
-            .build()
-
-        val call = RetrofitUtils.createRetrofit(
-            apiClass = MKCentralAPI::class.java,
-            factory = MoshiConverterFactory.create(builder),
-            url = MKCentralAPI.baseUrl,
-        ).getPlayer(id)
-
+        val call = RetrofitUtils.createRetrofit(apiClass = MKCentralAPI::class.java, url = MKCentralAPI.baseUrl,).getPlayer(id)
         call.enqueue(object : Callback<MKCFullPlayer> {
 
             override fun onResponse(
@@ -133,7 +100,7 @@ class MKCentralNetworkDataSource @Inject constructor() : MKCentralNetworkDataSou
             }
 
             override fun onFailure(call: Call<MKCFullPlayer>, t: Throwable) {
-                Log.d("MKDebugOnly", "MKC team onFailure: ${t.message}")
+                Log.d("MKDebugOnly", "MKC player onFailure: ${t.message}")
             }
 
         })

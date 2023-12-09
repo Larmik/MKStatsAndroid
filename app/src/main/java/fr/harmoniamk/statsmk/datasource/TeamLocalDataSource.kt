@@ -52,5 +52,4 @@ class TeamLocalDataSource @Inject constructor(@ApplicationContext private val co
 
     override fun clear(): Flow<Unit> = flow { emit(dao.clear()) }
 
-
 }
