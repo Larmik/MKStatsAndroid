@@ -22,7 +22,7 @@ import kotlinx.coroutines.FlowPreview
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class, ExperimentalMaterialApi::class)
 @Composable
-fun OpponentSettingsScreen(viewModel: OpponentSettingsViewModel = hiltViewModel()) {
+fun OpponentSettingsScreen(viewModel: OpponentSettingsViewModel = hiltViewModel(), onTeamClick: (String) -> Unit) {
     val searchState = remember { mutableStateOf(TextFieldValue("")) }
     val teams = viewModel.sharedTeams.collectAsState()
 
@@ -39,7 +39,7 @@ fun OpponentSettingsScreen(viewModel: OpponentSettingsViewModel = hiltViewModel(
             items(items = teams.value) {
                 MKCTeamItem(
                     team = it,
-                    onClick = {},
+                    onClick = onTeamClick,
                 )
             }
         }

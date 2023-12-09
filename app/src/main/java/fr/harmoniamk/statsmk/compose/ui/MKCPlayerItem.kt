@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
@@ -40,7 +39,7 @@ fun MKCPlayerItem(player: MKCLightPlayer, onPlayerClick: (String) -> Unit) {
             AsyncImage(
                 model = player.flag,
                 contentDescription = null,
-                modifier = Modifier.size(30.dp).clip(CircleShape),
+                modifier = Modifier.width(40.dp).height(30.dp).clip(CircleShape),
                 contentScale = ContentScale.FillBounds
             )
             Row(

@@ -7,6 +7,7 @@ import fr.harmoniamk.statsmk.compose.viewModel.PlayerListViewModel
 import fr.harmoniamk.statsmk.compose.viewModel.PlayerProfileViewModel
 import fr.harmoniamk.statsmk.compose.viewModel.PositionViewModel
 import fr.harmoniamk.statsmk.compose.viewModel.StatsRankingViewModel
+import fr.harmoniamk.statsmk.compose.viewModel.TeamProfileViewModel
 import fr.harmoniamk.statsmk.compose.viewModel.TrackDetailsViewModel
 import fr.harmoniamk.statsmk.compose.viewModel.TrackListViewModel
 import fr.harmoniamk.statsmk.compose.viewModel.WarDetailsViewModel
@@ -27,4 +28,5 @@ interface ViewModelFactoryProvider {
     val warTrackResultViewModel: WarTrackResultViewModel.Factory
     val statsRankingViewModel: StatsRankingViewModel.Factory
     val playerProfileViewModel: PlayerProfileViewModel.Factory
+    val teamProfileViewModel: TeamProfileViewModel.Factory
 }

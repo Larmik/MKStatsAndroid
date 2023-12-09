@@ -10,6 +10,7 @@ import fr.harmoniamk.statsmk.compose.ui.MKDialogState
 import fr.harmoniamk.statsmk.model.firebase.PictureResponse
 import fr.harmoniamk.statsmk.model.firebase.ResetPasswordResponse
 import fr.harmoniamk.statsmk.model.firebase.UploadPictureResponse
+import fr.harmoniamk.statsmk.model.network.MKCFullPlayer
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
@@ -43,27 +44,17 @@ class ProfileViewModel @Inject constructor(
     private val databaseRepository: DatabaseRepositoryInterface,
     private val networkRepository: NetworkRepositoryInterface) : ViewModel() {
 
-    private val _sharedPictureLoaded = MutableStateFlow<String?>(null)
     private val _sharedDisconnect = MutableSharedFlow<Unit>()
-    private val _sharedTeam = MutableStateFlow<String?>(null)
-    private val _sharedFriendCode = MutableStateFlow<String?>(null)
-    private val _sharedRole = MutableStateFlow<Int?>(null)
-    private val _sharedLocalPicture = MutableStateFlow<Int?>(null)
-    private val _sharedBottomSheetValue = MutableStateFlow<MKBottomSheetState?>(null)
+     private val _sharedBottomSheetValue = MutableStateFlow<MKBottomSheetState?>(null)
     private val _sharedDialogValue = MutableStateFlow<MKDialogState?>(null)
-    private val _sharedName = MutableStateFlow<String?>(null)
     private val _sharedEmail = MutableStateFlow<String?>(null)
+    private val _sharedPlayer = MutableStateFlow<MKCFullPlayer?>(null)
 
-    val sharedPictureLoaded =_sharedPictureLoaded.asStateFlow()
     val sharedDisconnect =_sharedDisconnect.asSharedFlow()
-    val sharedTeam = _sharedTeam.asStateFlow()
-    val sharedFriendCode = _sharedFriendCode.asStateFlow()
-    val sharedRole = _sharedRole.asStateFlow()
-    val sharedLocalPicture = _sharedLocalPicture.asStateFlow()
     val sharedBottomSheetValue = _sharedBottomSheetValue.asSharedFlow()
     val sharedDialogValue = _sharedDialogValue.asSharedFlow()
-    val sharedName = _sharedName.asStateFlow()
     val sharedEmail = _sharedEmail.asStateFlow()
+    val sharedPlayer = _sharedPlayer.asStateFlow()
 
     init { refresh() }
 
@@ -71,12 +62,8 @@ class ProfileViewModel @Inject constructor(
         flowOf(preferencesRepository.mkcPlayer)
             .filterNotNull()
             .onEach {
-                _sharedName.value = it.display_name
-                _sharedTeam.value = it.current_teams.firstOrNull()?.team_name
-                _sharedPictureLoaded.value = it.profile_picture?.takeIf { it.isNotEmpty() } ?: authenticationRepository.user?.photoUrl?.toString()
-                _sharedEmail.value = authenticationRepository.user?.email
-                _sharedLocalPicture.takeIf { !networkRepository.networkAvailable }?.value = R.drawable.mk_stats_logo_picture
-                _sharedFriendCode.value = it.switch_fc
+                _sharedPlayer.value = it
+               _sharedEmail.value = authenticationRepository.user?.email
             }.launchIn(viewModelScope)
     }
 
@@ -135,7 +122,7 @@ class ProfileViewModel @Inject constructor(
                 .filterNotNull()
                 .flatMapLatest { firebaseRepository.writeUser(it.apply { this.picture = url }) }
                 .flatMapLatest { authenticationRepository.updateProfile(authenticationRepository.user?.displayName.toString(), url) }
-                .onEach { _sharedPictureLoaded.emit(url) }
+               // .onEach { _sharedPictureLoaded.emit(url) }
                 .launchIn(viewModelScope)
         }
     }

@@ -70,7 +70,7 @@ fun PlayerProfileScreen(id: String) {
                         AsyncImage(
                             model = player.value?.flag,
                             contentDescription = null,
-                            modifier = Modifier.size(30.dp).clip(CircleShape),
+                            modifier = Modifier.width(40.dp).height(30.dp).clip(CircleShape),
                             contentScale = ContentScale.FillBounds
                         )
                         Spacer(Modifier.width(20.dp))

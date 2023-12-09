@@ -6,13 +6,17 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
@@ -21,6 +25,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -42,19 +48,14 @@ import kotlinx.coroutines.FlowPreview
 @Composable
 fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), onLogout: () -> Unit) {
 
-    val picture = viewModel.sharedPictureLoaded.collectAsState()
-    val name = viewModel.sharedName.collectAsState()
     val email = viewModel.sharedEmail.collectAsState()
-    val team = viewModel.sharedTeam.collectAsState()
-    val fc = viewModel.sharedFriendCode.collectAsState()
-    val role = viewModel.sharedRole.collectAsState()
-    val localPicture = viewModel.sharedLocalPicture.collectAsState()
     val currentState = viewModel.sharedBottomSheetValue.collectAsState(null)
     val dialogState = viewModel.sharedDialogValue.collectAsState(null)
     val launcher = rememberLauncherForActivityResult(
         ActivityResultContracts.PickVisualMedia(),
         onResult = viewModel::onPictureEdited
     )
+    val player = viewModel.sharedPlayer.collectAsState()
     val bottomSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
 
     LaunchedEffect(Unit) {
@@ -86,66 +87,105 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), onLogout: () ->
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.verticalScroll(rememberScrollState())
         ) {
-            AsyncImage(
-                model = picture.value, contentDescription = null, modifier = Modifier
-                    .size(170.dp)
-                    .padding(top = 15.dp)
-            )
-            localPicture.value?.let {
-                Image(
-                    painter = painterResource(id = it),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(170.dp)
-                        .padding(top = 15.dp)
-                )
-            }
-            MKText(
-                text = name.value.orEmpty(),
-                fontSize = 26,
-                font = R.font.montserrat_bold,
-                modifier = Modifier.padding(vertical = 15.dp)
-            )
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth(0.95f)
-                    .height(1.dp)
-                    .background(color = colorResource(id = R.color.white))
-            )
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(15.dp), horizontalAlignment = Alignment.Start
-            ) {
-                team.value?.let {
-                    MKText(text = stringResource(id = R.string.equipe_actuelle))
-                    MKText(
-                        text = team.value.orEmpty(),
-                        fontSize = 16,
-                        font = R.font.montserrat_bold,
-                        modifier = Modifier.padding(bottom = 15.dp)
+            when (player.value) {
+                null ->  CircularProgressIndicator(
+                    modifier = Modifier.padding(vertical = 10.dp), color = colorResource(
+                        id = R.color.harmonia_dark
                     )
-                    role.value?.let {
-                        MKText(text = stringResource(id = R.string.r_le))
+                )
+                else -> {
+                    when (player.value?.profile_picture?.takeIf { it.isNotEmpty() }) {
+                        null -> Image(
+                            painter = painterResource(R.drawable.mk_stats_logo_picture),
+                            contentDescription = null,
+                            modifier = Modifier.size(120.dp).clip(CircleShape)
+                        )
+                        else -> AsyncImage(
+                            model = player.value?.profile_picture, contentDescription = null, modifier = Modifier
+                                .size(170.dp)
+                                .padding(top = 15.dp)
+                        )
+                    }
+
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        AsyncImage(
+                            model = player.value?.flag,
+                            contentDescription = null,
+                            modifier = Modifier.size(30.dp).clip(CircleShape),
+                            contentScale = ContentScale.FillBounds
+                        )
+                        Spacer(Modifier.width(20.dp))
+                        MKText(
+                            text = player.value?.display_name.orEmpty(),
+                            fontSize = 26,
+                            font = R.font.montserrat_bold,
+                            modifier = Modifier.padding(vertical = 15.dp)
+                        )
+                    }
+
+                    player.value?.profile_message?.let {
                         MKText(
                             text = it,
-                            fontSize = 16,
-                            font = R.font.montserrat_bold,
-                            modifier = Modifier.padding(bottom = 15.dp)
+                            modifier = Modifier.padding(vertical = 15.dp)
                         )
-
                     }
-                }
-                MKText(text = stringResource(id = R.string.adresse_mail))
-                MKText(
-                    text = email.value.orEmpty(),
-                    fontSize = 16,
-                    font = R.font.montserrat_bold,
-                    modifier = Modifier.padding(bottom = 15.dp)
-                )
-                fc.value?.let {
-                    MKText(text = stringResource(id = R.string.code_ami))
-                    MKText(text = fc.value.orEmpty(), fontSize = 16, font = R.font.montserrat_bold)
+
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxWidth(0.95f)
+                            .height(1.dp)
+                            .background(color = colorResource(id = R.color.white))
+                    )
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(15.dp), horizontalAlignment = Alignment.Start
+                    ) {
+                        player.value?.createdDate?.let {
+                            MKText(text = stringResource(id = R.string.inscrit_depuis))
+                            MKText(
+                                text = it,
+                                fontSize = 16,
+                                font = R.font.montserrat_bold,
+                                modifier = Modifier.padding(bottom = 15.dp)
+                            )
+                        }
+                        player.value?.current_teams?.firstOrNull().let {
+                            MKText(text = stringResource(id = R.string.equipe_actuelle))
+                            MKText(
+                                text = it?.team_name.orEmpty(),
+                                fontSize = 16,
+                                font = R.font.montserrat_bold,
+                                modifier = Modifier.padding(bottom = 15.dp)
+                            )
+                        }
+
+                        email.value?.let {
+                            MKText(text = stringResource(id = R.string.adresse_mail))
+                            MKText(
+                                text = it,
+                                fontSize = 16,
+                                font = R.font.montserrat_bold,
+                                modifier = Modifier.padding(bottom = 15.dp)
+                            )
+                        }
+                        player.value?.switch_fc?.let {
+                            MKText(text = stringResource(id = R.string.code_ami))
+                            MKText(text = it, fontSize = 16, font = R.font.montserrat_bold,
+                                modifier = Modifier.padding(bottom = 15.dp)
+                            )
+                        }
+                        player.value?.discord_tag?.let {
+                            MKText(text = stringResource(id = R.string.discord_tag))
+                            MKText(text = it, fontSize = 16, font = R.font.montserrat_bold)
+                        }
+                    }
+                    Spacer(
+                        modifier = Modifier
+                            .fillMaxWidth(0.95f)
+                            .height(1.dp)
+                            .background(color = colorResource(id = R.color.white))
+                    )
                 }
             }
             Spacer(
@@ -158,7 +198,7 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), onLogout: () ->
                 listOf(
                     MenuItems.ChangeMail(),
                     MenuItems.ChangePassword(),
-                    MenuItems.ChangePicture(),
+                   // MenuItems.ChangePicture(),
                     MenuItems.Logout()
                 )
                     .forEach {

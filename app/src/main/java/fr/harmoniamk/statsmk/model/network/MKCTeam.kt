@@ -67,6 +67,12 @@ data class MKCLightTeam(
     val team_status: String,
 )
 
+@Keep
+@JsonClass(generateAdapter = true)
+data class SecondaryTeam(
+    val id: String, val name: String
+)
+
 @Suppress("UNCHECKED_CAST")
 @Keep
 @JsonClass(generateAdapter = true)
@@ -74,7 +80,7 @@ data class MKCFullTeam(
     val id: Int,
     val primary_team_id: Int?,
     val primary_team_name: String?,
-    val secondary_teams: List<String>?,
+    val secondary_teams: List<SecondaryTeam>?,
     val founding_date: MKCDate,
     val founding_date_human: String,
     val team_category: String,
