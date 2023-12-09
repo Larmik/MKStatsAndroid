@@ -3,6 +3,8 @@ package fr.harmoniamk.statsmk.model.network
 import androidx.annotation.Keep
 import com.squareup.moshi.JsonClass
 import fr.harmoniamk.statsmk.database.entities.MKCLightPlayerEntity
+import fr.harmoniamk.statsmk.extension.displayedString
+import fr.harmoniamk.statsmk.extension.formatToDate
 
 @Keep
 @JsonClass(generateAdapter = true)
@@ -103,15 +105,15 @@ data class MKCFullPlayer(
     val country_name: String,
     val region: String?,
     val city: String?,
-    val discord_privacy: String,
-    val discord_tag: String,
-    val switch_fc: String,
+    val discord_privacy: String?,
+    val discord_tag: String?,
+    val switch_fc: String?,
     val nnid: String?,
     val fc_3ds: String?,
     val mktour_fc: String?,
     val profile_picture: String?,
     val profile_picture_border_color: Int,
-    val profile_message: String,
+    val profile_message: String?,
     val is_supporter: Boolean,
     val is_administrator: Boolean,
     val is_moderator: Boolean,
@@ -120,4 +122,7 @@ data class MKCFullPlayer(
     val is_event_admin: Boolean,
     val is_event_mod: Boolean,
     val current_teams: List<MKCLightTeam>
-)
+) {
+    val createdDate = registered_at.date.split(".").first().formatToDate("yyyy-MM-dd HH:mm:ss")?.displayedString("dd MMMM yyyy")
+    val flag = "https://www.mariokartcentral.com/mkc/images/flags/${country_code.lowercase()}.png"
+}

@@ -3,6 +3,7 @@ package fr.harmoniamk.statsmk.compose.ui
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -29,8 +30,8 @@ import fr.harmoniamk.statsmk.extension.fromHex
 import fr.harmoniamk.statsmk.model.network.MKCLightPlayer
 
 @Composable
-fun MKCPlayerItem(player: MKCLightPlayer) {
-    Card(backgroundColor = colorResource(R.color.white_alphaed), modifier = Modifier.padding(bottom = 5.dp)) {
+fun MKCPlayerItem(player: MKCLightPlayer, onPlayerClick: (String) -> Unit) {
+    Card(backgroundColor = colorResource(R.color.white_alphaed), modifier = Modifier.padding(bottom = 5.dp).clickable { onPlayerClick(player.player_id) }) {
         Row(
             modifier = Modifier
                 .padding(10.dp)

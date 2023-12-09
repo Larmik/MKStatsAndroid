@@ -394,4 +394,7 @@
     <string name="ajouter_un_ally">Ajouter un ally</string>
     <string name="shocks_war">Shocks/War</string>
     <string name="no_players_enough"><![CDATA[Votre équipe ne comporte pas assez de joueurs pour commencer une war. \n \n Vous pouvez aller dans Paramètres -> Mon équipe pour ajouter des joueurs.]]></string>
+    <string name="inscrit_depuis">Inscrit depuis le</string>
+    <string name="entree_team">Dans l\'équipe depuis le</string>
+    <string name="discord_tag">Tag Discord</string>
 </resources>

@@ -42,11 +42,9 @@ import fr.harmoniamk.statsmk.compose.viewModel.TeamSettingsViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 
-@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class, ExperimentalMaterialApi::class,
-    ExperimentalFoundationApi::class
-)
+@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class, ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
-fun TeamSettingsScreen(viewModel: TeamSettingsViewModel = hiltViewModel()) {
+fun TeamSettingsScreen(viewModel: TeamSettingsViewModel = hiltViewModel(), onPlayerClick: (String) -> Unit) {
     val picture = viewModel.sharedPictureLoaded.collectAsState()
     val team = viewModel.sharedTeam.collectAsState()
     val players by viewModel.sharedPlayers.collectAsState()
@@ -81,18 +79,26 @@ fun TeamSettingsScreen(viewModel: TeamSettingsViewModel = hiltViewModel()) {
         manageVisible.value.takeIf { it }?.let {
             MKSegmentedButtons(buttons = topButtons)
         }
-        Row(Modifier.fillMaxWidth().padding(10.dp), horizontalArrangement = Arrangement.SpaceAround) {
-            when (picture.value) {
-                null -> Image(
-                    painter = painterResource(R.drawable.mk_stats_logo_picture),
-                    contentDescription = null,
-                    modifier = Modifier.size(120.dp).clip(CircleShape)
-                )
-                else ->  AsyncImage(
-                    model = picture.value,
-                    contentDescription = null,
-                    modifier = Modifier.size(120.dp).clip(CircleShape)
-                )
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .padding(10.dp), horizontalArrangement = Arrangement.SpaceAround) {
+            if (picture.value != null) {
+                when (picture.value?.isEmpty()) {
+                    true -> Image(
+                        painter = painterResource(R.drawable.mk_stats_logo_picture),
+                        contentDescription = null,
+                        modifier = Modifier.size(120.dp).clip(CircleShape)
+                    )
+                        else ->  AsyncImage(
+                            model = picture.value,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(120.dp)
+                                .clip(CircleShape)
+                        )
+                }
+
             }
             Spacer(Modifier.width(10.dp))
             Column(Modifier.height(120.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
@@ -107,18 +113,24 @@ fun TeamSettingsScreen(viewModel: TeamSettingsViewModel = hiltViewModel()) {
         LazyColumn(Modifier.offset(y = (-5).dp)) {
             players.takeIf { it.isNotEmpty() }?.let {
                 stickyHeader {
-                    Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().height(40.dp).background(color = colorResource(R.color.harmonia_dark))) {
+                    Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+                        .fillMaxWidth()
+                        .height(40.dp)
+                        .background(color = colorResource(R.color.harmonia_dark))) {
                         MKText(font = R.font.montserrat_bold, fontSize = 18, text = "Roster", textColor = R.color.white)
                     }
                 }
                 items(items = players) {
-                    MKCPlayerItem(player = it)
+                    MKCPlayerItem(player = it, onPlayerClick = onPlayerClick)
                 }
             }
 
             allies.takeIf { it.isNotEmpty() }?.let {
                 stickyHeader {
-                    Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().height(40.dp).background(color = colorResource(R.color.harmonia_dark))) {
+                    Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier
+                        .fillMaxWidth()
+                        .height(40.dp)
+                        .background(color = colorResource(R.color.harmonia_dark))) {
                         MKText(font = R.font.montserrat_bold, fontSize = 18, text = "Allies", textColor = R.color.white)
                     }
                 }

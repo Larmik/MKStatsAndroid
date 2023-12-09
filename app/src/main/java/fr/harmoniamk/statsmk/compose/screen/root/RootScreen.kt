@@ -11,6 +11,7 @@ import fr.harmoniamk.statsmk.compose.screen.CurrentWarScreen
 import fr.harmoniamk.statsmk.compose.screen.LoginScreen
 import fr.harmoniamk.statsmk.compose.screen.OpponentSettingsScreen
 import fr.harmoniamk.statsmk.compose.screen.PlayerListScreen
+import fr.harmoniamk.statsmk.compose.screen.PlayerProfileScreen
 import fr.harmoniamk.statsmk.compose.screen.PlayersSettingsScreen
 import fr.harmoniamk.statsmk.compose.screen.PositionScreen
 import fr.harmoniamk.statsmk.compose.screen.ProfileScreen
@@ -156,7 +157,14 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
 
         /** Settings navigation **/
         composable("Home/Settings/Team") {
-            TeamSettingsScreen()
+            TeamSettingsScreen(onPlayerClick = { navController.navigate("Home/Settings/PlayerProfile/$it") })
+        }
+        composable(
+            route = "Home/Settings/PlayerProfile/{id}",
+            arguments = listOf(navArgument("id") { type = NavType.StringType })
+        ) {
+            val playerId = it.arguments?.getString("id")
+            PlayerProfileScreen(id = playerId.orEmpty())
         }
         composable("Home/Settings/Players") {
             PlayersSettingsScreen(onBack = { navController.popBackStack() }, canAdd = false)
