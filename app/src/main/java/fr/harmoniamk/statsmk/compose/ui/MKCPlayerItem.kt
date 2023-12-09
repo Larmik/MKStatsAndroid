@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -57,19 +58,21 @@ fun MKCPlayerItem(player: MKCLightPlayer) {
             when (player.team_leader.startsWith("1")) {
                 true -> Row(
                     modifier = Modifier
-                        .width(70.dp)
+                        .width(65.dp)
                         .height(20.dp)
-                        .background(color = Color.fromHex("#029dbd"))
-                        .border(BorderStroke(1.dp, Color.fromHex("#027d99"))),
-                    horizontalArrangement = Arrangement.Center
+                        .background(color = Color.fromHex("#029dbd"), shape = RoundedCornerShape(10.dp))
+                        .border(BorderStroke(1.dp, Color.fromHex("#027d99")), shape = RoundedCornerShape(10.dp)),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     MKText(
                         text = "Leader",
+                        fontSize = 12,
                         textColor = R.color.white,
                         font = R.font.montserrat_bold
                     )
                 }
-                else -> Spacer(Modifier.width(75.dp).height(20.dp))
+                else -> Spacer(Modifier.width(65.dp).height(20.dp))
             }
         }
     }

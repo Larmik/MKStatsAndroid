@@ -1,11 +1,7 @@
 package fr.harmoniamk.statsmk.compose.ui
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.stringResource
-import fr.harmoniamk.statsmk.compose.screen.CreatePlayerScreen
-import fr.harmoniamk.statsmk.compose.screen.CreateTeamScreen
 import fr.harmoniamk.statsmk.compose.screen.EditPlayerScreen
-import fr.harmoniamk.statsmk.compose.screen.EditTeamScreen
 import fr.harmoniamk.statsmk.compose.screen.EditUserScreen
 import fr.harmoniamk.statsmk.compose.screen.FilterSortScreen
 import fr.harmoniamk.statsmk.compose.screen.PenaltyScreen
@@ -28,12 +24,9 @@ sealed class MKBottomSheetState {
     class EditShocks : MKBottomSheetState()
     class SubPlayer : MKBottomSheetState()
     class Penalty : MKBottomSheetState()
-    class CreatePlayer : MKBottomSheetState()
     class AddPlayer(val ally: Boolean) : MKBottomSheetState()
     class EditPlayer(val playerId: String) : MKBottomSheetState()
-    class EditUser(val emailEditing: Boolean) : MKBottomSheetState()
-    class CreateTeam: MKBottomSheetState()
-    class EditTeam(val teamId: String) : MKBottomSheetState()
+    class EditUser : MKBottomSheetState()
     class ResetPassword : MKBottomSheetState()
     class FilterSort(val sort: Sort, val filter: Filter): MKBottomSheetState()
 }
@@ -89,20 +82,11 @@ fun MKBottomSheet(
         is MKBottomSheetState.AddPlayer -> {
             PlayersSettingsScreen(onBack = onDismiss, canAdd = true, ally = state.ally)
         }
-        is MKBottomSheetState.EditTeam -> {
-            EditTeamScreen(teamId = state.teamId, onDismiss = onDismiss)
-        }
         is MKBottomSheetState.EditPlayer -> {
             EditPlayerScreen(playerId = state.playerId, onDismiss = onDismiss)
         }
-        is MKBottomSheetState.CreatePlayer -> {
-            CreatePlayerScreen(onDismiss = onDismiss)
-        }
         is MKBottomSheetState.EditUser -> {
-            EditUserScreen(emailEditing = state.emailEditing, onDismiss = onDismiss)
-        }
-        is MKBottomSheetState.CreateTeam -> {
-            CreateTeamScreen(onDismiss = onDismiss)
+            EditUserScreen(onDismiss = onDismiss)
         }
         is MKBottomSheetState.ResetPassword -> {
             ResetPasswordScreen(onDismiss = onDismiss)

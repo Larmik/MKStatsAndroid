@@ -7,12 +7,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKBottomSheetState
 import fr.harmoniamk.statsmk.compose.ui.MKDialogState
-import fr.harmoniamk.statsmk.enums.UserRole
-import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.firebase.PictureResponse
 import fr.harmoniamk.statsmk.model.firebase.ResetPasswordResponse
 import fr.harmoniamk.statsmk.model.firebase.UploadPictureResponse
-import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
@@ -27,10 +24,9 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -72,16 +68,15 @@ class ProfileViewModel @Inject constructor(
     init { refresh() }
 
     fun refresh() {
-        databaseRepository.getUser(authenticationRepository.user?.uid)
+        flowOf(preferencesRepository.mkcPlayer)
             .filterNotNull()
             .onEach {
-                _sharedName.value = authenticationRepository.user?.displayName
-                _sharedTeam.value = preferencesRepository.currentTeam?.name
-                _sharedPictureLoaded.value = authenticationRepository.user?.photoUrl?.toString()
+                _sharedName.value = it.display_name
+                _sharedTeam.value = it.current_teams.firstOrNull()?.team_name
+                _sharedPictureLoaded.value = it.profile_picture?.takeIf { it.isNotEmpty() } ?: authenticationRepository.user?.photoUrl?.toString()
                 _sharedEmail.value = authenticationRepository.user?.email
                 _sharedLocalPicture.takeIf { !networkRepository.networkAvailable }?.value = R.drawable.mk_stats_logo_picture
-                _sharedFriendCode.value = it.friendCode.takeIf { code -> code != "null" }
-                it.role?.let { role -> _sharedRole.value = UserRole.values().getOrNull(role)?.labelId }
+                _sharedFriendCode.value = it.switch_fc
             }.launchIn(viewModelScope)
     }
 
@@ -90,12 +85,8 @@ class ProfileViewModel @Inject constructor(
         refresh()
     }
 
-    fun onEditNickname() {
-        _sharedBottomSheetValue.value = MKBottomSheetState.EditUser(false)
-    }
-
     fun onEditEmail() {
-        _sharedBottomSheetValue.value = MKBottomSheetState.EditUser(true)
+        _sharedBottomSheetValue.value = MKBottomSheetState.EditUser()
     }
 
     fun onEditPassword() {
@@ -115,43 +106,6 @@ class ProfileViewModel @Inject constructor(
             }.launchIn(viewModelScope)
     }
 
-    fun onLeaveTeam() {
-        _sharedDialogValue.value = MKDialogState.LeaveTeam(
-            onTeamLeft = {
-                databaseRepository.getUser(authenticationRepository.user?.uid)
-                    .mapNotNull {
-                        val formerTeams = mutableListOf<String?>()
-                        formerTeams.addAll(it?.formerTeams.orEmpty())
-                        formerTeams.add(preferencesRepository.currentTeam?.mid)
-                        it?.formerTeams?.takeIf { it.isNotEmpty() }?.let {
-                            it.forEach {
-                                val wars = firebaseRepository.getNewWars(it)
-                                    .map { list -> list.map {  MKWar(it) } }
-                                    .first()
-                                val finalList = wars.withName(databaseRepository).first()
-                                databaseRepository.writeWars(finalList).first()
-                            }
-                        }
-                        it.apply {
-                            this?.team = "-1"
-                            this?.formerTeams = formerTeams.distinct().filterNotNull()
-                            this?.role = UserRole.MEMBER.ordinal
-                        }
-                    }
-                    .flatMapLatest { firebaseRepository.writeUser(it) }
-                    .onEach {
-                        preferencesRepository.currentTeam = null
-                        _sharedDialogValue.value = null
-                    }
-                    .launchIn(viewModelScope)
-            },
-            onDismiss = {
-                _sharedDialogValue.value = null
-                refresh()
-            }
-        )
-    }
-
     fun onLogout() {
         _sharedDialogValue.value = MKDialogState.Logout(
             onLogout = {
@@ -167,10 +121,6 @@ class ProfileViewModel @Inject constructor(
                 _sharedDialogValue.value = null
             }
         )
-    }
-
-    fun onTestFilter() {
-        _sharedBottomSheetValue.value = MKBottomSheetState.FilterSort(Sort.TrackSort(), Filter.WarFilter())
     }
 
     fun onPictureEdited(pictureUri: Uri?) {

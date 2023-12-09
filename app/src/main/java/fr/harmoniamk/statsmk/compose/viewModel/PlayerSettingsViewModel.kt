@@ -117,10 +117,6 @@ class PlayerSettingsViewModel @Inject constructor(
 
     }
 
-    fun onCreatePlayer() {
-        _sharedBottomSheetValue.value = MKBottomSheetState.CreatePlayer()
-    }
-
     fun dismissBottomSheet() {
         _sharedBottomSheetValue.value = null
     }

@@ -19,14 +19,10 @@ import kotlinx.coroutines.FlowPreview
 @Composable
 fun EditUserScreen(
     viewModel: EditUserViewModel = hiltViewModel(),
-    emailEditing: Boolean,
     onDismiss: () -> Unit
 ) {
     val fieldState = remember { mutableStateOf(TextFieldValue("")) }
-    val title = when (emailEditing) {
-        true -> R.string.edit_mail
-        else -> R.string.edit_nickname
-    }
+    val title = R.string.edit_mail
 
     BackHandler { onDismiss() }
     MKBaseScreen(title = title) {
@@ -36,7 +32,7 @@ fun EditUserScreen(
             placeHolderRes = R.string.modifier_le_nom
         )
         MKButton(text = R.string.enregistrer, enabled = fieldState.value.text.isNotEmpty()) {
-            viewModel.onValidate(emailEditing, fieldState.value.text)
+            viewModel.onValidate(fieldState.value.text)
             onDismiss()
         }
     }

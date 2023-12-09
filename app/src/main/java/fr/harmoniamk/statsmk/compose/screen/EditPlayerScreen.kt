@@ -21,7 +21,6 @@ import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.repository.mock.AuthenticationRepositoryMock
 import fr.harmoniamk.statsmk.repository.mock.DatabaseRepositoryMock
 import fr.harmoniamk.statsmk.repository.mock.FirebaseRepositoryMock
-import fr.harmoniamk.statsmk.repository.mock.PreferencesRepositoryMock
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 
@@ -34,7 +33,6 @@ fun EditPlayerScreen(
 ) {
     viewModel.refresh(playerId)
     val playerHasAccount by viewModel.sharedPlayerHasAccount.collectAsState()
-    val leaveTeamVisible = viewModel.sharedLeaveTeamVisibility.collectAsState()
     val player by viewModel.sharedPlayer.collectAsState()
     val nameState = remember { mutableStateOf(TextFieldValue("")) }
 
@@ -68,10 +66,6 @@ fun EditPlayerScreen(
                 }
             }
         }
-        if (leaveTeamVisible.value)
-            MKButton(text = R.string.retirer_ce_joueur_de_l_quipe, hasBackground = false) {
-                viewModel.onRemoveFromTeam(player)
-            }
     }
 }
 
@@ -83,7 +77,6 @@ fun EditPlayerPreview() {
         viewModel = EditPlayerViewModel(
             firebaseRepository = FirebaseRepositoryMock(),
             databaseRepository = DatabaseRepositoryMock(),
-            preferencesRepository = PreferencesRepositoryMock(),
             authenticationRepository = AuthenticationRepositoryMock()
         ), playerId = "12345"
     ) {

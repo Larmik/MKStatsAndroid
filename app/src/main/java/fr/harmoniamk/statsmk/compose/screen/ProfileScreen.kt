@@ -5,7 +5,6 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -91,7 +90,6 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), onLogout: () ->
                 model = picture.value, contentDescription = null, modifier = Modifier
                     .size(170.dp)
                     .padding(top = 15.dp)
-                    .clickable { viewModel.onTestFilter() }
             )
             localPicture.value?.let {
                 Image(
@@ -158,17 +156,14 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), onLogout: () ->
             )
             Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.Start) {
                 listOf(
-                    MenuItems.ChangePseudo(),
                     MenuItems.ChangeMail(),
                     MenuItems.ChangePassword(),
                     MenuItems.ChangePicture(),
-                    MenuItems.LeaveTeam().takeIf { team.value != null },
                     MenuItems.Logout()
-                ).filterNotNull()
+                )
                     .forEach {
                     MKListItem(item = it, separator = false, onNavigate = { }) {
                         when (it) {
-                            is MenuItems.ChangePseudo -> viewModel.onEditNickname()
                             is MenuItems.ChangeMail -> viewModel.onEditEmail()
                             is MenuItems.ChangePassword -> viewModel.onEditPassword()
                             is MenuItems.ChangePicture -> {
@@ -178,7 +173,6 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), onLogout: () ->
                                     )
                                 )
                             }
-                            is MenuItems.LeaveTeam -> viewModel.onLeaveTeam()
                             is MenuItems.Logout -> viewModel.onLogout()
                             else -> {}
                         }

@@ -29,7 +29,6 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKBaseScreen
 import fr.harmoniamk.statsmk.compose.ui.MKBottomSheet
 import fr.harmoniamk.statsmk.compose.ui.MKPlayerItem
-import fr.harmoniamk.statsmk.compose.ui.MKSegmentedButtons
 import fr.harmoniamk.statsmk.compose.ui.MKText
 import fr.harmoniamk.statsmk.compose.ui.MKTextField
 import fr.harmoniamk.statsmk.compose.viewModel.PlayerSettingsViewModel
@@ -52,7 +51,6 @@ fun PlayersSettingsScreen(
     val currentState = viewModel.sharedBottomSheetValue.collectAsState(null)
     val players by viewModel.sharedPlayers.collectAsState()
     val dummies by viewModel.sharedPlayersWithoutAccount.collectAsState()
-    val addPlayerVisible = viewModel.sharedAddPlayerVisibility.collectAsState()
     val teamId by viewModel.sharedTeamId.collectAsState()
     val bottomSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
 
@@ -79,13 +77,6 @@ fun PlayersSettingsScreen(
             onEditTrack = {}
         )
     }) {
-        addPlayerVisible.value.takeIf { it }?.let {
-            MKSegmentedButtons(
-                buttons = listOf(
-                    Pair(R.string.cr_er_un_joueur, viewModel::onCreatePlayer)
-                )
-            )
-        }
         MKTextField(
             value = searchState.value,
             onValueChange = {
@@ -145,7 +136,6 @@ fun PlayersSettingsScreen(
                     }
                 }
             }
-
         }
     }
 }
