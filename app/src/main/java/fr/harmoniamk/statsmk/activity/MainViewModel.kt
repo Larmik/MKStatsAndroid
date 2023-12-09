@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.BuildConfig
-import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.enums.WelcomeScreen
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.withName
@@ -28,18 +27,17 @@ class MainViewModel @Inject constructor(
     private val databaseRepository: DatabaseRepositoryInterface,
     private val networkRepository: NetworkRepositoryInterface,
     private val remoteConfigRepository: RemoteConfigRepositoryInterface,
-    private val notificationsRepository: NotificationsRepositoryInterface
-    ) : ViewModel() {
+    private val notificationsRepository: NotificationsRepositoryInterface,
+    private val mkCentralRepository: MKCentralRepositoryInterface
+) : ViewModel() {
 
     private val _sharedWelcomeScreen = MutableSharedFlow<WelcomeScreen>()
-    private val  _sharedShowPopup = MutableSharedFlow<Pair<WelcomeScreen, List<MKWar>>>()
-    private val  _sharedShowUpdatePopup = MutableSharedFlow<Unit>()
-    private val _sharedLoadingVisible = MutableSharedFlow<Int>()
+    private val _sharedShowPopup = MutableSharedFlow<Pair<WelcomeScreen, List<MKWar>>>()
+    private val _sharedShowUpdatePopup = MutableSharedFlow<Unit>()
 
     val sharedWelcomeScreen = _sharedWelcomeScreen.asSharedFlow()
     val sharedShowPopup = _sharedShowPopup.asSharedFlow()
     val sharedShowUpdatePopup = _sharedShowUpdatePopup.asSharedFlow()
-    val sharedLoadingVisible = _sharedLoadingVisible.asSharedFlow()
 
     fun bind() {
 
@@ -75,7 +73,6 @@ class MainViewModel @Inject constructor(
             .flatMapLatest { firebaseRepository.getTeams() }
             .flatMapLatest { databaseRepository.writeTeams(it) }
             .onEach {
-                _sharedLoadingVisible.emit(R.string.auth)
                 flowOf(preferencesRepository.authEmail)
                     .filterNotNull()
                     .flatMapLatest {
@@ -92,8 +89,14 @@ class MainViewModel @Inject constructor(
                             else -> preferencesRepository.currentTeam = databaseRepository.getTeam(team).firstOrNull()
                         }
                     }
-                    .onEach {user ->
-                        _sharedLoadingVisible.emit(R.string.retrieving_stats)
+                    .flatMapLatest { mkCentralRepository.getPlayer(it?.mkcId.orEmpty()) }
+                    .onEach { preferencesRepository.mkcPlayer = it }
+                    .flatMapLatest { mkCentralRepository.getTeam(it.current_teams.firstOrNull()?.team_id.toString()) }
+                    .onEach { preferencesRepository.mkcTeam = it }
+                    .flatMapLatest { databaseRepository.writeRoster(it.rosterList.orEmpty()) }
+                    .flatMapLatest { mkCentralRepository.teams }
+                    .flatMapLatest { databaseRepository.writeNewTeams(it) }
+                    .onEach {
                         preferencesRepository.currentTeam?.mid?.let {
                             firebaseRepository.getNewWars(it).zip(databaseRepository.getWars()) { remoteDb, localDb ->
                                 val finalLocalDb = localDb.filter { it.war?.teamHost == preferencesRepository.currentTeam?.mid }

@@ -3,6 +3,8 @@ package fr.harmoniamk.statsmk.repository.mock
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
 import fr.harmoniamk.statsmk.model.firebase.Team
+import fr.harmoniamk.statsmk.model.network.MKCFullPlayer
+import fr.harmoniamk.statsmk.model.network.MKCFullTeam
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -34,6 +36,12 @@ class PreferencesRepositoryMock : PreferencesRepositoryInterface {
         get() = true
         set(value) {}
     override var fcmToken: String?
+        get() = null
+        set(value) {}
+    override var mkcPlayer: MKCFullPlayer?
+        get() = null
+        set(value) {}
+    override var mkcTeam: MKCFullTeam?
         get() = null
         set(value) {}
 }

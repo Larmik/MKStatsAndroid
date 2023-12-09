@@ -14,6 +14,8 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
 import fr.harmoniamk.statsmk.model.firebase.Team
+import fr.harmoniamk.statsmk.model.network.MKCFullPlayer
+import fr.harmoniamk.statsmk.model.network.MKCFullTeam
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import javax.inject.Inject
@@ -31,6 +33,8 @@ interface PreferencesRepositoryInterface {
     var firstLaunch: Boolean
     var indivEnabled: Boolean
     var fcmToken: String?
+    var mkcPlayer: MKCFullPlayer?
+    var mkcTeam: MKCFullTeam?
 }
 
 @FlowPreview
@@ -84,4 +88,10 @@ class PreferencesRepository @Inject constructor(
     override var fcmToken: String?
         get() = preferences.getString("fcmToken", null)
         set(value) {preferences.edit().putString("fcmToken", value).apply()}
+    override var mkcPlayer: MKCFullPlayer?
+        get() = Gson().fromJson(preferences.getString("mkcPlayer", null), MKCFullPlayer::class.java)
+        set(value) = preferences.edit().putString("mkcPlayer", Gson().toJson(value)).apply()
+    override var mkcTeam: MKCFullTeam?
+        get() = Gson().fromJson(preferences.getString("mkcTeam", null), MKCFullTeam::class.java)
+        set(value) = preferences.edit().putString("mkcTeam", Gson().toJson(value)).apply()
 }

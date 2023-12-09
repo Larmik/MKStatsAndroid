@@ -2,6 +2,7 @@ package fr.harmoniamk.statsmk.model.network
 
 import androidx.annotation.Keep
 import com.squareup.moshi.JsonClass
+import fr.harmoniamk.statsmk.database.entities.MKCLightPlayerEntity
 
 @Keep
 @JsonClass(generateAdapter = true)
@@ -58,6 +59,32 @@ data class MKCLightPlayer(
     val team_leader: String
 ) {
     val flag = "https://www.mariokartcentral.com/mkc/images/flags/${country_code.lowercase()}.png"
+
+    fun toEntity() = MKCLightPlayerEntity(
+        player_id = player_id,
+        display_name = display_name,
+        custom_field_name = custom_field_name,
+        custom_field = custom_field,
+        player_status = player_status,
+        registered_since = registered_since,
+        registered_since_human = registered_since_human,
+        country_code = country_code,
+        country_name = country_name,
+        team_leader = team_leader
+    )
+
+    constructor(entity: MKCLightPlayerEntity) : this(
+        player_id = entity.player_id,
+        display_name = entity.display_name.orEmpty(),
+        custom_field_name = entity.custom_field_name.orEmpty(),
+        custom_field = entity.custom_field.orEmpty(),
+        player_status = entity.player_status.orEmpty(),
+        registered_since = entity.registered_since.orEmpty(),
+        registered_since_human = entity.registered_since_human.orEmpty(),
+        country_code = entity.country_code.orEmpty(),
+        country_name = entity.country_name.orEmpty(),
+        team_leader = entity.team_leader.orEmpty()
+    )
 }
 
 @Keep
@@ -82,7 +109,7 @@ data class MKCFullPlayer(
     val nnid: String?,
     val fc_3ds: String?,
     val mktour_fc: String?,
-    val profile_picture: String,
+    val profile_picture: String?,
     val profile_picture_border_color: Int,
     val profile_message: String,
     val is_supporter: Boolean,

@@ -4,6 +4,8 @@ import fr.harmoniamk.statsmk.database.entities.TopicEntity
 import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.MKWar
+import fr.harmoniamk.statsmk.model.network.MKCLightPlayer
+import fr.harmoniamk.statsmk.model.network.MKCTeam
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -23,6 +25,16 @@ class DatabaseRepositoryMock : DatabaseRepositoryInterface {
     override fun getTeams(): Flow<List<Team>> = flow {
         emit(teams)
     }
+
+    override fun getNewTeams(): Flow<List<MKCTeam>> = flow {
+        emit(listOf())
+    }
+
+
+    override fun getRoster(): Flow<List<MKCLightPlayer>> = flow {
+        emit(listOf())
+    }
+
 
     override fun getWars(): Flow<List<MKWar>> = flow {
         emit(listOf())
@@ -48,8 +60,16 @@ class DatabaseRepositoryMock : DatabaseRepositoryInterface {
         emit(Unit)
     }
 
+    override fun writeRoster(list: List<MKCLightPlayer>): Flow<Unit> {
+        TODO("Not yet implemented")
+    }
+
     override fun writeTeams(list: List<Team>): Flow<Unit> = flow {
         emit(Unit)
+    }
+
+    override fun writeNewTeams(list: List<MKCTeam>): Flow<Unit> {
+        TODO("Not yet implemented")
     }
 
     override fun writeWars(list: List<MKWar>): Flow<Unit> = flow {

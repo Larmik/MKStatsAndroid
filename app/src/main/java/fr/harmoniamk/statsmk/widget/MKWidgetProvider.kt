@@ -11,6 +11,8 @@ import android.widget.RemoteViews
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.activity.MainActivity
+import fr.harmoniamk.statsmk.datasource.NewPlayerLocalDataSource
+import fr.harmoniamk.statsmk.datasource.NewTeamLocalDataSource
 import fr.harmoniamk.statsmk.datasource.TeamLocalDataSource
 import fr.harmoniamk.statsmk.datasource.TopicLocalDataSource
 import fr.harmoniamk.statsmk.datasource.UserLocalDataSource
@@ -42,7 +44,9 @@ class MKWidgetProvider : AppWidgetProvider(), CoroutineScope {
                     userDataSource = UserLocalDataSource(context),
                     teamDataSource = TeamLocalDataSource(context),
                     warDataSource = WarLocalDataSource(context),
-                    topicDataSource = TopicLocalDataSource(context)
+                    topicDataSource = TopicLocalDataSource(context),
+                    newPlayerLocalDataSource = NewPlayerLocalDataSource(context),
+                    newTeamLocalDataSource = NewTeamLocalDataSource(context)
                 ),
                 remoteConfigRepository = RemoteConfigRepository()
             )

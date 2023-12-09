@@ -6,22 +6,20 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKBottomSheetState
 import fr.harmoniamk.statsmk.compose.ui.MKDialogState
-import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.firebase.AuthUserResponse
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
+import fr.harmoniamk.statsmk.repository.MKCentralRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
@@ -37,6 +35,7 @@ class LoginViewModel @Inject constructor(
     private val firebaseRepository: FirebaseRepositoryInterface,
     private val preferencesRepository: PreferencesRepositoryInterface,
     private val authenticationRepository: AuthenticationRepositoryInterface,
+    private val mkCentralRepository: MKCentralRepositoryInterface,
     private val databaseRepository: DatabaseRepositoryInterface
 ) : ViewModel() {
 
@@ -65,20 +64,25 @@ class LoginViewModel @Inject constructor(
                 }
                 preferencesRepository.firstLaunch = false
                 _sharedDialogValue.value = MKDialogState.Loading(R.string.fetch_data)
-                it?.formerTeams?.takeIf { it.isNotEmpty() }?.let {
-                    it.forEach {
-                        val wars = firebaseRepository.getNewWars(it)
-                            .map { list -> list.map {  MKWar(it) } }
-                            .first()
-                        val finalList = wars.withName(databaseRepository).first()
-                        databaseRepository.writeWars(finalList).first()
-                    }
+            }
+            .flatMapLatest { mkCentralRepository.getPlayer(it?.mkcId.orEmpty()) }
+            .onEach { preferencesRepository.mkcPlayer = it }
+            .flatMapLatest { mkCentralRepository.getTeam(it.current_teams.firstOrNull()?.team_id.toString()) }
+            .onEach { preferencesRepository.mkcTeam = it }
+            .flatMapLatest { databaseRepository.writeRoster(it.rosterList.orEmpty()) }
+            .flatMapLatest { mkCentralRepository.teams }
+            .flatMapLatest { databaseRepository.writeNewTeams(it) }
+            .onEach {
+                preferencesRepository.currentTeam?.mid?.let {
+                    firebaseRepository.getNewWars(it)
+                        .map { it.map { MKWar(it) } }
+                        .flatMapLatest { it.withName(databaseRepository) }
+                        .flatMapLatest {  databaseRepository.writeWars(it) }
+                        .firstOrNull()
                 }
-            }.flatMapLatest { firebaseRepository.getNewWars(it?.team ?: "-1") }
-            .map { it.map { MKWar(it) } }
-            .flatMapLatest { it.withName(databaseRepository) }
-            .flatMapLatest {  databaseRepository.writeWars(it) }
-            .onEach { _sharedNext.value = Unit }.launchIn(viewModelScope)
+            }
+            .onEach { _sharedNext.value = Unit }
+            .launchIn(viewModelScope)
 
         connectUser
             .mapNotNull { (it as? AuthUserResponse.Error)?.message }

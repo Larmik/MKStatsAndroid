@@ -118,7 +118,8 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
                     formerTeams = it["formerTeams"].toStringList(),
                     allyTeams = it["allyTeams"].toStringList(),
                     friendCode = it["friendCode"].toString(),
-                    discordId = it["discordId"].toString()
+                    discordId = it["discordId"].toString(),
+                    mkcId = it["mkcId"].toString()
                 ) }
             if (isActive) trySend(users)
         }
