@@ -11,7 +11,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKBaseScreen
-import fr.harmoniamk.statsmk.compose.ui.MKTeamItem
+import fr.harmoniamk.statsmk.compose.ui.MKCTeamItem
 import fr.harmoniamk.statsmk.compose.ui.MKTextField
 import fr.harmoniamk.statsmk.compose.viewModel.TeamListViewModel
 
@@ -31,7 +31,7 @@ fun TeamListScreen(viewModel: TeamListViewModel = hiltViewModel(), onTeamClick: 
         )
         LazyColumn {
             items(teams.value.orEmpty()) {
-                MKTeamItem(team = it, onClick = onTeamClick, onEditClick = {})
+                MKCTeamItem(team = it, onClick = onTeamClick)
             }
         }
     }

@@ -3,22 +3,15 @@ package fr.harmoniamk.statsmk.compose.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.isTrue
-import fr.harmoniamk.statsmk.model.firebase.Team
+import fr.harmoniamk.statsmk.model.network.MKCTeam
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
-import fr.harmoniamk.statsmk.repository.MKCentralRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import java.util.Locale
 import javax.inject.Inject
@@ -27,46 +20,29 @@ import javax.inject.Inject
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class TeamListViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepositoryInterface,
-    private val databaseRepository: DatabaseRepositoryInterface,
-    mkCentralRepository: MKCentralRepositoryInterface
+    databaseRepository: DatabaseRepositoryInterface,
 ): ViewModel() {
 
-    private val _sharedTeams = MutableStateFlow<List<Team>?>( null)
-    private val _sharedAddTeam = MutableSharedFlow<Unit>()
-
+    private val _sharedTeams = MutableStateFlow<List<MKCTeam>?>( null)
     val sharedTeams = _sharedTeams.asStateFlow()
-    val sharedAddTeam = _sharedAddTeam.asSharedFlow()
-
-    private val teams = mutableListOf<Team>()
+    private val teams = mutableListOf<MKCTeam>()
 
     fun search(searched: String) {
         _sharedTeams.value = teams.filter {
-            it.shortName?.toLowerCase(Locale.ROOT)
-                ?.contains(searched.toLowerCase(Locale.ROOT)).isTrue || it.name?.toLowerCase(
+            it.team_tag?.toLowerCase(Locale.ROOT)
+                ?.contains(searched.toLowerCase(Locale.ROOT)).isTrue || it.team_name?.toLowerCase(
                 Locale.ROOT)?.contains(searched.toLowerCase(Locale.ROOT)) ?: true
-        }.sortedBy { it.name }.filterNot { vm -> vm.mid == preferencesRepository.currentTeam?.mid }
+        }.sortedBy { it.team_name }.filterNot { vm -> vm.team_id == preferencesRepository.mkcTeam?.id }
     }
 
     init {
-        mkCentralRepository.teams
-            .map { it.map { mkcTeam -> Team(mid = mkcTeam.team_id.toString(), name = mkcTeam.team_name, shortName = mkcTeam.team_tag, teamColor = mkcTeam.team_color) } }
+        databaseRepository.getNewTeams()
             .onEach {
                 teams.clear()
-                teams.addAll(it.filterNot { team -> team.mid == preferencesRepository.currentTeam?.mid })
-                _sharedTeams.value = teams.sortedBy { it.name }
+                teams.addAll(it.filterNot { team -> team.team_id == preferencesRepository.mkcTeam?.id })
+                _sharedTeams.value = teams.sortedBy { it.team_name }
             }
             .launchIn(viewModelScope)
-    }
-
-    fun bind(onAddTeam: Flow<Unit>) {
-        onAddTeam.bind(_sharedAddTeam, viewModelScope)
-    }
-
-    fun bindAddDialog(onTeamAdded: Flow<Unit>) {
-        onTeamAdded
-            .flatMapLatest {  databaseRepository.getTeams() }
-            .map { list -> list.sortedBy { it.name }.filterNot { vm -> vm.mid == preferencesRepository.currentTeam?.mid } }
-            .bind(_sharedTeams, viewModelScope)
     }
 
 }

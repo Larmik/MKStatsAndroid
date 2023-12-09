@@ -7,7 +7,6 @@ import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.model.network.MKCTeam
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
-import fr.harmoniamk.statsmk.repository.MKCentralRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -21,8 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class OpponentSettingsViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepositoryInterface,
-    mkCentralRepository: MKCentralRepositoryInterface,
-    private val databaseRepository: DatabaseRepositoryInterface,
+    databaseRepository: DatabaseRepositoryInterface,
 ) : ViewModel() {
 
     private val _sharedTeams = MutableStateFlow<List<MKCTeam>>(listOf())
@@ -30,10 +28,11 @@ class OpponentSettingsViewModel @Inject constructor(
     private val teams = mutableListOf<MKCTeam>()
 
     init {
-        mkCentralRepository.teams
+        databaseRepository.getNewTeams()
             .map {
                 teams.clear()
-                teams.addAll(it.filterNot { team -> team.team_id.toString() == preferencesRepository.currentTeam?.mid }); teams
+                teams.addAll(it.filterNot { team -> team.team_id.toString() == preferencesRepository.mkcTeam?.id.toString() })
+                teams
             }.bind(_sharedTeams, viewModelScope)
     }
 
