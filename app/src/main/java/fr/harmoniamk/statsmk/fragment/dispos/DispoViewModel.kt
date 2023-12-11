@@ -30,7 +30,7 @@ class DispoViewModel @Inject constructor(private val firebaseRepository: Firebas
     val sharedPopupShowing = _sharedPopupShowing.asSharedFlow()
 
     private val dispos = mutableListOf<WarDispo>()
-    val teamId = preferencesRepository.currentTeam?.mid ?: ""
+    val teamId = preferencesRepository.mkcTeam?.id ?: ""
 
     private var dispoDetails: String? = null
 

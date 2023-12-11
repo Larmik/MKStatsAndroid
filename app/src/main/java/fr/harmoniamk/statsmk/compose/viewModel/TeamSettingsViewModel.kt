@@ -98,7 +98,7 @@ class TeamSettingsViewModel @Inject constructor(
                         && ((player.mid.toLongOrNull() != null && it >= UserRole.ADMIN.ordinal)
                         || it >= UserRole.LEADER.ordinal)
             }.onEach { canEdit ->
-                player.takeIf { it.allyTeams?.contains(preferencesRepository.currentTeam?.mid.orEmpty()).isTrue }?.let {
+                player.takeIf { it.allyTeams?.contains(preferencesRepository.mkcTeam?.id.orEmpty()).isTrue }?.let {
                     allys.add(ManagePlayersItemViewModel(player = it, canEdit = canEdit))
                 }
             }.launchIn(viewModelScope)
@@ -106,23 +106,4 @@ class TeamSettingsViewModel @Inject constructor(
         emit(allys)
     }
 
-    private fun writeFormerTeams(user: User): Flow<User> = flow {
-        val formerTeams = mutableListOf<String?>()
-        formerTeams.addAll(user.formerTeams.orEmpty())
-        formerTeams.add(preferencesRepository.currentTeam?.mid)
-        user.formerTeams?.takeIf { it.isNotEmpty() }?.let {
-            it.forEach {
-                val wars = firebaseRepository.getNewWars(it)
-                    .map { list -> list.map {  MKWar(it) } }
-                    .first()
-                val finalList = wars.withName(databaseRepository).first()
-                databaseRepository.writeWars(finalList).first()
-            }
-        }
-        emit(user.apply {
-            this.team = "-1"
-            this.formerTeams = formerTeams.distinct().filterNotNull()
-            this.role = UserRole.MEMBER.ordinal
-        })
-    }
 }

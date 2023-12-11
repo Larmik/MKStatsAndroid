@@ -69,7 +69,7 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
     }.flatMapLatest { databaseRepository.writeUser(user) }
 
     override fun writeNewWar(war: NewWar): Flow<Unit> = flow {
-        preferencesRepository.currentTeam?.mid?.let {
+        preferencesRepository.mkcTeam?.id?.let {
             Log.d("MKDebugOnly", "FirebaseRepository writeNewWar ${war.mid}")
             database.child("newWars").child(it).child(war.mid).setValue(war)
             emit(Unit)
@@ -77,7 +77,7 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
     }
 
     override fun writeCurrentWar(war: NewWar): Flow<Unit> = flow {
-        preferencesRepository.currentTeam?.mid?.let {
+        preferencesRepository.mkcTeam?.id?.let {
             Log.d("MKDebugOnly", "FirebaseRepository writeCurrentWar ${war.mid}")
             database.child("currentWars").child(it).setValue(war)
             emit(Unit)
@@ -85,7 +85,7 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
     }
 
     override fun writeTeam(team: Team): Flow<Unit> = flow {
-        Log.d("MKDebugOnly", "FirebaseRepository writeTeam ${team.name}")
+        Log.d("MKDebugOnly", "FirebaseRepository writeTeam ${team.mid}")
         database.child("teams").child(team.mid).setValue(team)
         emit(Unit)
     }.flatMapLatest { databaseRepository.writeTeam(team) }
@@ -99,7 +99,7 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
             23 -> 4
             else -> -1
         }
-        database.child("dispos").child(preferencesRepository.currentTeam?.mid ?: "").child(index.toString()).setValue(dispo)
+        database.child("dispos").child(preferencesRepository.mkcTeam?.id ?: "").child(index.toString()).setValue(dispo)
         emit(Unit)
     }
 
@@ -115,10 +115,7 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
                     team = it["team"].toString(),
                     role = it["role"].toString().toIntOrNull(),
                     picture = it["picture"].toString(),
-                    formerTeams = it["formerTeams"].toStringList(),
                     allyTeams = it["allyTeams"].toStringList(),
-                    friendCode = it["friendCode"].toString(),
-                    discordId = it["discordId"].toString(),
                     mkcId = it["mkcId"].toString()
                 ) }
             if (isActive) trySend(users)
@@ -135,6 +132,7 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
                     mid = it["mid"].toString(),
                     name = it["name"].toString(),
                     shortName = it["shortName"].toString(),
+                    mkcId = it["mkcId"].toString(),
                 ) }
             if (isActive) trySend(teams)
         }
@@ -190,7 +188,7 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
     override fun getDispos(): Flow<List<WarDispo>> = callbackFlow {
         val postListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                val wars: List<WarDispo> = dataSnapshot.child("dispos").child(preferencesRepository.currentTeam?.mid ?: "").children
+                val wars: List<WarDispo> = dataSnapshot.child("dispos").child(preferencesRepository.mkcTeam?.id ?: "").children
                     .mapNotNull { it.value as? Map<*, *> }
                     .map {map -> WarDispo(
                         dispoHour = map["dispoHour"].toString().toInt(),
@@ -248,14 +246,14 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
     }.flatMapLatest { databaseRepository.deleteUser(user) }
 
     override fun deleteTeam(team: Team) = flow {
-        Log.d("MKDebugOnly", "FirebaseRepository deleteTeam ${team.name}")
+        Log.d("MKDebugOnly", "FirebaseRepository deleteTeam ${team.mid}")
         database.child("teams").child(team.mid).removeValue()
         emit(Unit)
     }.flatMapLatest { databaseRepository.deleteTeam(team) }
 
     override fun deleteNewWar(war: MKWar) = flow {
         war.war?.let {war ->
-            preferencesRepository.currentTeam?.mid?.let {
+            preferencesRepository.mkcTeam?.id?.let {
                 Log.d("MKDebugOnly", "FirebaseRepository deleteNewWar ${war.mid}")
                 database.child("newWars").child(it).child(war.mid).removeValue()
                 emit(Unit)
@@ -265,7 +263,7 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
     }.flatMapLatest { databaseRepository.deleteWar(war) }
 
     override fun deleteCurrentWar() = flow {
-        preferencesRepository.currentTeam?.mid?.let {
+        preferencesRepository.mkcTeam?.id?.let {
             Log.d("MKDebugOnly", "FirebaseRepository deleteCurrentWar")
             database.child("currentWars").child(it).removeValue()
             emit(Unit)

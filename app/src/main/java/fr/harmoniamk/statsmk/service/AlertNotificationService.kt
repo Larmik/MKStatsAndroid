@@ -58,10 +58,10 @@ class AlertNotificationService : FirebaseMessagingService() {
             val scheduledHour = remoteMessage.data["hour"]
             val opponentId = remoteMessage.data["opponent"]
             val lineUp = remoteMessage.data["lu"] ?: ""
-            val teamId = preferencesRepository.currentTeam?.mid
+            val teamId = preferencesRepository.mkcTeam?.id
             val userId = authenticationRepository.user?.uid ?: ""
-            val teamTag = databaseRepository.getTeam(teamId).firstOrNull()?.shortName ?: ""
-            val opponentTag = databaseRepository.getTeam(opponentId).firstOrNull()?.shortName ?: ""
+            val teamTag = databaseRepository.getNewTeam(teamId).firstOrNull()?.team_tag ?: ""
+            val opponentTag = databaseRepository.getNewTeam(opponentId).firstOrNull()?.team_tag ?: ""
             remoteMessage.data["type"]?.let {
                 val type = NotifType.valueOf(it)
                 when (type) {

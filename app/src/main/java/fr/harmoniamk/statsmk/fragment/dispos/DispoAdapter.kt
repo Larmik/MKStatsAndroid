@@ -9,7 +9,6 @@ import fr.harmoniamk.statsmk.databinding.DispoItemBinding
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.extension.safeSubList
-import fr.harmoniamk.statsmk.fragment.scheduleWar.ScheduleLineUpAdapter
 import fr.harmoniamk.statsmk.model.firebase.Dispo
 import fr.harmoniamk.statsmk.model.firebase.WarDispo
 import kotlinx.coroutines.CoroutineScope
@@ -38,15 +37,11 @@ class DispoAdapter(val list: MutableList<Pair<WarDispo, Boolean>> = mutableListO
             val canSubAdapter = PlayerDispoAdapter(playersCanSub)
             val notSureAdapter = PlayerDispoAdapter(item.first.dispoPlayers?.singleOrNull { it.dispo == Dispo.NOT_SURE.ordinal }?.playerNames.orEmpty())
             val cantAdapter = PlayerDispoAdapter(item.first.dispoPlayers?.singleOrNull { it.dispo == Dispo.CANT.ordinal }?.playerNames.orEmpty())
-            val firstHalfLuAdapter = ScheduleLineUpAdapter(nameList = item.first.lineupNames?.safeSubList(0, 3))
-            val secondHalfLuAdapter = ScheduleLineUpAdapter(nameList = item.first.lineupNames?.safeSubList(3, 6))
             binding.hour.text = String.format(binding.root.context.getString(R.string.hour_placeholder), item.first.dispoHour.toString())
             binding.canList.adapter = canAdapter
             binding.canSubList.adapter = canSubAdapter
             binding.notSureList.adapter = notSureAdapter
             binding.cantList.adapter = cantAdapter
-            binding.firstHalfLu.adapter = firstHalfLuAdapter
-            binding.secondHalfLu.adapter = secondHalfLuAdapter
             binding.btnSchedule.isVisible = (playersCan.size + playersCanSub.size >= 6 && item.second)
             binding.dispoListLayout.isVisible = true
             binding.lineupLayout.isVisible = false

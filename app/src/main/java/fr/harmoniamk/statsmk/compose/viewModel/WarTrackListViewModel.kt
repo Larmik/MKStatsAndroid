@@ -13,6 +13,7 @@ import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import fr.harmoniamk.statsmk.model.local.MapDetails
+import fr.harmoniamk.statsmk.model.network.MKCTeam
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
@@ -33,9 +34,9 @@ class WarTrackListViewModel @Inject constructor(
     private val databaseRepository: DatabaseRepositoryInterface,
     private val authenticationRepository: AuthenticationRepositoryInterface
 ) : ViewModel() {
-    var onlyIndiv = preferencesRepository.currentTeam?.mid == null
+    var onlyIndiv = preferencesRepository.mkcTeam?.id == null
 
-    private val teams = mutableListOf<Team>()
+    private val teams = mutableListOf<MKCTeam>()
 
     private val _sharedMapStats = MutableStateFlow<List<MapDetails>?>(null)
     private val _sharedTrackIndex = MutableStateFlow<Int>(-1)
@@ -65,7 +66,7 @@ class WarTrackListViewModel @Inject constructor(
         _sharedUserId.value = userId
         _sharedSortTypeSelected.value = sort
         _sharedFilterList.value = filterType
-        databaseRepository.getTeams()
+        databaseRepository.getNewTeams()
             .onEach {
                 teams.clear()
                 teams.addAll(it)
@@ -87,8 +88,8 @@ class WarTrackListViewModel @Inject constructor(
         val filteredWars = mutableListOf<MKWar>()
         when (search.isNotEmpty()) {
             true -> teams
-                .filter { it.name?.lowercase()?.contains(search.lowercase()).isTrue || it.shortName?.lowercase()?.contains(search.lowercase()).isTrue }
-                .mapNotNull { it.shortName }
+                .filter { it.team_name.lowercase()?.contains(search.lowercase()).isTrue || it.team_tag.lowercase()?.contains(search.lowercase()).isTrue }
+                .mapNotNull { it.team_tag }
                 .forEach { tag -> filteredWars.addAll(wars.filter { it.name?.lowercase()?.contains(tag.lowercase()).isTrue }) }
             else -> filteredWars.addAll(wars)
         }
@@ -115,14 +116,14 @@ class WarTrackListViewModel @Inject constructor(
         val filters = _sharedFilterList.value
         val sort = _sharedSortTypeSelected.value
         val trackIndex = _sharedTrackIndex.value
-        onlyIndiv = userId != null || preferencesRepository.currentTeam?.mid == null
+        onlyIndiv = userId != null || preferencesRepository.mkcTeam?.id == null
 
         when {
             userId != null && teamId != null -> list.filter { war -> war.hasPlayer(preferencesRepository.mkcPlayer?.id.toString()) && war.hasTeam(teamId) }
             onlyIndiv -> list.filter { war -> war.hasPlayer(userId ?: preferencesRepository.mkcPlayer?.id.toString()) }
-            else -> list.filter { war -> war.hasTeam(teamId ?: preferencesRepository.currentTeam?.mid) }
+            else -> list.filter { war -> war.hasTeam(teamId ?: preferencesRepository.mkcTeam?.id) }
         }
-        .filter { (onlyIndiv && it.hasPlayer(userId)) || !onlyIndiv && it.hasTeam(preferencesRepository.currentTeam?.mid) }
+        .filter { (onlyIndiv && it.hasPlayer(userId)) || !onlyIndiv && it.hasTeam(preferencesRepository.mkcTeam?.id) }
         .forEach { mkWar ->
             mkWar.warTracks?.filter { track -> track.index == trackIndex }?.forEach { track ->
                 val position = track.track?.warPositions?.singleOrNull { it.playerId == userId }?.position?.takeIf { userId != null }

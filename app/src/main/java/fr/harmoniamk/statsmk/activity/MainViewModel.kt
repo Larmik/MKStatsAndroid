@@ -84,12 +84,6 @@ class MainViewModel @Inject constructor(
                     }
                     .mapNotNull { (it as? AuthUserResponse.Success)?.user?.uid }
                     .flatMapLatest { databaseRepository.getUser(it) }
-                    .onEach {
-                        when (val team = it?.team?.takeIf { it != "-1" }) {
-                            null -> preferencesRepository.currentTeam = null
-                            else -> preferencesRepository.currentTeam = databaseRepository.getTeam(team).firstOrNull()
-                        }
-                    }
                     .flatMapLatest { mkCentralRepository.getPlayer(it?.mkcId.orEmpty()) }
                     .onEach { preferencesRepository.mkcPlayer = it }
                     .flatMapLatest { mkCentralRepository.getTeam(it.current_teams.firstOrNull()?.team_id.toString()) }
@@ -100,9 +94,9 @@ class MainViewModel @Inject constructor(
                     .flatMapLatest { databaseRepository.getTeams() }
                     .flatMapLatest { databaseRepository.writeNewTeams(it.filter { team -> team.mid.toLong() > 999999 }.map { MKCTeam(it) }) }
                     .onEach {
-                        preferencesRepository.currentTeam?.mid?.let {
+                        preferencesRepository.mkcTeam?.id?.let {
                             firebaseRepository.getNewWars(it).zip(databaseRepository.getWars()) { remoteDb, localDb ->
-                                val finalLocalDb = localDb.filter { it.war?.teamHost == preferencesRepository.currentTeam?.mid }
+                                val finalLocalDb = localDb.filter { it.war?.teamHost == preferencesRepository.mkcTeam?.id }
                                 Log.d("MKDebugOnly", "local db size: ${finalLocalDb.size}")
                                 Log.d("MKDebugOnly", "remote db size: ${remoteDb.size}")
                                 when (finalLocalDb.size == remoteDb.size) {
@@ -117,7 +111,7 @@ class MainViewModel @Inject constructor(
                         }
                         _sharedWelcomeScreen.emit(WelcomeScreen.Home)
                     }
-                    .flatMapLatest { notificationsRepository.register(preferencesRepository.currentTeam?.mid ?: "") }
+                    .flatMapLatest { notificationsRepository.register(preferencesRepository.mkcTeam?.id ?: "") }
                     .launchIn(viewModelScope)
 
                 flowOf(preferencesRepository.firstLaunch)

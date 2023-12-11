@@ -52,8 +52,8 @@ class SubPlayerViewModel @Inject constructor(
                 allyList.clear()
                 currentPlayersList.clear()
 
-                playersList.addAll(it.filter { user -> user.currentWar == "-1" && user.team == preferencesRepository.currentTeam?.mid }.map { UserSelector(user = it, isSelected = false) })
-                allyList.addAll(it.filter { user -> user.currentWar == "-1" &&  user.allyTeams?.contains(preferencesRepository.currentTeam?.mid).isTrue }.map { UserSelector(user = it, isSelected = false) })
+                playersList.addAll(it.filter { user -> user.currentWar == "-1" && user.team == preferencesRepository.mkcTeam?.id }.map { UserSelector(user = it, isSelected = false) })
+                allyList.addAll(it.filter { user -> user.currentWar == "-1" &&  user.allyTeams?.contains(preferencesRepository.mkcTeam?.id).isTrue }.map { UserSelector(user = it, isSelected = false) })
                 currentPlayersList.addAll(it.filter { user -> user.currentWar == preferencesRepository.currentWar?.mid }.map { UserSelector(user = it, isSelected = false) } )
 
                 _sharedPlayers.value = currentPlayersList

@@ -52,6 +52,7 @@ fun WarTrackResultScreen(
         LazyColumn {
             items(positions.value.orEmpty()) {
                 MKPlayerItem(
+                    player = it.player,
                     position = it,
                     shockVisible = true,
                     shockCount = shocks.value?.singleOrNull { shock -> shock.playerId == it.player?.mkcId }?.count ?: 0,

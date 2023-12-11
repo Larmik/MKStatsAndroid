@@ -122,7 +122,7 @@ class StatsRankingViewModel @AssistedInject constructor(
 
     private val warList = mutableListOf<MKWar>()
     private var sortType: SortType? = null
-    private val onlyIndiv = preferencesRepository.currentTeam?.mid == null || userId != null
+    private val onlyIndiv = preferencesRepository.mkcTeam?.id == null || userId != null
 
     private val players = mutableListOf<PlayerRankingItemViewModel>()
     private val opponents = mutableListOf<OpponentRankingItemViewModel>()

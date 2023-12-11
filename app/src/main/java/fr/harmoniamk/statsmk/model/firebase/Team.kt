@@ -9,9 +9,8 @@ data class Team(
     val mid: String,
     var name: String? = null,
     var shortName: String? = null,
-    var teamColor: Int? = null
+    var mkcId: String? = null
 ): Parcelable {
-    constructor(entity: TeamEntity) : this(entity.mid, entity.name, entity.shortName)
-
-    fun toEntity() = TeamEntity(this.mid, this.name, this.shortName)
+    constructor(entity: TeamEntity) : this(entity.mid, entity.name, entity.shortName, entity.mkcId)
+    fun toEntity() = TeamEntity(this.mid, this.name, this.shortName, this.mkcId)
 }

@@ -115,7 +115,7 @@ class PlayerListViewModel @AssistedInject constructor(
     fun createWar() {
         val war =  NewWar(
             mid = System.currentTimeMillis().toString(),
-            teamHost = preferencesRepository.currentTeam?.mid,
+            teamHost = preferencesRepository.mkcTeam?.id,
             playerHostId = preferencesRepository.mkcPlayer?.id.toString(),
             teamOpponent = id,
             createdDate = date,
@@ -141,10 +141,10 @@ class PlayerListViewModel @AssistedInject constructor(
     init {
         databaseRepository.getUsers()
             .onEach {
-                _sharedPlayers.value =  it.filter { user -> user.team == preferencesRepository.currentTeam?.mid  }
+                _sharedPlayers.value =  it.filter { user -> user.team == preferencesRepository.mkcTeam?.id  }
                     .sortedBy { it.name?.toLowerCase(Locale.ROOT) }
                     .map { UserSelector(it, false) }
-                _sharedAllies.value =  it.filter { user -> user.allyTeams?.contains(preferencesRepository.currentTeam?.mid.orEmpty()).isTrue }
+                _sharedAllies.value =  it.filter { user -> user.allyTeams?.contains(preferencesRepository.mkcTeam?.id.orEmpty()).isTrue }
                     .sortedBy { it.name?.toLowerCase(Locale.ROOT) }
                     .map { UserSelector(it, false) }
             }
@@ -152,7 +152,7 @@ class PlayerListViewModel @AssistedInject constructor(
 
         databaseRepository.getNewTeam(id)
             .onEach {
-                _sharedWarName.value = "${preferencesRepository.currentTeam?.shortName} - ${it?.team_name}"
+                _sharedWarName.value = "${preferencesRepository.mkcTeam?.team_name} - ${it?.team_name}"
             }.launchIn(viewModelScope)
     }
 

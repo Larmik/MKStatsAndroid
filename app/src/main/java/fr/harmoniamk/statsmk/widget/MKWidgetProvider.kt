@@ -39,7 +39,6 @@ class MKWidgetProvider : AppWidgetProvider(), CoroutineScope {
 
     private val viewModel by lazy {
         MKWidgetViewModel(
-            preferencesRepository = PreferencesRepositoryMock(),
             firebaseRepository = FirebaseRepository(
                 preferencesRepository = PreferencesRepository(context),
                 databaseRepository = DatabaseRepository(

@@ -50,7 +50,7 @@ fun WarScreen(
             viewModel.refresh()
     }
 
-    MKBaseScreen(title = R.string.team_war, subTitle = team.value?.name) {
+    MKBaseScreen(title = R.string.team_war, subTitle = team.value?.team_name) {
         when  {
             team.value == null -> MKText(text = R.string.no_team, modifier = Modifier.padding(vertical = 30.dp))
             lastWars.value == null -> {

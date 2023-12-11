@@ -2,6 +2,7 @@ package fr.harmoniamk.statsmk.model.firebase
 
 import android.os.Parcelable
 import fr.harmoniamk.statsmk.database.entities.UserEntity
+import fr.harmoniamk.statsmk.model.network.MKCLightPlayer
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
@@ -12,12 +13,9 @@ data class User(
     var currentWar: String? = null,
     var role: Int? = null,
     var picture: String? = null,
-    var formerTeams: List<String>? = null,
     var allyTeams: List<String>? = null,
-    var friendCode: String? = null,
-    var discordId: String? = null,
     var mkcId: String? = null
-): Parcelable {
+) : Parcelable {
 
     constructor(entity: UserEntity) : this(
         mid = entity.mid,
@@ -26,15 +24,30 @@ data class User(
         currentWar = entity.currentWar,
         role = entity.role,
         picture = entity.picture,
-        formerTeams = entity.formerTeams,
         allyTeams = entity.allyTeams,
-        friendCode = entity.friendCode,
-        discordId = entity.discordId,
         mkcId = entity.mkcId
     )
 
+    constructor(player: MKCLightPlayer?, team: String?) : this(
+        mid = player?.player_id.orEmpty(),
+        name = player?.display_name,
+        team = team,
+        currentWar = "-1",
+        role = 0,
+        picture = "",
+        allyTeams = null,
+        mkcId = player?.player_id
+    )
+
     fun toEntity() = UserEntity(
-        mid, currentWar, name, role, team, picture, formerTeams, allyTeams, friendCode, discordId, mkcId
+        mid,
+        currentWar,
+        name,
+        role,
+        team,
+        picture,
+        allyTeams,
+        mkcId
     )
 
 }

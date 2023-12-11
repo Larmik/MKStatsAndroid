@@ -14,7 +14,7 @@ import javax.inject.Inject
 @HiltViewModel
 class StatsMenuViewModel @Inject constructor(preferencesRepository: PreferencesRepositoryInterface): ViewModel() {
     private val _sharedId = MutableStateFlow(preferencesRepository.mkcPlayer?.id.toString())
-    private val _sharedTeam = MutableStateFlow(preferencesRepository.currentTeam)
+    private val _sharedTeam = MutableStateFlow(preferencesRepository.mkcTeam)
     val sharedId = _sharedId.asStateFlow()
     val sharedTeam = _sharedTeam.asStateFlow()
 }

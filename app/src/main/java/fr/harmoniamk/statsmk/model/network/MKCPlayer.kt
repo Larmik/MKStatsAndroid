@@ -6,6 +6,7 @@ import com.squareup.moshi.JsonClass
 import fr.harmoniamk.statsmk.database.entities.MKCLightPlayerEntity
 import fr.harmoniamk.statsmk.extension.displayedString
 import fr.harmoniamk.statsmk.extension.formatToDate
+import fr.harmoniamk.statsmk.model.firebase.User
 import kotlinx.android.parcel.Parcelize
 
 @Keep
@@ -61,7 +62,7 @@ data class MKCLightPlayer(
     val registered_since_human: String,
     val country_code: String,
     val country_name: String,
-    val team_leader: String
+    val team_leader: String,
 ) : Parcelable {
     val flag = "https://www.mariokartcentral.com/mkc/images/flags/${country_code.lowercase()}.png"
 
@@ -76,6 +77,19 @@ data class MKCLightPlayer(
         country_code = country_code,
         country_name = country_name,
         team_leader = team_leader
+    )
+
+    constructor(user: User) : this(
+        player_id = user.mkcId.orEmpty(),
+        display_name = user.name.orEmpty(),
+        custom_field_name = "",
+        custom_field = "",
+        player_status = "",
+        registered_since = "",
+        registered_since_human = "",
+        country_code = "",
+        country_name = "",
+        team_leader = ""
     )
 
     constructor(entity: MKCLightPlayerEntity) : this(
@@ -126,6 +140,7 @@ data class MKCFullPlayer(
     val is_event_mod: Boolean,
     val current_teams: List<MKCLightTeam>
 ) {
-    val createdDate = registered_at.date.split(".").first().formatToDate("yyyy-MM-dd HH:mm:ss")?.displayedString("dd MMMM yyyy")
+    val createdDate = registered_at.date.split(".").first().formatToDate("yyyy-MM-dd HH:mm:ss")
+        ?.displayedString("dd MMMM yyyy")
     val flag = "https://www.mariokartcentral.com/mkc/images/flags/${country_code.lowercase()}.png"
 }

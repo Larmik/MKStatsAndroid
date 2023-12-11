@@ -24,7 +24,7 @@ fun MKCTeamItem(team: MKCTeam? = null, onClick: (String) -> Unit) {
 
     Card(
         backgroundColor = colorResource(R.color.white_alphaed),
-        modifier = Modifier.padding(bottom = 5.dp).clickable { team?.let { onClick(it.team_id.toString()) } },
+        modifier = Modifier.padding(bottom = 5.dp).clickable { team?.let { onClick(it.team_id) } },
     ) {
         Row(
             modifier = Modifier.padding(10.dp).fillMaxWidth(),
@@ -64,7 +64,7 @@ fun MKCTeamItem(team: MKCTeam? = null, onClick: (String) -> Unit) {
 fun MKCTeamItemPreview() {
     MKCTeamItem(
         MKCTeam(
-            123,
+            "123",
             "Harmonia",
             "HR",
             6,

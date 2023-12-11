@@ -106,10 +106,9 @@ class SignupViewModel @Inject constructor(
                     mid = fbUser.uid,
                     name = finalUser?.name ?: name,
                     role = UserRole.MEMBER.ordinal,
-                    team = finalUser?.team ?: preferencesRepository.currentTeam?.mid ?: "-1",
-                    currentWar = finalUser?.currentWar ?: preferencesRepository.currentWar?.mid ?: "-1",
+                    team = finalUser?.team ?: preferencesRepository.mkcTeam?.id ?: "-1",
+                    currentWar = finalUser?.currentWar ?: preferencesRepository.mkcTeam?.id ?: "-1",
                     picture = fbUser.photoUrl.toString(),
-                    friendCode = fc
                 )
             }
             .onEach {

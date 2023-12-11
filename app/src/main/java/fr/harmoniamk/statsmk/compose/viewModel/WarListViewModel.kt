@@ -11,6 +11,7 @@ import fr.harmoniamk.statsmk.enums.WarSortType
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.model.local.MKWar
+import fr.harmoniamk.statsmk.model.network.MKCTeam
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
@@ -52,7 +53,7 @@ class WarListViewModel @Inject constructor(
     val sharedTeamName = _sharedTeamName.asStateFlow()
 
     private val wars = mutableListOf<MKWar>()
-    private val teams = mutableListOf<Team>()
+    private val teams = mutableListOf<MKCTeam>()
 
     fun init(userId: String? = null, teamId: String? = null, isWeek: Boolean? = null, sort: SortType, filterType: List<FilterType>) {
         _sharedSortTypeSelected.value = sort
@@ -63,10 +64,10 @@ class WarListViewModel @Inject constructor(
         databaseRepository.getNewTeam(teamId)
             .onEach { _sharedTeamName.value = it?.team_name }
             .launchIn(viewModelScope)
-        databaseRepository.getUser(userId)
-            .onEach { _sharedUserName.value = it?.name }
+        databaseRepository.getRoster()
+            .onEach { _sharedUserName.value = it.singleOrNull { it.player_id == userId }?.display_name }
             .launchIn(viewModelScope)
-        databaseRepository.getTeams()
+        databaseRepository.getNewTeams()
             .onEach {
                 teams.clear()
                 teams.addAll(it)
@@ -86,8 +87,8 @@ class WarListViewModel @Inject constructor(
         val filteredWars = mutableListOf<MKWar>()
         when (search.isNotEmpty()) {
             true -> teams
-                .filter { it.name?.lowercase()?.contains(search.lowercase()).isTrue || it.shortName?.lowercase()?.contains(search.lowercase()).isTrue }
-                .mapNotNull { it.shortName }
+                .filter { it.team_name?.lowercase()?.contains(search.lowercase()).isTrue || it.team_tag?.lowercase()?.contains(search.lowercase()).isTrue }
+                .mapNotNull { it.team_tag }
                 .forEach { tag -> filteredWars.addAll(wars.filter { it.name?.lowercase()?.contains(tag.lowercase()).isTrue }) }
             else -> filteredWars.addAll(wars)
         }
@@ -115,9 +116,9 @@ class WarListViewModel @Inject constructor(
             userId != null && teamId != null -> list.filter { war -> war.hasPlayer(userId) && war.hasTeam(teamId)}
             userId != null -> list.filter { war -> war.hasPlayer(userId)}
             teamId != null -> list.filter { war -> war.hasTeam(teamId)}
-            isWeek.isTrue -> list.filter { war -> war.war?.teamHost == preferencesRepository.currentTeam?.mid && war.isThisWeek }
-            isWeek == false ->  list.filter { war -> war.war?.teamHost == preferencesRepository.currentTeam?.mid && war.isThisMonth }
-            else -> list.filter { war -> war.war?.teamHost == preferencesRepository.currentTeam?.mid}
+            isWeek.isTrue -> list.filter { war -> war.war?.teamHost == preferencesRepository.mkcTeam?.id && war.isThisWeek }
+            isWeek == false ->  list.filter { war -> war.war?.teamHost == preferencesRepository.mkcTeam?.id && war.isThisMonth }
+            else -> list.filter { war -> war.war?.teamHost == preferencesRepository.mkcTeam?.id}
         }.sortedByDescending { it.war?.mid }
         val filteredWars = applyFilters(list = wars, filters)
         emit(when (sort) {

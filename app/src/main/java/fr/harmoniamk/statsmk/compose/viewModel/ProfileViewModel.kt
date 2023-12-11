@@ -98,7 +98,7 @@ class ProfileViewModel @Inject constructor(
             onLogout = {
                 viewModelScope.launch {
                     authenticationRepository.signOut()
-                    preferencesRepository.currentTeam = null
+                    preferencesRepository.mkcTeam = null
                     preferencesRepository.authEmail = null
                     preferencesRepository.authPassword = null
                     _sharedDisconnect.emit(Unit)

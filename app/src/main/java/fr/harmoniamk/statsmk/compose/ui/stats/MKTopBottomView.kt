@@ -23,8 +23,8 @@ import fr.harmoniamk.statsmk.extension.positionColor
 @Composable
 fun MKTopBottomView(indiv: Boolean, tops: List<Pair<String, Int>>?, bottoms:  List<Pair<String, Int>>?) {
     val padding = when (indiv) {
-        true -> 60.dp
-        else -> 30.dp
+        true -> 45.dp
+        else -> 25.dp
     }
     Row {
         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(1f).padding(10.dp)) {

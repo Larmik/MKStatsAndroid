@@ -56,27 +56,15 @@ class ScheduleWarFragment(val dispo: WarDispo): BottomSheetDialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         val behavior = BottomSheetBehavior.from(view.parent as View)
         behavior.state = BottomSheetBehavior.STATE_EXPANDED
-        val luFirstHalfAdapter = ScheduleLineUpAdapter()
-        val luSecondtHalfAdapter = ScheduleLineUpAdapter()
-        val teamAdapter = TeamListAdapter()
-        binding.firstHalfLu.adapter = luFirstHalfAdapter
-        binding.secondHalfLu.adapter = luSecondtHalfAdapter
-        binding.teamRv.adapter = teamAdapter
+
         viewModel.bind(
             dispo = dispo,
             onSearch = binding.searchEt.onTextChanged(),
-            onTeamClick = teamAdapter.onTeamClick,
-            onPlayerDelete = flowOf(luFirstHalfAdapter.onPlayerDelete, luSecondtHalfAdapter.onPlayerDelete).flattenMerge(),
-            onWarScheduled = binding.confirmLuBtn.clicks(),
+          onWarScheduled = binding.confirmLuBtn.clicks(),
             onOpponentHostClick = binding.opponentHostBtn.clicks(),
             onTeamHostClick = binding.teamHostBtn.clicks()
         )
-        viewModel.sharedChosenLU
-            .onEach {
-                luSecondtHalfAdapter.addUsers(it.safeSubList(0, 3), it)
-                luFirstHalfAdapter.addUsers(it.safeSubList(3, it.size), it)
-            }.launchIn(lifecycleScope)
-        viewModel.sharedTeams.onEach { teamAdapter.addTeams(it) }.launchIn(lifecycleScope)
+
         viewModel.sharedButtonVisible
             .onEach { binding.confirmLuBtn.isEnabled = it }
             .launchIn(lifecycleScope)

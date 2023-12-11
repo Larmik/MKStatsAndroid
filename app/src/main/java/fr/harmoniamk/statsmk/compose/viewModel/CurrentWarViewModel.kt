@@ -75,7 +75,7 @@ class CurrentWarViewModel @Inject constructor(
     val sharedTrackClick = _sharedTrackClick.asSharedFlow()
 
     init {
-        flowOf(firebaseRepository.getCurrentWar(preferencesRepository.mkcTeam?.id.orEmpty()), firebaseRepository.listenToCurrentWar(preferencesRepository.mkcTeam?.id.toString()))
+        flowOf(firebaseRepository.getCurrentWar(preferencesRepository.mkcTeam?.id.orEmpty()), firebaseRepository.listenToCurrentWar())
             .flattenMerge()
             .flatMapLatest { it?.war.withName(databaseRepository) }
             .filterNotNull()
@@ -171,8 +171,8 @@ class CurrentWarViewModel @Inject constructor(
                         warPositions.forEach { position ->
                             trackPositions.add(
                                 MKWarPosition(
-                                    position,
-                                    players.singleOrNull { it.mkcId == position.playerId })
+                                    position = position,
+                                    player = players.singleOrNull { it.mkcId == position.playerId })
                             )
                         }
                         trackPositions.groupBy { it.player }.entries.forEach { entry ->

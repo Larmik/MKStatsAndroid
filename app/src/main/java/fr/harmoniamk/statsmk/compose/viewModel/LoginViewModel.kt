@@ -9,6 +9,7 @@ import fr.harmoniamk.statsmk.compose.ui.MKDialogState
 import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.firebase.AuthUserResponse
 import fr.harmoniamk.statsmk.model.local.MKWar
+import fr.harmoniamk.statsmk.model.network.MKCTeam
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
@@ -58,10 +59,6 @@ class LoginViewModel @Inject constructor(
             .onEach {
                 preferencesRepository.authEmail = email
                 preferencesRepository.authPassword = password
-                it?.team?.takeIf { it != "-1" }?.let { team ->
-                    preferencesRepository.currentTeam =
-                        databaseRepository.getTeam(team).firstOrNull()
-                }
                 preferencesRepository.firstLaunch = false
                 _sharedDialogValue.value = MKDialogState.Loading(R.string.fetch_data)
             }
@@ -72,8 +69,10 @@ class LoginViewModel @Inject constructor(
             .flatMapLatest { databaseRepository.writeRoster(it.rosterList.orEmpty()) }
             .flatMapLatest { mkCentralRepository.teams }
             .flatMapLatest { databaseRepository.writeNewTeams(it) }
+            .flatMapLatest { databaseRepository.getTeams() }
+            .flatMapLatest { databaseRepository.writeNewTeams(it.filter { team -> team.mid.toLong() > 999999 }.map { MKCTeam(it) }) }
             .onEach {
-                preferencesRepository.currentTeam?.mid?.let {
+                preferencesRepository.mkcTeam?.id?.let {
                     firebaseRepository.getNewWars(it)
                         .map { it.map { MKWar(it) } }
                         .flatMapLatest { it.withName(databaseRepository) }

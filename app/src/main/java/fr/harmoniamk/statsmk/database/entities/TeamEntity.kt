@@ -9,5 +9,6 @@ class TeamEntity(
     @PrimaryKey
     @ColumnInfo(name = "mid") val mid: String,
     @ColumnInfo(name = "name") val name: String?,
-    @ColumnInfo(name = "shortName") val shortName: String?
+    @ColumnInfo(name = "shortName") val shortName: String?,
+    @ColumnInfo(name = "mkcId") val mkcId: String?
 )

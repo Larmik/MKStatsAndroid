@@ -10,6 +10,7 @@ import fr.harmoniamk.statsmk.model.firebase.LineUp
 import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.firebase.WarDispo
+import fr.harmoniamk.statsmk.model.network.MKCTeam
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
@@ -22,10 +23,14 @@ import javax.inject.Inject
 @FlowPreview
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class ScheduleWarViewModel @Inject constructor(private val databaseRepository: DatabaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface, private val firebaseRepository: FirebaseRepositoryInterface): ViewModel() {
+class ScheduleWarViewModel @Inject constructor(
+    private val databaseRepository: DatabaseRepositoryInterface,
+    private val preferencesRepository: PreferencesRepositoryInterface,
+    private val firebaseRepository: FirebaseRepositoryInterface
+) : ViewModel() {
 
     private val _sharedChosenLU = MutableSharedFlow<List<LineUpSelector>>()
-    private val _sharedTeams = MutableSharedFlow<List<Team>>()
+    private val _sharedTeams = MutableSharedFlow<List<MKCTeam>>()
     private val _sharedDismiss = MutableSharedFlow<Unit>()
     private val _sharedButtonVisible = MutableSharedFlow<Boolean>()
     private val _sharedShowTeamHostPopup = MutableSharedFlow<List<UserSelector>?>()
@@ -42,12 +47,18 @@ class ScheduleWarViewModel @Inject constructor(private val databaseRepository: D
     val sharedChosenHost = _sharedChosenHost.asSharedFlow()
 
 
-    private val teams = mutableListOf<Team>()
+    private val teams = mutableListOf<MKCTeam>()
     private val players = mutableListOf<LineUpSelector>()
     private var teamSelected: String? = null
     private var chosenHost: String? = null
 
-    fun bind(dispo: WarDispo, onSearch: Flow<String>, onTeamClick: Flow<Team>, onPlayerDelete: Flow<LineUpSelector>, onWarScheduled: Flow<Unit>, onTeamHostClick: Flow<Unit>, onOpponentHostClick: Flow<Unit>) {
+    fun bind(
+        dispo: WarDispo,
+        onSearch: Flow<String>,
+        onWarScheduled: Flow<Unit>,
+        onTeamHostClick: Flow<Unit>,
+        onOpponentHostClick: Flow<Unit>
+    ) {
 
         onOpponentHostClick.map { true }.bind(_sharedShowOpponentHostPopup, viewModelScope)
         onTeamHostClick
@@ -56,10 +67,7 @@ class ScheduleWarViewModel @Inject constructor(private val databaseRepository: D
             }
             .bind(_sharedShowTeamHostPopup, viewModelScope)
 
-        onTeamClick
-            .onEach { teamSelected = it.mid }
-            .map { players.size == 6 }
-            .bind(_sharedButtonVisible, viewModelScope)
+
 
 
         onWarScheduled
@@ -67,7 +75,6 @@ class ScheduleWarViewModel @Inject constructor(private val databaseRepository: D
             .map {
                 dispo.apply {
                     this.opponentId = teamSelected
-                    this.lineUp = players.map { LineUp( it.user?.mid ?: "", it.user?.discordId ?: "") }
                     this.host = chosenHost
                 }
             }
@@ -79,9 +86,14 @@ class ScheduleWarViewModel @Inject constructor(private val databaseRepository: D
             .map {
                 val list = mutableListOf<Pair<String, Int>>()
                 it.dispoPlayers?.forEach {
-                    when  {
+                    when {
                         it.dispo == 0 -> list.addAll(it.players?.map { Pair(it, 0) }.orEmpty())
-                        it.dispo == 1 && list.size < 6 -> list.addAll(it.players?.map { Pair(it, 1) }.orEmpty())
+                        it.dispo == 1 && list.size < 6 -> list.addAll(it.players?.map {
+                            Pair(
+                                it,
+                                1
+                            )
+                        }.orEmpty())
                     }
                 }
                 list
@@ -97,36 +109,36 @@ class ScheduleWarViewModel @Inject constructor(private val databaseRepository: D
             }.onEach { userList ->
                 players.clear()
                 players.addAll(userList.map { LineUpSelector(it.first, it.second) })
-                 _sharedChosenLU.emit(players)
+                _sharedChosenLU.emit(players)
             }.launchIn(viewModelScope)
 
-        databaseRepository.getTeams()
+        databaseRepository.getNewTeams()
             .map {
                 teams.clear()
-                teams.addAll(it.filterNot { team -> team.mid == preferencesRepository.currentTeam?.mid })
-                teams.sortedBy { it.name }
+                teams.addAll(it.filterNot { team -> team.team_id == preferencesRepository.mkcTeam?.id })
+                teams.sortedBy { it.team_name }
             }
             .bind(_sharedTeams, viewModelScope)
         onSearch
             .map { searched ->
                 teams.filter {
-                    it.shortName?.toLowerCase(Locale.ROOT)
-                        ?.contains(searched.toLowerCase(Locale.ROOT)).isTrue || it.name?.toLowerCase(
-                        Locale.ROOT)?.contains(searched.toLowerCase(Locale.ROOT)) ?: true
-                }.sortedBy { it.name }.filterNot { vm -> vm.mid == preferencesRepository.currentTeam?.mid }
+                    it.team_tag?.toLowerCase(Locale.ROOT)
+                        ?.contains(searched.toLowerCase(Locale.ROOT)).isTrue || it.team_name?.toLowerCase(
+                        Locale.ROOT
+                    )?.contains(searched.toLowerCase(Locale.ROOT)) ?: true
+                }.sortedBy { it.team_name }
+                    .filterNot { vm -> vm.team_id == preferencesRepository.mkcTeam?.id }
             }
             .bind(_sharedTeams, viewModelScope)
 
-        onPlayerDelete
-            .onEach {
-                players.remove(it)
-                _sharedChosenLU.emit(players)
-                _sharedButtonVisible.emit(players.size == 6 && teamSelected != null)
-            }.launchIn(viewModelScope)
 
     }
 
-    fun bindTeamPopup(onPlayerSelected: Flow<String>, onValidate: Flow<Unit>, onDismiss: Flow<Unit> ) {
+    fun bindTeamPopup(
+        onPlayerSelected: Flow<String>,
+        onValidate: Flow<Unit>,
+        onDismiss: Flow<Unit>
+    ) {
         onDismiss.onEach { _sharedShowTeamHostPopup.emit(null) }.launchIn(viewModelScope)
         onPlayerSelected
             .onEach {
@@ -144,7 +156,11 @@ class ScheduleWarViewModel @Inject constructor(private val databaseRepository: D
             }.launchIn(viewModelScope)
     }
 
-    fun bindOpponentPopup(onCodeAdded: Flow<String>, onValidate: Flow<Unit>, onDismiss: Flow<Unit> ) {
+    fun bindOpponentPopup(
+        onCodeAdded: Flow<String>,
+        onValidate: Flow<Unit>,
+        onDismiss: Flow<Unit>
+    ) {
         onDismiss.onEach { _sharedShowOpponentHostPopup.emit(false) }.launchIn(viewModelScope)
         onCodeAdded.onEach { this.chosenHost = it }.launchIn(viewModelScope)
         onValidate

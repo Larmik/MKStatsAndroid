@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 7,
-    "identityHash": "6508206cf9786c6af42f498d2166bf44",
+    "identityHash": "97b132aa079a386a898ec925a3e7d0e0",
     "entities": [
       {
         "tableName": "UserEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`mid` TEXT NOT NULL, `currentWar` TEXT, `name` TEXT, `role` INTEGER, `team` TEXT, `picture` TEXT, `formerTeams` TEXT, `allyTeams` TEXT, `friendCode` TEXT, `discordId` TEXT, `mkcId` TEXT, PRIMARY KEY(`mid`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`mid` TEXT NOT NULL, `currentWar` TEXT, `name` TEXT, `role` INTEGER, `team` TEXT, `picture` TEXT, `allyTeams` TEXT, `mkcId` TEXT, PRIMARY KEY(`mid`))",
         "fields": [
           {
             "fieldPath": "mid",
@@ -45,26 +45,8 @@
             "notNull": false
           },
           {
-            "fieldPath": "formerTeams",
-            "columnName": "formerTeams",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
             "fieldPath": "allyTeams",
             "columnName": "allyTeams",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "friendCode",
-            "columnName": "friendCode",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "discordId",
-            "columnName": "discordId",
             "affinity": "TEXT",
             "notNull": false
           },
@@ -86,7 +68,7 @@
       },
       {
         "tableName": "TeamEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`mid` TEXT NOT NULL, `name` TEXT, `shortName` TEXT, PRIMARY KEY(`mid`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`mid` TEXT NOT NULL, `name` TEXT, `shortName` TEXT, `mkcId` TEXT, PRIMARY KEY(`mid`))",
         "fields": [
           {
             "fieldPath": "mid",
@@ -103,6 +85,12 @@
           {
             "fieldPath": "shortName",
             "columnName": "shortName",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "mkcId",
+            "columnName": "mkcId",
             "affinity": "TEXT",
             "notNull": false
           }
@@ -350,7 +338,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '6508206cf9786c6af42f498d2166bf44')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '97b132aa079a386a898ec925a3e7d0e0')"
     ]
   }
 }

@@ -116,18 +116,3 @@ fun MKPlayerList(players: List<CurrentPlayerModel>) {
         }
     }
 }
-
-@Preview
-@Composable
-fun MKPlayerListPreview() {
-    MKPlayerList(players = listOf(
-        CurrentPlayerModel(User(mid = "mid", name ="name"), 17, isNew = true),
-        CurrentPlayerModel(User(mid = "mid", name ="name2"), 17),
-        CurrentPlayerModel(User(mid = "mid", name ="name4"), 17),
-        CurrentPlayerModel(User(mid = "mid", name ="name8"), 17),
-        CurrentPlayerModel(User(mid = "mid", name ="name3"), 17),
-        CurrentPlayerModel(User(mid = "mid", name ="Larimaisavecunnomsilongquilnecon"), 17),
-        CurrentPlayerModel(User(mid = "mid", name ="name5"), 17, isOld = true),
-        CurrentPlayerModel(User(mid = "mid", name ="name6"), 17)
-    ))
-}

@@ -162,7 +162,7 @@ class DatabaseRepository @Inject constructor(
     }
 
     override fun writeTeam(team: Team): Flow<Unit> {
-        Log.d("MKDebugOnly", "DatabaseRepository writeTeam ${team.name}")
+        Log.d("MKDebugOnly", "DatabaseRepository writeTeam ${team.mid}")
         return teamDataSource.insert(team)
     }
 
@@ -182,7 +182,7 @@ class DatabaseRepository @Inject constructor(
     }
 
     override fun deleteTeam(team: Team): Flow<Unit> {
-        Log.d("MKDebugOnly", "DatabaseRepository deleteTeam ${team.name}")
+        Log.d("MKDebugOnly", "DatabaseRepository deleteTeam ${team.mid}")
         return teamDataSource.delete(team)
     }
 

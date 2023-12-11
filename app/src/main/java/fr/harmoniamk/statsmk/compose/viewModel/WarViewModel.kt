@@ -9,6 +9,8 @@ import fr.harmoniamk.statsmk.extension.safeSubList
 import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.model.firebase.WarDispo
 import fr.harmoniamk.statsmk.model.local.MKWar
+import fr.harmoniamk.statsmk.model.network.MKCFullTeam
+import fr.harmoniamk.statsmk.model.network.MKCTeam
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
@@ -42,7 +44,7 @@ class WarViewModel @Inject constructor(
 
     private val _sharedCurrentWar = MutableStateFlow<MKWar?>(null)
     private val _sharedLastWars = MutableStateFlow<List<MKWar>?>(null)
-    private val _sharedTeam = MutableStateFlow<Team?>(null)
+    private val _sharedTeam = MutableStateFlow<MKCFullTeam?>(null)
     private val _sharedCreateWarVisible = MutableStateFlow(false)
 
     val sharedCurrentWar = _sharedCurrentWar.asStateFlow()
@@ -71,7 +73,7 @@ class WarViewModel @Inject constructor(
     }
 
     fun refresh() {
-        _sharedTeam.value = preferencesRepository.currentTeam
+        _sharedTeam.value = preferencesRepository.mkcTeam
        databaseRepository.getWars()
            .map { it.filter { war -> war.hasTeam(preferencesRepository.mkcTeam?.id.toString()) } }
             .onEach {
