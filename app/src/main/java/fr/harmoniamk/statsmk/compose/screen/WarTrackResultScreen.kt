@@ -54,7 +54,7 @@ fun WarTrackResultScreen(
                 MKPlayerItem(
                     position = it,
                     shockVisible = true,
-                    shockCount = shocks.value?.singleOrNull { shock -> shock.playerId == it.player?.mid }?.count ?: 0,
+                    shockCount = shocks.value?.singleOrNull { shock -> shock.playerId == it.player?.mkcId }?.count ?: 0,
                     onAddShock = viewModel::onAddShock,
                     onRemoveShock = viewModel::onRemoveShock
                 ) {}

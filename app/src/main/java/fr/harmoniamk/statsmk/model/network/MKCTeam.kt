@@ -1,11 +1,14 @@
 package fr.harmoniamk.statsmk.model.network
 
+import android.os.Parcelable
 import androidx.annotation.Keep
 import com.squareup.moshi.JsonClass
 import fr.harmoniamk.statsmk.database.entities.MKCTeamEntity
 import fr.harmoniamk.statsmk.extension.displayedString
 import fr.harmoniamk.statsmk.extension.formatToDate
 import fr.harmoniamk.statsmk.extension.parseRoster
+import fr.harmoniamk.statsmk.model.firebase.Team
+import kotlinx.android.parcel.Parcelize
 
 @Keep
 @JsonClass(generateAdapter = true)
@@ -16,8 +19,9 @@ data class MKCTeamResponse(
 
 @Keep
 @JsonClass(generateAdapter = true)
+@Parcelize
 data class MKCTeam(
-    val team_id: Int,
+    val team_id: String,
     val team_name: String,
     val team_tag: String,
     val team_color: Int,
@@ -27,9 +31,10 @@ data class MKCTeam(
     val player_count: Int,
     val founding_date: String,
     val founding_date_human: String
-) {
+) : Parcelable {
+
     fun toEntity() = MKCTeamEntity(
-        id = team_id.toString(),
+        id = team_id,
         team_name = team_name,
         team_tag = team_tag,
         team_color = team_color.toString(),
@@ -42,7 +47,7 @@ data class MKCTeam(
     )
 
     constructor(entity: MKCTeamEntity) : this(
-        team_id = entity.id.toInt(),
+        team_id = entity.id,
         team_name = entity.team_name.orEmpty(),
         team_tag = entity.team_tag.orEmpty(),
         team_color = entity.team_color?.toInt() ?: 0,
@@ -52,6 +57,19 @@ data class MKCTeam(
         player_count = entity.player_count?.toInt() ?: 0,
         founding_date = entity.founding_date.orEmpty(),
         founding_date_human = entity.founding_date.orEmpty()
+    )
+
+    constructor(team: Team?) : this(
+        team_id = team?.mid.orEmpty(),
+        team_name = team?.name.orEmpty(),
+        team_tag = team?.shortName.orEmpty(),
+        team_color =  0,
+        team_status = "",
+        recruitment_status = "",
+        is_shadow = 0,
+        player_count = 0,
+        founding_date = "",
+        founding_date_human = ""
     )
 }
 
@@ -77,7 +95,7 @@ data class SecondaryTeam(
 @Keep
 @JsonClass(generateAdapter = true)
 data class MKCFullTeam(
-    val id: Int,
+    val id: String,
     val primary_team_id: Int?,
     val primary_team_name: String?,
     val secondary_teams: List<SecondaryTeam>?,

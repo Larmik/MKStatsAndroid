@@ -175,7 +175,7 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
             TeamProfileScreen(id = playerId.orEmpty(), onPlayerClick = { navController.navigate("Home/Settings/PlayerProfile/$it") })
         }
         composable("Home/Settings/Players") {
-            PlayersSettingsScreen(onBack = { navController.popBackStack() }, canAdd = false)
+            PlayersSettingsScreen(onBack = { navController.popBackStack() })
         }
         composable("Home/Settings/Opponents") {
             OpponentSettingsScreen(onTeamClick = { navController.navigate("Home/Settings/TeamProfile/$it") })
@@ -189,13 +189,13 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
         /** Opponent stats navigation **/
         composable("Home/Stats/Opponents") {
             StatsRankingScreen(state = StatsRankingState.OpponentRankingState()) { item, _, _ ->
-                navController.navigate("Home/Stats/Opponents/${(item as? OpponentRankingItemViewModel)?.team?.mid.orEmpty()}/${(item as? OpponentRankingItemViewModel)?.userId.orEmpty()}")
+                navController.navigate("Home/Stats/Opponents/${(item as? OpponentRankingItemViewModel)?.team?.team_id.orEmpty()}/${(item as? OpponentRankingItemViewModel)?.userId.orEmpty()}")
             }
         }
         /** Players stats navigation **/
         composable("Home/Stats/Players") {
             StatsRankingScreen(state = StatsRankingState.PlayerRankingState()) { item, _, _ ->
-                navController.navigate("Home/Stats/Players/${(item as? PlayerRankingItemViewModel)?.user?.mid.orEmpty()}")
+                navController.navigate("Home/Stats/Players/${(item as? PlayerRankingItemViewModel)?.user?.player_id.orEmpty()}")
             }
         }
         composable(

@@ -98,7 +98,7 @@ class WarDetailsViewModel  @AssistedInject constructor(
                     val trackPositions = mutableListOf<MKWarPosition>()
                     it.track?.warPositions?.let { warPositions ->
                         warPositions.forEach { position ->
-                            trackPositions.add(MKWarPosition(position, players?.singleOrNull { it.mid ==  position.playerId }))
+                            trackPositions.add(MKWarPosition(position = position, player = players?.singleOrNull { it.mkcId ==  position.playerId }))
                         }
                         trackPositions.groupBy { it.player }.entries.forEach { entry ->
                             positions.add(Pair(entry.key, entry.value.map { pos -> pos.position.position.positionToPoints() }.sum()))
@@ -109,10 +109,10 @@ class WarDetailsViewModel  @AssistedInject constructor(
                 val temp = positions.groupBy { it.first }.map { Pair(it.key, it.value.map { it.second }.sum()) }.sortedByDescending { it.second }
                 val finalList = mutableListOf<CurrentPlayerModel>()
                 temp.forEach { pair ->
-                    val shockCount = shocks.filter { it.playerId == pair.first?.mid }.map { it.count }.sum()
-                    val isSubPlayer = it.size > it.filter { track -> track.hasPlayer(pair.first?.mid) }.size
-                    val isOld = isSubPlayer && it.firstOrNull()?.hasPlayer(pair.first?.mid).isTrue
-                    val isNew = isSubPlayer && it.lastOrNull()?.hasPlayer(pair.first?.mid).isTrue
+                    val shockCount = shocks.filter { it.playerId == pair.first?.mkcId }.map { it.count }.sum()
+                    val isSubPlayer = it.size > it.filter { track -> track.hasPlayer(pair.first?.mkcId) }.size
+                    val isOld = isSubPlayer && it.firstOrNull()?.hasPlayer(pair.first?.mkcId).isTrue
+                    val isNew = isSubPlayer && it.lastOrNull()?.hasPlayer(pair.first?.mkcId).isTrue
                     finalList.add(CurrentPlayerModel(pair.first, pair.second, isOld, isNew, shockCount = shockCount))
                 }
                 _sharedWarPlayers.emit(finalList)

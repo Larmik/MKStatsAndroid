@@ -75,13 +75,13 @@ class SubPlayerViewModel @Inject constructor(
         val playerListWithSelected = mutableListOf<UserSelector>()
         val allyListWithSelected = mutableListOf<UserSelector>()
         playersList.forEach {
-            when (it.user?.mid == user.mid) {
+            when (it.user?.mkcId == user.mkcId) {
                 true -> playerListWithSelected.add(it.copy(isSelected = true))
                 else -> playerListWithSelected.add(it)
             }
         }
         allyList.forEach {
-            when (it.user?.mid == user.mid) {
+            when (it.user?.mkcId == user.mkcId) {
                 true -> allyListWithSelected.add(it.copy(isSelected = true))
                 else -> allyListWithSelected.add(it)
             }

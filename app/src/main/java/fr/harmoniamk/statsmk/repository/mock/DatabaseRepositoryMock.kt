@@ -52,6 +52,10 @@ class DatabaseRepositoryMock : DatabaseRepositoryInterface {
         emit(teams.singleOrNull { it.mid == id })
     }
 
+    override fun getNewTeam(id: String?): Flow<MKCTeam?> = flow {
+        emit(null)
+    }
+
     override fun getWar(id: String?): Flow<MKWar?> = flow {
         emit(null)
     }

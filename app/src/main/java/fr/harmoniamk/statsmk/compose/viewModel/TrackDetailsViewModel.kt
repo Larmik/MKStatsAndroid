@@ -125,7 +125,7 @@ class TrackDetailsViewModel @AssistedInject constructor(
                 val isLeader = role >= UserRole.LEADER.ordinal
                 val positions = mutableListOf<MKWarPosition>()
                 it.forEach { pos ->
-                    positions.add(MKWarPosition(pos, users.singleOrNull { it.mid == pos.playerId }))
+                    positions.add(MKWarPosition(pos, users.singleOrNull { it.mkcId == pos.playerId }))
                 }
                 _sharedPositions.emit(positions.sortedBy { it.position.position })
                 _sharedButtonsVisible.value = warId == "Current" && networkRepository.networkAvailable && (isAdmin.isTrue || isLeader)
@@ -151,7 +151,7 @@ class TrackDetailsViewModel @AssistedInject constructor(
                 _sharedCurrentTrack.value = warTrack
                 val positions = mutableListOf<MKWarPosition>()
                 it?.warTracks?.getOrNull(trackIndex)?.track?.warPositions?.forEach { pos ->
-                    positions.add(MKWarPosition(pos, users.singleOrNull{ it.mid == pos.playerId }))
+                    positions.add(MKWarPosition(pos, users.singleOrNull{ it.mkcId == pos.playerId }))
                 }
                 _sharedPositions.value = positions.sortedBy { it.position.position }
                 val shocks = mutableListOf<Shock>()

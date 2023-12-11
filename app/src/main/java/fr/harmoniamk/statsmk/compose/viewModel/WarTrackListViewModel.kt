@@ -102,7 +102,7 @@ class WarTrackListViewModel @Inject constructor(
         filtered.addAll(list)
         if (filters.contains(WarFilterType.WEEK)) filtered.removeAll(list.filterNot { it.war.isThisWeek })
         if (filters.contains(WarFilterType.OFFICIAL)) filtered.removeAll(list.filterNot { it.war.war?.isOfficial.isTrue })
-        if (filters.contains(WarFilterType.PLAY)) filtered.removeAll(list.filterNot { it.war.hasPlayer(authenticationRepository.user?.uid) })
+        if (filters.contains(WarFilterType.PLAY)) filtered.removeAll(list.filterNot { it.war.hasPlayer(preferencesRepository.mkcPlayer?.id.toString()) })
         return filtered
     }
 
@@ -118,8 +118,8 @@ class WarTrackListViewModel @Inject constructor(
         onlyIndiv = userId != null || preferencesRepository.currentTeam?.mid == null
 
         when {
-            userId != null && teamId != null -> list.filter { war -> war.hasPlayer(authenticationRepository.user?.uid) && war.hasTeam(teamId) }
-            onlyIndiv -> list.filter { war -> war.hasPlayer(userId ?: authenticationRepository.user?.uid) }
+            userId != null && teamId != null -> list.filter { war -> war.hasPlayer(preferencesRepository.mkcPlayer?.id.toString()) && war.hasTeam(teamId) }
+            onlyIndiv -> list.filter { war -> war.hasPlayer(userId ?: preferencesRepository.mkcPlayer?.id.toString()) }
             else -> list.filter { war -> war.hasTeam(teamId ?: preferencesRepository.currentTeam?.mid) }
         }
         .filter { (onlyIndiv && it.hasPlayer(userId)) || !onlyIndiv && it.hasTeam(preferencesRepository.currentTeam?.mid) }

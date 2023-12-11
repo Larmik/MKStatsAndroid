@@ -1,10 +1,12 @@
 package fr.harmoniamk.statsmk.model.network
 
+import android.os.Parcelable
 import androidx.annotation.Keep
 import com.squareup.moshi.JsonClass
 import fr.harmoniamk.statsmk.database.entities.MKCLightPlayerEntity
 import fr.harmoniamk.statsmk.extension.displayedString
 import fr.harmoniamk.statsmk.extension.formatToDate
+import kotlinx.android.parcel.Parcelize
 
 @Keep
 @JsonClass(generateAdapter = true)
@@ -48,6 +50,7 @@ data class MKCDate(
 
 @Keep
 @JsonClass(generateAdapter = true)
+@Parcelize
 data class MKCLightPlayer(
     val player_id: String,
     val display_name: String,
@@ -59,7 +62,7 @@ data class MKCLightPlayer(
     val country_code: String,
     val country_name: String,
     val team_leader: String
-) {
+) : Parcelable {
     val flag = "https://www.mariokartcentral.com/mkc/images/flags/${country_code.lowercase()}.png"
 
     fun toEntity() = MKCLightPlayerEntity(

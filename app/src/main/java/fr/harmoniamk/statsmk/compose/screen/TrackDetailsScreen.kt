@@ -83,7 +83,7 @@ fun TrackDetailsScreen(warId: String, warTrackId: String, onBack: () -> Unit) {
                     MKPlayerItem(
                         position = it,
                         shockVisible = false,
-                        shockCount = shocks.value?.singleOrNull { shock -> shock.playerId == it.player?.mid }?.count ?: 0
+                        shockCount = shocks.value?.singleOrNull { shock -> shock.playerId == it.player?.mkcId }?.count ?: 0
                     ) {}
                 }
             }

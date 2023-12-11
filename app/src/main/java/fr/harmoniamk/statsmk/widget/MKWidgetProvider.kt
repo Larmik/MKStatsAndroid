@@ -21,6 +21,7 @@ import fr.harmoniamk.statsmk.repository.DatabaseRepository
 import fr.harmoniamk.statsmk.repository.FirebaseRepository
 import fr.harmoniamk.statsmk.repository.PreferencesRepository
 import fr.harmoniamk.statsmk.repository.RemoteConfigRepository
+import fr.harmoniamk.statsmk.repository.mock.PreferencesRepositoryMock
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -38,6 +39,7 @@ class MKWidgetProvider : AppWidgetProvider(), CoroutineScope {
 
     private val viewModel by lazy {
         MKWidgetViewModel(
+            preferencesRepository = PreferencesRepositoryMock(),
             firebaseRepository = FirebaseRepository(
                 preferencesRepository = PreferencesRepository(context),
                 databaseRepository = DatabaseRepository(
@@ -46,9 +48,9 @@ class MKWidgetProvider : AppWidgetProvider(), CoroutineScope {
                     warDataSource = WarLocalDataSource(context),
                     topicDataSource = TopicLocalDataSource(context),
                     newPlayerLocalDataSource = NewPlayerLocalDataSource(context),
-                    newTeamLocalDataSource = NewTeamLocalDataSource(context)
+                    newTeamLocalDataSource = NewTeamLocalDataSource(context),
                 ),
-                remoteConfigRepository = RemoteConfigRepository()
+                remoteConfigRepository = RemoteConfigRepository(),
             )
         )
     }

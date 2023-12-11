@@ -59,7 +59,7 @@ class WarViewModel @Inject constructor(
     private val dispoList = mutableListOf<WarDispo>()
 
     init {
-        firebaseRepository.takeIf { preferencesRepository.currentTeam != null }?.listenToCurrentWar()
+        firebaseRepository.takeIf { preferencesRepository.mkcTeam != null }?.listenToCurrentWar()
             ?.onEach {
                 if (networkRepository.networkAvailable) {
                     val isAdmin =  authenticationRepository.userRole.map { it >= UserRole.ADMIN.ordinal }.first()
@@ -73,14 +73,14 @@ class WarViewModel @Inject constructor(
     fun refresh() {
         _sharedTeam.value = preferencesRepository.currentTeam
        databaseRepository.getWars()
-           .map { it.filter { war -> war.hasTeam(preferencesRepository.currentTeam?.mid) } }
+           .map { it.filter { war -> war.hasTeam(preferencesRepository.mkcTeam?.id.toString()) } }
             .onEach {
                 delay(100)
                 it.sortedByDescending { it.war?.createdDate?.formatToDate() }
                 .safeSubList(0, 5)
                 .let { _sharedLastWars.emit(it) }
             }.launchIn(viewModelScope)
-        firebaseRepository.getCurrentWar(preferencesRepository.currentTeam?.mid.orEmpty())
+        firebaseRepository.getCurrentWar(preferencesRepository.mkcTeam?.id.toString())
             .zip( authenticationRepository.userRole.map { it >= UserRole.ADMIN.ordinal }) { war, isAdmin ->
                 if (networkRepository.networkAvailable) {
                     _sharedCurrentWar.value = war

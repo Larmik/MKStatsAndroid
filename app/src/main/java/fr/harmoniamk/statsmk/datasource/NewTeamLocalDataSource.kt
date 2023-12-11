@@ -11,6 +11,7 @@ import fr.harmoniamk.statsmk.model.network.MKCTeam
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -18,6 +19,7 @@ import javax.inject.Singleton
 
 interface NewTeamLocalDataSourceInterface {
     fun getAll(): Flow<List<MKCTeam>>
+    fun getById(id: String) : Flow<MKCTeam>
     fun bulkInsert(teams: List<MKCTeam>): Flow<Unit>
     fun insert(team: MKCTeam): Flow<Unit>
 }
@@ -40,6 +42,8 @@ class NewTeamLocalDataSource @Inject constructor(@ApplicationContext private val
     private val dao = MKDatabase.getInstance(context).mkcTeamDao()
 
     override fun getAll(): Flow<List<MKCTeam>> = dao.getAll().map { list -> list.map { MKCTeam(it) } }
+
+    override fun getById(id: String) = dao.getById(id).filterNotNull().map { MKCTeam(it) }
 
     override fun bulkInsert(teams: List<MKCTeam>): Flow<Unit> = flow { emit(dao.bulkInsert(teams.map { it.toEntity() })) }
 

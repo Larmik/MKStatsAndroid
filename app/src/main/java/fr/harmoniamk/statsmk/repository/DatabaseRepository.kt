@@ -35,6 +35,7 @@ interface DatabaseRepositoryInterface {
 
     fun getUser(id: String?): Flow<User?>
     fun getTeam(id: String?): Flow<Team?>
+    fun getNewTeam(id: String?): Flow<MKCTeam?>
     fun getWar(id: String?): Flow<MKWar?>
 
     fun writeUsers(list: List<User>): Flow<Unit>
@@ -118,6 +119,11 @@ class DatabaseRepository @Inject constructor(
     override fun getTeam(id: String?): Flow<Team?> = id?.let {
         Log.d("MKDebugOnly", "DatabaseRepository getTeam $id")
         teamDataSource.getById(it)
+    } ?: flowOf(null)
+
+    override fun getNewTeam(id: String?): Flow<MKCTeam?> = id?.let {
+        Log.d("MKDebugOnly", "DatabaseRepository getNewTeam $id")
+        newTeamLocalDataSource.getById(it)
     } ?: flowOf(null)
 
     override fun getWar(id: String?): Flow<MKWar?> = id?.let {

@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.firebase.Penalty
-import fr.harmoniamk.statsmk.model.firebase.Team
+import fr.harmoniamk.statsmk.model.network.MKCTeam
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
@@ -23,8 +23,8 @@ class PenaltyViewModel @Inject constructor(
     private val firebaseRepository: FirebaseRepositoryInterface,
     private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
 
-    private val _sharedTeam1 = MutableStateFlow<Team?>(null)
-    private val _sharedTeam2 = MutableStateFlow<Team?>(null)
+    private val _sharedTeam1 = MutableStateFlow<MKCTeam?>(null)
+    private val _sharedTeam2 = MutableStateFlow<MKCTeam?>(null)
     private val _sharedDismiss = MutableSharedFlow<Unit>()
 
     val sharedTeam1 = _sharedTeam1.asStateFlow()
@@ -40,8 +40,8 @@ class PenaltyViewModel @Inject constructor(
             ?.mapNotNull { it?.war }
             ?.onEach {
                 teamSelected = it.teamHost
-                _sharedTeam1.value = databaseRepository.getTeam(it.teamHost).firstOrNull()
-                _sharedTeam2.value = databaseRepository.getTeam(it.teamOpponent).firstOrNull()
+                _sharedTeam1.value = databaseRepository.getNewTeam(it.teamHost).firstOrNull()
+                _sharedTeam2.value = databaseRepository.getNewTeam(it.teamOpponent).firstOrNull()
             }
             ?.launchIn(viewModelScope)
     }

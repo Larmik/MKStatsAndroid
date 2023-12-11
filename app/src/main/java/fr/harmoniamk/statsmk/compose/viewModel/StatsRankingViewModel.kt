@@ -9,7 +9,6 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.EntryPointAccessors
-import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.application.MainApplication
 import fr.harmoniamk.statsmk.compose.ViewModelFactoryProvider
@@ -47,7 +46,6 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 sealed class StatsRankingState(val title: Int, val placeholderRes: Int, val sort: Sort) {
     class PlayerRankingState: StatsRankingState(
@@ -140,13 +138,12 @@ class StatsRankingViewModel @AssistedInject constructor(
                         warList.clear()
                         warList.addAll(it)
                     }
-                    .flatMapLatest { databaseRepository.getUsers() }
-                    .map { it.filter { user -> user.team == preferencesRepository.currentTeam?.mid } }
-                    .mapNotNull { it.sortedBy { it.name } }
+                    .flatMapLatest { databaseRepository.getRoster() }
+                    .mapNotNull { it.sortedBy { it.display_name } }
                     .onEach {
                         val temp = mutableListOf<PlayerRankingItemViewModel>()
                         it.forEach { user ->
-                            val stats = warList.filter { war -> war.hasPlayer(user.mid) }.withFullStats(databaseRepository, userId = user.mid).first()
+                            val stats = warList.filter { war -> war.hasPlayer(user.player_id.split(".").first()) }.withFullStats(databaseRepository, userId = user.player_id.split(".").first()).first()
                             temp.add(PlayerRankingItemViewModel(user, stats))
                         }
                         _sharedList.value = sortPlayers(sortType, temp)
@@ -158,29 +155,29 @@ class StatsRankingViewModel @AssistedInject constructor(
                         warList.clear()
                         warList.addAll(it)
                     }
-                    .flatMapLatest { databaseRepository.getTeams() }
-                    .map { it.filterNot { team -> team.mid == preferencesRepository.currentTeam?.mid } }
-                    .mapNotNull { it.sortedBy { it.name } }
-                    .flatMapLatest { it.withFullTeamStats(warList, databaseRepository, authenticationRepository.user?.uid.takeIf { indivEnabled.isTrue }) }
-                    .mapNotNull { it.filter { vm -> (vm.userId == null && vm.stats.warStats.list.any { war -> war.hasTeam(preferencesRepository.currentTeam?.mid) }) || vm.userId != null } }
+                    .flatMapLatest { databaseRepository.getNewTeams() }
+                    .map { it.filterNot { team -> team.team_id == preferencesRepository.mkcTeam?.id.toString() } }
+                    .mapNotNull { it.sortedBy { it.team_name } }
+                    .flatMapLatest { it.withFullTeamStats(warList, databaseRepository, preferencesRepository.mkcPlayer?.id.toString().split(".").first().takeIf { indivEnabled.isTrue }) }
+                    .mapNotNull { it.filter { vm -> (vm.userId == null && vm.stats.warStats.list.any { war -> war.hasTeam(preferencesRepository.mkcTeam?.id.toString()) }) || vm.userId != null } }
                     .onEach {
                         _sharedList.value = sortTeams(sortType, it)
                     }.launchIn(viewModelScope)
             }
             is StatsRankingState.MapsRankingState -> {
-                val finalTeamId = teamId ?: preferencesRepository.currentTeam?.mid
-                val finalUserId = userId ?: authenticationRepository.user?.uid?.takeIf { indivEnabled }
+                val finalTeamId = teamId ?: preferencesRepository.mkcTeam?.id.toString()
+                val finalUserId = userId?.split(".")?.first() ?: preferencesRepository.mkcPlayer?.id.toString().takeIf { indivEnabled }?.split(".")?.first()
                 _sharedTeamId.value =  finalTeamId
                 _sharedUserId.value = finalUserId
 
-                databaseRepository.getUser(userId)
+                databaseRepository.getRoster()
                     .filterNotNull()
-                    .onEach { _sharedUserName.value = it.name }
+                    .onEach { _sharedUserName.value = it.singleOrNull { it.player_id == userId }?.display_name }
                     .launchIn(viewModelScope)
 
-                databaseRepository.getTeam(teamId)
+                databaseRepository.getNewTeam(teamId)
                     .filterNotNull()
-                    .onEach { _sharedUserName.value = it.name }
+                    .onEach { _sharedUserName.value = it.team_name }
                     .launchIn(viewModelScope)
 
                 databaseRepository.getWars()
@@ -228,13 +225,13 @@ class StatsRankingViewModel @AssistedInject constructor(
     fun onSearch(state: StatsRankingState, search: String) {
         (state as? StatsRankingState.PlayerRankingState)?.let {
             when (search.isNotEmpty()) {
-                true ->  _sharedList.value = players.filter { it.user.name?.lowercase()?.contains(search.lowercase()).isTrue }
+                true ->  _sharedList.value = players.filter { it.user.display_name?.lowercase()?.contains(search.lowercase()).isTrue }
                 else -> _sharedList.value = players
             }
         }
         (state as? StatsRankingState.OpponentRankingState)?.let {
             when (search.isNotEmpty()) {
-                true ->  _sharedList.value = opponents.filter { it.team?.name?.lowercase()?.contains(search.lowercase()).isTrue || it.team?.shortName?.lowercase()?.contains(search.lowercase()).isTrue }
+                true ->  _sharedList.value = opponents.filter { it.team?.team_name?.lowercase()?.contains(search.lowercase()).isTrue || it.team?.team_tag?.lowercase()?.contains(search.lowercase()).isTrue }
                 else -> _sharedList.value = opponents
             }
         }
@@ -283,7 +280,7 @@ class StatsRankingViewModel @AssistedInject constructor(
             PlayerSortType.WINRATE -> list.sortedByDescending { (it.stats.warStats.warsWon*100)/it.stats.warStats.warsPlayed}
             PlayerSortType.TOTAL_WIN -> list.sortedByDescending { it.stats.warStats.warsPlayed }
             PlayerSortType.AVERAGE -> list.sortedByDescending { it.stats.averagePoints }
-            else -> list.sortedBy { it.user.name?.lowercase() }
+            else -> list.sortedBy { it.user.display_name.lowercase() }
         }
         val playerList =  pairList.filter { it.stats.warStats.warsPlayed > 0 }
         players.clear()
@@ -296,7 +293,7 @@ class StatsRankingViewModel @AssistedInject constructor(
             PlayerSortType.WINRATE -> list.sortedByDescending { (it.stats.warStats.warsWon*100)/it.stats.warStats.warsPlayed}
             PlayerSortType.TOTAL_WIN -> list.sortedByDescending { it.stats.warStats.warsPlayed }
             PlayerSortType.AVERAGE -> list.sortedByDescending { it.stats.averagePoints }
-            else -> list.sortedBy { it.team?.name }
+            else -> list.sortedBy { it.team?.team_name }
         }.filter { vm -> vm.stats.warStats.warsPlayed > 1 }
         opponents.clear()
         opponents.addAll(pairList)

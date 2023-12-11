@@ -97,7 +97,7 @@ class PositionViewModel @AssistedInject constructor(
     private val positions = mutableListOf<NewWarPositions>()
 
     fun onPositionClick(position: Int) {
-       val pos = NewWarPositions(mid = System.currentTimeMillis().toString(), position = position, playerId = currentUser?.mid)
+       val pos = NewWarPositions(mid = System.currentTimeMillis().toString(), position = position, playerId = currentUser?.mkcId)
         positions.add(pos)
         _sharedSelectedPositions.value = positions.mapNotNull { it.position }
         if (positions.size == currentUsers.size) {

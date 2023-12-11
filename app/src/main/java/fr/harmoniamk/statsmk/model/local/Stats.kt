@@ -3,7 +3,7 @@ package fr.harmoniamk.statsmk.model.local
 import android.os.Parcelable
 import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.extension.*
-import fr.harmoniamk.statsmk.model.firebase.Team
+import fr.harmoniamk.statsmk.model.network.MKCTeam
 import kotlinx.android.parcel.Parcelize
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -59,8 +59,8 @@ data class TrackStats(
 ): Parcelable, RankingItemViewModel
 
 @Parcelize
-class TeamStats(val team: Team?, val totalPlayed: Int?): Parcelable {
-    val teamName = team?.name
+class TeamStats(val team: MKCTeam?, val totalPlayed: Int?): Parcelable {
+    val teamName = team?.team_name
 }
 
 @Parcelize

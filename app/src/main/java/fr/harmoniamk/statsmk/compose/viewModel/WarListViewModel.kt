@@ -60,8 +60,8 @@ class WarListViewModel @Inject constructor(
         _sharedIsWeek.value = isWeek
         _sharedUserId.value = userId
         _sharedTeamId.value = teamId
-        databaseRepository.getTeam(teamId)
-            .onEach { _sharedTeamName.value = it?.name }
+        databaseRepository.getNewTeam(teamId)
+            .onEach { _sharedTeamName.value = it?.team_name }
             .launchIn(viewModelScope)
         databaseRepository.getUser(userId)
             .onEach { _sharedUserName.value = it?.name }
@@ -101,7 +101,7 @@ class WarListViewModel @Inject constructor(
         filtered.addAll(list)
         if (filters.contains(WarFilterType.WEEK)) filtered.removeAll(list.filterNot { it.isThisWeek })
         if (filters.contains(WarFilterType.OFFICIAL)) filtered.removeAll(list.filterNot { it.war?.isOfficial.isTrue })
-        if (filters.contains(WarFilterType.PLAY)) filtered.removeAll(list.filterNot { it.hasPlayer(authenticationRepository.user?.uid) })
+        if (filters.contains(WarFilterType.PLAY)) filtered.removeAll(list.filterNot { it.hasPlayer(preferencesRepository.mkcPlayer?.id.toString()) })
         return filtered
     }
 

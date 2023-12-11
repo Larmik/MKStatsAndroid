@@ -71,21 +71,21 @@ class SignupViewModel @Inject constructor(
                     preferencesRepository.currentTeam = databaseRepository.getTeam(it.team.takeIf { it != "-1" }).firstOrNull()
                     firebaseRepository.deleteUser(it).first()
                     firebaseRepository.getNewWars(it.team ?: "-1").firstOrNull()?.let {
-                        val hasPlayerWars = it.filter { MKWar(it).hasPlayer(finalUser?.mid) }
+                        val hasPlayerWars = it.filter { MKWar(it).hasPlayer(finalUser?.mkcId) }
                         hasPlayerWars.forEach { war ->
                             val newWarTrack = mutableListOf<NewWarTrack>()
                             war.warTracks?.forEach { warTrack ->
                                 val newPositions = mutableListOf<NewWarPositions>()
                                 val newShocks = mutableListOf<Shock>()
                                 warTrack.warPositions?.forEach { pos ->
-                                    val newPosition = when (pos.playerId == finalUser?.mid) {
+                                    val newPosition = when (pos.playerId == finalUser?.mkcId) {
                                         true -> pos.apply { this.playerId = fbUser.uid }
                                         else -> pos
                                     }
                                     newPositions.add(newPosition)
                                 }
                                 warTrack.shocks?.forEach {
-                                    val newShock = when (it.playerId == finalUser?.mid) {
+                                    val newShock = when (it.playerId == finalUser?.mkcId) {
                                         true -> it.apply { this.playerId = fbUser.uid }
                                         else -> it
                                     }

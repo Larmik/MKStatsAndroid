@@ -80,7 +80,7 @@ class TeamSettingsViewModel @Inject constructor(
     }
 
     fun onEditPlayer(player: User) {
-        _sharedBottomSheetValue.value = MKBottomSheetState.EditPlayer(player.mid)
+        _sharedBottomSheetValue.value = MKBottomSheetState.EditPlayer(player.mkcId.orEmpty())
     }
 
     fun dismissBottomSheet() {
@@ -92,7 +92,7 @@ class TeamSettingsViewModel @Inject constructor(
         allys.clear()
         list?.sortedBy { it.name }?.forEach { player ->
             authenticationRepository.userRole.map {
-                authenticationRepository.user?.uid != player.mid
+                preferencesRepository.mkcPlayer?.id.toString() != player.mkcId
                         && networkRepository.networkAvailable
                         && player.mid.toLongOrNull() != null
                         && ((player.mid.toLongOrNull() != null && it >= UserRole.ADMIN.ordinal)

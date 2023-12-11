@@ -75,7 +75,7 @@ class CurrentWarViewModel @Inject constructor(
     val sharedTrackClick = _sharedTrackClick.asSharedFlow()
 
     init {
-        flowOf(firebaseRepository.getCurrentWar(preferencesRepository.currentTeam?.mid.orEmpty()), firebaseRepository.listenToCurrentWar())
+        flowOf(firebaseRepository.getCurrentWar(preferencesRepository.mkcTeam?.id.orEmpty()), firebaseRepository.listenToCurrentWar(preferencesRepository.mkcTeam?.id.toString()))
             .flattenMerge()
             .flatMapLatest { it?.war.withName(databaseRepository) }
             .filterNotNull()
@@ -172,7 +172,7 @@ class CurrentWarViewModel @Inject constructor(
                             trackPositions.add(
                                 MKWarPosition(
                                     position,
-                                    players.singleOrNull { it.mid == position.playerId })
+                                    players.singleOrNull { it.mkcId == position.playerId })
                             )
                         }
                         trackPositions.groupBy { it.player }.entries.forEach { entry ->
@@ -191,15 +191,13 @@ class CurrentWarViewModel @Inject constructor(
                     .map { Pair(it.key, it.value.map { it.second }.sum()) }
                     .sortedByDescending { it.second }
                 temp.forEach { pair ->
-                    val shockCount = shocks.filter { it.playerId == pair.first?.mid }.map { it.count }.sum()
+                    val shockCount = shocks.filter { it.playerId == pair.first?.mkcId }.map { it.count }.sum()
                     val isOld = pair.first?.currentWar == "-1"
-                    val isNew =
-                        trackList.size > trackList.filter { track -> track.hasPlayer(pair.first?.mid) }.size && pair.first?.currentWar == preferencesRepository.currentWar?.mid
+                    val isNew = trackList.size > trackList.filter { track -> track.hasPlayer(pair.first?.mkcId) }.size && pair.first?.currentWar == preferencesRepository.currentWar?.mid
                     finalList.add(CurrentPlayerModel(pair.first, pair.second, isOld, isNew, shockCount))
                 }
                 players.filter {
-                    it.currentWar == preferencesRepository.currentWar?.mid && !finalList.map { it.player?.mid }
-                        .contains(it.mid)
+                    it.currentWar == preferencesRepository.currentWar?.mid && !finalList.map { it.player?.mkcId }.contains(it.mkcId)
                 }.forEach { finalList.add(CurrentPlayerModel(it, 0, isNew = true)) }
                 finalList
             }

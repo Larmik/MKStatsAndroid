@@ -21,18 +21,18 @@ fun MKTeamStatsView(stats: Stats, userId: String? = null, onMostPlayedClick: (St
         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
             .padding(bottom = 10.dp)
             .fillMaxWidth()
-            .clickable { onMostPlayedClick(stats.mostPlayedTeam?.team?.mid, userId) }) {
+            .clickable { onMostPlayedClick(stats.mostPlayedTeam?.team?.team_id.toString(), userId) }) {
             MKText(text = R.string.equipe_la_plus_jou_e, fontSize = 12)
             MKText(text = stats.mostPlayedTeam?.teamName.toString(), font = R.font.montserrat_bold)
             MKText(text = String.format(stringResource(id = R.string.matchs_played), stats.mostPlayedTeam?.totalPlayed.toString()), fontSize = 12)
         }
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Column(Modifier.weight(1f).clickable { onMostDefeatedClick(stats.mostDefeatedTeam?.team?.mid, userId) }, horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(Modifier.weight(1f).clickable { onMostDefeatedClick(stats.mostDefeatedTeam?.team?.team_id.toString(), userId) }, horizontalAlignment = Alignment.CenterHorizontally) {
                 MKText(text = R.string.la_plus_gagn_e, fontSize = 12)
                 MKText(text = stats.mostDefeatedTeam?.teamName.toString(), font = R.font.montserrat_bold)
                 MKText(text = String.format(stringResource(id = R.string.victory_placeholder), stats.mostDefeatedTeam?.totalPlayed.toString()), fontSize = 12)
             }
-            Column(Modifier.weight(1f).clickable { onLessDefeatedClick(stats.lessDefeatedTeam?.team?.mid, userId) }, horizontalAlignment = Alignment.CenterHorizontally) {
+            Column(Modifier.weight(1f).clickable { onLessDefeatedClick(stats.lessDefeatedTeam?.team?.team_id.toString(), userId) }, horizontalAlignment = Alignment.CenterHorizontally) {
                 MKText(text = R.string.la_plus_perdue, fontSize = 12)
                 MKText(text = stats.lessDefeatedTeam?.teamName.toString(), font = R.font.montserrat_bold)
                 MKText(text = String.format(stringResource(id = R.string.defeat_placeholder), stats.lessDefeatedTeam?.totalPlayed.toString()), fontSize = 12)

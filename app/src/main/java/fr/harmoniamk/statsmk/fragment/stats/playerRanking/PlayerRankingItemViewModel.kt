@@ -2,15 +2,15 @@ package fr.harmoniamk.statsmk.fragment.stats.playerRanking
 
 import android.os.Parcelable
 import fr.harmoniamk.statsmk.model.local.RankingItemViewModel
-import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.Stats
+import fr.harmoniamk.statsmk.model.network.MKCLightPlayer
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-data class PlayerRankingItemViewModel(val user: User, override val stats: Stats) : Parcelable, RankingItemViewModel {
+data class PlayerRankingItemViewModel(val user: MKCLightPlayer, override val stats: Stats) : Parcelable, RankingItemViewModel {
 
     val playerName: String?
-        get() = user.name
+        get() = user.display_name
     val warsPlayedLabel: String
         get() = stats.warStats.warsPlayed.toString()
     val winrateLabel: String
@@ -21,5 +21,5 @@ data class PlayerRankingItemViewModel(val user: User, override val stats: Stats)
     val averageLabel: String
         get() = stats.averagePoints.toString()
     val picture: String?
-        get() = user.picture
+        get() = user.flag
 }

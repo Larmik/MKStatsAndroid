@@ -12,8 +12,8 @@ import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 @HiltViewModel
-class StatsMenuViewModel @Inject constructor(authenticationRepository: AuthenticationRepositoryInterface, preferencesRepository: PreferencesRepositoryInterface): ViewModel() {
-    private val _sharedId = MutableStateFlow(authenticationRepository.user?.uid)
+class StatsMenuViewModel @Inject constructor(preferencesRepository: PreferencesRepositoryInterface): ViewModel() {
+    private val _sharedId = MutableStateFlow(preferencesRepository.mkcPlayer?.id.toString())
     private val _sharedTeam = MutableStateFlow(preferencesRepository.currentTeam)
     val sharedId = _sharedId.asStateFlow()
     val sharedTeam = _sharedTeam.asStateFlow()

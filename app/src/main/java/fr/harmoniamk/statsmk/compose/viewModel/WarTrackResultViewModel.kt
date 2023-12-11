@@ -175,7 +175,7 @@ class WarTrackResultViewModel @AssistedInject constructor(
         }
         currentTrack?.warPositions.orEmpty().sortedBy { it.position }.forEach { pos ->
             val shocksForPlayer = shocks[pos.playerId] ?: currentTrack?.shocks.orEmpty().singleOrNull { it.playerId == pos.playerId }?.count
-            positions.add(MKWarPosition(pos, users.singleOrNull { it.mid == pos.playerId }))
+            positions.add(MKWarPosition(pos, users.singleOrNull { it.mkcId == pos.playerId }))
             shocks[pos.playerId] = shocksForPlayer ?: 0
         }
         val newPositions = mutableListOf<MKWarPosition>()

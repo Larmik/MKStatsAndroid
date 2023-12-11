@@ -20,13 +20,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.extension.positionColor
 import fr.harmoniamk.statsmk.fragment.stats.playerRanking.PlayerRankingItemViewModel
-import fr.harmoniamk.statsmk.model.firebase.NewWarPositions
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.MKWarPosition
 
@@ -43,7 +41,6 @@ fun MKPlayerItem(
     onRemoveShock: (String) -> Unit = { },
     onRootClick: () -> Unit = { },
     onEditClick: (User) -> Unit) {
-    val finalPlayer = player ?: position?.player ?: playerRanking?.user
     val backgroundColor = colorResource(id =
         when (isSelected) {
             true -> R.color.harmonia_dark
@@ -61,15 +58,19 @@ fun MKPlayerItem(
         Row(modifier = Modifier
             .padding(10.dp)
             .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            when (finalPlayer?.picture) {
-                null -> Image(painter = painterResource(R.drawable.mk_stats_logo_picture), contentDescription = null, modifier = Modifier.size(40.dp).clip(
-                    CircleShape))
-                    else ->     AsyncImage(model = finalPlayer.picture, contentDescription = null, modifier = Modifier.size(40.dp).clip(
+            when  {
+
+                playerRanking?.user?.flag != null ->     AsyncImage(model = playerRanking?.user.flag, contentDescription = null, modifier = Modifier.size(40.dp).clip(
                         CircleShape))
+                player?.picture != null -> AsyncImage(model = player?.picture, contentDescription = null, modifier = Modifier.size(40.dp).clip(
+                    CircleShape))
+                else -> Image(painter = painterResource(R.drawable.mk_stats_logo_picture), contentDescription = null, modifier = Modifier.size(40.dp).clip(
+                    CircleShape))
             }
 
             Row(Modifier.weight(1f), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
-                finalPlayer?.name?.let { MKText(modifier = Modifier.widthIn(0.dp, 120.dp), text = it, font = R.font.montserrat_bold, textColor = textColor, maxLines = 1) }
+                playerRanking?.user?.display_name?.let { MKText(modifier = Modifier.widthIn(0.dp, 120.dp), text = it, font = R.font.montserrat_bold, textColor = textColor, maxLines = 1) }
+                player?.name?.let { MKText(modifier = Modifier.widthIn(0.dp, 120.dp), text = it, font = R.font.montserrat_bold, textColor = textColor, maxLines = 1) }
                 shockCount.takeIf { it > 0 }?.let {
                     Image(painter = painterResource(id = R.drawable.shock), contentDescription = null, modifier = Modifier
                         .size(25.dp)
@@ -87,7 +88,7 @@ fun MKPlayerItem(
                         MKText(text = R.string.minus, font = R.font.orbitron_semibold, fontSize = 26, modifier = Modifier
                             .size(30.dp)
                             .clickable {
-                                position.player?.mid?.let { mid ->
+                                position.player?.mkcId?.let { mid ->
                                     onRemoveShock(mid)
                                 }
                             })
@@ -97,7 +98,7 @@ fun MKPlayerItem(
                         MKText(text = R.string.plus, font = R.font.orbitron_semibold, fontSize = 26, modifier = Modifier
                             .size(30.dp)
                             .clickable {
-                                position.player?.mid?.let { mid ->
+                                position.player?.mkcId?.let { mid ->
                                     onAddShock(mid)
                                 }
                             })
@@ -119,48 +120,6 @@ fun MKPlayerItem(
                     }
                 }
             }
-            player?.takeIf { editVisible }?.let {
-                Image(painter = painterResource(id = R.drawable.edit), contentDescription = null, modifier = Modifier
-                    .size(25.dp)
-                    .clickable { onEditClick(it) })
-            }
          }
     }
-}
-
-@Composable
-@Preview
-fun MKPlayerItemPreview() {
-    MKPlayerItem(player = User(
-        mid = "mid",
-        name = "Lari",
-        picture = "https://firebasestorage.googleapis.com/v0/b/stats-mk.appspot.com/o/1643723546718?alt=media&token=901e95bd-5d15-4ef4-a541-bdbf28d3bfca"
-    )) {
-
-    }
-}
-@Composable
-@Preview
-fun MKPlayerItemPositionPreview() {
-    MKPlayerItem(position = MKWarPosition(
-        position = NewWarPositions("mid", "pl_id", 4),
-        player = User(
-            mid = "mid",
-            name = "Lari",
-            picture = "https://firebasestorage.googleapis.com/v0/b/stats-mk.appspot.com/o/1643723546718?alt=media&token=901e95bd-5d15-4ef4-a541-bdbf28d3bfca"
-        )), shockVisible = true
-    ) {}
-}
-@Composable
-@Preview
-fun MKPlayerItemPositionPreviewWithSkock() {
-    MKPlayerItem(position = MKWarPosition(
-        position = NewWarPositions("mid", "pl_id", 4),
-        player = User(
-            mid = "mid",
-            name = "Lari",
-            picture = "https://firebasestorage.googleapis.com/v0/b/stats-mk.appspot.com/o/1643723546718?alt=media&token=901e95bd-5d15-4ef4-a541-bdbf28d3bfca"
-        ),
-    ), shockCount = 2
-    ) {}
 }

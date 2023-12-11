@@ -11,11 +11,9 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.EntryPointAccessors
 import fr.harmoniamk.statsmk.compose.ViewModelFactoryProvider
-import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.fragment.playerSelect.UserSelector
 import fr.harmoniamk.statsmk.model.firebase.NewWar
-import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
@@ -28,7 +26,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -92,7 +89,7 @@ class PlayerListViewModel @AssistedInject constructor(
     fun selectUser(user: UserSelector) {
         val temp = mutableListOf<UserSelector>()
         _sharedPlayers.value?.forEach {
-            when (it.user?.mid == user.user?.mid) {
+            when (it.user?.mkcId == user.user?.mkcId) {
                 true -> temp.add(user)
                 else -> temp.add(it)
             }
@@ -103,7 +100,7 @@ class PlayerListViewModel @AssistedInject constructor(
     fun selectAlly(user: UserSelector) {
         val temp = mutableListOf<UserSelector>()
         _sharedAllies.value?.forEach {
-            when (it.user?.mid == user.user?.mid) {
+            when (it.user?.mkcId == user.user?.mkcId) {
                 true -> temp.add(user)
                 else -> temp.add(it)
             }
@@ -119,7 +116,7 @@ class PlayerListViewModel @AssistedInject constructor(
         val war =  NewWar(
             mid = System.currentTimeMillis().toString(),
             teamHost = preferencesRepository.currentTeam?.mid,
-            playerHostId = authenticationRepository.user?.uid,
+            playerHostId = preferencesRepository.mkcPlayer?.id.toString(),
             teamOpponent = id,
             createdDate = date,
             isOfficial = official
@@ -153,9 +150,9 @@ class PlayerListViewModel @AssistedInject constructor(
             }
             .launchIn(viewModelScope)
 
-        databaseRepository.getTeam(id)
+        databaseRepository.getNewTeam(id)
             .onEach {
-                _sharedWarName.value = "${preferencesRepository.currentTeam?.shortName} - ${it?.shortName}"
+                _sharedWarName.value = "${preferencesRepository.currentTeam?.shortName} - ${it?.team_name}"
             }.launchIn(viewModelScope)
     }
 

@@ -38,8 +38,8 @@ fun PenaltyScreen(viewModel: PenaltyViewModel = hiltViewModel(), onDismiss: () -
     }
     MKBaseScreen(title = R.string.p_nalit) {
         MKSegmentedSelector(buttons = listOf(
-            Pair(team1.value?.name.orEmpty()) { viewModel.onSelectTeam(team1.value?.mid) },
-            Pair(team2.value?.name.orEmpty()) { viewModel.onSelectTeam(team2.value?.mid) }
+            Pair(team1.value?.team_name.orEmpty()) { viewModel.onSelectTeam(team1.value?.team_id.toString()) },
+            Pair(team2.value?.team_name.orEmpty()) { viewModel.onSelectTeam(team2.value?.team_id.toString()) }
         ))
         Spacer(modifier = Modifier.height(20.dp))
         MKTextField(

@@ -10,6 +10,7 @@ import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.firebase.AuthUserResponse
 import fr.harmoniamk.statsmk.model.local.MKWar
+import fr.harmoniamk.statsmk.model.network.MKCTeam
 import fr.harmoniamk.statsmk.repository.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -96,6 +97,8 @@ class MainViewModel @Inject constructor(
                     .flatMapLatest { databaseRepository.writeRoster(it.rosterList.orEmpty()) }
                     .flatMapLatest { mkCentralRepository.teams }
                     .flatMapLatest { databaseRepository.writeNewTeams(it) }
+                    .flatMapLatest { databaseRepository.getTeams() }
+                    .flatMapLatest { databaseRepository.writeNewTeams(it.filter { team -> team.mid.toLong() > 999999 }.map { MKCTeam(it) }) }
                     .onEach {
                         preferencesRepository.currentTeam?.mid?.let {
                             firebaseRepository.getNewWars(it).zip(databaseRepository.getWars()) { remoteDb, localDb ->

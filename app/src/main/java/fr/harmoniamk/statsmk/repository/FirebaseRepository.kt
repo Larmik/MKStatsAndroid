@@ -216,7 +216,7 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 launch {
                     Log.d("MKDebugOnly", "FirebaseRepository listenCurrentWar")
-                    val war = when (val value = dataSnapshot.child("currentWars").child(preferencesRepository.currentTeam?.mid ?: "-1").value as? Map<*,*>) {
+                    val war = when (val value = dataSnapshot.child("currentWars").child(preferencesRepository.mkcTeam?.id.orEmpty()).value as? Map<*,*>) {
                         null -> null
                         else -> NewWar(
                             mid = value["mid"].toString(),

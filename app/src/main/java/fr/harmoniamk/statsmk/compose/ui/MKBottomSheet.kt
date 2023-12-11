@@ -80,7 +80,7 @@ fun MKBottomSheet(
             PenaltyScreen(onDismiss = onDismiss)
         }
         is MKBottomSheetState.AddPlayer -> {
-            PlayersSettingsScreen(onBack = onDismiss, canAdd = true, ally = state.ally)
+            PlayersSettingsScreen(onBack = onDismiss)
         }
         is MKBottomSheetState.EditPlayer -> {
             EditPlayerScreen(playerId = state.playerId, onDismiss = onDismiss)
