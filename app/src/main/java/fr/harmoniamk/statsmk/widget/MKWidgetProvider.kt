@@ -13,15 +13,12 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.activity.MainActivity
 import fr.harmoniamk.statsmk.datasource.NewPlayerLocalDataSource
 import fr.harmoniamk.statsmk.datasource.NewTeamLocalDataSource
-import fr.harmoniamk.statsmk.datasource.TeamLocalDataSource
 import fr.harmoniamk.statsmk.datasource.TopicLocalDataSource
-import fr.harmoniamk.statsmk.datasource.UserLocalDataSource
 import fr.harmoniamk.statsmk.datasource.WarLocalDataSource
 import fr.harmoniamk.statsmk.repository.DatabaseRepository
 import fr.harmoniamk.statsmk.repository.FirebaseRepository
 import fr.harmoniamk.statsmk.repository.PreferencesRepository
 import fr.harmoniamk.statsmk.repository.RemoteConfigRepository
-import fr.harmoniamk.statsmk.repository.mock.PreferencesRepositoryMock
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -42,8 +39,6 @@ class MKWidgetProvider : AppWidgetProvider(), CoroutineScope {
             firebaseRepository = FirebaseRepository(
                 preferencesRepository = PreferencesRepository(context),
                 databaseRepository = DatabaseRepository(
-                    userDataSource = UserLocalDataSource(context),
-                    teamDataSource = TeamLocalDataSource(context),
                     warDataSource = WarLocalDataSource(context),
                     topicDataSource = TopicLocalDataSource(context),
                     newPlayerLocalDataSource = NewPlayerLocalDataSource(context),

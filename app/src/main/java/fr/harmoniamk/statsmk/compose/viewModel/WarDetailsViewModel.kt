@@ -10,33 +10,22 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.EntryPointAccessors
-import fr.harmoniamk.statsmk.model.local.CurrentPlayerModel
 import fr.harmoniamk.statsmk.compose.ViewModelFactoryProvider
-import fr.harmoniamk.statsmk.enums.UserRole
-import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.extension.positionToPoints
 import fr.harmoniamk.statsmk.extension.sum
-import fr.harmoniamk.statsmk.extension.withTeamName
-import fr.harmoniamk.statsmk.model.firebase.Penalty
 import fr.harmoniamk.statsmk.model.firebase.Shock
-import fr.harmoniamk.statsmk.model.firebase.User
+import fr.harmoniamk.statsmk.model.local.CurrentPlayerModel
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarPosition
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
-import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
+import fr.harmoniamk.statsmk.model.network.MKCLightPlayer
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
-import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
-import fr.harmoniamk.statsmk.repository.NetworkRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
@@ -90,17 +79,17 @@ class WarDetailsViewModel  @AssistedInject constructor(
             }
             .mapNotNull { it?.warTracks }
             .onEach {
-                val positions = mutableListOf<Pair<User?, Int>>()
-                val players = databaseRepository.getUsers().firstOrNull()
+                val positions = mutableListOf<Pair<MKCLightPlayer?, Int>>()
+                val players = databaseRepository.getRoster().firstOrNull()
                 val shocks = mutableStateListOf<Shock>()
                 _sharedTracks.emit(it)
                 it.forEach {
                     val trackPositions = mutableListOf<MKWarPosition>()
                     it.track?.warPositions?.let { warPositions ->
                         warPositions.forEach { position ->
-                            trackPositions.add(MKWarPosition(position = position, player = players?.singleOrNull { it.mkcId ==  position.playerId }))
+                            trackPositions.add(MKWarPosition(position = position, mkcPlayer = players?.singleOrNull { it.mid ==  position.playerId }))
                         }
-                        trackPositions.groupBy { it.player }.entries.forEach { entry ->
+                        trackPositions.groupBy { it.mkcPlayer }.entries.forEach { entry ->
                             positions.add(Pair(entry.key, entry.value.map { pos -> pos.position.position.positionToPoints() }.sum()))
                         }
                         shocks.addAll(it.track.shocks?.takeIf { it.isNotEmpty() }.orEmpty())

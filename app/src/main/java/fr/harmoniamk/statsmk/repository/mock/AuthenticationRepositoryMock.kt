@@ -37,6 +37,6 @@ class AuthenticationRepositoryMock : AuthenticationRepositoryInterface {
 
     override val user: FirebaseUser?
         get() = null
-    override val userRole: Flow<Int>
-        get() = flow { emit(0) }
+    override val userRole: Int
+        get() = 0
 }

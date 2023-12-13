@@ -9,7 +9,6 @@ import fr.harmoniamk.statsmk.enums.SortType
 import fr.harmoniamk.statsmk.enums.WarFilterType
 import fr.harmoniamk.statsmk.enums.WarSortType
 import fr.harmoniamk.statsmk.extension.isTrue
-import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.network.MKCTeam
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
@@ -31,7 +30,6 @@ import javax.inject.Inject
 @HiltViewModel
 class WarListViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepositoryInterface,
-    private val authenticationRepository: AuthenticationRepositoryInterface,
     private val databaseRepository: DatabaseRepositoryInterface
 ) : ViewModel() {
 
@@ -65,7 +63,7 @@ class WarListViewModel @Inject constructor(
             .onEach { _sharedTeamName.value = it?.team_name }
             .launchIn(viewModelScope)
         databaseRepository.getRoster()
-            .onEach { _sharedUserName.value = it.singleOrNull { it.player_id == userId }?.display_name }
+            .onEach { _sharedUserName.value = it.singleOrNull { it.mkcId == userId }?.name }
             .launchIn(viewModelScope)
         databaseRepository.getNewTeams()
             .onEach {

@@ -15,10 +15,10 @@ import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
 import fr.harmoniamk.statsmk.model.firebase.Shock
-import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarPosition
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
+import fr.harmoniamk.statsmk.model.network.MKCLightPlayer
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
@@ -89,7 +89,7 @@ class WarTrackResultViewModel @AssistedInject constructor(
     val sharedShocks = _sharedShocks.asStateFlow()
 
     private val positions = mutableListOf<MKWarPosition>()
-    private val users = mutableListOf<User>()
+    private val users = mutableListOf<MKCLightPlayer>()
     private val finalList = mutableListOf<Shock>()
     private val shocks = mutableMapOf<String?, Int>()
 
@@ -108,7 +108,7 @@ class WarTrackResultViewModel @AssistedInject constructor(
             ?.withName(databaseRepository)
             ?.onEach {
                 users.clear()
-                users.addAll(databaseRepository.getUsers().first())
+                users.addAll(databaseRepository.getRoster().first())
                 _sharedWar.value = it
                     val trackIndexInWarTracks = when (editing) {
                         true -> trackResultIndex + 1
@@ -175,7 +175,7 @@ class WarTrackResultViewModel @AssistedInject constructor(
         }
         currentTrack?.warPositions.orEmpty().sortedBy { it.position }.forEach { pos ->
             val shocksForPlayer = shocks[pos.playerId] ?: currentTrack?.shocks.orEmpty().singleOrNull { it.playerId == pos.playerId }?.count
-            positions.add(MKWarPosition(position = pos, player = users.singleOrNull { it.mkcId == pos.playerId }))
+            positions.add(MKWarPosition(position = pos, mkcPlayer = users.singleOrNull { it.mkcId == pos.playerId }))
             shocks[pos.playerId] = shocksForPlayer ?: 0
         }
         val newPositions = mutableListOf<MKWarPosition>()

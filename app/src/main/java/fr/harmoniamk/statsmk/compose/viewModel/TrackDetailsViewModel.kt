@@ -15,10 +15,10 @@ import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.firebase.Shock
-import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarPosition
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
+import fr.harmoniamk.statsmk.model.network.MKCLightPlayer
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.NetworkRepositoryInterface
@@ -28,7 +28,6 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
@@ -89,10 +88,10 @@ class TrackDetailsViewModel @AssistedInject constructor(
     val sharedShocks = _sharedShocks.asStateFlow()
 
     private var index = 0
-    private val users = mutableListOf<User>()
+    private val users = mutableListOf<MKCLightPlayer>()
 
     init {
-        databaseRepository.getUsers()
+        databaseRepository.getRoster()
             .onEach {
                 users.clear()
                 users.addAll(it)
@@ -120,12 +119,11 @@ class TrackDetailsViewModel @AssistedInject constructor(
                 }
             }
             .onEach {
-                val role = authenticationRepository.userRole.firstOrNull() ?: 0
-                val isAdmin = role >= UserRole.ADMIN.ordinal
-                val isLeader = role >= UserRole.LEADER.ordinal
+                val isAdmin = authenticationRepository.userRole >= UserRole.ADMIN.ordinal
+                val isLeader = authenticationRepository.userRole >= UserRole.LEADER.ordinal
                 val positions = mutableListOf<MKWarPosition>()
                 it.forEach { pos ->
-                    positions.add(MKWarPosition(pos, users.singleOrNull { it.mkcId == pos.playerId }))
+                    positions.add(MKWarPosition(position = pos, mkcPlayer = users.singleOrNull { it.mkcId == pos.playerId }))
                 }
                 _sharedPositions.emit(positions.sortedBy { it.position.position })
                 _sharedButtonsVisible.value = warId == "Current" && networkRepository.networkAvailable && (isAdmin.isTrue || isLeader)
@@ -151,7 +149,7 @@ class TrackDetailsViewModel @AssistedInject constructor(
                 _sharedCurrentTrack.value = warTrack
                 val positions = mutableListOf<MKWarPosition>()
                 it?.warTracks?.getOrNull(trackIndex)?.track?.warPositions?.forEach { pos ->
-                    positions.add(MKWarPosition(pos, users.singleOrNull{ it.mkcId == pos.playerId }))
+                    positions.add(MKWarPosition(position = pos, mkcPlayer = users.singleOrNull{ it.mkcId == pos.playerId }))
                 }
                 _sharedPositions.value = positions.sortedBy { it.position.position }
                 val shocks = mutableListOf<Shock>()

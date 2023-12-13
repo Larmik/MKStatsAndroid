@@ -1,7 +1,6 @@
 package fr.harmoniamk.statsmk.compose.ui
 
 import androidx.compose.runtime.Composable
-import fr.harmoniamk.statsmk.compose.screen.EditPlayerScreen
 import fr.harmoniamk.statsmk.compose.screen.EditUserScreen
 import fr.harmoniamk.statsmk.compose.screen.FilterSortScreen
 import fr.harmoniamk.statsmk.compose.screen.PenaltyScreen
@@ -24,8 +23,6 @@ sealed class MKBottomSheetState {
     class EditShocks : MKBottomSheetState()
     class SubPlayer : MKBottomSheetState()
     class Penalty : MKBottomSheetState()
-    class AddPlayer(val ally: Boolean) : MKBottomSheetState()
-    class EditPlayer(val playerId: String) : MKBottomSheetState()
     class EditUser : MKBottomSheetState()
     class ResetPassword : MKBottomSheetState()
     class FilterSort(val sort: Sort, val filter: Filter): MKBottomSheetState()
@@ -78,12 +75,6 @@ fun MKBottomSheet(
         }
         is MKBottomSheetState.Penalty -> {
             PenaltyScreen(onDismiss = onDismiss)
-        }
-        is MKBottomSheetState.AddPlayer -> {
-            PlayersSettingsScreen(onBack = onDismiss)
-        }
-        is MKBottomSheetState.EditPlayer -> {
-            EditPlayerScreen(playerId = state.playerId, onDismiss = onDismiss)
         }
         is MKBottomSheetState.EditUser -> {
             EditUserScreen(onDismiss = onDismiss)

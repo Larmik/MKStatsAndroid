@@ -17,7 +17,7 @@ import javax.inject.Singleton
 interface MKCentralRepositoryInterface {
     val teams: Flow<List<MKCTeam>>
     fun getTeam(id: String): Flow<MKCFullTeam>
-    fun getPlayer(id: String): Flow<MKCFullPlayer>
+    fun getPlayer(id: String): Flow<MKCFullPlayer?>
 }
 
 @FlowPreview
@@ -38,6 +38,6 @@ class MKCentralRepository @Inject constructor(private val dataSource: MKCentralN
 
     override fun getTeam(id: String): Flow<MKCFullTeam> = dataSource.getTeam(id)
 
-    override fun getPlayer(id: String): Flow<MKCFullPlayer> = dataSource.getPlayer(id)
+    override fun getPlayer(id: String): Flow<MKCFullPlayer?> = dataSource.getPlayer(id)
 
 }

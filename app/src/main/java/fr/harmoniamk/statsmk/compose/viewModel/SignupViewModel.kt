@@ -14,9 +14,11 @@ import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
 import fr.harmoniamk.statsmk.model.firebase.Shock
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.MKWar
+import fr.harmoniamk.statsmk.model.network.MKCLightPlayer
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
+import fr.harmoniamk.statsmk.repository.MKCentralRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -25,7 +27,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
@@ -62,60 +63,23 @@ class SignupViewModel @Inject constructor(
             .mapNotNull { authenticationRepository.user }
             .map { fbUser ->
                 _sharedDialogValue.value = MKDialogState.Loading(R.string.fetch_data)
-                var finalUser: User? = null
-                databaseRepository.getUsers().firstOrNull()?.singleOrNull { user ->
-                    user.name?.toLowerCase(Locale.getDefault())
-                        ?.trim() == name.toLowerCase(Locale.getDefault()).trim()
+                var finalUser: MKCLightPlayer? = null
+                databaseRepository.getRoster().firstOrNull()?.singleOrNull { user ->
+                    user.name.toLowerCase(Locale.getDefault())
+                        .trim() == name.toLowerCase(Locale.getDefault()).trim()
                 }?.let {
                     finalUser = it
-                    preferencesRepository.currentTeam = databaseRepository.getTeam(it.team.takeIf { it != "-1" }).firstOrNull()
-                    firebaseRepository.deleteUser(it).first()
-                    firebaseRepository.getNewWars(it.team ?: "-1").firstOrNull()?.let {
-                        val hasPlayerWars = it.filter { MKWar(it).hasPlayer(finalUser?.mkcId) }
-                        hasPlayerWars.forEach { war ->
-                            val newWarTrack = mutableListOf<NewWarTrack>()
-                            war.warTracks?.forEach { warTrack ->
-                                val newPositions = mutableListOf<NewWarPositions>()
-                                val newShocks = mutableListOf<Shock>()
-                                warTrack.warPositions?.forEach { pos ->
-                                    val newPosition = when (pos.playerId == finalUser?.mkcId) {
-                                        true -> pos.apply { this.playerId = fbUser.uid }
-                                        else -> pos
-                                    }
-                                    newPositions.add(newPosition)
-                                }
-                                warTrack.shocks?.forEach {
-                                    val newShock = when (it.playerId == finalUser?.mkcId) {
-                                        true -> it.apply { this.playerId = fbUser.uid }
-                                        else -> it
-                                    }
-                                    newShocks.add(newShock)
-                                }
-                                newWarTrack.add(warTrack.apply {
-                                    this.warPositions = newPositions
-                                    this.shocks = newShocks
-                                })
-                            }
-                            firebaseRepository.writeNewWar(war.apply { this.warTracks = newWarTrack }).first()
-                            val mkWar = listOf(MKWar(war)).withName(databaseRepository).first()
-                            mkWar.singleOrNull()?.let { databaseRepository.writeWar(it).first() }
-                        }
-                    }
                 }
                 User(
+                    finalUser,
                     mid = fbUser.uid,
-                    name = finalUser?.name ?: name,
-                    role = UserRole.MEMBER.ordinal,
-                    team = finalUser?.team ?: preferencesRepository.mkcTeam?.id ?: "-1",
-                    currentWar = finalUser?.currentWar ?: preferencesRepository.mkcTeam?.id ?: "-1",
-                    picture = fbUser.photoUrl.toString(),
+                    discordId = null,
                 )
             }
             .onEach {
                 preferencesRepository.authEmail = email
                 preferencesRepository.authPassword = password
                 preferencesRepository.firstLaunch = false
-                preferencesRepository.currentTeam = databaseRepository.getTeam(it.team.takeIf { it != "-1" }).firstOrNull()
             }
             .flatMapLatest { firebaseRepository.writeUser(it) }
             .onEach { _sharedDialogValue.value = null }

@@ -53,56 +53,83 @@ data class MKCDate(
 @JsonClass(generateAdapter = true)
 @Parcelize
 data class MKCLightPlayer(
-    val player_id: String,
-    val display_name: String,
-    val custom_field_name: String,
-    val custom_field: String,
-    val player_status: String,
-    val registered_since: String,
-    val registered_since_human: String,
-    val country_code: String,
-    val country_name: String,
-    val team_leader: String,
+    val mid: String,
+    val mkcId: String,
+    val name: String,
+    val fc: String,
+    val status: String,
+    val registerDate: String,
+    val country: String,
+    val isLeader: String,
+    val role: Int,
+    var currentWar: String,
+    val picture: String,
+    val isAlly: Int
 ) : Parcelable {
-    val flag = "https://www.mariokartcentral.com/mkc/images/flags/${country_code.lowercase()}.png"
+    val flag = "https://www.mariokartcentral.com/mkc/images/flags/${country.lowercase()}.png"
 
     fun toEntity() = MKCLightPlayerEntity(
-        player_id = player_id,
-        display_name = display_name,
-        custom_field_name = custom_field_name,
-        custom_field = custom_field,
-        player_status = player_status,
-        registered_since = registered_since,
-        registered_since_human = registered_since_human,
-        country_code = country_code,
-        country_name = country_name,
-        team_leader = team_leader
+        mid, mkcId, name, fc, status, registerDate, country, isLeader, role, currentWar, picture, isAlly
     )
 
-    constructor(user: User) : this(
-        player_id = user.mkcId.orEmpty(),
-        display_name = user.name.orEmpty(),
-        custom_field_name = "",
-        custom_field = "",
-        player_status = "",
-        registered_since = "",
-        registered_since_human = "",
-        country_code = "",
-        country_name = "",
-        team_leader = ""
+    constructor(user: User?) : this(
+        mid = user?.mid.orEmpty(),
+        mkcId = user?.mkcId.orEmpty(),
+        name = user?.name.orEmpty(),
+        fc = "",
+        status = "",
+        registerDate = "",
+        country = "",
+        isLeader = "",
+        role = user?.role ?: 0,
+        currentWar = user?.currentWar.orEmpty(),
+        picture = user?.picture.orEmpty(),
+        isAlly = 1
     )
 
     constructor(entity: MKCLightPlayerEntity) : this(
-        player_id = entity.player_id,
-        display_name = entity.display_name.orEmpty(),
-        custom_field_name = entity.custom_field_name.orEmpty(),
-        custom_field = entity.custom_field.orEmpty(),
-        player_status = entity.player_status.orEmpty(),
-        registered_since = entity.registered_since.orEmpty(),
-        registered_since_human = entity.registered_since_human.orEmpty(),
-        country_code = entity.country_code.orEmpty(),
-        country_name = entity.country_name.orEmpty(),
-        team_leader = entity.team_leader.orEmpty()
+        mid = entity.mid,
+        mkcId = entity.mkcId,
+        name = entity.name,
+        fc = entity.fc,
+        status = entity.status,
+        registerDate = entity.registerDate,
+        country = entity.country,
+        isLeader = entity.isLeader,
+        role = entity.role,
+        currentWar = entity.currentWar,
+        picture = entity.picture,
+        isAlly = entity.isAlly
+    )
+
+    constructor(player: MKCFullPlayer?, role: Int, isAlly: Int, isLeader: String, currentWar: String) : this(
+        mid = player?.id.toString(),
+        mkcId = player?.id.toString(),
+        name = player?.display_name.orEmpty(),
+        fc = player?.switch_fc.orEmpty(),
+        status = player?.player_status.orEmpty(),
+        registerDate = player?.registered_at?.date.orEmpty(),
+        country = player?.country_code.orEmpty(),
+        isLeader = isLeader,
+        role = role,
+        currentWar = currentWar,
+        picture = player?.profile_picture.orEmpty(),
+        isAlly = isAlly
+    )
+
+    constructor(player: MKCLightPlayer, role: Int?, picture: String?) : this(
+        mid = player.mid,
+        mkcId = player.mkcId,
+        name = player.name,
+        fc = player.fc,
+        status = player.status,
+        registerDate = player.registerDate,
+        country = player.country,
+        isLeader = player.isLeader,
+        role = role ?: 0,
+        currentWar = player.currentWar,
+        picture = picture.orEmpty(),
+        isAlly = player.isAlly
     )
 }
 

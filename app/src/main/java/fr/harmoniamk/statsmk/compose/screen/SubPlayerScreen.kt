@@ -86,7 +86,7 @@ fun SubPlayerScreen(viewModel: SubPlayerViewModel = hiltViewModel(), onDismiss: 
                             }
                         }
                     }
-                ) {}
+                )
             }
             allies.value.takeIf { it.isNotEmpty() }?.let {
                 stickyHeader {
@@ -108,7 +108,7 @@ fun SubPlayerScreen(viewModel: SubPlayerViewModel = hiltViewModel(), onDismiss: 
                                 }
                             }
                         }
-                    ) {}
+                    )
                 }
             }
         }

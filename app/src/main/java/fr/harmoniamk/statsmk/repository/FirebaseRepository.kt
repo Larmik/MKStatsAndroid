@@ -25,25 +25,27 @@ interface FirebaseRepositoryInterface{
     fun writeUser(user: User): Flow<Unit>
     fun writeNewWar(war: NewWar): Flow<Unit>
     fun writeCurrentWar(war: NewWar): Flow<Unit>
-    fun writeTeam(team: Team): Flow<Unit>
     fun writeDispo(dispo: WarDispo): Flow<Unit>
 
-    //Get lists methods
+    //Get firebase users, only on currentWar
     fun getUsers(): Flow<List<User>>
+    //Get firebase user by id, only on splashscreen and login
+    fun getUser(id: String): Flow<User?>
+    //Get firebase teams, only on splashscreen and login
     fun getTeams(): Flow<List<Team>>
+    //Get firebase allies, only on splashscreen and login
+    fun getAllies(): Flow<List<String>>
+    //Get wars by team id, only on splashscreen and login
     fun getNewWars(teamId: String): Flow<List<NewWar>>
-    fun getCurrentWar(teamId: String): Flow<MKWar?>
-    fun getDispos(): Flow<List<WarDispo>>
-
-    //Firebase event listeners methods
+    //Get/Listen current war by team Id, only on home and currentWar
+    fun getCurrentWar(): Flow<MKWar?>
     fun listenToCurrentWar(): Flow<MKWar?>
-
-    //delete methods
+    //delete user, only on user migration on signup
     fun deleteUser(user: User): Flow<Unit>
-    fun deleteTeam(team: Team): Flow<Unit>
-    fun deleteNewWar(war: MKWar): Flow<Unit>
+    //only on current war
     fun deleteCurrentWar(): Flow<Unit>
 
+    fun getDispos(): Flow<List<WarDispo>>
 }
 
 @FlowPreview
@@ -66,7 +68,7 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
         Log.d("MKDebugOnly", "FirebaseRepository writeUser ${user.name}")
         database.child("users").child(user.mid).setValue(user)
         emit(Unit)
-    }.flatMapLatest { databaseRepository.writeUser(user) }
+    }
 
     override fun writeNewWar(war: NewWar): Flow<Unit> = flow {
         preferencesRepository.mkcTeam?.id?.let {
@@ -83,12 +85,6 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
             emit(Unit)
         }
     }
-
-    override fun writeTeam(team: Team): Flow<Unit> = flow {
-        Log.d("MKDebugOnly", "FirebaseRepository writeTeam ${team.mid}")
-        database.child("teams").child(team.mid).setValue(team)
-        emit(Unit)
-    }.flatMapLatest { databaseRepository.writeTeam(team) }
 
     override fun writeDispo(dispo: WarDispo) = flow {
         val index = when (dispo.dispoHour) {
@@ -112,13 +108,34 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
                     mid = it["mid"].toString(),
                     name = it["name"].toString(),
                     currentWar = it["currentWar"].toString(),
-                    team = it["team"].toString(),
                     role = it["role"].toString().toIntOrNull(),
                     picture = it["picture"].toString(),
-                    allyTeams = it["allyTeams"].toStringList(),
-                    mkcId = it["mkcId"].toString()
+                    mkcId = it["mkcId"].toString(),
+                    discordId = it["discordId"].toString()
                 ) }
             if (isActive) trySend(users)
+        }
+        awaitClose {  }
+    }
+
+    override fun getUser(id: String): Flow<User?>  = callbackFlow {
+        Log.d("MKDebugOnly", "FirebaseRepository getUsers")
+        database.child("users").child(id.split(".").first()).get().addOnSuccessListener { snapshot ->
+            (snapshot.value as? Map<*,*>)?.let { value ->
+                launch {
+                    val war =  User(
+                        mid = value["mid"].toString(),
+                        name = value["name"].toString(),
+                        currentWar = value["currentWar"].toString(),
+                        role = value["role"].toString().toIntOrNull(),
+                        picture = value["picture"].toString(),
+                        mkcId = value["mkcId"].toString(),
+                        discordId = value["discordId"].toString()
+
+                    )
+                    if (isActive) trySend(war)
+                }
+            } ?: if (isActive) trySend(null)
         }
         awaitClose {  }
     }
@@ -132,12 +149,21 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
                     mid = it["mid"].toString(),
                     name = it["name"].toString(),
                     shortName = it["shortName"].toString(),
-                    mkcId = it["mkcId"].toString(),
                 ) }
             if (isActive) trySend(teams)
         }
         awaitClose {  }
     }
+
+    override fun getAllies(): Flow<List<String>> = callbackFlow {
+        Log.d("MKDebugOnly", "FirebaseRepository getTeams")
+        database.child("allies").child(preferencesRepository.mkcTeam?.id.orEmpty()).get().addOnSuccessListener { snapshot ->
+            val teams: List<String> = snapshot.children.map { it.value as String }
+            if (isActive) trySend(teams)
+        }
+        awaitClose {  }
+    }
+
 
     override fun getNewWars(teamId: String): Flow<List<NewWar>> = callbackFlow {
         Log.d("MKDebugOnly", "FirebaseRepository getNewWars")
@@ -160,9 +186,9 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
         awaitClose {  }
     }
 
-    override fun getCurrentWar(teamId: String): Flow<MKWar?>  = callbackFlow {
+    override fun getCurrentWar(): Flow<MKWar?>  = callbackFlow {
         Log.d("MKDebugOnly", "FirebaseRepository getCurrentWar")
-          database.child("currentWars").child(teamId).get().addOnSuccessListener { snapshot ->
+          database.child("currentWars").child(preferencesRepository.mkcTeam?.id.orEmpty()).get().addOnSuccessListener { snapshot ->
               (snapshot.value as? Map<*,*>)?.let { value ->
                   launch {
                       val war = NewWar(
@@ -243,24 +269,7 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
         Log.d("MKDebugOnly", "FirebaseRepository deleteUser ${user.name}")
         database.child("users").child(user.mid).removeValue()
         emit(Unit)
-    }.flatMapLatest { databaseRepository.deleteUser(user) }
-
-    override fun deleteTeam(team: Team) = flow {
-        Log.d("MKDebugOnly", "FirebaseRepository deleteTeam ${team.mid}")
-        database.child("teams").child(team.mid).removeValue()
-        emit(Unit)
-    }.flatMapLatest { databaseRepository.deleteTeam(team) }
-
-    override fun deleteNewWar(war: MKWar) = flow {
-        war.war?.let {war ->
-            preferencesRepository.mkcTeam?.id?.let {
-                Log.d("MKDebugOnly", "FirebaseRepository deleteNewWar ${war.mid}")
-                database.child("newWars").child(it).child(war.mid).removeValue()
-                emit(Unit)
-            }
-
-        }
-    }.flatMapLatest { databaseRepository.deleteWar(war) }
+    }
 
     override fun deleteCurrentWar() = flow {
         preferencesRepository.mkcTeam?.id?.let {

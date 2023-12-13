@@ -24,7 +24,7 @@ import javax.inject.Singleton
 interface MKCentralNetworkDataSourceInterface {
     val teams: Flow<List<MKCTeam>>
     fun getTeam(id: String): Flow<MKCFullTeam>
-    fun getPlayer(id: String): Flow<MKCFullPlayer>
+    fun getPlayer(id: String): Flow<MKCFullPlayer?>
 }
 
 @FlowPreview
@@ -85,17 +85,20 @@ class MKCentralNetworkDataSource @Inject constructor() : MKCentralNetworkDataSou
     }
 
 
-    override fun getPlayer(id: String): Flow<MKCFullPlayer>  = callbackFlow {
+    override fun getPlayer(id: String): Flow<MKCFullPlayer?>  = callbackFlow {
         val call = RetrofitUtils.createRetrofit(apiClass = MKCentralAPI::class.java, url = MKCentralAPI.baseUrl,).getPlayer(id)
         call.enqueue(object : Callback<MKCFullPlayer> {
 
             override fun onResponse(
-                call: Call<MKCFullPlayer>,
-                response: retrofit2.Response<MKCFullPlayer>
+                call: Call<MKCFullPlayer?>,
+                response: retrofit2.Response<MKCFullPlayer?>
             ) {
                 Log.d("MKDebugOnly", "MKC player onResponse: ")
-                response.body()?.let {
-                    trySend(it)
+                when (response.code()) {
+                    200 ->  response.body()?.let {
+                        trySend(it)
+                    }
+                    else -> trySend(null)
                 }
             }
 

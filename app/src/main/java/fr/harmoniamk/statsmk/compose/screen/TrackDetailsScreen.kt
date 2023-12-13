@@ -81,10 +81,11 @@ fun TrackDetailsScreen(warId: String, warTrackId: String, onBack: () -> Unit) {
             LazyColumn {
                 items(items = positions.value.orEmpty()) {
                     MKPlayerItem(
+                        player = it.mkcPlayer,
                         position = it,
                         shockVisible = false,
-                        shockCount = shocks.value?.singleOrNull { shock -> shock.playerId == it.player?.mkcId }?.count ?: 0
-                    ) {}
+                        shockCount = shocks.value?.singleOrNull { shock -> shock.playerId == it.mkcPlayer?.mkcId }?.count ?: 0
+                    )
                 }
             }
             currentTrack.value?.let { MKScoreView(track = it) }

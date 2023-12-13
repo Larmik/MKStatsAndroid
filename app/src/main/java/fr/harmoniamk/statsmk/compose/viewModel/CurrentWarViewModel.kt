@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.R
-import fr.harmoniamk.statsmk.model.local.CurrentPlayerModel
 import fr.harmoniamk.statsmk.compose.ui.MKBottomSheetState
 import fr.harmoniamk.statsmk.compose.ui.MKDialogState
 import fr.harmoniamk.statsmk.enums.UserRole
@@ -17,16 +16,17 @@ import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.extension.withTeamName
 import fr.harmoniamk.statsmk.model.firebase.Shock
 import fr.harmoniamk.statsmk.model.firebase.User
+import fr.harmoniamk.statsmk.model.local.CurrentPlayerModel
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarPosition
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
+import fr.harmoniamk.statsmk.model.network.MKCLightPlayer
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -36,8 +36,8 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flattenMerge
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
@@ -74,32 +74,43 @@ class CurrentWarViewModel @Inject constructor(
     val sharedBackToWars = _sharedBackToWars.asSharedFlow()
     val sharedTrackClick = _sharedTrackClick.asSharedFlow()
 
+    val users = mutableListOf<User>()
+    val currentPlayers = mutableListOf<MKCLightPlayer>()
+
     init {
-        flowOf(firebaseRepository.getCurrentWar(preferencesRepository.mkcTeam?.id.orEmpty()), firebaseRepository.listenToCurrentWar())
+        firebaseRepository.getUsers()
+            .map { it.filter { user -> user.currentWar == preferencesRepository.currentWar?.mid }.sortedBy { it.name?.toLowerCase(Locale.ROOT) } }
+            .onEach {
+                users.clear()
+                users.addAll(it)
+            }
+            .flatMapLatest { databaseRepository.getRoster() }
+            .onEach {
+                currentPlayers.clear()
+                currentPlayers.addAll(it)
+            }
+
+            .launchIn(viewModelScope)
+
+        flowOf(firebaseRepository.getCurrentWar(), firebaseRepository.listenToCurrentWar())
             .flattenMerge()
             .flatMapLatest { it?.war.withName(databaseRepository) }
             .filterNotNull()
             .onEach {
                 val penalties = it.war?.penalties?.withTeamName(databaseRepository)?.firstOrNull()
-                val warWithPenas =
-                    it.war?.copy(penalties = penalties).withName(databaseRepository).firstOrNull()
-                val isAdmin =
-                    (authenticationRepository.userRole.firstOrNull() ?: 0) >= UserRole.ADMIN.ordinal
-                val players = firebaseRepository.getUsers().first()
-                    .filter { it.currentWar == preferencesRepository.currentWar?.mid }
-                    .sortedBy { it.name?.toLowerCase(Locale.ROOT) }
-
+                val warWithPenas = it.war?.copy(penalties = penalties).withName(databaseRepository).firstOrNull()
+                val isAdmin = authenticationRepository.userRole >= UserRole.ADMIN.ordinal
                 preferencesRepository.currentWar = warWithPenas?.war
                 _sharedCurrentWar.emit(warWithPenas)
                 _sharedTracks.emit(warWithPenas?.war?.warTracks.orEmpty().map { MKWarTrack(it) })
-                _sharedWarPlayers.takeIf { warWithPenas?.war?.warTracks == null }
-                    ?.emit(players.map { CurrentPlayerModel(it, 0) })
+                _sharedWarPlayers.takeIf { warWithPenas?.war?.warTracks == null }?.emit(currentPlayers.filter { player -> users.singleOrNull { it.mkcId == player.mkcId }?.currentWar == preferencesRepository.currentWar?.mid }.map { CurrentPlayerModel(it, 0) })
                 _sharedButtonVisible.emit(isAdmin.isTrue)
             }
-            .mapNotNull { it.war?.warTracks?.map { MKWarTrack(it) } }
-            .onEach { _sharedTracks.emit(it) }
-            .flatMapLatest { initPlayersList(it) }
-            .bind(_sharedWarPlayers, viewModelScope)
+            .mapNotNull { it.war?.warTracks.orEmpty().map { MKWarTrack(it) } }
+            .onEach {
+                _sharedTracks.emit(it)
+                _sharedWarPlayers.emit(initPlayersList(it))
+            }.launchIn(viewModelScope)
     }
 
     fun onSubPlayer() {
@@ -114,16 +125,17 @@ class CurrentWarViewModel @Inject constructor(
         _sharedDialogValue.value = MKDialogState.CancelWar(
             onWarCancelled = {
                 _sharedDialogValue.value = MKDialogState.Loading(R.string.delete_war_in_progress)
-                firebaseRepository.getUsers()
-                    .map { list -> list.filter { user -> user.currentWar == preferencesRepository.currentWar?.mid } }
-                    .onEach { list ->
-                        list.forEach {
-                            val newUser = it.apply { this.currentWar = "-1" }
-                            firebaseRepository.writeUser(newUser).first()
-                        }
+                databaseRepository.getRoster()
+                    .onEach {
+                    it.filter { it.currentWar != "-1" }.forEach { user ->
+                        val newUser = user.copy(currentWar = "-1")
+                        val fbUser = users.singleOrNull { it.mkcId == user.mkcId }
+                        firebaseRepository.writeUser(User(newUser, fbUser?.mid, fbUser?.discordId)).firstOrNull()
+                        databaseRepository.writeUser(newUser).firstOrNull()
                     }
-                    .flatMapLatest { firebaseRepository.deleteCurrentWar() }
-                    .bind(_sharedBackToWars, viewModelScope)
+                    firebaseRepository.deleteCurrentWar().firstOrNull()
+                    _sharedBackToWars.emit(Unit)
+                }.launchIn(viewModelScope)
             },
             onDismiss = { _sharedDialogValue.value = null }
         )
@@ -139,10 +151,13 @@ class CurrentWarViewModel @Inject constructor(
                         firebaseRepository.deleteCurrentWar().first()
                         val mkWar = listOf(MKWar(war)).withName(databaseRepository).first()
                         mkWar.singleOrNull()?.let { databaseRepository.writeWar(it).first() }
-                        databaseRepository.getUsers().first().filter { it.currentWar == war.mid }
-                            .forEach {
-                                val new = it.apply { this.currentWar = "-1" }
-                                firebaseRepository.writeUser(new).first()
+                        currentPlayers
+                            .filter { player -> users.singleOrNull { it.mkcId == player.mkcId }?.currentWar == preferencesRepository.currentWar?.mid }
+                            .forEach {user ->
+                                val new = user.apply { this.currentWar = "-1" }
+                                val fbUser = firebaseRepository.getUsers().firstOrNull()?.singleOrNull { it.mkcId == user.mkcId }
+                                firebaseRepository.writeUser(User(new, fbUser?.mid, fbUser?.discordId)).first()
+                                databaseRepository.writeUser(new).first()
                             }
                         war.withName(databaseRepository)
                             .mapNotNull { it?.war?.mid }
@@ -159,47 +174,48 @@ class CurrentWarViewModel @Inject constructor(
         _sharedBottomSheetValue.value = null
     }
 
-    private fun initPlayersList(trackList: List<MKWarTrack>): Flow<List<CurrentPlayerModel>> =
-        firebaseRepository.getUsers()
-            .map { players ->
-                val finalList = mutableListOf<CurrentPlayerModel>()
-                val positions = mutableListOf<Pair<User?, Int>>()
-                val shocks = mutableStateListOf<Shock>()
-                trackList.forEach {
-                    it.track?.warPositions?.let { warPositions ->
-                        val trackPositions = mutableListOf<MKWarPosition>()
-                        warPositions.forEach { position ->
-                            trackPositions.add(
-                                MKWarPosition(
-                                    position = position,
-                                    player = players.singleOrNull { it.mkcId == position.playerId })
+    private fun initPlayersList(trackList: List<MKWarTrack>): List<CurrentPlayerModel> {
+        val finalList = mutableListOf<CurrentPlayerModel>()
+        val positions = mutableListOf<Pair<MKCLightPlayer?, Int>>()
+        val shocks = mutableStateListOf<Shock>()
+        trackList.forEach {
+            it.track?.warPositions?.let { warPositions ->
+                val trackPositions = mutableListOf<MKWarPosition>()
+                warPositions.forEach { position ->
+                    viewModelScope.launch {
+                        trackPositions.add(
+                            MKWarPosition(
+                                position = position,
+                                mkcPlayer = currentPlayers.singleOrNull { it.mkcId == position.playerId }
                             )
-                        }
-                        trackPositions.groupBy { it.player }.entries.forEach { entry ->
-                            positions.add(
-                                Pair(
-                                    entry.key,
-                                    entry.value.map { pos -> pos.position.position.positionToPoints() }
-                                        .sum()
-                                )
-                            )
-                        }
-                        shocks.addAll(it.track.shocks?.takeIf { it.isNotEmpty() }.orEmpty())
+                        )
                     }
                 }
-                val temp = positions.groupBy { it.first }
-                    .map { Pair(it.key, it.value.map { it.second }.sum()) }
-                    .sortedByDescending { it.second }
-                temp.forEach { pair ->
-                    val shockCount = shocks.filter { it.playerId == pair.first?.mkcId }.map { it.count }.sum()
-                    val isOld = pair.first?.currentWar == "-1"
-                    val isNew = trackList.size > trackList.filter { track -> track.hasPlayer(pair.first?.mkcId) }.size && pair.first?.currentWar == preferencesRepository.currentWar?.mid
-                    finalList.add(CurrentPlayerModel(pair.first, pair.second, isOld, isNew, shockCount))
+                trackPositions.groupBy { it.mkcPlayer }.entries.forEach { entry ->
+                    positions.add(
+                        Pair(
+                            entry.key,
+                            entry.value.map { pos -> pos.position.position.positionToPoints() }
+                                .sum()
+                        )
+                    )
                 }
-                players.filter {
-                    it.currentWar == preferencesRepository.currentWar?.mid && !finalList.map { it.player?.mkcId }.contains(it.mkcId)
-                }.forEach { finalList.add(CurrentPlayerModel(it, 0, isNew = true)) }
-                finalList
+                shocks.addAll(it.track.shocks?.takeIf { it.isNotEmpty() }.orEmpty())
             }
+        }
+        val temp = positions.groupBy { it.first }
+            .map { Pair(it.key, it.value.map { it.second }.sum()) }
+            .sortedByDescending { it.second }
+        temp.forEach { pair ->
+            val shockCount = shocks.filter { it.playerId == pair.first?.mkcId }.map { it.count }.sum()
+            val isOld = pair.first?.currentWar == "-1"
+            val isNew =   trackList.size > trackList.filter { track -> track.hasPlayer(pair.first?.mkcId) }.size
+            finalList.add(CurrentPlayerModel(pair.first, pair.second, isOld, isNew, shockCount))
+        }
+        currentPlayers.filter {
+            it.currentWar == preferencesRepository.currentWar?.mid && !finalList.map { it.player?.mkcId }.contains(it.mkcId)
+        }.forEach { finalList.add(CurrentPlayerModel(it, 0, isNew = trackList.isNotEmpty())) }
+        return finalList
+    }
 
 }

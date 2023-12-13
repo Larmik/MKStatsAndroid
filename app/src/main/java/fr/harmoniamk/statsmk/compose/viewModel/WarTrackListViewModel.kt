@@ -9,12 +9,10 @@ import fr.harmoniamk.statsmk.enums.SortType
 import fr.harmoniamk.statsmk.enums.WarFilterType
 import fr.harmoniamk.statsmk.enums.WarSortType
 import fr.harmoniamk.statsmk.extension.isTrue
-import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import fr.harmoniamk.statsmk.model.local.MapDetails
 import fr.harmoniamk.statsmk.model.network.MKCTeam
-import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -31,8 +29,7 @@ import javax.inject.Inject
 @HiltViewModel
 class WarTrackListViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepositoryInterface,
-    private val databaseRepository: DatabaseRepositoryInterface,
-    private val authenticationRepository: AuthenticationRepositoryInterface
+    private val databaseRepository: DatabaseRepositoryInterface
 ) : ViewModel() {
     var onlyIndiv = preferencesRepository.mkcTeam?.id == null
 

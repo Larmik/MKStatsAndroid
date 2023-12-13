@@ -8,6 +8,7 @@ import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.fragment.playerSelect.UserSelector
 import fr.harmoniamk.statsmk.model.firebase.User
+import fr.harmoniamk.statsmk.model.network.MKCLightPlayer
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
@@ -30,7 +31,7 @@ class SubPlayerViewModel @Inject constructor(
     private val _sharedAllies = MutableStateFlow<List<UserSelector>>(listOf())
     private val _sharedTitle = MutableStateFlow(R.string.joueur_sortant)
     private val _sharedBack = MutableSharedFlow<Unit>()
-    private val _sharedPlayerSelected = MutableStateFlow<User?>(null)
+    private val _sharedPlayerSelected = MutableStateFlow<MKCLightPlayer?>(null)
 
     val sharedPlayers = _sharedPlayers.asStateFlow()
     val sharedAllies = _sharedAllies.asStateFlow()
@@ -41,27 +42,34 @@ class SubPlayerViewModel @Inject constructor(
     private val playersList = mutableListOf<UserSelector>()
     private val allyList = mutableListOf<UserSelector>()
     private val currentPlayersList = mutableListOf<UserSelector>()
+    private val fbUsers = mutableListOf<User>()
 
-    var oldPlayer: User? = null
-    var newPlayer: User? = null
+    var oldPlayer: MKCLightPlayer? = null
+    var newPlayer: MKCLightPlayer? = null
 
     fun refresh() {
-        databaseRepository.getUsers()
+        databaseRepository.getRoster()
             .onEach {
                 playersList.clear()
                 allyList.clear()
                 currentPlayersList.clear()
 
-                playersList.addAll(it.filter { user -> user.currentWar == "-1" && user.team == preferencesRepository.mkcTeam?.id }.map { UserSelector(user = it, isSelected = false) })
-                allyList.addAll(it.filter { user -> user.currentWar == "-1" &&  user.allyTeams?.contains(preferencesRepository.mkcTeam?.id).isTrue }.map { UserSelector(user = it, isSelected = false) })
+                playersList.addAll(it.filter { user -> user.currentWar == "-1" }.map { UserSelector(user = it, isSelected = false) })
+                allyList.addAll(it.filter { user -> user.currentWar == "-1" &&  user.isAlly == 1 }.map { UserSelector(user = it, isSelected = false) })
                 currentPlayersList.addAll(it.filter { user -> user.currentWar == preferencesRepository.currentWar?.mid }.map { UserSelector(user = it, isSelected = false) } )
 
                 _sharedPlayers.value = currentPlayersList
                 _sharedTitle.value = R.string.joueur_sortant
-            }.launchIn(viewModelScope)
+            }
+            .flatMapLatest { firebaseRepository.getUsers() }
+            .onEach {
+                fbUsers.clear()
+                fbUsers.addAll(it)
+            }
+            .launchIn(viewModelScope)
     }
 
-    fun onOldPlayerSelect(user : User) {
+    fun onOldPlayerSelect(user : MKCLightPlayer) {
         oldPlayer = user
         _sharedPlayers.value = playersList
         _sharedAllies.value = allyList
@@ -70,7 +78,7 @@ class SubPlayerViewModel @Inject constructor(
         _sharedPlayerSelected.value = user
     }
 
-    fun onNewPlayerSelect(user: User) {
+    fun onNewPlayerSelect(user: MKCLightPlayer) {
         newPlayer = user
         val playerListWithSelected = mutableListOf<UserSelector>()
         val allyListWithSelected = mutableListOf<UserSelector>()
@@ -91,16 +99,23 @@ class SubPlayerViewModel @Inject constructor(
     }
 
     fun onSubClick() {
-        oldPlayer?.copy(currentWar = "-1")?.let {
-            firebaseRepository.writeUser(it)
-                .mapNotNull { newPlayer?.copy(currentWar = preferencesRepository.currentWar?.mid) }
-                .flatMapLatest { firebaseRepository.writeUser(it) }
+        oldPlayer?.apply { this.currentWar = "-1" }?.let { old ->
+            val fbOld = fbUsers.singleOrNull { it.mkcId == old.mkcId }
+            firebaseRepository.writeUser(User(old, fbOld?.mid, fbOld?.discordId))
+                .flatMapLatest { databaseRepository.writeUser(old) }
+                .mapNotNull { newPlayer?.apply { this.currentWar = preferencesRepository.currentWar?.mid.orEmpty()} }
+                .map { new ->
+                    val fbNew = fbUsers.singleOrNull { it.mkcId == new.mkcId }
+                    firebaseRepository.writeUser(User(new, fbNew?.mid, fbNew?.discordId)).first()
+                    databaseRepository.writeUser(new).first()
+                }
                 .onEach {
                     oldPlayer = null
                     newPlayer = null
                     playersList.clear()
                     allyList.clear()
                     currentPlayersList.clear()
+                    fbUsers.clear()
                     _sharedPlayerSelected.value = null
                 }
                 .bind(_sharedBack, viewModelScope)

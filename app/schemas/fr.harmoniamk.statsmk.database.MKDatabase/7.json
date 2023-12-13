@@ -2,108 +2,8 @@
   "formatVersion": 1,
   "database": {
     "version": 7,
-    "identityHash": "97b132aa079a386a898ec925a3e7d0e0",
+    "identityHash": "e6dba0abb16f6ec20bfdd3515aa938a7",
     "entities": [
-      {
-        "tableName": "UserEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`mid` TEXT NOT NULL, `currentWar` TEXT, `name` TEXT, `role` INTEGER, `team` TEXT, `picture` TEXT, `allyTeams` TEXT, `mkcId` TEXT, PRIMARY KEY(`mid`))",
-        "fields": [
-          {
-            "fieldPath": "mid",
-            "columnName": "mid",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "currentWar",
-            "columnName": "currentWar",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "name",
-            "columnName": "name",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "role",
-            "columnName": "role",
-            "affinity": "INTEGER",
-            "notNull": false
-          },
-          {
-            "fieldPath": "team",
-            "columnName": "team",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "picture",
-            "columnName": "picture",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "allyTeams",
-            "columnName": "allyTeams",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "mkcId",
-            "columnName": "mkcId",
-            "affinity": "TEXT",
-            "notNull": false
-          }
-        ],
-        "primaryKey": {
-          "autoGenerate": false,
-          "columnNames": [
-            "mid"
-          ]
-        },
-        "indices": [],
-        "foreignKeys": []
-      },
-      {
-        "tableName": "TeamEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`mid` TEXT NOT NULL, `name` TEXT, `shortName` TEXT, `mkcId` TEXT, PRIMARY KEY(`mid`))",
-        "fields": [
-          {
-            "fieldPath": "mid",
-            "columnName": "mid",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "name",
-            "columnName": "name",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "shortName",
-            "columnName": "shortName",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
-            "fieldPath": "mkcId",
-            "columnName": "mkcId",
-            "affinity": "TEXT",
-            "notNull": false
-          }
-        ],
-        "primaryKey": {
-          "autoGenerate": false,
-          "columnNames": [
-            "mid"
-          ]
-        },
-        "indices": [],
-        "foreignKeys": []
-      },
       {
         "tableName": "WarEntity",
         "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`mid` TEXT NOT NULL, `name` TEXT, `playerHostId` TEXT, `teamHost` TEXT, `teamOpponent` TEXT, `createdDate` TEXT, `warTracks` TEXT, `penalties` TEXT, `isOfficial` INTEGER, PRIMARY KEY(`mid`))",
@@ -262,73 +162,85 @@
       },
       {
         "tableName": "MKCLightPlayerEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`player_id` TEXT NOT NULL, `display_name` TEXT, `custom_field_name` TEXT, `custom_field` TEXT, `player_status` TEXT, `registered_since` TEXT, `registered_since_human` TEXT, `country_code` TEXT, `country_name` TEXT, `team_leader` TEXT, PRIMARY KEY(`player_id`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`mid` TEXT NOT NULL, `mkcId` TEXT NOT NULL, `name` TEXT NOT NULL, `fc` TEXT NOT NULL, `status` TEXT NOT NULL, `registerDate` TEXT NOT NULL, `country` TEXT NOT NULL, `isLeader` TEXT NOT NULL, `role` INTEGER NOT NULL, `currentWar` TEXT NOT NULL, `picture` TEXT NOT NULL, `isAlly` INTEGER NOT NULL, PRIMARY KEY(`mid`))",
         "fields": [
           {
-            "fieldPath": "player_id",
-            "columnName": "player_id",
+            "fieldPath": "mid",
+            "columnName": "mid",
             "affinity": "TEXT",
             "notNull": true
           },
           {
-            "fieldPath": "display_name",
-            "columnName": "display_name",
+            "fieldPath": "mkcId",
+            "columnName": "mkcId",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
-            "fieldPath": "custom_field_name",
-            "columnName": "custom_field_name",
+            "fieldPath": "name",
+            "columnName": "name",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
-            "fieldPath": "custom_field",
-            "columnName": "custom_field",
+            "fieldPath": "fc",
+            "columnName": "fc",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
-            "fieldPath": "player_status",
-            "columnName": "player_status",
+            "fieldPath": "status",
+            "columnName": "status",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
-            "fieldPath": "registered_since",
-            "columnName": "registered_since",
+            "fieldPath": "registerDate",
+            "columnName": "registerDate",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
-            "fieldPath": "registered_since_human",
-            "columnName": "registered_since_human",
+            "fieldPath": "country",
+            "columnName": "country",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
-            "fieldPath": "country_code",
-            "columnName": "country_code",
+            "fieldPath": "isLeader",
+            "columnName": "isLeader",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
           },
           {
-            "fieldPath": "country_name",
-            "columnName": "country_name",
-            "affinity": "TEXT",
-            "notNull": false
+            "fieldPath": "role",
+            "columnName": "role",
+            "affinity": "INTEGER",
+            "notNull": true
           },
           {
-            "fieldPath": "team_leader",
-            "columnName": "team_leader",
+            "fieldPath": "currentWar",
+            "columnName": "currentWar",
             "affinity": "TEXT",
-            "notNull": false
+            "notNull": true
+          },
+          {
+            "fieldPath": "picture",
+            "columnName": "picture",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isAlly",
+            "columnName": "isAlly",
+            "affinity": "INTEGER",
+            "notNull": true
           }
         ],
         "primaryKey": {
           "autoGenerate": false,
           "columnNames": [
-            "player_id"
+            "mid"
           ]
         },
         "indices": [],
@@ -338,7 +250,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '97b132aa079a386a898ec925a3e7d0e0')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e6dba0abb16f6ec20bfdd3515aa938a7')"
     ]
   }
 }

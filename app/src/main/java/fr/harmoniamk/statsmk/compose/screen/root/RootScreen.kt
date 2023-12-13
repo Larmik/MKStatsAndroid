@@ -195,7 +195,7 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
         /** Players stats navigation **/
         composable("Home/Stats/Players") {
             StatsRankingScreen(state = StatsRankingState.PlayerRankingState()) { item, _, _ ->
-                navController.navigate("Home/Stats/Players/${(item as? PlayerRankingItemViewModel)?.user?.player_id.orEmpty()}")
+                navController.navigate("Home/Stats/Players/${(item as? PlayerRankingItemViewModel)?.user?.mkcId.orEmpty()}")
             }
         }
         composable(

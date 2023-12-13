@@ -28,7 +28,7 @@ interface AuthenticationRepositoryInterface {
     fun updateProfile(username: String, imageUrl: String?) : Flow<Unit>
     fun updateEmail(email: String): Flow<Unit>
     val user: FirebaseUser?
-    val userRole: Flow<Int>
+    val userRole: Int
 }
 
 @FlowPreview
@@ -43,7 +43,7 @@ interface AuthenticationRepositoryModule {
 
 @FlowPreview
 @ExperimentalCoroutinesApi
-class AuthenticationRepository @Inject constructor(private val databaseRepository: DatabaseRepositoryInterface) : AuthenticationRepositoryInterface {
+class AuthenticationRepository @Inject constructor(private val databaseRepository: DatabaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface) : AuthenticationRepositoryInterface {
 
     private val auth: FirebaseAuth
         get() = FirebaseAuth.getInstance()
@@ -136,8 +136,6 @@ class AuthenticationRepository @Inject constructor(private val databaseRepositor
     override val user: FirebaseUser?
         get() = auth.currentUser
 
-    override val userRole: Flow<Int>
-        get() = flowOf(auth.currentUser?.uid)
-            .flatMapLatest { databaseRepository.getUser(it) }
-            .mapNotNull { it?.role }
+    override val userRole: Int
+        get() = preferencesRepository.role
 }

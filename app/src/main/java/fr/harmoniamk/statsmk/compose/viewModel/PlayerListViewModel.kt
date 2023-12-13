@@ -1,6 +1,5 @@
 package fr.harmoniamk.statsmk.compose.viewModel
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
@@ -14,7 +13,7 @@ import fr.harmoniamk.statsmk.compose.ViewModelFactoryProvider
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.fragment.playerSelect.UserSelector
 import fr.harmoniamk.statsmk.model.firebase.NewWar
-import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
+import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
@@ -27,7 +26,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -37,13 +35,14 @@ class PlayerListViewModel @AssistedInject constructor(
     @Assisted private val id: String,
     private val preferencesRepository: PreferencesRepositoryInterface,
     private val databaseRepository: DatabaseRepositoryInterface,
-    private val authenticationRepository: AuthenticationRepositoryInterface,
     private val firebaseRepository: FirebaseRepositoryInterface
 ): ViewModel() {
 
     private val _sharedPlayers = MutableStateFlow<List<UserSelector>?>(null)
     private val _sharedAllies = MutableStateFlow<List<UserSelector>?>(null)
     private val _sharedWarName = MutableStateFlow<String?>(null)
+    private val players = mutableListOf<UserSelector>()
+    private val allies = mutableListOf<UserSelector>()
 
     val sharedPlayers = _sharedPlayers.asStateFlow()
     val sharedAllies = _sharedAllies.asStateFlow()
@@ -94,6 +93,7 @@ class PlayerListViewModel @AssistedInject constructor(
                 else -> temp.add(it)
             }
         }
+        players.addAll(temp)
         _sharedPlayers.value = temp
     }
 
@@ -105,6 +105,7 @@ class PlayerListViewModel @AssistedInject constructor(
                 else -> temp.add(it)
             }
         }
+        allies.addAll(temp)
         _sharedAllies.value = temp
     }
 
@@ -121,30 +122,34 @@ class PlayerListViewModel @AssistedInject constructor(
             createdDate = date,
             isOfficial = official
         )
-        viewModelScope.launch {
-            _sharedPlayers.value?.filter { it.isSelected.isTrue }?.mapNotNull { it.user }?.forEach { user ->
-                val new = user.apply { this.currentWar = war.mid }
-                Log.d("MKDebugOnly", "createWar: write player")
-                firebaseRepository.writeUser(new).first()
-            }
-            _sharedAllies.value?.filter { it.isSelected.isTrue }?.mapNotNull { it.user }?.forEach { user ->
-                val new = user.apply { this.currentWar = war.mid }
-                Log.d("MKDebugOnly", "createWar: write ally")
-                firebaseRepository.writeUser(new).first()
-            }
-            preferencesRepository.currentWar = war
-            firebaseRepository.writeCurrentWar(war).first()
-            _sharedStarted.emit(Unit)
-        }
+        firebaseRepository.getUsers()
+            .onEach {
+                players.filter { it.isSelected.isTrue }.mapNotNull { it.user }.forEach { user ->
+                    val new = user.apply { this.currentWar = war.mid }
+                    val fbUser = it.singleOrNull { it.mkcId == user.mkcId }
+                    firebaseRepository.writeUser(User(new, fbUser?.mid, fbUser?.discordId)).first()
+                    databaseRepository.writeUser(new).first()
+                }
+                allies.filter { it.isSelected.isTrue }.mapNotNull { it.user }.forEach { user ->
+                    val new = user.apply { this.currentWar = war.mid }
+                    val fbUser = it.singleOrNull { it.mkcId == user.mkcId }
+                    firebaseRepository.writeUser(User(new, fbUser?.mid, fbUser?.discordId)).first()
+                    databaseRepository.writeUser(new).first()
+                }
+                preferencesRepository.currentWar = war
+                firebaseRepository.writeCurrentWar(war).first()
+                _sharedStarted.emit(Unit)
+            }.launchIn(viewModelScope)
+
     }
 
     init {
-        databaseRepository.getUsers()
+        databaseRepository.getRoster()
             .onEach {
-                _sharedPlayers.value =  it.filter { user -> user.team == preferencesRepository.mkcTeam?.id  }
+                _sharedPlayers.value =  it.filter { user -> user.isAlly == 0  }
                     .sortedBy { it.name?.toLowerCase(Locale.ROOT) }
                     .map { UserSelector(it, false) }
-                _sharedAllies.value =  it.filter { user -> user.allyTeams?.contains(preferencesRepository.mkcTeam?.id.orEmpty()).isTrue }
+                _sharedAllies.value =  it.filter { user -> user.isAlly == 1  }
                     .sortedBy { it.name?.toLowerCase(Locale.ROOT) }
                     .map { UserSelector(it, false) }
             }

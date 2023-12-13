@@ -139,11 +139,11 @@ class StatsRankingViewModel @AssistedInject constructor(
                         warList.addAll(it)
                     }
                     .flatMapLatest { databaseRepository.getRoster() }
-                    .mapNotNull { it.sortedBy { it.display_name } }
+                    .mapNotNull { it.sortedBy { it.name } }
                     .onEach {
                         val temp = mutableListOf<PlayerRankingItemViewModel>()
                         it.forEach { user ->
-                            val stats = warList.filter { war -> war.hasPlayer(user.player_id.split(".").first()) }.withFullStats(databaseRepository, userId = user.player_id.split(".").first()).first()
+                            val stats = warList.filter { war -> war.hasPlayer(user.mkcId.split(".").first()) }.withFullStats(databaseRepository, userId = user.mkcId.split(".").first()).first()
                             temp.add(PlayerRankingItemViewModel(user, stats))
                         }
                         _sharedList.value = sortPlayers(sortType, temp)
@@ -172,7 +172,7 @@ class StatsRankingViewModel @AssistedInject constructor(
 
                 databaseRepository.getRoster()
                     .filterNotNull()
-                    .onEach { _sharedUserName.value = it.singleOrNull { it.player_id == userId }?.display_name }
+                    .onEach { _sharedUserName.value = it.singleOrNull { it.mkcId == userId }?.name }
                     .launchIn(viewModelScope)
 
                 databaseRepository.getNewTeam(teamId)
@@ -225,7 +225,7 @@ class StatsRankingViewModel @AssistedInject constructor(
     fun onSearch(state: StatsRankingState, search: String) {
         (state as? StatsRankingState.PlayerRankingState)?.let {
             when (search.isNotEmpty()) {
-                true ->  _sharedList.value = players.filter { it.user.display_name?.lowercase()?.contains(search.lowercase()).isTrue }
+                true ->  _sharedList.value = players.filter { it.user.name?.lowercase()?.contains(search.lowercase()).isTrue }
                 else -> _sharedList.value = players
             }
         }
@@ -280,7 +280,7 @@ class StatsRankingViewModel @AssistedInject constructor(
             PlayerSortType.WINRATE -> list.sortedByDescending { (it.stats.warStats.warsWon*100)/it.stats.warStats.warsPlayed}
             PlayerSortType.TOTAL_WIN -> list.sortedByDescending { it.stats.warStats.warsPlayed }
             PlayerSortType.AVERAGE -> list.sortedByDescending { it.stats.averagePoints }
-            else -> list.sortedBy { it.user.display_name.lowercase() }
+            else -> list.sortedBy { it.user.name.lowercase() }
         }
         val playerList =  pairList.filter { it.stats.warStats.warsPlayed > 0 }
         players.clear()

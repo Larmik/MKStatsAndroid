@@ -174,13 +174,13 @@ fun WarDispo.withLineUpAndOpponent(databaseRepository: DatabaseRepositoryInterfa
         val lineupNames = mutableListOf<String?>()
         var hostName: String? = null
         this@withLineUpAndOpponent.lineUp?.forEach {
-            val playerName = databaseRepository.getUser(it.userId).firstOrNull()?.name
+            val playerName = databaseRepository.getNewUser(it.userId).firstOrNull()?.name
             lineupNames.add(playerName)
         }
         this@withLineUpAndOpponent.host?.takeIf { it != "null" }?.let {
             hostName = when (this@withLineUpAndOpponent.host?.contains("-")) {
                 true -> this@withLineUpAndOpponent.host
-                else -> databaseRepository.getUser(this@withLineUpAndOpponent.host)
+                else -> databaseRepository.getNewUser(this@withLineUpAndOpponent.host)
                     .firstOrNull()?.name
             }
         }
@@ -280,15 +280,17 @@ fun List<Map<*, *>>?.parseLineUp(): List<LineUp>? =
 fun List<Map<*, *>>?.parseRoster(): List<MKCLightPlayer>? =
     this?.map { item ->
         MKCLightPlayer(
-            player_id = item["player_id"].toString(),
-            display_name = item["display_name"].toString(),
-            custom_field_name = item["custom_field_name"].toString(),
-            custom_field = item["custom_field"].toString(),
-            player_status = item["player_status"].toString(),
-            registered_since = item["registered_since"].toString(),
-            country_code = item["country_code"].toString(),
-            registered_since_human = item["registered_since_human"].toString(),
-            country_name = item["country_name"].toString(),
-            team_leader = item["team_leader"].toString(),
+            mid = item["player_id"].toString(),
+            mkcId = item["player_id"].toString(),
+            name = item["display_name"].toString(),
+            fc = item["custom_field"].toString(),
+            status = item["player_status"].toString(),
+            registerDate = item["registered_since"].toString(),
+            country = item["country_code"].toString(),
+            isLeader = item["team_leader"].toString(),
+            role = 0,
+            currentWar = "-1",
+            picture = "",
+            isAlly = 0
         )
     }

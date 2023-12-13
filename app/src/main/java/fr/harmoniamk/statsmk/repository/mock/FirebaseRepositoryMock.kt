@@ -30,9 +30,6 @@ class FirebaseRepositoryMock(
         emit(Unit)
     }
 
-    override fun writeTeam(team: Team): Flow<Unit> = flow {
-        emit(Unit)
-    }
 
     override fun writeDispo(dispo: WarDispo): Flow<Unit> = flow {
         emit(Unit)
@@ -42,7 +39,14 @@ class FirebaseRepositoryMock(
         emit(listOf())
     }
 
+    override fun getUser(id: String): Flow<User?> = flow{
+emit(null)    }
+
     override fun getTeams(): Flow<List<Team>> = flow {
+        emit(listOf())
+    }
+
+    override fun getAllies(): Flow<List<String>> = flow {
         emit(listOf())
     }
 
@@ -50,7 +54,7 @@ class FirebaseRepositoryMock(
         emit(listOf())
     }
 
-    override fun getCurrentWar(teamId: String): Flow<MKWar?> = flow {
+    override fun getCurrentWar(): Flow<MKWar?> = flow {
         emit(null)
     }
 
@@ -72,13 +76,6 @@ class FirebaseRepositoryMock(
         emit(Unit)
     }
 
-    override fun deleteTeam(team: Team): Flow<Unit> = flow {
-        emit(Unit)
-    }
-
-    override fun deleteNewWar(war: MKWar): Flow<Unit> = flow {
-        emit(Unit)
-    }
 
     override fun deleteCurrentWar(): Flow<Unit> = flow {
         emit(Unit)

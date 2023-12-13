@@ -2,7 +2,6 @@ package fr.harmoniamk.statsmk.repository.mock
 
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
-import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.model.network.MKCFullPlayer
 import fr.harmoniamk.statsmk.model.network.MKCFullTeam
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
@@ -11,9 +10,7 @@ import kotlinx.coroutines.FlowPreview
 
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class PreferencesRepositoryMock : PreferencesRepositoryInterface {
-    override var currentTeam: Team?
-        get() = null
-        set(value) {}
+
     override var currentWar: NewWar?
         get() = null
         set(value) {}
@@ -43,5 +40,8 @@ class PreferencesRepositoryMock : PreferencesRepositoryInterface {
         set(value) {}
     override var mkcTeam: MKCFullTeam?
         get() = null
+        set(value) {}
+    override var role: Int
+        get() = 0
         set(value) {}
 }

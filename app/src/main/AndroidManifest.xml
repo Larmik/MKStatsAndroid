@@ -5,6 +5,7 @@
         android:allowBackup="false"
         android:fullBackupContent="false"
         android:roundIcon="@drawable/mk_stats_logo_picture"
+        android:icon="@drawable/mk_stats_logo_picture"
         android:label="${appLabel}"
         android:supportsRtl="true"
         android:name=".application.MainApplication"

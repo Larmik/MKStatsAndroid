@@ -129,7 +129,7 @@ fun StatsRankingScreen(
             items(list.value) { rankingItem ->
                 when (rankingItem) {
                     is PlayerRankingItemViewModel -> {
-                        MKPlayerItem(playerRanking = rankingItem, onRootClick = { viewModel.onItemClick(rankingItem) }, onEditClick = {} )
+                        MKPlayerItem(playerRanking = rankingItem, onRootClick = { viewModel.onItemClick(rankingItem) })
                     }
 
                     is OpponentRankingItemViewModel -> {

@@ -52,13 +52,13 @@ fun WarTrackResultScreen(
         LazyColumn {
             items(positions.value.orEmpty()) {
                 MKPlayerItem(
-                    player = it.player,
+                    player = it.mkcPlayer,
                     position = it,
                     shockVisible = true,
-                    shockCount = shocks.value?.singleOrNull { shock -> shock.playerId == it.player?.mkcId }?.count ?: 0,
+                    shockCount = shocks.value?.singleOrNull { shock -> shock.playerId == it.mkcPlayer?.mkcId }?.count ?: 0,
                     onAddShock = viewModel::onAddShock,
                     onRemoveShock = viewModel::onRemoveShock
-                ) {}
+                )
             }
         }
         track.value?.let { MKScoreView(track = it) }

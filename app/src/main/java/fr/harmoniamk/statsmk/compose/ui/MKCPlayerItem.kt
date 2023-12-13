@@ -30,7 +30,7 @@ import fr.harmoniamk.statsmk.model.network.MKCLightPlayer
 
 @Composable
 fun MKCPlayerItem(player: MKCLightPlayer, onPlayerClick: (String) -> Unit) {
-    Card(backgroundColor = colorResource(R.color.white_alphaed), modifier = Modifier.padding(bottom = 5.dp).clickable { onPlayerClick(player.player_id) }) {
+    Card(backgroundColor = colorResource(R.color.white_alphaed), modifier = Modifier.padding(bottom = 5.dp).clickable { onPlayerClick(player.mkcId) }) {
         Row(
             modifier = Modifier
                 .padding(10.dp)
@@ -49,13 +49,13 @@ fun MKCPlayerItem(player: MKCLightPlayer, onPlayerClick: (String) -> Unit) {
             ) {
                 MKText(
                     modifier = Modifier.widthIn(0.dp, 120.dp),
-                    text = player.display_name,
+                    text = player.name,
                     font = R.font.montserrat_bold,
                     textColor = R.color.harmonia_dark,
                     maxLines = 1
                 )
             }
-            when (player.team_leader.startsWith("1")) {
+            when (player.isLeader.startsWith("1")) {
                 true -> Row(
                     modifier = Modifier
                         .width(65.dp)

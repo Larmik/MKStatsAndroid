@@ -35,7 +35,6 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKBaseScreen
 import fr.harmoniamk.statsmk.compose.ui.MKBottomSheet
 import fr.harmoniamk.statsmk.compose.ui.MKCPlayerItem
-import fr.harmoniamk.statsmk.compose.ui.MKPlayerItem
 import fr.harmoniamk.statsmk.compose.ui.MKSegmentedButtons
 import fr.harmoniamk.statsmk.compose.ui.MKText
 import fr.harmoniamk.statsmk.compose.viewModel.TeamSettingsViewModel
@@ -51,8 +50,6 @@ fun TeamSettingsScreen(viewModel: TeamSettingsViewModel = hiltViewModel(), onPla
     val allies by viewModel.sharedAllies.collectAsState()
     val currentState = viewModel.sharedBottomSheetValue.collectAsState(null)
     val bottomSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
-    val manageVisible = viewModel.sharedManageVisible.collectAsState()
-    val topButtons = listOf(Pair(R.string.ajouter_un_ally,{ viewModel.onAddPlayer(true) }),)
 
     viewModel.init()
     LaunchedEffect(Unit) {
@@ -76,9 +73,7 @@ fun TeamSettingsScreen(viewModel: TeamSettingsViewModel = hiltViewModel(), onPla
             )
         }
     ) {
-        manageVisible.value.takeIf { it }?.let {
-            MKSegmentedButtons(buttons = topButtons)
-        }
+
         Row(
             Modifier
                 .fillMaxWidth()
@@ -134,11 +129,14 @@ fun TeamSettingsScreen(viewModel: TeamSettingsViewModel = hiltViewModel(), onPla
                         MKText(font = R.font.montserrat_bold, fontSize = 18, text = "Allies", textColor = R.color.white)
                     }
                 }
-                items(items = allies) {
-                    MKPlayerItem(
-                        player = it.player,
-                        editVisible = it.canEdit,
-                        onEditClick = viewModel::onEditPlayer
+                items(items = allies) {player ->
+                    MKCPlayerItem(
+                        player = player,
+                        onPlayerClick = { id ->
+                            id.takeIf { it.toInt() < 999999 }?.let {
+                                onPlayerClick(it)
+                            }
+                        }
                     )
                 }
             }

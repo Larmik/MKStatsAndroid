@@ -33,8 +33,8 @@ class NotificationsRepository @Inject constructor(@ApplicationContext var contex
 
     override fun register(teamTopic: String) = AlertNotificationService().token
         .onEach {
-            databaseRepository.getTeams().firstOrNull()?.let {
-                it.map { it.mid }.forEach { teamId ->
+            databaseRepository.getNewTeams().firstOrNull()?.let {
+                it.map { it.team_id }.forEach { teamId ->
                     FirebaseMessaging.getInstance().unsubscribeFromTopic(teamId)
                 }
             }

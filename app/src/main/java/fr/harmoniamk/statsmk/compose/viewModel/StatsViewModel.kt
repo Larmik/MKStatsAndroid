@@ -131,14 +131,14 @@ class StatsViewModel @Inject constructor(
                 item = it
                 val finalList = mutableListOf<Pair<Int, String?>>()
                 it.warStats.list.forEach { war ->
-                    val positions = mutableListOf<Pair<User?, Int>>()
+                    val positions = mutableListOf<Pair<MKCLightPlayer?, Int>>()
                     war.warTracks?.forEach { warTrack ->
                         warTrack.track?.warPositions?.let { warPositions ->
                             val trackPositions = mutableListOf<MKWarPosition>()
                             warPositions.forEach { position ->
-                                trackPositions.add(MKWarPosition(position, User(users.singleOrNull { it.player_id ==  position.playerId }, preferencesRepository.mkcTeam?.id)))
+                                trackPositions.add(MKWarPosition(position = position, mkcPlayer = users.singleOrNull { it.mkcId ==  position.playerId }))
                             }
-                            trackPositions.groupBy { it.player }.entries.forEach { entry ->
+                            trackPositions.groupBy { it.mkcPlayer }.entries.forEach { entry ->
                                 positions.add(Pair(entry.key, entry.value.map { pos -> pos.position.position.positionToPoints() }.sum()))
                             }
                         }
@@ -170,7 +170,7 @@ class StatsViewModel @Inject constructor(
                 _sharedOwnTeamId.value = preferencesRepository.mkcTeam?.id?.takeIf { type is StatsType.TeamStats || type is StatsType.PeriodicStats}
                 _sharedStats.emit(it)
                 _sharedSubtitle.value = when (type) {
-                    is StatsType.IndivStats -> users.singleOrNull { it.player_id == (type as? StatsType.IndivStats)?.userId }?.display_name
+                    is StatsType.IndivStats -> users.singleOrNull { it.mkcId == (type as? StatsType.IndivStats)?.userId }?.name
                     else -> preferencesRepository.mkcTeam?.team_name
                 }
             }
@@ -234,7 +234,7 @@ class StatsViewModel @Inject constructor(
                 )
                 _sharedStats.value = MapStats(mapDetailsList, onlyIndiv && (type as StatsType.MapStats).userId != null, (type as StatsType.MapStats).userId?.split(".")?.firstOrNull())
             }
-            .flatMapLatest { databaseRepository.getUser((type as? StatsType.MapStats)?.userId).zip(databaseRepository.getNewTeam((type as? StatsType.MapStats)?.teamId)) { user, team ->
+            .flatMapLatest { databaseRepository.getNewUser((type as? StatsType.MapStats)?.userId).zip(databaseRepository.getNewTeam((type as? StatsType.MapStats)?.teamId)) { user, team ->
                 _sharedSubtitle.value = when {
                     user != null && team != null -> "${user.name} vs ${team.team_name}"
                     user != null  -> user.name

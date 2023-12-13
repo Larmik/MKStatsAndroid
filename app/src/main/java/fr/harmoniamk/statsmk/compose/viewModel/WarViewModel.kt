@@ -6,11 +6,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.extension.formatToDate
 import fr.harmoniamk.statsmk.extension.safeSubList
-import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.model.firebase.WarDispo
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.network.MKCFullTeam
-import fr.harmoniamk.statsmk.model.network.MKCTeam
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
@@ -23,12 +21,9 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.zip
 import javax.inject.Inject
 
 @FlowPreview
@@ -64,7 +59,7 @@ class WarViewModel @Inject constructor(
         firebaseRepository.takeIf { preferencesRepository.mkcTeam != null }?.listenToCurrentWar()
             ?.onEach {
                 if (networkRepository.networkAvailable) {
-                    val isAdmin =  authenticationRepository.userRole.map { it >= UserRole.ADMIN.ordinal }.first()
+                    val isAdmin =  authenticationRepository.userRole >= UserRole.ADMIN.ordinal
                     _sharedCurrentWar.value = it
                     preferencesRepository.currentWar = it?.war
                     _sharedCreateWarVisible.value = it == null && isAdmin
@@ -82,12 +77,13 @@ class WarViewModel @Inject constructor(
                 .safeSubList(0, 5)
                 .let { _sharedLastWars.emit(it) }
             }.launchIn(viewModelScope)
-        firebaseRepository.getCurrentWar(preferencesRepository.mkcTeam?.id.toString())
-            .zip( authenticationRepository.userRole.map { it >= UserRole.ADMIN.ordinal }) { war, isAdmin ->
+        firebaseRepository.getCurrentWar()
+            .onEach {
                 if (networkRepository.networkAvailable) {
-                    _sharedCurrentWar.value = war
-                    preferencesRepository.currentWar = war?.war
-                    _sharedCreateWarVisible.value = war == null && isAdmin                }
+                    _sharedCurrentWar.value = it
+                    preferencesRepository.currentWar = it?.war
+                    _sharedCreateWarVisible.value = it == null && authenticationRepository.userRole >= UserRole.ADMIN.ordinal
+                }
             }.launchIn(viewModelScope)
 
 

@@ -43,7 +43,7 @@ class DispoViewModel @Inject constructor(private val firebaseRepository: Firebas
                     dispo.dispoPlayers?.forEach {
                         val listName = mutableListOf<String?>()
                         it.players?.forEach {
-                            listName.add(databaseRepository.getUser(it.takeIf{it != "-1"}).firstOrNull()?.name)
+                            listName.add(databaseRepository.getNewUser(it.takeIf{it != "-1"}).firstOrNull()?.name)
                         }
                         playerDispoList.add(it.apply { this.playerNames = listName.filterNotNull() })
                     }
@@ -60,14 +60,12 @@ class DispoViewModel @Inject constructor(private val firebaseRepository: Firebas
                 dispos.addAll(it)
             }
             .map {
-                val role = authenticationRepository.userRole.firstOrNull() ?: 0
-                it.map { Pair(it, role >= UserRole.ADMIN.ordinal) }
+                it.map { Pair(it, authenticationRepository.userRole >= UserRole.ADMIN.ordinal) }
             }
             .bind(_sharedDispos, viewModelScope)
 
         onPopup
-            .flatMapLatest {  authenticationRepository.userRole }
-            .map { it >= UserRole.LEADER.ordinal }
+            .map { authenticationRepository.userRole >= UserRole.LEADER.ordinal }
             .bind(_sharedPopupShowing, viewModelScope)
 
         onDispoSelected
@@ -111,7 +109,7 @@ class DispoViewModel @Inject constructor(private val firebaseRepository: Firebas
                     }
                     val listName = mutableListOf<String?>()
                     finalPlayers.forEach {
-                        listName.add(databaseRepository.getUser(it.takeIf{it != "-1"}).firstOrNull()?.name)
+                        listName.add(databaseRepository.getNewUser(it.takeIf{it != "-1"}).firstOrNull()?.name)
                     }
                     playerDispos.add(playerDispo.apply {
                         this.players = finalPlayers.filterNotNull()

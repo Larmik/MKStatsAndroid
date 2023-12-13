@@ -9,8 +9,6 @@ import kotlinx.android.parcel.Parcelize
 @Parcelize
 data class PlayerRankingItemViewModel(val user: MKCLightPlayer, override val stats: Stats) : Parcelable, RankingItemViewModel {
 
-    val playerName: String?
-        get() = user.display_name
     val warsPlayedLabel: String
         get() = stats.warStats.warsPlayed.toString()
     val winrateLabel: String

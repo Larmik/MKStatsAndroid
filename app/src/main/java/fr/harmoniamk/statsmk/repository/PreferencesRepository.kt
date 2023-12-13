@@ -13,7 +13,6 @@ import dagger.hilt.components.SingletonComponent
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
-import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.model.network.MKCFullPlayer
 import fr.harmoniamk.statsmk.model.network.MKCFullTeam
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -24,7 +23,6 @@ import javax.inject.Singleton
 @ExperimentalCoroutinesApi
 @FlowPreview
 interface PreferencesRepositoryInterface {
-    var currentTeam: Team?
     var currentWar: NewWar?
     var currentWarTrack: NewWarTrack?
     var currentTheme: Int
@@ -35,6 +33,7 @@ interface PreferencesRepositoryInterface {
     var fcmToken: String?
     var mkcPlayer: MKCFullPlayer?
     var mkcTeam: MKCFullTeam?
+    var role: Int
 }
 
 @FlowPreview
@@ -61,9 +60,6 @@ class PreferencesRepository @Inject constructor(
         EncryptedSharedPreferences.PrefValueEncryptionScheme.AES256_GCM
     )
 
-    override var currentTeam: Team?
-        get() = Gson().fromJson(preferences.getString("currentTeam", null), Team::class.java)
-        set(value) = preferences.edit().putString("currentTeam", Gson().toJson(value)).apply()
     override var currentWar: NewWar?
         get() = Gson().fromJson(preferences.getString("currentWar", null), NewWar::class.java)
         set(value) = preferences.edit().putString("currentWar", Gson().toJson(value)).apply()
@@ -94,4 +90,7 @@ class PreferencesRepository @Inject constructor(
     override var mkcTeam: MKCFullTeam?
         get() = Gson().fromJson(preferences.getString("mkcTeam", null), MKCFullTeam::class.java)
         set(value) = preferences.edit().putString("mkcTeam", Gson().toJson(value)).apply()
+    override var role: Int
+        get() = preferences.getInt("role", 0)
+        set(value) {preferences.edit().putInt("role", value).apply()}
 }

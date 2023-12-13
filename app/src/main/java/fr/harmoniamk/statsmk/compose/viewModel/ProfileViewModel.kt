@@ -118,7 +118,7 @@ class ProfileViewModel @Inject constructor(
                 .mapNotNull { authenticationRepository.user?.uid }
                 .flatMapLatest { storageRepository.getPicture(it) }
                 .mapNotNull { url = (it as? PictureResponse.Success)?.url; url }
-                .flatMapLatest { databaseRepository.getUser(authenticationRepository.user?.uid) }
+                .flatMapLatest { firebaseRepository.getUser(authenticationRepository.user?.uid.orEmpty()) }
                 .filterNotNull()
                 .flatMapLatest { firebaseRepository.writeUser(it.apply { this.picture = url }) }
                 .flatMapLatest { authenticationRepository.updateProfile(authenticationRepository.user?.displayName.toString(), url) }

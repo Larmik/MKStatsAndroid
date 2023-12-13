@@ -74,9 +74,7 @@ fun PlayerListScreen(teamId: String?, onWarStarted: () -> Unit) {
                             isSelected = it.isSelected.isTrue,
                             onRootClick = {
                                 viewModel.selectUser(it.copy(isSelected = !it.isSelected.isTrue))
-                            }) {
-
-                        }
+                            })
                     }
                     stickyHeader {
                         Row(
@@ -101,9 +99,7 @@ fun PlayerListScreen(teamId: String?, onWarStarted: () -> Unit) {
                             isSelected = it.isSelected.isTrue,
                             onRootClick = {
                                 viewModel.selectAlly(it.copy(isSelected = !it.isSelected.isTrue))
-                            }) {
-
-                        }
+                            })
                     }
                 }
                 MKCheckBox(text = R.string.war_officielle, onValue = viewModel::toggleOfficial)

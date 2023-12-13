@@ -25,22 +25,20 @@ import coil.compose.AsyncImage
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.extension.positionColor
 import fr.harmoniamk.statsmk.fragment.stats.playerRanking.PlayerRankingItemViewModel
-import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.MKWarPosition
+import fr.harmoniamk.statsmk.model.network.MKCLightPlayer
 
 @Composable
 fun MKPlayerItem(
-    player: User? = null,
+    player: MKCLightPlayer? = null,
     playerRanking: PlayerRankingItemViewModel? = null,
     position: MKWarPosition? = null,
     isSelected: Boolean = false,
     shockVisible: Boolean = false,
-    editVisible: Boolean = false,
     shockCount: Int = 0,
     onAddShock: (String) -> Unit = { },
     onRemoveShock: (String) -> Unit = { },
-    onRootClick: () -> Unit = { },
-    onEditClick: (User) -> Unit) {
+    onRootClick: () -> Unit = { }) {
     val backgroundColor = colorResource(id =
         when (isSelected) {
             true -> R.color.harmonia_dark
@@ -69,7 +67,7 @@ fun MKPlayerItem(
             }
 
             Row(Modifier.weight(1f), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
-                playerRanking?.user?.display_name?.let { MKText(modifier = Modifier.widthIn(0.dp, 120.dp), text = it, font = R.font.montserrat_bold, textColor = textColor, maxLines = 1) }
+                playerRanking?.user?.name?.let { MKText(modifier = Modifier.widthIn(0.dp, 120.dp), text = it, font = R.font.montserrat_bold, textColor = textColor, maxLines = 1) }
                 player?.name?.let { MKText(modifier = Modifier.widthIn(0.dp, 120.dp), text = it, font = R.font.montserrat_bold, textColor = textColor, maxLines = 1) }
                 shockCount.takeIf { it > 0 }?.let {
                     Image(painter = painterResource(id = R.drawable.shock), contentDescription = null, modifier = Modifier
@@ -88,7 +86,7 @@ fun MKPlayerItem(
                         MKText(text = R.string.minus, font = R.font.orbitron_semibold, fontSize = 26, modifier = Modifier
                             .size(30.dp)
                             .clickable {
-                                position.player?.mkcId?.let { mid ->
+                                position.mkcPlayer?.mkcId?.let { mid ->
                                     onRemoveShock(mid)
                                 }
                             })
@@ -98,7 +96,7 @@ fun MKPlayerItem(
                         MKText(text = R.string.plus, font = R.font.orbitron_semibold, fontSize = 26, modifier = Modifier
                             .size(30.dp)
                             .clickable {
-                                position.player?.mkcId?.let { mid ->
+                                position.mkcPlayer?.mkcId?.let { mid ->
                                     onAddShock(mid)
                                 }
                             })
