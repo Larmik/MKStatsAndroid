@@ -23,9 +23,9 @@
     <color name="pos_9_10">#E27602</color>
     <color name="pos_11">#DC6601</color>
     <color name="pos_12">#D24E01</color>
-    <color name="win">#9cffa1</color>
+    <color name="win">#008000</color>
     <color name="win_alphaed">#aa9cffa1</color>
-    <color name="lose">#ff8282</color>
+    <color name="lose">#ff000a</color>
     <color name="lose_alphaed">#aaff8282</color>
     <color name="text_color">#FFF</color>
     <color name="green">#008000</color>

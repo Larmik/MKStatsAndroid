@@ -31,7 +31,7 @@ fun MKCurrentWarCell(war: MKWar, onClick: () -> Unit) {
     val remaining = 12 - (war.warTracks?.size ?: 0)
     val diffColor = when {
         war.displayedDiff.contains("-") -> R.color.lose
-        war.displayedDiff.contains("+") -> R.color.green
+        war.displayedDiff.contains("+") -> R.color.win
         else -> R.color.white
     }
     Card(

@@ -36,7 +36,7 @@ fun MKWarDetailsStatsView(mkStats: MKStats, type: StatsType) {
 
     val diffColor = when {
         type is StatsType.IndivStats || (type as? StatsType.OpponentStats)?.userId != null -> R.color.black
-        stats?.averagePointsLabel?.contains("+").isTrue || mapStats?.teamScore?.trackScoreToDiff()?.contains("+").isTrue -> R.color.luigi
+        stats?.averagePointsLabel?.contains("+").isTrue || mapStats?.teamScore?.trackScoreToDiff()?.contains("+").isTrue -> R.color.win
         stats?.averagePointsLabel?.contains("-").isTrue || mapStats?.teamScore?.trackScoreToDiff()?.contains("-").isTrue -> R.color.lose
         else -> R.color.black
     }
@@ -116,8 +116,8 @@ fun MKWarDetailsStatsView(mkStats: MKStats, type: StatsType) {
                     else -> R.string.shocks_war
                 }
                 val shockCount = when (stats) {
-                    null ->  mapStats?.shockCount
-                    else -> stats.shockCount / stats.warStats.warsPlayed
+                    null ->  mapStats?.shockCount.toString()
+                    else -> String.format("%.2f", (stats.shockCount.toFloat() / stats.warStats.warsPlayedSinceShocks))
                 }
                 MKText(text = shockLabel, fontSize = 12)
                 Row(
@@ -130,7 +130,7 @@ fun MKWarDetailsStatsView(mkStats: MKStats, type: StatsType) {
                         modifier = Modifier.size(30.dp)
                     )
                     MKText(
-                        text = shockCount.toString(),
+                        text = shockCount,
                         fontSize = 16,
                         font = R.font.orbitron_semibold
                     )

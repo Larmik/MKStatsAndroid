@@ -24,7 +24,7 @@ import fr.harmoniamk.statsmk.model.local.MapDetails
 fun MKWarTrackItem(details: MapDetails, isIndiv: Boolean) {
     val borderColor = when {
         isIndiv -> R.color.transparent
-        details.warTrack.displayedDiff.contains("+") -> R.color.luigi
+        details.warTrack.displayedDiff.contains("+") -> R.color.win
         details.warTrack.displayedDiff.contains("-") -> R.color.lose
         else -> R.color.transparent
     }
@@ -33,7 +33,7 @@ fun MKWarTrackItem(details: MapDetails, isIndiv: Boolean) {
             .fillMaxWidth()
             .padding(horizontal = 10.dp)
             .padding(bottom = 5.dp)
-            .border(1.dp, color = colorResource(id = borderColor), shape = RoundedCornerShape(5.dp))
+            .border(2.dp, color = colorResource(id = borderColor), shape = RoundedCornerShape(5.dp))
             .background(
                 color = colorResource(id = R.color.white_alphaed),
                 shape = RoundedCornerShape(5.dp)

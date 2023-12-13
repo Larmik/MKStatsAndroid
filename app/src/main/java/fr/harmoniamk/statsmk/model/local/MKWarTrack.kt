@@ -43,7 +43,7 @@ data class MKWarTrack(val track: NewWarTrack?): Parcelable {
 
     val backgroundColor : Int
         get() = when {
-            diffScore > 0 -> R.color.luigi
+            diffScore > 0 -> R.color.win
             diffScore < 0 -> R.color.lose
             else -> R.color.white_alphaed
         }

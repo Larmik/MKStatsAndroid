@@ -7,6 +7,8 @@ import fr.harmoniamk.statsmk.model.network.MKCTeam
 import kotlinx.android.parcel.Parcelize
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import java.util.Calendar
+import java.util.Date
 
 interface MKStats
 
@@ -65,7 +67,9 @@ class TeamStats(val team: MKCTeam?, val totalPlayed: Int?): Parcelable {
 
 @Parcelize
 class WarStats(val list : List<MKWar>): Parcelable {
+    private val shockFeatureDate = Date().set(Calendar.MONTH, 3).set(Calendar.DAY_OF_MONTH, 22).set(Calendar.YEAR, 2023)
     val warsPlayed = list.count()
+    val warsPlayedSinceShocks = list.filter { it.war?.createdDate?.formatToDate("dd/MM/yyyy - HH'h'mm")?.after(shockFeatureDate).isTrue }.size
     val warsWon = list.count { war -> war.displayedDiff.contains('+') }
     val warsTied = list.count { war -> war.displayedDiff == "0" }
     val warsLoss = list.count { war -> war.displayedDiff.contains('-') }

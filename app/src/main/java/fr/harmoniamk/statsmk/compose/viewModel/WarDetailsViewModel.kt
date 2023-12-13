@@ -87,7 +87,7 @@ class WarDetailsViewModel  @AssistedInject constructor(
                     val trackPositions = mutableListOf<MKWarPosition>()
                     it.track?.warPositions?.let { warPositions ->
                         warPositions.forEach { position ->
-                            trackPositions.add(MKWarPosition(position = position, mkcPlayer = players?.singleOrNull { it.mid ==  position.playerId }))
+                            trackPositions.add(MKWarPosition(position = position, mkcPlayer = players?.singleOrNull { it.mkcId ==  position.playerId }))
                         }
                         trackPositions.groupBy { it.mkcPlayer }.entries.forEach { entry ->
                             positions.add(Pair(entry.key, entry.value.map { pos -> pos.position.position.positionToPoints() }.sum()))

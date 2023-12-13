@@ -44,13 +44,13 @@ fun MKWarItem(war: MKWar, isForStats: Boolean = false, onClick: (String?) -> Uni
             }
             else -> {
                 val borderColor =  when (war.displayedDiff.first()) {
-                    '+' -> R.color.luigi
+                    '+' -> R.color.win
                     '0' -> R.color.transparent
                     else -> R.color.lose
                 }
                 Row(modifier = Modifier
                     .fillMaxWidth()
-                    .border(1.dp, color = colorResource(id = borderColor), shape = RoundedCornerShape(5.dp))
+                    .border(2.dp, color = colorResource(id = borderColor), shape = RoundedCornerShape(5.dp))
                     .padding(10.dp), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                     war.war?.isOfficial?.takeIf { it.isTrue }?.let {
                         Image(painter = painterResource(id = R.drawable.mku_logo), contentDescription = null, modifier = Modifier.size(25.dp))

@@ -56,7 +56,7 @@ fun MKTrackItem(
     Card(
         elevation = 0.dp,
         backgroundColor = colorResource(bgColor),
-        border = BorderStroke((1.5).dp, colorResource(id = track?.backgroundColor ?: bgColor)),
+        border = BorderStroke(2.dp, colorResource(id = track?.backgroundColor ?: bgColor)),
         modifier = modifier.clickable {
             trackIndex?.let { onClick(it) }
             track?.track?.mid?.let { goToDetails(it) }
@@ -128,7 +128,7 @@ fun MKTrackItem(
                                     textColor = when (isIndiv) {
                                         true -> it.playerScore.pointsToPosition().positionColor()
                                         else -> when {
-                                            it.teamScore?.trackScoreToDiff()?.contains("+").isTrue -> R.color.luigi
+                                            it.teamScore?.trackScoreToDiff()?.contains("+").isTrue -> R.color.win
                                             it.teamScore?.trackScoreToDiff()?.contains("-").isTrue -> R.color.lose
                                             else -> R.color.black
                                         }

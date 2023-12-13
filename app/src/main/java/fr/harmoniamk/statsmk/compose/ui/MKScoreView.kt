@@ -30,9 +30,9 @@ fun MKScoreView(modifier: Modifier = Modifier, track: MKWarTrack? = null, war: M
     val diffColor = when {
         isSmaller && !colored -> R.color.harmonia_dark
         war?.displayedDiff?.contains("-").isTrue -> R.color.lose
-        war?.displayedDiff?.contains("+").isTrue -> R.color.green
+        war?.displayedDiff?.contains("+").isTrue -> R.color.win
         track?.displayedDiff?.contains("-").isTrue -> R.color.lose
-        track?.displayedDiff?.contains("+").isTrue -> R.color.green
+        track?.displayedDiff?.contains("+").isTrue -> R.color.win
         else -> R.color.harmonia_dark
     }
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier) {
