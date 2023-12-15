@@ -9,6 +9,8 @@ import fr.harmoniamk.statsmk.api.MKCentralAPI
 import fr.harmoniamk.statsmk.api.RetrofitUtils
 import fr.harmoniamk.statsmk.model.network.MKCFullPlayer
 import fr.harmoniamk.statsmk.model.network.MKCFullTeam
+import fr.harmoniamk.statsmk.model.network.MKCPlayer
+import fr.harmoniamk.statsmk.model.network.MKCPlayerList
 import fr.harmoniamk.statsmk.model.network.MKCTeam
 import fr.harmoniamk.statsmk.model.network.MKCTeamResponse
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -25,6 +27,7 @@ interface MKCentralNetworkDataSourceInterface {
     val teams: Flow<List<MKCTeam>>
     fun getTeam(id: String): Flow<MKCFullTeam>
     fun getPlayer(id: String): Flow<MKCFullPlayer?>
+    fun searchPlayers(search: String): Flow<List<MKCPlayer>>
 }
 
 @FlowPreview
@@ -104,6 +107,32 @@ class MKCentralNetworkDataSource @Inject constructor() : MKCentralNetworkDataSou
 
             override fun onFailure(call: Call<MKCFullPlayer>, t: Throwable) {
                 Log.d("MKDebugOnly", "MKC player onFailure: ${t.message}")
+            }
+
+        })
+        awaitClose { call.cancel() }
+    }
+
+    override fun searchPlayers(search: String): Flow<List<MKCPlayer>> = callbackFlow {
+        val call = RetrofitUtils.createRetrofit(apiClass = MKCentralAPI::class.java, url = MKCentralAPI.baseUrl,).searchPlayers(search)
+        call.enqueue(object : Callback<MKCPlayerList> {
+
+            override fun onResponse(
+                call: Call<MKCPlayerList?>,
+                response: retrofit2.Response<MKCPlayerList?>
+            ) {
+                Log.d("MKDebugOnly", "MKC player list onResponse: ")
+                when (response.code()) {
+                    200 ->  response.body()?.let {
+                        trySend(it.data)
+                    }
+                    else -> trySend(listOf())
+                }
+            }
+
+            override fun onFailure(call: Call<MKCPlayerList>, t: Throwable) {
+                Log.d("MKDebugOnly", "MKC player list onFailure: ${t.message}")
+                trySend(listOf())
             }
 
         })

@@ -128,13 +128,13 @@ class PlayerListViewModel @AssistedInject constructor(
                     val new = user.apply { this.currentWar = war.mid }
                     val fbUser = it.singleOrNull { it.mkcId == user.mkcId }
                     firebaseRepository.writeUser(User(new, fbUser?.mid, fbUser?.discordId)).first()
-                    databaseRepository.writeUser(new).first()
+                    databaseRepository.updateUser(new).first()
                 }
                 allies.filter { it.isSelected.isTrue }.mapNotNull { it.user }.forEach { user ->
                     val new = user.apply { this.currentWar = war.mid }
                     val fbUser = it.singleOrNull { it.mkcId == user.mkcId }
                     firebaseRepository.writeUser(User(new, fbUser?.mid, fbUser?.discordId)).first()
-                    databaseRepository.writeUser(new).first()
+                    databaseRepository.updateUser(new).first()
                 }
                 preferencesRepository.currentWar = war
                 firebaseRepository.writeCurrentWar(war).first()

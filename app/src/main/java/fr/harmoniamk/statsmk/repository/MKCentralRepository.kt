@@ -7,6 +7,7 @@ import dagger.hilt.components.SingletonComponent
 import fr.harmoniamk.statsmk.datasource.MKCentralNetworkDataSource
 import fr.harmoniamk.statsmk.model.network.MKCFullPlayer
 import fr.harmoniamk.statsmk.model.network.MKCFullTeam
+import fr.harmoniamk.statsmk.model.network.MKCPlayer
 import fr.harmoniamk.statsmk.model.network.MKCTeam
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -18,6 +19,7 @@ interface MKCentralRepositoryInterface {
     val teams: Flow<List<MKCTeam>>
     fun getTeam(id: String): Flow<MKCFullTeam>
     fun getPlayer(id: String): Flow<MKCFullPlayer?>
+    fun searchPlayers(search: String): Flow<List<MKCPlayer>>
 }
 
 @FlowPreview
@@ -39,5 +41,6 @@ class MKCentralRepository @Inject constructor(private val dataSource: MKCentralN
     override fun getTeam(id: String): Flow<MKCFullTeam> = dataSource.getTeam(id)
 
     override fun getPlayer(id: String): Flow<MKCFullPlayer?> = dataSource.getPlayer(id)
+    override fun searchPlayers(search: String): Flow<List<MKCPlayer>> = dataSource.searchPlayers(search)
 
 }

@@ -52,6 +52,10 @@ class DatabaseRepositoryMock : DatabaseRepositoryInterface {
         emit(Unit)
     }
 
+    override fun updateUser(user: MKCLightPlayer): Flow<Unit> = flow {
+        emit(Unit)
+    }
+
     override fun writeUser(user: MKCLightPlayer): Flow<Unit> = flow {
         emit(Unit)
     }

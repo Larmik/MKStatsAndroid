@@ -12,11 +12,7 @@ import kotlinx.android.parcel.Parcelize
 @Keep
 @JsonClass(generateAdapter = true)
 data class MKCPlayerList(
-    val first: Int,
-    val last: Int,
-    val total: Int,
-    val page: Int,
-    val hasMore: Boolean,
+    val count: Int,
     val data: List<MKCPlayer>
 )
 
@@ -86,20 +82,49 @@ data class MKCLightPlayer(
         picture = user?.picture.orEmpty(),
         isAlly = 1
     )
+    constructor(fullPlayer: MKCFullPlayer?) : this(
+        mid = fullPlayer?.id.toString(),
+        mkcId = fullPlayer?.id.toString(),
+        name = fullPlayer?.display_name.orEmpty(),
+        fc = fullPlayer?.switch_fc.orEmpty(),
+        status = fullPlayer?.player_status.orEmpty(),
+        registerDate = fullPlayer?.registered_at?.date.orEmpty(),
+        country = fullPlayer?.country_code.orEmpty(),
+        isLeader = "",
+        role = 0,
+        currentWar = "-1",
+        picture = fullPlayer?.profile_picture.orEmpty(),
+        isAlly = 1
+    )
 
-    constructor(entity: MKCLightPlayerEntity) : this(
-        mid = entity.mid,
-        mkcId = entity.mkcId,
-        name = entity.name,
-        fc = entity.fc,
-        status = entity.status,
-        registerDate = entity.registerDate,
-        country = entity.country,
-        isLeader = entity.isLeader,
-        role = entity.role,
-        currentWar = entity.currentWar,
-        picture = entity.picture,
-        isAlly = entity.isAlly
+    constructor(entity: MKCLightPlayerEntity?) : this(
+        mid = entity?.mid.orEmpty(),
+        mkcId = entity?.mkcId.orEmpty(),
+        name = entity?.name.orEmpty(),
+        fc = entity?.fc.orEmpty(),
+        status = entity?.status.orEmpty(),
+        registerDate = entity?.registerDate.orEmpty(),
+        country = entity?.country.orEmpty(),
+        isLeader = entity?.isLeader.orEmpty(),
+        role = entity?.role ?: 0,
+        currentWar = entity?.currentWar.orEmpty(),
+        picture = entity?.picture.orEmpty(),
+        isAlly = entity?.isAlly ?: 0
+    )
+
+    constructor(player: MKCPlayer) : this (
+        mid = player.player_id.toString(),
+        mkcId = player.player_id.toString(),
+        name = player.display_name,
+        fc = player.switch_fc.orEmpty(),
+        status = player.player_status,
+        registerDate = player.registered_at,
+        country = player.country_code,
+        isLeader =  "0",
+        role =  0,
+        currentWar = "-1",
+        picture = "",
+        isAlly = 0
     )
 
     constructor(player: MKCFullPlayer?, role: Int, isAlly: Int, isLeader: String, currentWar: String) : this(

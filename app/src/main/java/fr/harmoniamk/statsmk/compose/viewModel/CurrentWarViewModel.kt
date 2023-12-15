@@ -131,7 +131,7 @@ class CurrentWarViewModel @Inject constructor(
                         val newUser = user.copy(currentWar = "-1")
                         val fbUser = users.singleOrNull { it.mkcId == user.mkcId }
                         firebaseRepository.writeUser(User(newUser, fbUser?.mid, fbUser?.discordId)).firstOrNull()
-                        databaseRepository.writeUser(newUser).firstOrNull()
+                        databaseRepository.updateUser(newUser).firstOrNull()
                     }
                     firebaseRepository.deleteCurrentWar().firstOrNull()
                     _sharedBackToWars.emit(Unit)
@@ -157,7 +157,7 @@ class CurrentWarViewModel @Inject constructor(
                                 val new = user.apply { this.currentWar = "-1" }
                                 val fbUser = firebaseRepository.getUsers().firstOrNull()?.singleOrNull { it.mkcId == user.mkcId }
                                 firebaseRepository.writeUser(User(new, fbUser?.mid, fbUser?.discordId)).first()
-                                databaseRepository.writeUser(new).first()
+                                databaseRepository.updateUser(new).first()
                             }
                         war.withName(databaseRepository)
                             .mapNotNull { it?.war?.mid }

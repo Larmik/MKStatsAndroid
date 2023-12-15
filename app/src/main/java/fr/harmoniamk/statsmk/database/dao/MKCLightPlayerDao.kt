@@ -22,6 +22,9 @@ interface MKCLightPlayerDao {
     suspend fun bulkInsert(teams: List<MKCLightPlayerEntity>)
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun update(team: MKCLightPlayerEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(team: MKCLightPlayerEntity)
 
     @Delete

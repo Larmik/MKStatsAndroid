@@ -26,6 +26,7 @@ interface FirebaseRepositoryInterface{
     fun writeNewWar(war: NewWar): Flow<Unit>
     fun writeCurrentWar(war: NewWar): Flow<Unit>
     fun writeDispo(dispo: WarDispo): Flow<Unit>
+    fun writeAlly(ally : String): Flow<Unit>
 
     //Get firebase users, only on currentWar
     fun getUsers(): Flow<List<User>>
@@ -98,6 +99,12 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
         database.child("dispos").child(preferencesRepository.mkcTeam?.id ?: "").child(index.toString()).setValue(dispo)
         emit(Unit)
     }
+
+    override fun writeAlly(ally: String): Flow<Unit>  =
+        getAllies()
+            .onEach {
+                database.child("allies").child(preferencesRepository.mkcTeam?.id.orEmpty()).child(it.size.toString()).setValue(ally)
+            }.map {  }
 
     override fun getUsers(): Flow<List<User>> = callbackFlow {
         Log.d("MKDebugOnly", "FirebaseRepository getUsers")

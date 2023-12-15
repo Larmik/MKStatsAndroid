@@ -1,6 +1,5 @@
 package fr.harmoniamk.statsmk.compose.viewModel
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
@@ -11,39 +10,32 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.EntryPointAccessors
 import fr.harmoniamk.statsmk.compose.ViewModelFactoryProvider
-import fr.harmoniamk.statsmk.compose.ui.MKBottomSheetState
 import fr.harmoniamk.statsmk.enums.UserRole
-import fr.harmoniamk.statsmk.extension.bind
-import fr.harmoniamk.statsmk.model.firebase.User
+import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.model.network.MKCFullPlayer
 import fr.harmoniamk.statsmk.model.network.MKCLightPlayer
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.MKCentralRepositoryInterface
-import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.zip
 
 @FlowPreview
 @ExperimentalCoroutinesApi
 class PlayerProfileViewModel @AssistedInject constructor(
     @Assisted val id: String,
     mkCentralRepository: MKCentralRepositoryInterface,
-    databaseRepository: DatabaseRepositoryInterface,
-    firebaseRepository: FirebaseRepositoryInterface,
-    authenticationRepository: AuthenticationRepositoryInterface,
-    preferencesRepository: PreferencesRepositoryInterface
+    private val databaseRepository: DatabaseRepositoryInterface,
+    private val firebaseRepository: FirebaseRepositoryInterface,
+    authenticationRepository: AuthenticationRepositoryInterface
 ) : ViewModel() {
 
     companion object {
@@ -76,13 +68,31 @@ class PlayerProfileViewModel @AssistedInject constructor(
 
     private val _sharedEmail = MutableStateFlow<String?>(null)
     private val _sharedPlayer = MutableStateFlow<MKCFullPlayer?>(null)
+    private val _sharedAllyButton = MutableStateFlow<Pair<String, Boolean>?>(null)
     val sharedEmail = _sharedEmail.asStateFlow()
     val sharedPlayer = _sharedPlayer.asStateFlow()
+    val sharedAllyButton = _sharedAllyButton.asStateFlow()
+    var player: MKCFullPlayer? = null
 
     init {
         mkCentralRepository.getPlayer(id)
             .filterNotNull()
-            .bind(_sharedPlayer, viewModelScope)
+            .zip(databaseRepository.getNewUser(id)) { fullPlayer, localPlayer ->
+                player = fullPlayer
+                _sharedPlayer.value = fullPlayer
+                _sharedAllyButton.takeIf { authenticationRepository.userRole >= UserRole.ADMIN.ordinal }?.value = when {
+                    localPlayer?.mkcId?.isEmpty().isTrue -> Pair(fullPlayer.id.toString(), true)
+                    localPlayer?.isAlly == 1 -> Pair(localPlayer.mkcId, false)
+                    else -> null
+                }
+            }.launchIn(viewModelScope)
+    }
+
+    fun onAddAlly() {
+      firebaseRepository.writeAlly(player?.id.toString())
+            .flatMapLatest { databaseRepository.writeUser(MKCLightPlayer(player)) }
+            .onEach { _sharedAllyButton.value = null }
+            .launchIn(viewModelScope)
     }
 
 }

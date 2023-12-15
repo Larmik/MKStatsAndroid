@@ -34,6 +34,7 @@ interface DatabaseRepositoryInterface {
     fun writeRoster(list: List<MKCLightPlayer>): Flow<Unit>
     fun writeNewTeams(list: List<MKCTeam>): Flow<Unit>
     fun writeWars(list: List<MKWar>): Flow<Unit>
+    fun updateUser(user: MKCLightPlayer): Flow<Unit>
     fun writeUser(user: MKCLightPlayer): Flow<Unit>
 
     fun writeWar(war: MKWar): Flow<Unit>
@@ -87,7 +88,7 @@ class DatabaseRepository @Inject constructor(
     } ?: flowOf(null)
 
     override fun getNewUser(id: String?): Flow<MKCLightPlayer?> = id?.let {
-        Log.d("MKDebugOnly", "DatabaseRepository getNewTeam $id")
+        Log.d("MKDebugOnly", "DatabaseRepository getNewUser $id")
         newPlayerLocalDataSource.getById(it)
     } ?: flowOf(null)
 
@@ -113,8 +114,13 @@ class DatabaseRepository @Inject constructor(
         return warDataSource.insert(list)
     }
 
-    override fun writeUser(user: MKCLightPlayer): Flow<Unit>{
-        Log.d("MKDebugOnly", "DatabaseRepository writeWars")
+    override fun updateUser(user: MKCLightPlayer): Flow<Unit> {
+        Log.d("MKDebugOnly", "DatabaseRepository updateUser")
+        return newPlayerLocalDataSource.update(user)
+    }
+
+    override fun writeUser(user: MKCLightPlayer): Flow<Unit> {
+        Log.d("MKDebugOnly", "DatabaseRepository writeUser")
         return newPlayerLocalDataSource.insert(user)
     }
 

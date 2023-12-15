@@ -175,7 +175,7 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
             TeamProfileScreen(id = playerId.orEmpty(), onPlayerClick = { navController.navigate("Home/Settings/PlayerProfile/$it") })
         }
         composable("Home/Settings/Players") {
-            PlayersSettingsScreen(onBack = { navController.popBackStack() })
+            PlayersSettingsScreen(onBack = { navController.popBackStack() }, onPlayerClick = { navController.navigate("Home/Settings/PlayerProfile/$it") })
         }
         composable("Home/Settings/Opponents") {
             OpponentSettingsScreen(onTeamClick = { navController.navigate("Home/Settings/TeamProfile/$it") })

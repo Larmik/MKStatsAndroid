@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKBaseScreen
+import fr.harmoniamk.statsmk.compose.ui.MKButton
 import fr.harmoniamk.statsmk.compose.ui.MKText
 import fr.harmoniamk.statsmk.compose.viewModel.PlayerProfileViewModel.Companion.viewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -40,6 +41,7 @@ fun PlayerProfileScreen(id: String) {
     val viewModel = viewModel(id = id)
     val email = viewModel.sharedEmail.collectAsState()
     val player = viewModel.sharedPlayer.collectAsState()
+    val allyButton = viewModel.sharedAllyButton.collectAsState()
 
     MKBaseScreen(title = R.string.profil) {
         Column(
@@ -145,6 +147,14 @@ fun PlayerProfileScreen(id: String) {
                             .height(1.dp)
                             .background(color = colorResource(id = R.color.white))
                     )
+                    allyButton.value?.let {
+                        when (it.second) {
+                            true ->   MKButton(text = stringResource(R.string.ajouter_en_tant_qu_ally), onClick = viewModel::onAddAlly)
+                            else -> {
+                                //Retirer un ally
+                            }
+                        }
+                    }
                 }
             }
         }

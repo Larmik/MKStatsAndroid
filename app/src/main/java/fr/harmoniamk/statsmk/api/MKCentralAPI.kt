@@ -2,10 +2,12 @@ package fr.harmoniamk.statsmk.api
 
 import fr.harmoniamk.statsmk.model.network.MKCFullPlayer
 import fr.harmoniamk.statsmk.model.network.MKCFullTeam
+import fr.harmoniamk.statsmk.model.network.MKCPlayerList
 import fr.harmoniamk.statsmk.model.network.MKCTeamResponse
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface MKCentralAPI {
 
@@ -21,5 +23,8 @@ interface MKCentralAPI {
 
     @GET("teams/{id}")
     fun getTeam(@Path("id") id: String?) : Call<MKCFullTeam>
+
+    @GET("players/category/150cc")
+    fun searchPlayers(@Query("search") search: String) : Call<MKCPlayerList>
 
 }

@@ -35,6 +35,10 @@ class FirebaseRepositoryMock(
         emit(Unit)
     }
 
+    override fun writeAlly(ally:String): Flow<Unit> = flow {
+        emit(Unit)
+    }
+
     override fun getUsers(): Flow<List<User>> = flow {
         emit(listOf())
     }
