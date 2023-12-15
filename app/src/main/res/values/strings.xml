@@ -254,8 +254,8 @@
     <string name="reset_pwd">Renseignez votre adresse email afin de réinitialiser votre mot de passe :</string>
     <string name="envoyer_le_lien">Envoyer le lien</string>
     <string name="retour">Retour</string>
-    <string name="g_rer_les_quipes">Gérer les équipes</string>
-    <string name="joueurs_libres">Joueurs libres</string>
+    <string name="g_rer_les_quipes">Adversaires</string>
+    <string name="joueurs_libres">Joueurs</string>
     <string name="statistiques_p_riodiques">Statistiques périodiques</string>
     <string name="s_lectionnez_le_joueur_remplacer">Sélectionnez le joueur à remplacer</string>
     <string name="remplacer">Remplacer</string>
@@ -351,6 +351,7 @@
     <string name="fetch_wars">Récupération des wars...</string>
     <string name="week_stats">Statiqtiques hebdomadaires</string>
     <string name="month_stats">Statistiques mensuelles</string>
+    <string name="registry">Registre</string>
     <string name="kick_player">Retirer ce joueur de l\'équipe</string>
     <string name="created_by">Créée par %s</string>
     <string name="select_sub">Sélectionnez le joueur entrant</string>
@@ -399,5 +400,5 @@
     <string name="no_players_enough"><![CDATA[Votre équipe ne comporte pas assez de joueurs pour commencer une war. \n \n Vous pouvez aller dans Paramètres -> Mon équipe pour ajouter des joueurs.]]></string>
     <string name="inscrit_depuis">Inscrit depuis le</string>
     <string name="entree_team">Dans l\'équipe depuis le</string>
-    <string name="discord_tag">Tag Discord</string>
+    <string name="discord_tag" translatable="false">Tag Discord</string>
 </resources>
