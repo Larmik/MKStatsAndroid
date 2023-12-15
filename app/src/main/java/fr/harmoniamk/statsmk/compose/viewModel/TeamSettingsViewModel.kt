@@ -5,23 +5,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.compose.ui.MKBottomSheetState
-import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.network.MKCFullTeam
 import fr.harmoniamk.statsmk.model.network.MKCLightPlayer
-import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
-import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.MKCentralRepositoryInterface
-import fr.harmoniamk.statsmk.repository.NetworkRepositoryInterface
-import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
@@ -46,7 +39,6 @@ class TeamSettingsViewModel @Inject constructor(
     val sharedPictureLoaded =_sharedPictureLoaded.asStateFlow()
     val sharedBottomSheetValue = _sharedBottomSheetValue.asSharedFlow()
 
-    private val allys = SnapshotStateList<MKCLightPlayer>()
 
     fun init() {
         mkCentralRepository.getTeam("874")
@@ -54,10 +46,9 @@ class TeamSettingsViewModel @Inject constructor(
                 _sharedTeam.emit(it)
                 _sharedPictureLoaded.emit(it.logoUrl)
                 _sharedPlayers.emit(it.rosterList.orEmpty())
-            }.launchIn(viewModelScope)
-
-        databaseRepository.getRoster()
-            .onEach { _sharedAllies.emit(createAllyList(list = it).first()) }
+            }
+            .flatMapLatest { databaseRepository.getRoster() }
+            .onEach { _sharedAllies.emit(createAllyList(list = it)) }
             .launchIn(viewModelScope)
 
     }
@@ -67,14 +58,14 @@ class TeamSettingsViewModel @Inject constructor(
     }
 
 
-    private fun createAllyList(list: List<MKCLightPlayer>? = null): Flow<SnapshotStateList<MKCLightPlayer>> = flow {
-        allys.clear()
+    private fun createAllyList(list: List<MKCLightPlayer>? = null): SnapshotStateList<MKCLightPlayer> {
+        val allyList = SnapshotStateList<MKCLightPlayer>()
         list?.sortedBy { it.name }?.forEach { player ->
             player.takeIf { it.isAlly == 1 }?.let {
-                allys.add(it)
+                allyList.add(it)
             }
         }
-        emit(allys)
+        return allyList
     }
 
 }

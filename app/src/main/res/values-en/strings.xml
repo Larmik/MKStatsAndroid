@@ -339,9 +339,12 @@
     <string name="track_12">Last race</string>
     <string name="need_update">An update is need for this app to run properly. \n \n Please update and try again.</string>
     <string name="kick_player">Kick this player</string>
+    <string name="fetch_player">Fetching player...</string>
+    <string name="fetch_players">Fetching roster...</string>
+    <string name="fetch_teams">Fetching teams...</string>
+    <string name="fetch_wars">Fetching wars...</string>
     <string name="week_stats">Weekly stats</string>
     <string name="month_stats">Monthly stats</string>
-    <string name="fetch_data">Fetching data…</string>
     <string name="matchs_played">%s wars played</string>
     <string name="creating_user">Creating account, please wait…</string>
     <string name="batd">Athens Dash</string>

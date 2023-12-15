@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.BuildConfig
+import fr.harmoniamk.statsmk.R
+import fr.harmoniamk.statsmk.compose.ui.MKDialogState
 import fr.harmoniamk.statsmk.enums.WelcomeScreen
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.model.firebase.AuthUserResponse
@@ -20,8 +22,10 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.filterNotNull
@@ -48,12 +52,12 @@ class MainViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _sharedWelcomeScreen = MutableSharedFlow<WelcomeScreen>()
-    private val _sharedShowPopup = MutableSharedFlow<Pair<WelcomeScreen, List<MKWar>>>()
     private val _sharedShowUpdatePopup = MutableSharedFlow<Unit>()
+    private val _sharedDialogValue = MutableStateFlow<MKDialogState?>(null)
 
     val sharedWelcomeScreen = _sharedWelcomeScreen.asSharedFlow()
-    val sharedShowPopup = _sharedShowPopup.asSharedFlow()
     val sharedShowUpdatePopup = _sharedShowUpdatePopup.asSharedFlow()
+    val sharedDialogValue = _sharedDialogValue.asStateFlow()
 
     fun bind() {
 
@@ -78,7 +82,7 @@ class MainViewModel @Inject constructor(
                 }
                 Pair(screen, it)
             }
-            .bind(_sharedShowPopup, viewModelScope)
+            //.bind(_sharedShowPopup, viewModelScope)
 
         isConnected
             .filter { it }
@@ -91,9 +95,19 @@ class MainViewModel @Inject constructor(
                             preferencesRepository.authPassword.toString()
                         )
                     }
-                    .mapNotNull { (it as? AuthUserResponse.Success)?.user?.uid }
-                    .flatMapLatest { fetchUseCase.fetch(it) }
-                    .onEach { _sharedWelcomeScreen.emit(WelcomeScreen.Home) }
+                    .mapNotNull { (it as? AuthUserResponse.Success)?.user }
+                    .onEach {  _sharedDialogValue.value = MKDialogState.Loading(R.string.fetch_player) }
+                    .flatMapLatest { fetchUseCase.fetchPlayer() }
+                    .onEach {  _sharedDialogValue.value = MKDialogState.Loading(R.string.fetch_players) }
+                    .flatMapLatest { fetchUseCase.fetchPlayers() }
+                    .onEach {  _sharedDialogValue.value = MKDialogState.Loading(R.string.fetch_teams) }
+                    .flatMapLatest { fetchUseCase.fetchTeams() }
+                    .onEach {  _sharedDialogValue.value = MKDialogState.Loading(R.string.fetch_wars) }
+                    .flatMapLatest { fetchUseCase.fetchWars() }
+                    .onEach {
+                        _sharedDialogValue.value = null
+                        _sharedWelcomeScreen.emit(WelcomeScreen.Home)
+                    }
                     .flatMapLatest { notificationsRepository.register(preferencesRepository.mkcTeam?.id ?: "") }
                     .launchIn(viewModelScope)
 

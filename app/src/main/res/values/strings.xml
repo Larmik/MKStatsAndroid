@@ -345,7 +345,10 @@
     <string name="edit_mail">Modifier l\'adresse email</string>
     <string name="confirm">Confirmer</string>
     <string name="matchs_played">%s matchs joués</string>
-    <string name="fetch_data">Récupération des données…</string>
+    <string name="fetch_player">Récupération du joueur...</string>
+    <string name="fetch_players">Récupération de l\'équipe et des allies...</string>
+    <string name="fetch_teams">Récupération des équipes...</string>
+    <string name="fetch_wars">Récupération des wars...</string>
     <string name="week_stats">Statiqtiques hebdomadaires</string>
     <string name="month_stats">Statistiques mensuelles</string>
     <string name="kick_player">Retirer ce joueur de l\'équipe</string>

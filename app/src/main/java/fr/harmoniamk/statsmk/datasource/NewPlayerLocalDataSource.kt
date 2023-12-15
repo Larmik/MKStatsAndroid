@@ -22,6 +22,7 @@ interface NewPlayerLocalDataSourceInterface {
     fun bulkInsert(players: List<MKCLightPlayer>): Flow<Unit>
     fun insert(player: MKCLightPlayer): Flow<Unit>
     fun update(player: MKCLightPlayer): Flow<Unit>
+    fun clear(): Flow<Unit>
 }
 
 @FlowPreview
@@ -47,5 +48,7 @@ class NewPlayerLocalDataSource @Inject constructor(@ApplicationContext private v
 
     override fun insert(player: MKCLightPlayer): Flow<Unit> = flow { emit(dao.insert(player.toEntity())) }
     override fun update(player: MKCLightPlayer): Flow<Unit>  = flow { emit(dao.update(player.toEntity())) }
+    override fun clear(): Flow<Unit> = flow { emit(dao.clear())}
+
 
 }

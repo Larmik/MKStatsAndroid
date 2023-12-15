@@ -20,6 +20,7 @@ interface TopicLocalDataSourceInterface {
     fun getAll(): Flow<List<TopicEntity>>
     fun insert(topic: TopicEntity): Flow<Unit>
     fun delete(topic: String): Flow<Unit>
+    fun clear(): Flow<Unit>
 
 }
 
@@ -49,5 +50,6 @@ class TopicLocalDataSource @Inject constructor(@ApplicationContext private val c
     override fun delete(topic: String): Flow<Unit> = flow {
         emit(dao.delete(topic))
     }
+    override fun clear(): Flow<Unit> = flow { emit(dao.clear())}
 
 }

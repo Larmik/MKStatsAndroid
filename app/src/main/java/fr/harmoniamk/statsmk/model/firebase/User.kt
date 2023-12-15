@@ -1,6 +1,7 @@
 package fr.harmoniamk.statsmk.model.firebase
 
 import android.os.Parcelable
+import com.google.firebase.auth.FirebaseUser
 import fr.harmoniamk.statsmk.model.network.MKCLightPlayer
 import kotlinx.android.parcel.Parcelize
 
@@ -24,6 +25,16 @@ data class User(
         picture = player?.picture,
         mkcId = player?.mkcId,
         discordId = discordId
+    )
+
+    constructor(user: FirebaseUser, picture: String) : this(
+        mid = user.uid,
+        name = user.displayName,
+        currentWar = "-1",
+        role = 0,
+        picture = picture,
+        mkcId = user.uid,
+        discordId = null
     )
 
 }

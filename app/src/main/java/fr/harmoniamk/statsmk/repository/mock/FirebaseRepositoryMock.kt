@@ -54,7 +54,7 @@ emit(null)    }
         emit(listOf())
     }
 
-    override fun getNewWars(teamId: String): Flow<List<NewWar>> = flow {
+    override fun getNewWars(): Flow<List<NewWar>> = flow {
         emit(listOf())
     }
 
@@ -75,11 +75,6 @@ emit(null)    }
             ).apply { this.name = "HR - Ev" }
         )
     }
-
-    override fun deleteUser(user: User): Flow<Unit> = flow {
-        emit(Unit)
-    }
-
 
     override fun deleteCurrentWar(): Flow<Unit> = flow {
         emit(Unit)

@@ -22,6 +22,7 @@ interface NewTeamLocalDataSourceInterface {
     fun getById(id: String) : Flow<MKCTeam>
     fun bulkInsert(teams: List<MKCTeam>): Flow<Unit>
     fun insert(team: MKCTeam): Flow<Unit>
+    fun clear(): Flow<Unit>
 }
 
 @FlowPreview
@@ -48,5 +49,6 @@ class NewTeamLocalDataSource @Inject constructor(@ApplicationContext private val
     override fun bulkInsert(teams: List<MKCTeam>): Flow<Unit> = flow { emit(dao.bulkInsert(teams.map { it.toEntity() })) }
 
     override fun insert(team: MKCTeam): Flow<Unit> = flow { emit(dao.insert(team.toEntity())) }
+    override fun clear(): Flow<Unit> = flow { emit(dao.clear())}
 
 }

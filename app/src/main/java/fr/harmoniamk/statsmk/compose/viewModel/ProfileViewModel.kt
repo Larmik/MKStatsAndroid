@@ -96,13 +96,14 @@ class ProfileViewModel @Inject constructor(
     fun onLogout() {
         _sharedDialogValue.value = MKDialogState.Logout(
             onLogout = {
-                viewModelScope.launch {
-                    authenticationRepository.signOut()
-                    preferencesRepository.mkcTeam = null
-                    preferencesRepository.authEmail = null
-                    preferencesRepository.authPassword = null
-                    _sharedDisconnect.emit(Unit)
-                }
+                databaseRepository.clear()
+                    .onEach {
+                        authenticationRepository.signOut()
+                        preferencesRepository.mkcTeam = null
+                        preferencesRepository.authEmail = null
+                        preferencesRepository.authPassword = null
+                        _sharedDisconnect.emit(Unit)
+                    }.launchIn(viewModelScope)
             },
             onDismiss = {
                 _sharedDialogValue.value = null

@@ -139,7 +139,7 @@ class StatsRankingViewModel @AssistedInject constructor(
                         warList.addAll(it)
                     }
                     .flatMapLatest { databaseRepository.getRoster() }
-                    .mapNotNull { it.sortedBy { it.name } }
+                    .mapNotNull { it.filter { it.isAlly == 0 }.sortedBy { it.name } }
                     .onEach {
                         val temp = mutableListOf<PlayerRankingItemViewModel>()
                         it.forEach { user ->

@@ -21,6 +21,13 @@ import javax.inject.Singleton
 import kotlin.coroutines.CoroutineContext
 
 interface FirebaseRepositoryInterface{
+    //SplashScreen/Login
+    fun getUser(id: String): Flow<User?>
+    fun getTeams(): Flow<List<Team>>
+    fun getAllies(): Flow<List<String>>
+    fun getNewWars(): Flow<List<NewWar>>
+
+
     //Write and edit methods
     fun writeUser(user: User): Flow<Unit>
     fun writeNewWar(war: NewWar): Flow<Unit>
@@ -30,19 +37,10 @@ interface FirebaseRepositoryInterface{
 
     //Get firebase users, only on currentWar
     fun getUsers(): Flow<List<User>>
-    //Get firebase user by id, only on splashscreen and login
-    fun getUser(id: String): Flow<User?>
-    //Get firebase teams, only on splashscreen and login
-    fun getTeams(): Flow<List<Team>>
-    //Get firebase allies, only on splashscreen and login
-    fun getAllies(): Flow<List<String>>
-    //Get wars by team id, only on splashscreen and login
-    fun getNewWars(teamId: String): Flow<List<NewWar>>
+
     //Get/Listen current war by team Id, only on home and currentWar
     fun getCurrentWar(): Flow<MKWar?>
     fun listenToCurrentWar(): Flow<MKWar?>
-    //delete user, only on user migration on signup
-    fun deleteUser(user: User): Flow<Unit>
     //only on current war
     fun deleteCurrentWar(): Flow<Unit>
 
@@ -172,9 +170,9 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
     }
 
 
-    override fun getNewWars(teamId: String): Flow<List<NewWar>> = callbackFlow {
+    override fun getNewWars(): Flow<List<NewWar>> = callbackFlow {
         Log.d("MKDebugOnly", "FirebaseRepository getNewWars")
-         database.child("newWars").child(teamId).get().addOnSuccessListener { snapshot ->
+         database.child("newWars").child(preferencesRepository.mkcTeam?.id.orEmpty()).get().addOnSuccessListener { snapshot ->
             val wars: List<NewWar> = snapshot.children
                 .map { it.value as Map<*, *> }
                 .map {map -> NewWar(
@@ -271,12 +269,6 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
         awaitClose { database.removeEventListener(postListener) }
     }
 
-
-    override fun deleteUser(user: User) = flow {
-        Log.d("MKDebugOnly", "FirebaseRepository deleteUser ${user.name}")
-        database.child("users").child(user.mid).removeValue()
-        emit(Unit)
-    }
 
     override fun deleteCurrentWar() = flow {
         preferencesRepository.mkcTeam?.id?.let {

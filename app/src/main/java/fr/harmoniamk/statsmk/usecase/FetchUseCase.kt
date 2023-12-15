@@ -8,8 +8,10 @@ import dagger.hilt.components.SingletonComponent
 import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.MKWar
+import fr.harmoniamk.statsmk.model.network.MKCFullTeam
 import fr.harmoniamk.statsmk.model.network.MKCLightPlayer
 import fr.harmoniamk.statsmk.model.network.MKCTeam
+import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.MKCentralRepositoryInterface
@@ -27,7 +29,10 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 interface FetchUseCaseInterface {
-    fun fetch(id: String): Flow<List<MKWar>>
+    fun fetchPlayer(): Flow<MKCFullTeam>
+    fun fetchTeams(): Flow<Unit>
+    fun fetchPlayers(): Flow<Unit>
+    fun fetchWars(): Flow<List<MKWar>>
 }
 
 @FlowPreview
@@ -46,7 +51,8 @@ class FetchUseCase @Inject constructor(
     private val firebaseRepository: FirebaseRepositoryInterface,
     private val preferencesRepository: PreferencesRepositoryInterface,
     private val mkCentralRepository: MKCentralRepositoryInterface,
-    private val databaseRepository: DatabaseRepositoryInterface
+    private val databaseRepository: DatabaseRepositoryInterface,
+    private val authenticationRepository: AuthenticationRepositoryInterface
 ) : FetchUseCaseInterface {
 
     private val finalRoster = mutableListOf<MKCLightPlayer>()
@@ -54,14 +60,24 @@ class FetchUseCase @Inject constructor(
     private val allies = mutableListOf<String>()
     private val users = mutableListOf<User>()
 
-    override fun fetch(id: String) = firebaseRepository.getUser(id)
-        .onEach { Log.d("MKDebugOnly", "fetchUser $id") }
-        .onEach { preferencesRepository.role = it?.role ?: 0 }
-        .flatMapLatest { mkCentralRepository.getPlayer(it?.mkcId.orEmpty()) }
-        .onEach { preferencesRepository.mkcPlayer = it }
-        .flatMapLatest { mkCentralRepository.getTeam(it?.current_teams?.firstOrNull()?.team_id.toString()) }
-        .onEach { preferencesRepository.mkcTeam = it }
-        .flatMapLatest { firebaseRepository.getUsers() }
+
+
+    override fun fetchPlayer(): Flow<MKCFullTeam>  =
+        firebaseRepository.getUser(authenticationRepository.user?.uid.orEmpty())
+    .onEach { Log.d("MKDebugOnly", "fetchUser") }
+    .onEach { preferencesRepository.role = it?.role ?: 0 }
+    .flatMapLatest { mkCentralRepository.getPlayer(it?.mkcId.orEmpty()) }
+    .onEach { preferencesRepository.mkcPlayer = it }
+    .flatMapLatest { mkCentralRepository.getTeam(it?.current_teams?.firstOrNull()?.team_id.toString()) }
+    .onEach { preferencesRepository.mkcTeam = it }
+
+    override fun fetchTeams(): Flow<Unit> = mkCentralRepository.teams
+        .onEach { Log.d("MKDebugOnly", "fetchTeams") }
+        .flatMapLatest { databaseRepository.writeNewTeams(it) }
+        .flatMapLatest { firebaseRepository.getTeams() }
+        .flatMapLatest { databaseRepository.writeNewTeams(it.map { MKCTeam(it) }) }
+
+    override fun fetchPlayers(): Flow<Unit> = firebaseRepository.getUsers()
         .onEach { Log.d("MKDebugOnly", "fetchPlayers") }
         .onEach {
             users.clear()
@@ -118,12 +134,8 @@ class FetchUseCase @Inject constructor(
                 finalRosterWithCurrentWar.add(player.apply { this.currentWar = currentWar ?: "-1" })
             }
         }.flatMapLatest { databaseRepository.writeRoster(finalRosterWithCurrentWar) }
-        .flatMapLatest { mkCentralRepository.teams }
-        .onEach { Log.d("MKDebugOnly", "fetchTeams") }
-        .flatMapLatest { databaseRepository.writeNewTeams(it) }
-        .flatMapLatest { firebaseRepository.getTeams() }
-        .flatMapLatest { databaseRepository.writeNewTeams(it.map { MKCTeam(it) }) }
-        .flatMapLatest { firebaseRepository.getNewWars(preferencesRepository.mkcTeam?.id.orEmpty()) }
+
+    override fun fetchWars(): Flow<List<MKWar>> = firebaseRepository.getNewWars()
         .onEach { Log.d("MKDebugOnly", "fetchWars") }
         .zip(databaseRepository.getWars()) { remoteDb, localDb ->
             val finalLocalDb =

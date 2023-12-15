@@ -16,6 +16,7 @@ import fr.harmoniamk.statsmk.model.network.MKCTeam
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -41,6 +42,8 @@ interface DatabaseRepositoryInterface {
     fun writeTopic(topic: TopicEntity): Flow<Unit>
 
     fun deleteTopic(topic: String): Flow<Unit>
+
+    fun clear(): Flow<Unit>
 
 }
 
@@ -139,5 +142,10 @@ class DatabaseRepository @Inject constructor(
         Log.d("MKDebugOnly", "DatabaseRepository delete topic $topic")
         return topicDataSource.delete(topic)
     }
+
+    override fun clear(): Flow<Unit> = newTeamLocalDataSource.clear()
+        .flatMapLatest { newPlayerLocalDataSource.clear() }
+        .flatMapLatest { warDataSource.clear() }
+        .flatMapLatest { topicDataSource.clear() }
 
 }

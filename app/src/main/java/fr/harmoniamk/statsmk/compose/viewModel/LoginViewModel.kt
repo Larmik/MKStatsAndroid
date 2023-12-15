@@ -45,14 +45,20 @@ class LoginViewModel @Inject constructor(
             .shareIn(viewModelScope, SharingStarted.Lazily)
 
         connectUser
-            .mapNotNull { (it as? AuthUserResponse.Success)?.user?.uid }
+            .mapNotNull { (it as? AuthUserResponse.Success)?.user }
             .onEach {
                 preferencesRepository.authEmail = email
                 preferencesRepository.authPassword = password
                 preferencesRepository.firstLaunch = false
-                _sharedDialogValue.value = MKDialogState.Loading(R.string.fetch_data)
+                _sharedDialogValue.value = MKDialogState.Loading(R.string.fetch_player)
             }
-            .flatMapLatest { fetchUseCase.fetch(it) }
+            .flatMapLatest { fetchUseCase.fetchPlayer() }
+            .onEach {  _sharedDialogValue.value = MKDialogState.Loading(R.string.fetch_players) }
+            .flatMapLatest { fetchUseCase.fetchPlayers() }
+            .onEach {  _sharedDialogValue.value = MKDialogState.Loading(R.string.fetch_teams) }
+            .flatMapLatest { fetchUseCase.fetchTeams() }
+            .onEach {  _sharedDialogValue.value = MKDialogState.Loading(R.string.fetch_wars) }
+            .flatMapLatest { fetchUseCase.fetchWars() }
             .onEach { _sharedNext.value = Unit }
             .launchIn(viewModelScope)
 

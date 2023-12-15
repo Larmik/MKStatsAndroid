@@ -133,7 +133,7 @@ fun TeamSettingsScreen(viewModel: TeamSettingsViewModel = hiltViewModel(), onPla
                     MKCPlayerItem(
                         player = player,
                         onPlayerClick = { id ->
-                            id.takeIf { it.toInt() < 999999 }?.let {
+                            id.takeIf { it.toLong() < 999999 }?.let {
                                 onPlayerClick(it)
                             }
                         }

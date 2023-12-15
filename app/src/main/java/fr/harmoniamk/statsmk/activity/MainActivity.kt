@@ -38,6 +38,13 @@ class MainActivity : AppCompatActivity() {
                 setContent { RootScreen(startDestination = it.name) { finish() } }
             }.launchIn(lifecycleScope)
 
+        viewModel.sharedDialogValue
+            .onEach { state ->
+                setContent{
+                    state?.let {  MKDialog(state = it) }
+                }
+            }.launchIn(lifecycleScope)
+
         viewModel.sharedShowUpdatePopup
             .distinctUntilChanged()
             .onEach {
