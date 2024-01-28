@@ -44,7 +44,7 @@ interface DatabaseRepositoryInterface {
     fun deleteTopic(topic: String): Flow<Unit>
 
     fun clear(): Flow<Unit>
-
+    fun clearRoster(): Flow<Unit>
 }
 
 @FlowPreview
@@ -147,5 +147,7 @@ class DatabaseRepository @Inject constructor(
         .flatMapLatest { newPlayerLocalDataSource.clear() }
         .flatMapLatest { warDataSource.clear() }
         .flatMapLatest { topicDataSource.clear() }
+
+    override fun clearRoster(): Flow<Unit> = newPlayerLocalDataSource.clear()
 
 }

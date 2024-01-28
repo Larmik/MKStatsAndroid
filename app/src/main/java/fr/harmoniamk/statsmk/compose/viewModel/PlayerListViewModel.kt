@@ -88,11 +88,12 @@ class PlayerListViewModel @AssistedInject constructor(
     fun selectUser(user: UserSelector) {
         val temp = mutableListOf<UserSelector>()
         _sharedPlayers.value?.forEach {
-            when (it.user?.mkcId == user.user?.mkcId) {
+            when (it.user?.mid == user.user?.mid) {
                 true -> temp.add(user)
                 else -> temp.add(it)
             }
         }
+        players.clear()
         players.addAll(temp)
         _sharedPlayers.value = temp
     }
@@ -105,6 +106,7 @@ class PlayerListViewModel @AssistedInject constructor(
                 else -> temp.add(it)
             }
         }
+        allies.clear()
         allies.addAll(temp)
         _sharedAllies.value = temp
     }

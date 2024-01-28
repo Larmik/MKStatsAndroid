@@ -25,6 +25,7 @@ import javax.inject.Singleton
 
 interface MKCentralNetworkDataSourceInterface {
     val teams: Flow<List<MKCTeam>>
+    val historicalTeams: Flow<List<MKCTeam>>
     fun getTeam(id: String): Flow<MKCFullTeam>
     fun getPlayer(id: String): Flow<MKCFullPlayer?>
     fun searchPlayers(search: String): Flow<List<MKCPlayer>>
@@ -46,6 +47,26 @@ class MKCentralNetworkDataSource @Inject constructor() : MKCentralNetworkDataSou
 
     override val teams: Flow<List<MKCTeam>> = callbackFlow {
         val call = RetrofitUtils.createRetrofit(apiClass = MKCentralAPI::class.java, url = MKCentralAPI.baseUrl,).getTeams()
+        call.enqueue(object : Callback<MKCTeamResponse> {
+
+            override fun onResponse(
+                call: Call<MKCTeamResponse>,
+                response: retrofit2.Response<MKCTeamResponse>
+            ) {
+                Log.d("MKDebugOnly", "MKC teams onResponse: ")
+                val result = response.body()
+                trySend(result?.data.orEmpty())
+            }
+
+            override fun onFailure(call: Call<MKCTeamResponse>, t: Throwable) {
+                Log.d("MKDebugOnly", "MKC team onFailure: ${t.message}")
+            }
+
+        })
+        awaitClose { call.cancel() }
+    }
+    override val historicalTeams: Flow<List<MKCTeam>> = callbackFlow {
+        val call = RetrofitUtils.createRetrofit(apiClass = MKCentralAPI::class.java, url = MKCentralAPI.baseUrl,).getHistoricalTeams()
         call.enqueue(object : Callback<MKCTeamResponse> {
 
             override fun onResponse(

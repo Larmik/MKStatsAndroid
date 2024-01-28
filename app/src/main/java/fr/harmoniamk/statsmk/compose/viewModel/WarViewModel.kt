@@ -14,16 +14,23 @@ import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.NetworkRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
+import fr.harmoniamk.statsmk.usecase.FetchUseCaseInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.shareIn
 import javax.inject.Inject
 
 @FlowPreview
@@ -34,16 +41,19 @@ class WarViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepositoryInterface,
     private val authenticationRepository: AuthenticationRepositoryInterface,
     private val databaseRepository: DatabaseRepositoryInterface,
-    private val networkRepository: NetworkRepositoryInterface
+    private val networkRepository: NetworkRepositoryInterface,
+    private val fetchUseCase: FetchUseCaseInterface
 ) : ViewModel() {
 
     private val _sharedCurrentWar = MutableStateFlow<MKWar?>(null)
+    private val _sharedCurrentWarState = MutableStateFlow<String?>(null)
     private val _sharedLastWars = MutableStateFlow<List<MKWar>?>(null)
     private val _sharedTeam = MutableStateFlow<MKCFullTeam?>(null)
     private val _sharedCreateWarVisible = MutableStateFlow(false)
 
     val sharedCurrentWar = _sharedCurrentWar.asStateFlow()
     val sharedLastWars = _sharedLastWars.asStateFlow()
+    val sharedCurrentWarState = _sharedCurrentWarState.asStateFlow()
     val sharedTeam = _sharedTeam.asStateFlow()
     val sharedCreateWarVisible = _sharedCreateWarVisible.asStateFlow()
 
@@ -56,18 +66,35 @@ class WarViewModel @Inject constructor(
     private val dispoList = mutableListOf<WarDispo>()
 
     init {
-        firebaseRepository.takeIf { preferencesRepository.mkcTeam != null }?.listenToCurrentWar()
+       val currentWar =  firebaseRepository.takeIf { preferencesRepository.mkcTeam != null }?.listenToCurrentWar()?.shareIn(viewModelScope, SharingStarted.Lazily)
+
+       currentWar
+           ?.filterNotNull()
+           ?.onEach {
+               _sharedCreateWarVisible.value = false
+               _sharedCurrentWarState.value = "Récupération de la war en cours..."
+               _sharedCurrentWar.value = it
+               preferencesRepository.currentWar = it.war
+               delay(500)
+           }
+           ?.flatMapLatest { war ->  fetchUseCase.fetchPlayers(forceUpdate = true).takeIf { war.warTracks.isNullOrEmpty() } ?: flowOf() }
+           ?.onEach { _sharedCurrentWarState.value = null }
+           ?.launchIn(viewModelScope)
+
+       currentWar
+            ?.filter { it == null }
             ?.onEach {
                 if (networkRepository.networkAvailable) {
                     val isAdmin =  authenticationRepository.userRole >= UserRole.ADMIN.ordinal
-                    _sharedCurrentWar.value = it
-                    preferencesRepository.currentWar = it?.war
-                    _sharedCreateWarVisible.value = it == null && isAdmin
+                    _sharedCurrentWar.value = null
+                    preferencesRepository.currentWar = null
+                    _sharedCreateWarVisible.value = isAdmin
                 }
             }?.launchIn(viewModelScope)
     }
 
     fun refresh() {
+        _sharedCurrentWarState.value = null
         _sharedTeam.value = preferencesRepository.mkcTeam
        databaseRepository.getWars()
            .map { it.filter { war -> war.hasTeam(preferencesRepository.mkcTeam?.id.toString()) } }

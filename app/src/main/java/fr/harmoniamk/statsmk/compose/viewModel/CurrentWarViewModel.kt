@@ -107,9 +107,9 @@ class CurrentWarViewModel @Inject constructor(
                 _sharedButtonVisible.emit(isAdmin.isTrue)
             }
             .mapNotNull { it.war?.warTracks.orEmpty().map { MKWarTrack(it) } }
-            .onEach {
-                _sharedTracks.emit(it)
-                _sharedWarPlayers.emit(initPlayersList(it))
+            .onEach {list ->
+                _sharedTracks.emit(list)
+                _sharedWarPlayers.takeIf { list.isNotEmpty() }?.emit(initPlayersList(list))
             }.launchIn(viewModelScope)
     }
 

@@ -76,5 +76,9 @@ class DatabaseRepositoryMock : DatabaseRepositoryInterface {
         emit(Unit)
     }
 
+    override fun clearRoster(): Flow<Unit> = flow {
+        emit(Unit)
+    }
+
 
 }

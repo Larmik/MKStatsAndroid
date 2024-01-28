@@ -18,6 +18,9 @@ interface MKCentralAPI {
     @GET("teams/category/150cc")
     fun getTeams() : Call<MKCTeamResponse>
 
+    @GET("teams/category/historical")
+    fun getHistoricalTeams() : Call<MKCTeamResponse>
+
     @GET("players/{id}")
     fun getPlayer(@Path("id") id: String?) : Call<MKCFullPlayer>
 

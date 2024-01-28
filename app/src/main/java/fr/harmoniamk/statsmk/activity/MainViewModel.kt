@@ -99,7 +99,7 @@ class MainViewModel @Inject constructor(
                     .onEach {  _sharedDialogValue.value = MKDialogState.Loading(R.string.fetch_player) }
                     .flatMapLatest { fetchUseCase.fetchPlayer() }
                     .onEach {  _sharedDialogValue.value = MKDialogState.Loading(R.string.fetch_players) }
-                    .flatMapLatest { fetchUseCase.fetchPlayers() }
+                    .flatMapLatest { fetchUseCase.fetchPlayers(forceUpdate = false) }
                     .onEach {  _sharedDialogValue.value = MKDialogState.Loading(R.string.fetch_teams) }
                     .flatMapLatest { fetchUseCase.fetchTeams() }
                     .onEach {  _sharedDialogValue.value = MKDialogState.Loading(R.string.fetch_wars) }

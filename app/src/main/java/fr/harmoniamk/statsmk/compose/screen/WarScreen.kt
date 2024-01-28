@@ -36,6 +36,7 @@ fun WarScreen(
     onCreateWarClick: () -> Unit
 ) {
     val currentWar = viewModel.sharedCurrentWar.collectAsState()
+    val loadingState = viewModel.sharedCurrentWarState.collectAsState()
     val lastWars = viewModel.sharedLastWars.collectAsState()
     val team = viewModel.sharedTeam.collectAsState()
     val createWarVisible = viewModel.sharedCreateWarVisible.collectAsState()
@@ -67,7 +68,7 @@ fun WarScreen(
                 MKSegmentedButtons(buttons = buttons)
                 currentWar.value?.let {
                     MKText(modifier = Modifier.padding(top = 10.dp), text = R.string.war_en_cours, font = R.font.montserrat_bold)
-                    MKCurrentWarCell(it, onCurrentWarClick)
+                    MKCurrentWarCell(it, loadingState.value, onCurrentWarClick)
                 }
                 when (lastWars.value.isNullOrEmpty()) {
                     true -> MKText(

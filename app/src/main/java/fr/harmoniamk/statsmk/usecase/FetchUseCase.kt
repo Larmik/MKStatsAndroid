@@ -18,6 +18,7 @@ import fr.harmoniamk.statsmk.repository.MKCentralRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
@@ -31,7 +32,7 @@ import javax.inject.Singleton
 interface FetchUseCaseInterface {
     fun fetchPlayer(): Flow<MKCFullTeam>
     fun fetchTeams(): Flow<Unit>
-    fun fetchPlayers(): Flow<Unit>
+    fun fetchPlayers(forceUpdate: Boolean): Flow<Unit>
     fun fetchWars(): Flow<List<MKWar>>
 }
 
@@ -74,10 +75,12 @@ class FetchUseCase @Inject constructor(
     override fun fetchTeams(): Flow<Unit> = mkCentralRepository.teams
         .onEach { Log.d("MKDebugOnly", "fetchTeams") }
         .flatMapLatest { databaseRepository.writeNewTeams(it) }
+        .flatMapLatest { mkCentralRepository.historicalTeams }
+        .flatMapLatest { databaseRepository.writeNewTeams(it) }
         .flatMapLatest { firebaseRepository.getTeams() }
         .flatMapLatest { databaseRepository.writeNewTeams(it.map { MKCTeam(it) }) }
 
-    override fun fetchPlayers(): Flow<Unit> = firebaseRepository.getUsers()
+    override fun fetchPlayers(forceUpdate: Boolean): Flow<Unit> = firebaseRepository.getUsers()
         .onEach { Log.d("MKDebugOnly", "fetchPlayers") }
         .onEach {
             users.clear()
@@ -93,47 +96,73 @@ class FetchUseCase @Inject constructor(
             val players = databaseRepository.getRoster().firstOrNull()
             Log.d("MKDebugOnly", "local roster size: ${players?.size}")
             Log.d("MKDebugOnly", "remote roster size: ${allies.size + list.size}")
-            if (allies.size + list.size != players?.size) {
+            if (forceUpdate || allies.size + list.size != players?.size) {
                 finalRoster.clear()
                 list.forEach {
-                    val mkcPlayer = mkCentralRepository.getPlayer(it.mkcId).first()
-                    val fbUser =
-                        users.singleOrNull { item -> item.mkcId == it.mkcId.split(".").first() }
-                    finalRoster.add(
-                        MKCLightPlayer(
-                            mkcPlayer,
-                            fbUser?.role ?: 0,
-                            0,
-                            it.isLeader,
-                            fbUser?.currentWar ?: "-1"
+                    val fbUser = users.singleOrNull { item -> item.mkcId == it.mkcId.split(".").first() }
+                    val mkcPlayer = when (forceUpdate) {
+                        true -> players?.firstOrNull { player -> player.mkcId == it.mkcId }?.copy(
+                            role = fbUser?.role ?: 0,
+                            isAlly = 0,
+                            isLeader = it.isLeader,
+                            currentWar = fbUser?.currentWar ?: "-1"
                         )
-                    )
+                        else ->  {
+                            when (val player = mkCentralRepository.getPlayer(it.mkcId).firstOrNull()) {
+                                null -> MKCLightPlayer(fbUser)
+                                else -> MKCLightPlayer(
+                                    player,
+                                    fbUser?.role ?: 0,
+                                    1,
+                                    "",
+                                    fbUser?.currentWar ?: "-1"
+                                )
+                            }
+                        }
+                    }
+                    mkcPlayer?.let {
+                        finalRoster.add(it)
+                    }
                 }
                 allies.forEach { allyId ->
-                    val mkPlayer = mkCentralRepository.getPlayer(allyId).firstOrNull()
                     val fbUser = users.singleOrNull { item -> item.mkcId == allyId }
-                    when {
-                        mkPlayer != null -> finalRoster.add(
-                            MKCLightPlayer(
-                                mkPlayer,
-                                fbUser?.role ?: 0,
-                                1,
-                                "",
-                                fbUser?.currentWar ?: "-1"
-                            )
+                    val mkPlayer = when (forceUpdate) {
+                        true -> players?.firstOrNull { player -> player.mkcId == allyId }?.copy(
+                            role = fbUser?.role ?: 0,
+                            isAlly = 1,
+                            isLeader = "",
+                            currentWar = fbUser?.currentWar ?: "-1"
                         )
-                        fbUser != null -> finalRoster.add(MKCLightPlayer(fbUser))
+                        else ->  {
+                            when (val player = mkCentralRepository.getPlayer(allyId).firstOrNull()) {
+                                null -> MKCLightPlayer(fbUser)
+                                else -> MKCLightPlayer(
+                                    player,
+                                    fbUser?.role ?: 0,
+                                    1,
+                                    "",
+                                    fbUser?.currentWar ?: "-1"
+                                )
+                            }
+                        }
+                    }
+                    mkPlayer?.let {
+                        finalRoster.add(it)
                     }
                 }
             }
         }
         .onEach {
+            delay(1000)
             finalRosterWithCurrentWar.clear()
             finalRoster.forEach { player ->
-                val currentWar = users.singleOrNull { it.mkcId == player.mkcId }?.currentWar
+                val currentWar = users.firstOrNull { it.mkcId == player.mkcId }?.currentWar
                 finalRosterWithCurrentWar.add(player.apply { this.currentWar = currentWar ?: "-1" })
             }
-        }.flatMapLatest { databaseRepository.writeRoster(finalRosterWithCurrentWar) }
+        }.flatMapLatest {
+            databaseRepository.clearRoster()
+            databaseRepository.writeRoster(finalRosterWithCurrentWar)
+        }
 
     override fun fetchWars(): Flow<List<MKWar>> = firebaseRepository.getNewWars()
         .onEach { Log.d("MKDebugOnly", "fetchWars") }
