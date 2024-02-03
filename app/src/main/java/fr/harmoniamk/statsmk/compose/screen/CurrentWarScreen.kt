@@ -146,7 +146,6 @@ fun CurrentWarScreenPreview() {
                 penalties = listOf(Penalty("12345", 20)),
                 shocks = listOf(Shock("12345", 1))
             ),
-            authenticationRepository = AuthenticationRepositoryMock(),
             databaseRepository = DatabaseRepositoryMock(),
             preferencesRepository = PreferencesRepositoryMock()
         ),
