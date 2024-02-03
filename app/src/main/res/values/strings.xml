@@ -111,7 +111,7 @@
     <string name="cherry">Coupe Cerises</string>
     <string name="acorn">Coupe Gland</string>
     <string name="spiny">Coupe à Epines</string>
-    <string name="team_war">War en équipe</string>
+    <string name="team_war">Wars</string>
     <string name="settings">Paramètres</string>
     <string name="stats">Statistiques</string>
     <string name="mario_kart" translatable="false">MARIO KART</string>
@@ -401,4 +401,5 @@
     <string name="inscrit_depuis">Inscrit depuis le</string>
     <string name="entree_team">Dans l\'équipe depuis le</string>
     <string name="discord_tag" translatable="false">Tag Discord</string>
+    <string name="refresh_data">Rafraîchir les données</string>
 </resources>

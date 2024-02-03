@@ -110,7 +110,7 @@ fun CurrentWarScreen(
                 MKScoreView(modifier = Modifier.weight(1.2f), war = war.value)
                 MKShockView(modifier = Modifier.weight(0.8f), tracks = war.value?.warTracks)
             }
-            players.value?.let { MKPlayerList(players = it) }
+            players.value?.let { MKPlayerList(players = it, trackCount = war.value?.warTracks?.size ?: 0) }
             if (buttonVisible.value)
                 MKButton(text = when (war.value?.warTracks.orEmpty().size) {
                     12 -> R.string.validate_war

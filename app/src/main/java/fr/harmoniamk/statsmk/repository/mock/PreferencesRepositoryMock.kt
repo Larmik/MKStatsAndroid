@@ -44,4 +44,7 @@ class PreferencesRepositoryMock : PreferencesRepositoryInterface {
     override var role: Int
         get() = 0
         set(value) {}
+    override var lastUpdate: String
+        get() = ""
+        set(value) {}
 }

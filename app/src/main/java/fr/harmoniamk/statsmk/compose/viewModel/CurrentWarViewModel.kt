@@ -50,7 +50,6 @@ import javax.inject.Inject
 class CurrentWarViewModel @Inject constructor(
     private val firebaseRepository: FirebaseRepositoryInterface,
     private val preferencesRepository: PreferencesRepositoryInterface,
-    private val authenticationRepository: AuthenticationRepositoryInterface,
     private val databaseRepository: DatabaseRepositoryInterface
 ) : ViewModel() {
 
@@ -99,12 +98,11 @@ class CurrentWarViewModel @Inject constructor(
             .onEach {
                 val penalties = it.war?.penalties?.withTeamName(databaseRepository)?.firstOrNull()
                 val warWithPenas = it.war?.copy(penalties = penalties).withName(databaseRepository).firstOrNull()
-                val isAdmin = authenticationRepository.userRole >= UserRole.ADMIN.ordinal
                 preferencesRepository.currentWar = warWithPenas?.war
                 _sharedCurrentWar.emit(warWithPenas)
                 _sharedTracks.emit(warWithPenas?.war?.warTracks.orEmpty().map { MKWarTrack(it) })
-                _sharedWarPlayers.takeIf { warWithPenas?.war?.warTracks == null }?.emit(currentPlayers.filter { player -> users.singleOrNull { it.mkcId == player.mkcId }?.currentWar == preferencesRepository.currentWar?.mid }.map { CurrentPlayerModel(it, 0) })
-                _sharedButtonVisible.emit(isAdmin.isTrue)
+                _sharedWarPlayers.takeIf { warWithPenas?.war?.warTracks == null }?.emit(currentPlayers.filter { player -> users.singleOrNull { it.mkcId == player.mkcId }?.currentWar == preferencesRepository.currentWar?.mid }.map { CurrentPlayerModel(it, 0, tracksPlayed = 0) })
+                _sharedButtonVisible.emit(warWithPenas?.war?.playerHostId.equals(preferencesRepository.mkcPlayer?.id.toString()))
             }
             .mapNotNull { it.war?.warTracks.orEmpty().map { MKWarTrack(it) } }
             .onEach {list ->
@@ -208,13 +206,17 @@ class CurrentWarViewModel @Inject constructor(
             .sortedByDescending { it.second }
         temp.forEach { pair ->
             val shockCount = shocks.filter { it.playerId == pair.first?.mkcId }.map { it.count }.sum()
-            val isOld = pair.first?.currentWar == "-1"
-            val isNew =   trackList.size > trackList.filter { track -> track.hasPlayer(pair.first?.mkcId) }.size
-            finalList.add(CurrentPlayerModel(pair.first, pair.second, isOld, isNew, shockCount))
+
+            finalList.add(CurrentPlayerModel(
+                player = pair.first,
+                score = pair.second,
+                tracksPlayed = trackList.filter { track -> track.hasPlayer(pair.first?.mkcId) }.size,
+                shockCount = shockCount
+            ))
         }
         currentPlayers.filter {
             it.currentWar == preferencesRepository.currentWar?.mid && !finalList.map { it.player?.mkcId }.contains(it.mkcId)
-        }.forEach { finalList.add(CurrentPlayerModel(it, 0, isNew = trackList.isNotEmpty())) }
+        }.forEach { finalList.add(CurrentPlayerModel(player = it, score = 0, tracksPlayed = 0)) }
         return finalList
     }
 

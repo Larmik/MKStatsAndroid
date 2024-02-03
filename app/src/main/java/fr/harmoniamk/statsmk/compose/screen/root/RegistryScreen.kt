@@ -12,7 +12,7 @@ import fr.harmoniamk.statsmk.enums.MenuItems
 
 @Composable
 @OptIn(ExperimentalMaterialApi::class)
-fun SettingsScreen(viewModel: StatsMenuViewModel = hiltViewModel(), onItemClick: (String) -> Unit) {
+fun RegistryScreen(viewModel: StatsMenuViewModel = hiltViewModel(), onItemClick: (String) -> Unit) {
     MKBaseScreen(title = R.string.registry) {
         listOfNotNull(
             MenuItems.ManagePlayers().takeIf { viewModel.sharedTeam.collectAsState().value != null },

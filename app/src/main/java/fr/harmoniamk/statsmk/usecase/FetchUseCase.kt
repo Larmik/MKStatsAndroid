@@ -113,7 +113,7 @@ class FetchUseCase @Inject constructor(
                                 else -> MKCLightPlayer(
                                     player,
                                     fbUser?.role ?: 0,
-                                    1,
+                                    0,
                                     "",
                                     fbUser?.currentWar ?: "-1"
                                 )

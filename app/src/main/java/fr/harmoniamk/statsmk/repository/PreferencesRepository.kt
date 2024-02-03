@@ -34,6 +34,7 @@ interface PreferencesRepositoryInterface {
     var mkcPlayer: MKCFullPlayer?
     var mkcTeam: MKCFullTeam?
     var role: Int
+    var lastUpdate: String
 }
 
 @FlowPreview
@@ -93,4 +94,7 @@ class PreferencesRepository @Inject constructor(
     override var role: Int
         get() = preferences.getInt("role", 0)
         set(value) {preferences.edit().putInt("role", value).apply()}
+    override var lastUpdate: String
+        get() = preferences.getString("lastUpdate", "").orEmpty()
+        set(value) {preferences.edit().putString("lastUpdate", value).apply()}
 }

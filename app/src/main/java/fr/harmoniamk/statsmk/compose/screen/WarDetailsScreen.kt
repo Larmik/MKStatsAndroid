@@ -46,7 +46,7 @@ fun WarDetailsScreen(id: String?, onTrackClick: (String) -> Unit) {
             MKScoreView(modifier = Modifier.weight(1.2f), war = war.value)
             MKShockView(modifier = Modifier.weight(0.8f), tracks = war.value?.warTracks)
         }
-        players.value?.let { MKPlayerList(players = it) }
+        players.value?.let { MKPlayerList(players = it, trackCount = war.value?.warTracks?.size ?: 0) }
         Row {
             Column(
                 Modifier

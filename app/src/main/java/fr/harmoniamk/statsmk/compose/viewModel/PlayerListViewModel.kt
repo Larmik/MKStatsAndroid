@@ -9,7 +9,9 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.EntryPointAccessors
+import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ViewModelFactoryProvider
+import fr.harmoniamk.statsmk.compose.ui.MKDialogState
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.fragment.playerSelect.UserSelector
 import fr.harmoniamk.statsmk.model.firebase.NewWar
@@ -19,6 +21,7 @@ import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -40,6 +43,7 @@ class PlayerListViewModel @AssistedInject constructor(
 
     private val _sharedPlayers = MutableStateFlow<List<UserSelector>?>(null)
     private val _sharedAllies = MutableStateFlow<List<UserSelector>?>(null)
+    private val _sharedDialogValue = MutableStateFlow<MKDialogState?>(null)
     private val _sharedWarName = MutableStateFlow<String?>(null)
     private val players = mutableListOf<UserSelector>()
     private val allies = mutableListOf<UserSelector>()
@@ -47,6 +51,7 @@ class PlayerListViewModel @AssistedInject constructor(
     val sharedPlayers = _sharedPlayers.asStateFlow()
     val sharedAllies = _sharedAllies.asStateFlow()
     val sharedWarName = _sharedWarName.asStateFlow()
+    val sharedDialogValue = _sharedDialogValue.asStateFlow()
 
     private val _sharedStarted = MutableSharedFlow<Unit>()
     private val _sharedAlreadyCreated = MutableSharedFlow<Unit>()
@@ -116,6 +121,7 @@ class PlayerListViewModel @AssistedInject constructor(
     }
 
     fun createWar() {
+        _sharedDialogValue.value = MKDialogState.Loading(R.string.creating_war)
         val war =  NewWar(
             mid = System.currentTimeMillis().toString(),
             teamHost = preferencesRepository.mkcTeam?.id,
@@ -140,6 +146,8 @@ class PlayerListViewModel @AssistedInject constructor(
                 }
                 preferencesRepository.currentWar = war
                 firebaseRepository.writeCurrentWar(war).first()
+                delay(1000)
+                _sharedDialogValue.value = null
                 _sharedStarted.emit(Unit)
             }.launchIn(viewModelScope)
 

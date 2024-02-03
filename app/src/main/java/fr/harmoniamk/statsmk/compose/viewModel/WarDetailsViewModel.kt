@@ -99,10 +99,11 @@ class WarDetailsViewModel  @AssistedInject constructor(
                 val finalList = mutableListOf<CurrentPlayerModel>()
                 temp.forEach { pair ->
                     val shockCount = shocks.filter { it.playerId == pair.first?.mkcId }.map { it.count }.sum()
-                    val isSubPlayer = it.size > it.filter { track -> track.hasPlayer(pair.first?.mkcId) }.size
-                    val isOld = isSubPlayer && it.firstOrNull()?.hasPlayer(pair.first?.mkcId).isTrue
-                    val isNew = isSubPlayer && it.lastOrNull()?.hasPlayer(pair.first?.mkcId).isTrue
-                    finalList.add(CurrentPlayerModel(pair.first, pair.second, isOld, isNew, shockCount = shockCount))
+                    finalList.add(CurrentPlayerModel(
+                        player = pair.first,
+                        score = pair.second,
+                        tracksPlayed = it.filter { track -> track.hasPlayer(pair.first?.mkcId) }.size, shockCount = shockCount)
+                    )
                 }
                 _sharedWarPlayers.emit(finalList)
             }

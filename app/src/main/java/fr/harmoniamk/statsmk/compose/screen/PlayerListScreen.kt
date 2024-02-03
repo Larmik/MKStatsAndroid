@@ -21,6 +21,7 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKBaseScreen
 import fr.harmoniamk.statsmk.compose.ui.MKButton
 import fr.harmoniamk.statsmk.compose.ui.MKCheckBox
+import fr.harmoniamk.statsmk.compose.ui.MKDialog
 import fr.harmoniamk.statsmk.compose.ui.MKPlayerItem
 import fr.harmoniamk.statsmk.compose.ui.MKText
 import fr.harmoniamk.statsmk.compose.viewModel.PlayerListViewModel
@@ -37,11 +38,14 @@ fun PlayerListScreen(teamId: String?, onWarStarted: () -> Unit) {
     val warName = viewModel.sharedWarName.collectAsState()
     val allPlayersSize = players.value?.size ?: 0
     val allAlliesSize = allies.value?.size ?: 0
+    val loadingState = viewModel.sharedDialogValue.collectAsState()
+
     LaunchedEffect(Unit) {
         viewModel.sharedStarted.filterNotNull().collect {
             onWarStarted()
         }
     }
+    loadingState.value?.let { MKDialog(state = it) }
     MKBaseScreen(title = R.string.cr_er_une_war, subTitle = warName.value) {
 
         when (allPlayersSize + allAlliesSize >= 6) {

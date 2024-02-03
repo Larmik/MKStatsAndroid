@@ -376,4 +376,6 @@
     <string name="inscrit_depuis">Registered at</string>
     <string name="entree_team">Since</string>
     <string name="registry">Registry</string>
+    <string name="refresh_data">Refresh data</string>
+
 </resources>

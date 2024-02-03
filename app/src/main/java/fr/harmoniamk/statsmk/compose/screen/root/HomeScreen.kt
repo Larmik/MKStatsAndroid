@@ -21,6 +21,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import fr.harmoniamk.statsmk.R
+import fr.harmoniamk.statsmk.compose.screen.SettingsScreen
 import fr.harmoniamk.statsmk.compose.screen.WarScreen
 import fr.harmoniamk.statsmk.compose.ui.MKText
 import fr.harmoniamk.statsmk.enums.BottomNavItem
@@ -42,6 +43,7 @@ fun HomeScreen(
     val items = listOf(
         BottomNavItem.War,
         BottomNavItem.Stats,
+        BottomNavItem.Registry,
         BottomNavItem.Settings,
     )
     BackHandler { onBack() }
@@ -98,8 +100,11 @@ fun HomeScreen(
             composable(route = "Home/Stats") {
                 StatsMenuScreen(onItemClick = onSettingsItemClick)
             }
+            composable(route = "Home/Registry") {
+                RegistryScreen(onItemClick = onSettingsItemClick)
+            }
             composable(route = "Home/Settings") {
-                SettingsScreen(onItemClick = onSettingsItemClick)
+                SettingsScreen()
             }
         }
     }
