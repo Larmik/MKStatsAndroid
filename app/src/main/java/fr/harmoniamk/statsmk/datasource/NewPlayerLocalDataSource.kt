@@ -7,7 +7,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import fr.harmoniamk.statsmk.database.MKDatabase
-import fr.harmoniamk.statsmk.model.network.MKCLightPlayer
+import fr.harmoniamk.statsmk.model.network.MKPlayer
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
@@ -17,11 +17,11 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 interface NewPlayerLocalDataSourceInterface {
-    fun getAll(): Flow<List<MKCLightPlayer>>
-    fun getById(id: String): Flow<MKCLightPlayer>
-    fun bulkInsert(players: List<MKCLightPlayer>): Flow<Unit>
-    fun insert(player: MKCLightPlayer): Flow<Unit>
-    fun update(player: MKCLightPlayer): Flow<Unit>
+    fun getAll(): Flow<List<MKPlayer>>
+    fun getById(id: String): Flow<MKPlayer>
+    fun bulkInsert(players: List<MKPlayer>): Flow<Unit>
+    fun insert(player: MKPlayer): Flow<Unit>
+    fun update(player: MKPlayer): Flow<Unit>
     fun clear(): Flow<Unit>
 }
 
@@ -42,12 +42,12 @@ class NewPlayerLocalDataSource @Inject constructor(@ApplicationContext private v
 
     private val dao = MKDatabase.getInstance(context).mkcLightPlayerDao()
 
-    override fun getAll(): Flow<List<MKCLightPlayer>> = dao.getAll().map { list -> list.map { MKCLightPlayer(it) } }
-    override fun getById(id: String): Flow<MKCLightPlayer> = dao.getById(id).map { MKCLightPlayer(it) }
-    override fun bulkInsert(players: List<MKCLightPlayer>): Flow<Unit> = flow { emit(dao.bulkInsert(players.map { it.toEntity() })) }
+    override fun getAll(): Flow<List<MKPlayer>> = dao.getAll().map { list -> list.map { MKPlayer(it) } }
+    override fun getById(id: String): Flow<MKPlayer> = dao.getById(id).map { MKPlayer(it) }
+    override fun bulkInsert(players: List<MKPlayer>): Flow<Unit> = flow { emit(dao.bulkInsert(players.map { it.toEntity() })) }
 
-    override fun insert(player: MKCLightPlayer): Flow<Unit> = flow { emit(dao.insert(player.toEntity())) }
-    override fun update(player: MKCLightPlayer): Flow<Unit>  = flow { emit(dao.update(player.toEntity())) }
+    override fun insert(player: MKPlayer): Flow<Unit> = flow { emit(dao.insert(player.toEntity())) }
+    override fun update(player: MKPlayer): Flow<Unit>  = flow { emit(dao.update(player.toEntity())) }
     override fun clear(): Flow<Unit> = flow { emit(dao.clear())}
 
 

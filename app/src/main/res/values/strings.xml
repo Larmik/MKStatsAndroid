@@ -346,7 +346,8 @@
     <string name="confirm">Confirmer</string>
     <string name="matchs_played">%s matchs joués</string>
     <string name="fetch_player">Récupération du joueur...</string>
-    <string name="fetch_players">Récupération de l\'équipe et des allies...</string>
+    <string name="fetch_players">Récupération de l\'équipe ...</string>
+    <string name="fetch_allies">Récupération des allies...</string>
     <string name="fetch_teams">Récupération des équipes...</string>
     <string name="fetch_wars">Récupération des wars...</string>
     <string name="week_stats">Statiqtiques hebdomadaires</string>
@@ -402,4 +403,6 @@
     <string name="entree_team">Dans l\'équipe depuis le</string>
     <string name="discord_tag" translatable="false">Tag Discord</string>
     <string name="refresh_data">Rafraîchir les données</string>
+    <string name="id_mkc">Identifiant MKCentral</string>
+    <string name="confirmez_le_mot_de_passe">Confimez le mot de passe</string>
 </resources>

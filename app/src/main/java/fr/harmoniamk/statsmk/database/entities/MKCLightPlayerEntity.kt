@@ -18,6 +18,5 @@ class MKCLightPlayerEntity(
     @ColumnInfo(name = "role") val role: Int,
     @ColumnInfo(name = "currentWar") val currentWar: String,
     @ColumnInfo(name = "picture") val picture: String,
-    @ColumnInfo(name = "isAlly") val isAlly: Int,
-
+    @ColumnInfo(name = "rosterId") val rosterId: String,
 )

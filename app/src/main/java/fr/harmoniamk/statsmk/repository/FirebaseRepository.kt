@@ -161,7 +161,7 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
     }
 
     override fun getAllies(): Flow<List<String>> = callbackFlow {
-        Log.d("MKDebugOnly", "FirebaseRepository getTeams")
+        Log.d("MKDebugOnly", "FirebaseRepository getAllies")
         database.child("allies").child(preferencesRepository.mkcTeam?.id.orEmpty()).get().addOnSuccessListener { snapshot ->
             val teams: List<String> = snapshot.children.map { it.value as String }
             if (isActive) trySend(teams)

@@ -77,7 +77,7 @@ class WarViewModel @Inject constructor(
                preferencesRepository.currentWar = it.war
                delay(500)
            }
-           ?.flatMapLatest { war ->  fetchUseCase.fetchPlayers(forceUpdate = true).takeIf { war.warTracks.isNullOrEmpty() } ?: flowOf() }
+           ?.flatMapLatest { war ->  fetchUseCase.fetchPlayers(forceUpdate = false).flatMapLatest { fetchUseCase.fetchAllies(false) }.takeIf { war.warTracks.isNullOrEmpty() } ?: flowOf() }
            ?.onEach { _sharedCurrentWarState.value = null }
            ?.launchIn(viewModelScope)
 

@@ -18,7 +18,7 @@ import fr.harmoniamk.statsmk.model.firebase.Shock
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarPosition
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
-import fr.harmoniamk.statsmk.model.network.MKCLightPlayer
+import fr.harmoniamk.statsmk.model.network.MKPlayer
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.NetworkRepositoryInterface
@@ -88,7 +88,7 @@ class TrackDetailsViewModel @AssistedInject constructor(
     val sharedShocks = _sharedShocks.asStateFlow()
 
     private var index = 0
-    private val users = mutableListOf<MKCLightPlayer>()
+    private val users = mutableListOf<MKPlayer>()
 
     init {
         databaseRepository.getRoster()

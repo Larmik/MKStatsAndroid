@@ -5,7 +5,7 @@ import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.fragment.stats.opponentRanking.OpponentRankingItemViewModel
 import fr.harmoniamk.statsmk.model.firebase.*
 import fr.harmoniamk.statsmk.model.local.*
-import fr.harmoniamk.statsmk.model.network.MKCLightPlayer
+import fr.harmoniamk.statsmk.model.network.MKPlayer
 import fr.harmoniamk.statsmk.model.network.MKCTeam
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import kotlinx.coroutines.flow.first
@@ -277,9 +277,9 @@ fun List<Map<*, *>>?.parseLineUp(): List<LineUp>? =
         )
     }
 
-fun List<Map<*, *>>?.parseRoster(): List<MKCLightPlayer>? =
+fun List<Map<*, *>>?.parseRoster(): List<MKPlayer>? =
     this?.map { item ->
-        MKCLightPlayer(
+        MKPlayer(
             mid = item["player_id"].toString(),
             mkcId = item["player_id"].toString(),
             name = item["display_name"].toString(),
@@ -291,6 +291,6 @@ fun List<Map<*, *>>?.parseRoster(): List<MKCLightPlayer>? =
             role = 0,
             currentWar = "-1",
             picture = "",
-            isAlly = 0
+            rosterId = ""
         )
     }

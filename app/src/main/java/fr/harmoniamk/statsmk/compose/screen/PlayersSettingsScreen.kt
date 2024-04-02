@@ -21,7 +21,7 @@ import fr.harmoniamk.statsmk.compose.ui.MKBaseScreen
 import fr.harmoniamk.statsmk.compose.ui.MKCPlayerItem
 import fr.harmoniamk.statsmk.compose.ui.MKTextField
 import fr.harmoniamk.statsmk.compose.viewModel.PlayerSettingsViewModel
-import fr.harmoniamk.statsmk.model.network.MKCLightPlayer
+import fr.harmoniamk.statsmk.model.network.MKPlayer
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 
@@ -55,7 +55,7 @@ fun PlayersSettingsScreen(
             )
             else ->   LazyColumn {
                 items(items = players) {
-                    MKCPlayerItem(player = MKCLightPlayer(it), onPlayerClick = onPlayerClick)
+                    MKCPlayerItem(player = MKPlayer(it), onPlayerClick = onPlayerClick)
                 }
             }
         }

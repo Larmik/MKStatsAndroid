@@ -26,10 +26,10 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.extension.fromHex
-import fr.harmoniamk.statsmk.model.network.MKCLightPlayer
+import fr.harmoniamk.statsmk.model.network.MKPlayer
 
 @Composable
-fun MKCPlayerItem(player: MKCLightPlayer, onPlayerClick: (String) -> Unit) {
+fun MKCPlayerItem(player: MKPlayer, onPlayerClick: (String) -> Unit) {
     Card(backgroundColor = colorResource(R.color.white_alphaed), modifier = Modifier.padding(bottom = 5.dp).clickable { onPlayerClick(player.mkcId) }) {
         Row(
             modifier = Modifier

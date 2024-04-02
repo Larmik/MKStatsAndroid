@@ -13,7 +13,8 @@ import fr.harmoniamk.statsmk.compose.ViewModelFactoryProvider
 import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.model.network.MKCFullPlayer
-import fr.harmoniamk.statsmk.model.network.MKCLightPlayer
+import fr.harmoniamk.statsmk.model.network.MKPlayer
+import fr.harmoniamk.statsmk.model.network.NetworkResponse
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
@@ -25,6 +26,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.zip
 
@@ -76,13 +78,14 @@ class PlayerProfileViewModel @AssistedInject constructor(
 
     init {
         mkCentralRepository.getPlayer(id)
+            .mapNotNull { (it as? NetworkResponse.Success)?.response }
             .filterNotNull()
             .zip(databaseRepository.getNewUser(id)) { fullPlayer, localPlayer ->
                 player = fullPlayer
                 _sharedPlayer.value = fullPlayer
                 _sharedAllyButton.takeIf { authenticationRepository.userRole >= UserRole.ADMIN.ordinal }?.value = when {
                     localPlayer?.mkcId?.isEmpty().isTrue -> Pair(fullPlayer.id.toString(), true)
-                    localPlayer?.isAlly == 1 -> Pair(localPlayer.mkcId, false)
+                    localPlayer?.rosterId == "-1" -> Pair(localPlayer.mkcId, false)
                     else -> null
                 }
             }.launchIn(viewModelScope)
@@ -90,7 +93,7 @@ class PlayerProfileViewModel @AssistedInject constructor(
 
     fun onAddAlly() {
       firebaseRepository.writeAlly(player?.id.toString())
-            .flatMapLatest { databaseRepository.writeUser(MKCLightPlayer(player)) }
+            .flatMapLatest { databaseRepository.writeUser(MKPlayer(player)) }
             .onEach { _sharedAllyButton.value = null }
             .launchIn(viewModelScope)
     }

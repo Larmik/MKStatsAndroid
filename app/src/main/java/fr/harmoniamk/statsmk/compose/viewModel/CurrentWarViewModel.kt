@@ -7,9 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKBottomSheetState
 import fr.harmoniamk.statsmk.compose.ui.MKDialogState
-import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.extension.bind
-import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.extension.positionToPoints
 import fr.harmoniamk.statsmk.extension.sum
 import fr.harmoniamk.statsmk.extension.withName
@@ -20,8 +18,7 @@ import fr.harmoniamk.statsmk.model.local.CurrentPlayerModel
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarPosition
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
-import fr.harmoniamk.statsmk.model.network.MKCLightPlayer
-import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
+import fr.harmoniamk.statsmk.model.network.MKPlayer
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
@@ -74,7 +71,7 @@ class CurrentWarViewModel @Inject constructor(
     val sharedTrackClick = _sharedTrackClick.asSharedFlow()
 
     val users = mutableListOf<User>()
-    val currentPlayers = mutableListOf<MKCLightPlayer>()
+    val currentPlayers = mutableListOf<MKPlayer>()
 
     init {
         firebaseRepository.getUsers()
@@ -174,7 +171,7 @@ class CurrentWarViewModel @Inject constructor(
 
     private fun initPlayersList(trackList: List<MKWarTrack>): List<CurrentPlayerModel> {
         val finalList = mutableListOf<CurrentPlayerModel>()
-        val positions = mutableListOf<Pair<MKCLightPlayer?, Int>>()
+        val positions = mutableListOf<Pair<MKPlayer?, Int>>()
         val shocks = mutableStateListOf<Shock>()
         trackList.forEach {
             it.track?.warPositions?.let { warPositions ->

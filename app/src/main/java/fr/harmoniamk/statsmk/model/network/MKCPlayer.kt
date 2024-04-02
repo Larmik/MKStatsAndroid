@@ -48,7 +48,7 @@ data class MKCDate(
 @Keep
 @JsonClass(generateAdapter = true)
 @Parcelize
-data class MKCLightPlayer(
+data class MKPlayer(
     val mid: String,
     val mkcId: String,
     val name: String,
@@ -60,13 +60,12 @@ data class MKCLightPlayer(
     val role: Int,
     var currentWar: String,
     val picture: String,
-    val isAlly: Int
+    val rosterId: String
 ) : Parcelable {
+
     val flag = "https://www.mariokartcentral.com/mkc/images/flags/${country.lowercase()}.png"
 
-    fun toEntity() = MKCLightPlayerEntity(
-        mid, mkcId, name, fc, status, registerDate, country, isLeader, role, currentWar, picture, isAlly
-    )
+    fun toEntity() = MKCLightPlayerEntity(mid, mkcId, name, fc, status, registerDate, country, isLeader, role, currentWar, picture, rosterId)
 
     constructor(user: User?) : this(
         mid = user?.mid.orEmpty(),
@@ -80,7 +79,7 @@ data class MKCLightPlayer(
         role = user?.role ?: 0,
         currentWar = user?.currentWar.orEmpty(),
         picture = user?.picture.orEmpty(),
-        isAlly = 1
+        rosterId = user?.rosterId.orEmpty()
     )
     constructor(fullPlayer: MKCFullPlayer?) : this(
         mid = fullPlayer?.id.toString(),
@@ -94,7 +93,7 @@ data class MKCLightPlayer(
         role = 0,
         currentWar = "-1",
         picture = fullPlayer?.profile_picture.orEmpty(),
-        isAlly = 1
+        rosterId = fullPlayer?.current_teams?.getOrNull(0)?.team_id?.toString().orEmpty()
     )
 
     constructor(entity: MKCLightPlayerEntity?) : this(
@@ -109,7 +108,7 @@ data class MKCLightPlayer(
         role = entity?.role ?: 0,
         currentWar = entity?.currentWar.orEmpty(),
         picture = entity?.picture.orEmpty(),
-        isAlly = entity?.isAlly ?: 0
+        rosterId = entity?.rosterId.orEmpty()
     )
 
     constructor(player: MKCPlayer) : this (
@@ -124,10 +123,10 @@ data class MKCLightPlayer(
         role =  0,
         currentWar = "-1",
         picture = "",
-        isAlly = 0
+        rosterId = ""
     )
 
-    constructor(player: MKCFullPlayer?, role: Int, isAlly: Int, isLeader: String, currentWar: String) : this(
+    constructor(player: MKCFullPlayer?, role: Int, isLeader: String, currentWar: String, rosterId: String) : this(
         mid = player?.id.toString(),
         mkcId = player?.id.toString(),
         name = player?.display_name.orEmpty(),
@@ -139,10 +138,10 @@ data class MKCLightPlayer(
         role = role,
         currentWar = currentWar,
         picture = player?.profile_picture.orEmpty(),
-        isAlly = isAlly
+        rosterId = rosterId
     )
 
-    constructor(player: MKCLightPlayer, role: Int?, picture: String?) : this(
+    constructor(player: MKPlayer, role: Int?, picture: String?) : this(
         mid = player.mid,
         mkcId = player.mkcId,
         name = player.name,
@@ -154,7 +153,7 @@ data class MKCLightPlayer(
         role = role ?: 0,
         currentWar = player.currentWar,
         picture = picture.orEmpty(),
-        isAlly = player.isAlly
+        rosterId = player.rosterId
     )
 }
 

@@ -156,10 +156,10 @@ class PlayerListViewModel @AssistedInject constructor(
     init {
         databaseRepository.getRoster()
             .onEach {
-                _sharedPlayers.value =  it.filter { user -> user.isAlly == 0  }
+                _sharedPlayers.value =  it.filter { user -> user.rosterId != "-1"  }
                     .sortedBy { it.name?.toLowerCase(Locale.ROOT) }
                     .map { UserSelector(it, false) }
-                _sharedAllies.value =  it.filter { user -> user.isAlly == 1  }
+                _sharedAllies.value =  it.filter { user -> user.rosterId == "-1"  }
                     .sortedBy { it.name?.toLowerCase(Locale.ROOT) }
                     .map { UserSelector(it, false) }
             }

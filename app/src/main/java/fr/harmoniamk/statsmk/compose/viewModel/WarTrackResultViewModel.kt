@@ -18,7 +18,7 @@ import fr.harmoniamk.statsmk.model.firebase.Shock
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarPosition
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
-import fr.harmoniamk.statsmk.model.network.MKCLightPlayer
+import fr.harmoniamk.statsmk.model.network.MKPlayer
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
@@ -89,7 +89,7 @@ class WarTrackResultViewModel @AssistedInject constructor(
     val sharedShocks = _sharedShocks.asStateFlow()
 
     private val positions = mutableListOf<MKWarPosition>()
-    private val users = mutableListOf<MKCLightPlayer>()
+    private val users = mutableListOf<MKPlayer>()
     private val finalList = mutableListOf<Shock>()
     private val shocks = mutableMapOf<String?, Int>()
 

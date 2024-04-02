@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKDialogState
+import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import fr.harmoniamk.statsmk.usecase.FetchUseCaseInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -22,6 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepositoryInterface,
+    private val databaseRepository: DatabaseRepositoryInterface,
     private val fetchUseCase: FetchUseCaseInterface,
 ): ViewModel() {
     private val _sharedLastUpdate = MutableStateFlow(preferencesRepository.lastUpdate)
@@ -31,10 +33,14 @@ class SettingsViewModel @Inject constructor(
     val sharedDialogValue = _sharedDialogValue.asStateFlow()
 
     fun onUpdate() {
-        _sharedDialogValue.value = MKDialogState.Loading(R.string.fetch_player)
-        fetchUseCase.fetchPlayer()
+        _sharedDialogValue.value = MKDialogState.Loading(R.string.mise_jour_des_donn_es)
+        databaseRepository.clear()
+            .onEach { _sharedDialogValue.value = MKDialogState.Loading(R.string.fetch_player) }
+            .flatMapLatest { fetchUseCase.fetchPlayer() }
             .onEach { _sharedDialogValue.value = MKDialogState.Loading(R.string.fetch_players) }
             .flatMapLatest { fetchUseCase.fetchPlayers(forceUpdate = true) }
+            .onEach {  _sharedDialogValue.value = MKDialogState.Loading(R.string.fetch_allies) }
+            .flatMapLatest { fetchUseCase.fetchAllies(forceUpdate = true) }
             .onEach {  _sharedDialogValue.value = MKDialogState.Loading(R.string.fetch_teams) }
             .flatMapLatest { fetchUseCase.fetchTeams() }
             .onEach {  _sharedDialogValue.value = MKDialogState.Loading(R.string.fetch_wars) }

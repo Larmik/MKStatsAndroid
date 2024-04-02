@@ -2,9 +2,7 @@ package fr.harmoniamk.statsmk.model.local
 
 import android.os.Parcelable
 import fr.harmoniamk.statsmk.extension.*
-import fr.harmoniamk.statsmk.model.firebase.TOTAL_TRACKS
 import fr.harmoniamk.statsmk.model.firebase.NewWar
-import fr.harmoniamk.statsmk.model.firebase.TOTAL_TRACK_SCORE
 import kotlinx.android.parcel.Parcelize
 import java.io.Serializable
 import java.util.*
@@ -16,13 +14,12 @@ data class MKWar(val war: NewWar?) : Serializable, Parcelable {
     val trackPlayed = warTracks?.size ?: 0
     val scoreHost = warTracks?.map { it.teamScore }.sum()
     private val scoreHostWithPenalties = scoreHost - war?.penalties?.filter { it.teamId == war.teamHost }?.map { it.amount }.sum()
-    private val scoreOpponent = (TOTAL_TRACK_SCORE * trackPlayed) - scoreHost
+    private val scoreOpponent = (82 * trackPlayed) - scoreHost
     private val scoreOpponentWithPenalties = scoreOpponent - war?.penalties?.filter { it.teamId == war.teamOpponent }?.map { it.amount }.sum()
-    val isOver = trackPlayed >= TOTAL_TRACKS
+    val isOver = trackPlayed >= 12
     val displayedScore = "$scoreHostWithPenalties - $scoreOpponentWithPenalties"
-    val scoreLabel = "Score: $displayedScore"
     val mapsWon = "${war?.warTracks?.map { MKWarTrack(it) }?.filter { it.displayedDiff.contains("+") }?.size} / 12"
-    val displayedState = if (isOver) "War terminée" else "War en cours (${trackPlayed}/$TOTAL_TRACKS)"
+    val displayedState = if (isOver) "War terminée" else "War en cours (${trackPlayed}/12)"
     val displayedDiff: String
         get() {
             val diff = scoreHostWithPenalties - scoreOpponentWithPenalties

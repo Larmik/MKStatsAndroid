@@ -11,7 +11,6 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.EntryPointAccessors
 import fr.harmoniamk.statsmk.compose.ViewModelFactoryProvider
-import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.extension.positionToPoints
 import fr.harmoniamk.statsmk.extension.sum
 import fr.harmoniamk.statsmk.model.firebase.Shock
@@ -19,7 +18,7 @@ import fr.harmoniamk.statsmk.model.local.CurrentPlayerModel
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarPosition
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
-import fr.harmoniamk.statsmk.model.network.MKCLightPlayer
+import fr.harmoniamk.statsmk.model.network.MKPlayer
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -79,7 +78,7 @@ class WarDetailsViewModel  @AssistedInject constructor(
             }
             .mapNotNull { it?.warTracks }
             .onEach {
-                val positions = mutableListOf<Pair<MKCLightPlayer?, Int>>()
+                val positions = mutableListOf<Pair<MKPlayer?, Int>>()
                 val players = databaseRepository.getRoster().firstOrNull()
                 val shocks = mutableStateListOf<Shock>()
                 _sharedTracks.emit(it)

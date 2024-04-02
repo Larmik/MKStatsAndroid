@@ -17,7 +17,7 @@ import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.firebase.NewWarPositions
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
 import fr.harmoniamk.statsmk.model.local.MKWar
-import fr.harmoniamk.statsmk.model.network.MKCLightPlayer
+import fr.harmoniamk.statsmk.model.network.MKPlayer
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
@@ -92,8 +92,8 @@ class PositionViewModel @AssistedInject constructor(
     val sharedTrackNumber = _sharedTrackNumber.asStateFlow()
     val sharedQuit = _sharedQuit.asSharedFlow()
 
-    private var currentUser: MKCLightPlayer? = null
-    private var currentUsers: List<MKCLightPlayer> = listOf()
+    private var currentUser: MKPlayer? = null
+    private var currentUsers: List<MKPlayer> = listOf()
     private val positions = mutableListOf<NewWarPositions>()
 
     fun onPositionClick(position: Int) {

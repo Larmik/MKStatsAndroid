@@ -9,7 +9,6 @@ import fr.harmoniamk.statsmk.extension.positionToPoints
 import fr.harmoniamk.statsmk.extension.withFullStats
 import fr.harmoniamk.statsmk.extension.withFullTeamStats
 import fr.harmoniamk.statsmk.fragment.stats.opponentRanking.OpponentRankingItemViewModel
-import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.MKStats
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarPosition
@@ -18,7 +17,7 @@ import fr.harmoniamk.statsmk.model.local.MapDetails
 import fr.harmoniamk.statsmk.model.local.MapStats
 import fr.harmoniamk.statsmk.model.local.Stats
 import fr.harmoniamk.statsmk.model.local.TrackStats
-import fr.harmoniamk.statsmk.model.network.MKCLightPlayer
+import fr.harmoniamk.statsmk.model.network.MKPlayer
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -87,7 +86,7 @@ class StatsViewModel @Inject constructor(
     private var mostDefeatedTeam: OpponentRankingItemViewModel? = null
     private var lessDefeatedTeam: OpponentRankingItemViewModel? = null
 
-    private val users = mutableListOf<MKCLightPlayer>()
+    private val users = mutableListOf<MKPlayer>()
     private val wars = mutableListOf<MKWar>()
     private var item: Stats? = null
     var onlyIndiv =  preferencesRepository.mkcTeam?.id == null
@@ -131,7 +130,7 @@ class StatsViewModel @Inject constructor(
                 item = it
                 val finalList = mutableListOf<Pair<Int, String?>>()
                 it.warStats.list.forEach { war ->
-                    val positions = mutableListOf<Pair<MKCLightPlayer?, Int>>()
+                    val positions = mutableListOf<Pair<MKPlayer?, Int>>()
                     war.warTracks?.forEach { warTrack ->
                         warTrack.track?.warPositions?.let { warPositions ->
                             val trackPositions = mutableListOf<MKWarPosition>()

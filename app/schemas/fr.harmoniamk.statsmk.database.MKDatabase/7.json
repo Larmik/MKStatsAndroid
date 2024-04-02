@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 7,
-    "identityHash": "e6dba0abb16f6ec20bfdd3515aa938a7",
+    "identityHash": "b7d492982391b0b42649d6af2ab90774",
     "entities": [
       {
         "tableName": "WarEntity",
@@ -162,7 +162,7 @@
       },
       {
         "tableName": "MKCLightPlayerEntity",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`mid` TEXT NOT NULL, `mkcId` TEXT NOT NULL, `name` TEXT NOT NULL, `fc` TEXT NOT NULL, `status` TEXT NOT NULL, `registerDate` TEXT NOT NULL, `country` TEXT NOT NULL, `isLeader` TEXT NOT NULL, `role` INTEGER NOT NULL, `currentWar` TEXT NOT NULL, `picture` TEXT NOT NULL, `isAlly` INTEGER NOT NULL, PRIMARY KEY(`mid`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`mid` TEXT NOT NULL, `mkcId` TEXT NOT NULL, `name` TEXT NOT NULL, `fc` TEXT NOT NULL, `status` TEXT NOT NULL, `registerDate` TEXT NOT NULL, `country` TEXT NOT NULL, `isLeader` TEXT NOT NULL, `role` INTEGER NOT NULL, `currentWar` TEXT NOT NULL, `picture` TEXT NOT NULL, `rosterId` TEXT NOT NULL, PRIMARY KEY(`mid`))",
         "fields": [
           {
             "fieldPath": "mid",
@@ -231,9 +231,9 @@
             "notNull": true
           },
           {
-            "fieldPath": "isAlly",
-            "columnName": "isAlly",
-            "affinity": "INTEGER",
+            "fieldPath": "rosterId",
+            "columnName": "rosterId",
+            "affinity": "TEXT",
             "notNull": true
           }
         ],
@@ -250,7 +250,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e6dba0abb16f6ec20bfdd3515aa938a7')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'b7d492982391b0b42649d6af2ab90774')"
     ]
   }
 }

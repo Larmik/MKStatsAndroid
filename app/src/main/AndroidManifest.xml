@@ -12,22 +12,6 @@
         android:theme="@style/SplashScreen"
         android:dataExtractionRules="@xml/data_extraction_rules">
 
-        <receiver android:name=".widget.MKWidgetProvider"
-            android:exported="false">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-            <meta-data android:name="android.appwidget.provider"
-                android:resource="@xml/appwidget_info" />
-        </receiver>
-        <service
-            android:name=".widget.MKWidgetFetchService"
-            android:enabled="true" />
-
-        <service
-            android:name=".widget.MKWidgetJobService"
-            android:label="Widget service"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
         <activity
             android:name=".activity.MainActivity"
             android:theme="@style/SplashScreen"

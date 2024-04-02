@@ -11,7 +11,7 @@ import fr.harmoniamk.statsmk.datasource.NewTeamLocalDataSourceInterface
 import fr.harmoniamk.statsmk.datasource.TopicLocalDataSourceInterface
 import fr.harmoniamk.statsmk.datasource.WarLocalDataSourceInterface
 import fr.harmoniamk.statsmk.model.local.MKWar
-import fr.harmoniamk.statsmk.model.network.MKCLightPlayer
+import fr.harmoniamk.statsmk.model.network.MKPlayer
 import fr.harmoniamk.statsmk.model.network.MKCTeam
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -25,18 +25,18 @@ interface DatabaseRepositoryInterface {
 
 
     fun getNewTeams(): Flow<List<MKCTeam>>
-    fun getRoster(): Flow<List<MKCLightPlayer>>
+    fun getRoster(): Flow<List<MKPlayer>>
     fun getWars(): Flow<List<MKWar>>
 
     fun getNewTeam(id: String?): Flow<MKCTeam?>
-    fun getNewUser(id: String?): Flow<MKCLightPlayer?>
+    fun getNewUser(id: String?): Flow<MKPlayer?>
     fun getWar(id: String?): Flow<MKWar?>
 
-    fun writeRoster(list: List<MKCLightPlayer>): Flow<Unit>
+    fun writeRoster(list: List<MKPlayer>): Flow<Unit>
     fun writeNewTeams(list: List<MKCTeam>): Flow<Unit>
     fun writeWars(list: List<MKWar>): Flow<Unit>
-    fun updateUser(user: MKCLightPlayer): Flow<Unit>
-    fun writeUser(user: MKCLightPlayer): Flow<Unit>
+    fun updateUser(user: MKPlayer): Flow<Unit>
+    fun writeUser(user: MKPlayer): Flow<Unit>
 
     fun writeWar(war: MKWar): Flow<Unit>
     fun writeTopic(topic: TopicEntity): Flow<Unit>
@@ -74,7 +74,7 @@ class DatabaseRepository @Inject constructor(
         return newTeamLocalDataSource.getAll()
     }
 
-    override fun getRoster(): Flow<List<MKCLightPlayer>> {
+    override fun getRoster(): Flow<List<MKPlayer>> {
         Log.d("MKDebugOnly", "DatabaseRepository getRoster")
         return newPlayerLocalDataSource.getAll()
     }
@@ -90,7 +90,7 @@ class DatabaseRepository @Inject constructor(
         newTeamLocalDataSource.getById(it)
     } ?: flowOf(null)
 
-    override fun getNewUser(id: String?): Flow<MKCLightPlayer?> = id?.let {
+    override fun getNewUser(id: String?): Flow<MKPlayer?> = id?.let {
         Log.d("MKDebugOnly", "DatabaseRepository getNewUser $id")
         newPlayerLocalDataSource.getById(it)
     } ?: flowOf(null)
@@ -101,8 +101,8 @@ class DatabaseRepository @Inject constructor(
     } ?: flowOf(null)
 
 
-    override fun writeRoster(list: List<MKCLightPlayer>): Flow<Unit> {
-        Log.d("MKDebugOnly", "DatabaseRepository writeNewUsers")
+    override fun writeRoster(list: List<MKPlayer>): Flow<Unit> {
+        Log.d("MKDebugOnly", "DatabaseRepository write ${list.size} New players")
         return newPlayerLocalDataSource.bulkInsert(list)
     }
 
@@ -117,12 +117,12 @@ class DatabaseRepository @Inject constructor(
         return warDataSource.insert(list)
     }
 
-    override fun updateUser(user: MKCLightPlayer): Flow<Unit> {
+    override fun updateUser(user: MKPlayer): Flow<Unit> {
         Log.d("MKDebugOnly", "DatabaseRepository updateUser")
         return newPlayerLocalDataSource.update(user)
     }
 
-    override fun writeUser(user: MKCLightPlayer): Flow<Unit> {
+    override fun writeUser(user: MKPlayer): Flow<Unit> {
         Log.d("MKDebugOnly", "DatabaseRepository writeUser")
         return newPlayerLocalDataSource.insert(user)
     }

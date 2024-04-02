@@ -7,7 +7,7 @@ import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.fragment.playerSelect.UserSelector
 import fr.harmoniamk.statsmk.model.firebase.WarDispo
-import fr.harmoniamk.statsmk.model.network.MKCLightPlayer
+import fr.harmoniamk.statsmk.model.network.MKPlayer
 import fr.harmoniamk.statsmk.model.network.MKCTeam
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
@@ -106,7 +106,7 @@ class ScheduleWarViewModel @Inject constructor(
                 list
             }
             .map {
-                val nameList = mutableListOf<Pair<MKCLightPlayer, Int>>()
+                val nameList = mutableListOf<Pair<MKPlayer, Int>>()
                 it.forEach { pair ->
                     databaseRepository.getNewUser(pair.first).firstOrNull()?.let {
                         nameList.add(Pair(it, pair.second))

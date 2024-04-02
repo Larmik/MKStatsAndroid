@@ -340,6 +340,7 @@
     <string name="need_update">An update is need for this app to run properly. \n \n Please update and try again.</string>
     <string name="kick_player">Kick this player</string>
     <string name="fetch_player">Fetching player...</string>
+    <string name="fetch_allies">Fetching allies...</string>
     <string name="fetch_players">Fetching roster...</string>
     <string name="fetch_teams">Fetching teams...</string>
     <string name="fetch_wars">Fetching wars...</string>
@@ -377,5 +378,7 @@
     <string name="entree_team">Since</string>
     <string name="registry">Registry</string>
     <string name="refresh_data">Refresh data</string>
+    <string name="id_mkc">MKCentral ID</string>
+    <string name="confirmez_le_mot_de_passe">Confimez le mot de passe</string>
 
 </resources>

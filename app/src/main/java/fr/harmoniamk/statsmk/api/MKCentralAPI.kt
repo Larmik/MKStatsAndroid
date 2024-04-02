@@ -15,11 +15,8 @@ interface MKCentralAPI {
         const val baseUrl = "https://www.mariokartcentral.com/mkc/api/registry/"
     }
 
-    @GET("teams/category/150cc")
-    fun getTeams() : Call<MKCTeamResponse>
-
-    @GET("teams/category/historical")
-    fun getHistoricalTeams() : Call<MKCTeamResponse>
+    @GET("teams/category/{category}")
+    fun getTeams(@Path("category") category: String?) : Call<MKCTeamResponse>
 
     @GET("players/{id}")
     fun getPlayer(@Path("id") id: String?) : Call<MKCFullPlayer>

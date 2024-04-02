@@ -30,7 +30,7 @@ interface MKCLightPlayerDao {
     @Delete
     suspend fun delete(team: MKCLightPlayerEntity)
 
-    @Query("DELETE FROM MKCTeamEntity")
+    @Query("DELETE FROM MKCLightPlayerEntity")
     suspend fun clear()
 
 }

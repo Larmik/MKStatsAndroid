@@ -2,7 +2,7 @@ package fr.harmoniamk.statsmk.model.firebase
 
 import android.os.Parcelable
 import com.google.firebase.auth.FirebaseUser
-import fr.harmoniamk.statsmk.model.network.MKCLightPlayer
+import fr.harmoniamk.statsmk.model.network.MKPlayer
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
@@ -13,11 +13,11 @@ data class User(
     var role: Int? = null,
     var picture: String? = null,
     var mkcId: String? = null,
-    var discordId: String?
+    var discordId: String?,
+    var rosterId: String? = null
 ) : Parcelable {
 
-
-    constructor(player: MKCLightPlayer?, mid: String?, discordId: String?) : this(
+    constructor(player: MKPlayer?, mid: String?, discordId: String?) : this(
         mid = mid ?: player?.mkcId.orEmpty(),
         name = player?.name,
         currentWar = player?.currentWar,

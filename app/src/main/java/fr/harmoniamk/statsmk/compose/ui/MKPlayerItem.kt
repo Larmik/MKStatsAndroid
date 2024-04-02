@@ -26,11 +26,11 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.extension.positionColor
 import fr.harmoniamk.statsmk.fragment.stats.playerRanking.PlayerRankingItemViewModel
 import fr.harmoniamk.statsmk.model.local.MKWarPosition
-import fr.harmoniamk.statsmk.model.network.MKCLightPlayer
+import fr.harmoniamk.statsmk.model.network.MKPlayer
 
 @Composable
 fun MKPlayerItem(
-    player: MKCLightPlayer? = null,
+    player: MKPlayer? = null,
     playerRanking: PlayerRankingItemViewModel? = null,
     position: MKWarPosition? = null,
     isSelected: Boolean = false,

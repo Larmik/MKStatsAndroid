@@ -8,7 +8,7 @@ import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.fragment.playerSelect.UserSelector
 import fr.harmoniamk.statsmk.model.firebase.User
-import fr.harmoniamk.statsmk.model.network.MKCLightPlayer
+import fr.harmoniamk.statsmk.model.network.MKPlayer
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
@@ -31,7 +31,7 @@ class SubPlayerViewModel @Inject constructor(
     private val _sharedAllies = MutableStateFlow<List<UserSelector>>(listOf())
     private val _sharedTitle = MutableStateFlow(R.string.joueur_sortant)
     private val _sharedBack = MutableSharedFlow<Unit>()
-    private val _sharedPlayerSelected = MutableStateFlow<MKCLightPlayer?>(null)
+    private val _sharedPlayerSelected = MutableStateFlow<MKPlayer?>(null)
 
     val sharedPlayers = _sharedPlayers.asStateFlow()
     val sharedAllies = _sharedAllies.asStateFlow()
@@ -44,8 +44,8 @@ class SubPlayerViewModel @Inject constructor(
     private val currentPlayersList = mutableListOf<UserSelector>()
     private val fbUsers = mutableListOf<User>()
 
-    var oldPlayer: MKCLightPlayer? = null
-    var newPlayer: MKCLightPlayer? = null
+    var oldPlayer: MKPlayer? = null
+    var newPlayer: MKPlayer? = null
 
     fun refresh() {
         databaseRepository.getRoster()
@@ -55,7 +55,7 @@ class SubPlayerViewModel @Inject constructor(
                 currentPlayersList.clear()
 
                 playersList.addAll(it.filter { user -> user.currentWar == "-1" }.map { UserSelector(user = it, isSelected = false) })
-                allyList.addAll(it.filter { user -> user.currentWar == "-1" &&  user.isAlly == 1 }.map { UserSelector(user = it, isSelected = false) })
+                allyList.addAll(it.filter { user -> user.currentWar == "-1" &&  user.rosterId == "-1" }.map { UserSelector(user = it, isSelected = false) })
                 currentPlayersList.addAll(it.filter { user -> user.currentWar == preferencesRepository.currentWar?.mid }.map { UserSelector(user = it, isSelected = false) } )
 
                 _sharedPlayers.value = currentPlayersList
@@ -69,7 +69,7 @@ class SubPlayerViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
-    fun onOldPlayerSelect(user : MKCLightPlayer) {
+    fun onOldPlayerSelect(user : MKPlayer) {
         oldPlayer = user
         _sharedPlayers.value = playersList
         _sharedAllies.value = allyList
@@ -78,7 +78,7 @@ class SubPlayerViewModel @Inject constructor(
         _sharedPlayerSelected.value = user
     }
 
-    fun onNewPlayerSelect(user: MKCLightPlayer) {
+    fun onNewPlayerSelect(user: MKPlayer) {
         newPlayer = user
         val playerListWithSelected = mutableListOf<UserSelector>()
         val allyListWithSelected = mutableListOf<UserSelector>()

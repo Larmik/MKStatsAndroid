@@ -12,7 +12,8 @@ import dagger.hilt.android.EntryPointAccessors
 import fr.harmoniamk.statsmk.compose.ViewModelFactoryProvider
 import fr.harmoniamk.statsmk.compose.ui.MKBottomSheetState
 import fr.harmoniamk.statsmk.model.network.MKCFullTeam
-import fr.harmoniamk.statsmk.model.network.MKCLightPlayer
+import fr.harmoniamk.statsmk.model.network.MKPlayer
+import fr.harmoniamk.statsmk.model.network.NetworkResponse
 import fr.harmoniamk.statsmk.repository.MKCentralRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -20,6 +21,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 
 @FlowPreview
@@ -57,7 +59,7 @@ class TeamProfileViewModel @AssistedInject constructor(
         fun create(id: String): TeamProfileViewModel
     }
 
-    private val _sharedPlayers = MutableStateFlow<List<MKCLightPlayer>>(listOf())
+    private val _sharedPlayers = MutableStateFlow<List<MKPlayer>>(listOf())
     private val _sharedTeam = MutableStateFlow<MKCFullTeam?>(null)
     private val _sharedPictureLoaded = MutableStateFlow<String?>(null)
     private val _sharedBottomSheetValue = MutableStateFlow<MKBottomSheetState?>(null)
@@ -70,6 +72,7 @@ class TeamProfileViewModel @AssistedInject constructor(
 
     fun init() {
         mkCentralRepository.getTeam(id)
+            .mapNotNull { (it as? NetworkResponse.Success)?.response }
             .onEach {
                 _sharedTeam.emit(it)
                 _sharedPictureLoaded.emit(it.logoUrl)

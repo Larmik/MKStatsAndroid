@@ -2,7 +2,7 @@ package fr.harmoniamk.statsmk.repository.mock
 
 import fr.harmoniamk.statsmk.database.entities.TopicEntity
 import fr.harmoniamk.statsmk.model.local.MKWar
-import fr.harmoniamk.statsmk.model.network.MKCLightPlayer
+import fr.harmoniamk.statsmk.model.network.MKPlayer
 import fr.harmoniamk.statsmk.model.network.MKCTeam
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import kotlinx.coroutines.flow.Flow
@@ -16,7 +16,7 @@ class DatabaseRepositoryMock : DatabaseRepositoryInterface {
     }
 
 
-    override fun getRoster(): Flow<List<MKCLightPlayer>> = flow {
+    override fun getRoster(): Flow<List<MKPlayer>> = flow {
         emit(listOf())
     }
 
@@ -30,7 +30,7 @@ class DatabaseRepositoryMock : DatabaseRepositoryInterface {
         emit(null)
     }
 
-    override fun getNewUser(id: String?): Flow<MKCLightPlayer?> = flow {
+    override fun getNewUser(id: String?): Flow<MKPlayer?> = flow {
         emit(null)
     }
 
@@ -39,7 +39,7 @@ class DatabaseRepositoryMock : DatabaseRepositoryInterface {
     }
 
 
-    override fun writeRoster(list: List<MKCLightPlayer>): Flow<Unit> {
+    override fun writeRoster(list: List<MKPlayer>): Flow<Unit> {
         TODO("Not yet implemented")
     }
 
@@ -52,11 +52,11 @@ class DatabaseRepositoryMock : DatabaseRepositoryInterface {
         emit(Unit)
     }
 
-    override fun updateUser(user: MKCLightPlayer): Flow<Unit> = flow {
+    override fun updateUser(user: MKPlayer): Flow<Unit> = flow {
         emit(Unit)
     }
 
-    override fun writeUser(user: MKCLightPlayer): Flow<Unit> = flow {
+    override fun writeUser(user: MKPlayer): Flow<Unit> = flow {
         emit(Unit)
     }
 

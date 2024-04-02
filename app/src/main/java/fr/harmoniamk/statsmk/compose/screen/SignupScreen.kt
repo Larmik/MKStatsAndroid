@@ -37,8 +37,8 @@ fun SignupScreen(
 ) {
     val emailValue = remember { mutableStateOf(TextFieldValue("")) }
     val passwordValue = remember { mutableStateOf(TextFieldValue("")) }
-    val nicknameValue = remember { mutableStateOf(TextFieldValue("")) }
-    val fcValue = remember { mutableStateOf(TextFieldValue("")) }
+    val confirmPasswordValue = remember { mutableStateOf(TextFieldValue("")) }
+    val mkcIdValue = remember { mutableStateOf(TextFieldValue("")) }
     val loadingState = viewModel.sharedDialogValue.collectAsState()
     val context = LocalContext.current
 
@@ -64,11 +64,7 @@ fun SignupScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.padding(horizontal = 15.dp)
         ) {
-            MKTextField(
-                value = nicknameValue.value,
-                onValueChange = { nicknameValue.value = it },
-                placeHolderRes = R.string.entrez_votre_pseudo
-            )
+
             MKTextField(
                 value = emailValue.value,
                 onValueChange = { emailValue.value = it },
@@ -82,20 +78,28 @@ fun SignupScreen(
                 keyboardType = KeyboardType.Password
             )
             MKTextField(
-                value = fcValue.value,
-                onValueChange = { fcValue.value = it },
-                placeHolderRes = R.string.code_ami,
+                value = confirmPasswordValue.value,
+                onValueChange = { confirmPasswordValue.value = it },
+                placeHolderRes = R.string.confirmez_le_mot_de_passe,
+                keyboardType = KeyboardType.Password
+            )
+            MKTextField(
+                value = mkcIdValue.value,
+                onValueChange = { mkcIdValue.value = it },
+                placeHolderRes = R.string.id_mkc,
                 keyboardType = KeyboardType.Number
             )
             MKButton(
                 text = R.string.suivant,
-                enabled = emailValue.value.text.isNotEmpty() && passwordValue.value.text.isNotEmpty() && nicknameValue.value.text.isNotEmpty()
+                enabled = emailValue.value.text.isNotEmpty()
+                        && passwordValue.value.text.isNotEmpty()
+                        && passwordValue.value == confirmPasswordValue.value
+                        && mkcIdValue.value.text.isNotEmpty()
             ) {
                 viewModel.onSignup(
                     emailValue.value.text,
                     passwordValue.value.text,
-                    nicknameValue.value.text,
-                    fcValue.value.text
+                    mkcIdValue.value.text
                 )
             }
         }
