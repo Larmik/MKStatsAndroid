@@ -4,8 +4,6 @@
     <application
         android:allowBackup="false"
         android:fullBackupContent="false"
-        android:hardwareAccelerated="false"
-        android:largeHeap="true"
         android:roundIcon="@drawable/mk_stats_logo_picture"
         android:icon="@drawable/mk_stats_logo_picture"
         android:label="${appLabel}"
