@@ -16,8 +16,10 @@ import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.fragment.playerSelect.UserSelector
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.firebase.User
+import fr.harmoniamk.statsmk.model.network.NetworkResponse
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
+import fr.harmoniamk.statsmk.repository.MKCentralRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -26,8 +28,10 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -38,29 +42,23 @@ class PlayerListViewModel @AssistedInject constructor(
     @Assisted private val id: String,
     private val preferencesRepository: PreferencesRepositoryInterface,
     private val databaseRepository: DatabaseRepositoryInterface,
-    private val firebaseRepository: FirebaseRepositoryInterface
+    private val firebaseRepository: FirebaseRepositoryInterface,
+    mkCentralRepository: MKCentralRepositoryInterface
 ): ViewModel() {
 
-    private val _sharedPlayers = MutableStateFlow<List<UserSelector>?>(null)
-    private val _sharedAllies = MutableStateFlow<List<UserSelector>?>(null)
+    private val _sharedPlayers = MutableStateFlow<Map<String, List<UserSelector>>>(mapOf())
     private val _sharedDialogValue = MutableStateFlow<MKDialogState?>(null)
     private val _sharedWarName = MutableStateFlow<String?>(null)
-    private val players = mutableListOf<UserSelector>()
-    private val allies = mutableListOf<UserSelector>()
+    private val _sharedStarted = MutableSharedFlow<Unit>()
 
     val sharedPlayers = _sharedPlayers.asStateFlow()
-    val sharedAllies = _sharedAllies.asStateFlow()
     val sharedWarName = _sharedWarName.asStateFlow()
     val sharedDialogValue = _sharedDialogValue.asStateFlow()
-
-    private val _sharedStarted = MutableSharedFlow<Unit>()
-    private val _sharedAlreadyCreated = MutableSharedFlow<Unit>()
-
     val sharedStarted = _sharedStarted.asSharedFlow()
-    val sharedAlreadyCreated = _sharedAlreadyCreated.asSharedFlow()
 
-    val date = SimpleDateFormat("dd/MM/yyyy - HH'h'mm", Locale.FRANCE).format(Date())
-    var official: Boolean = false
+    private val date = SimpleDateFormat("dd/MM/yyyy - HH'h'mm", Locale.FRANCE).format(Date())
+    private var official: Boolean = false
+    private val roster = mutableMapOf<String, List<UserSelector>>()
 
     companion object {
         @Suppress("UNCHECKED_CAST")
@@ -91,29 +89,17 @@ class PlayerListViewModel @AssistedInject constructor(
     }
 
     fun selectUser(user: UserSelector) {
-        val temp = mutableListOf<UserSelector>()
-        _sharedPlayers.value?.forEach {
-            when (it.user?.mid == user.user?.mid) {
-                true -> temp.add(user)
-                else -> temp.add(it)
+        _sharedPlayers.value.forEach {
+            val temp = mutableListOf<UserSelector>()
+            it.value.forEach {
+                when (it.user?.mid == user.user?.mid) {
+                    true -> temp.add(user)
+                    else -> temp.add(it)
+                }
             }
+            roster[it.key] = temp
         }
-        players.clear()
-        players.addAll(temp)
-        _sharedPlayers.value = temp
-    }
-
-    fun selectAlly(user: UserSelector) {
-        val temp = mutableListOf<UserSelector>()
-        _sharedAllies.value?.forEach {
-            when (it.user?.mkcId == user.user?.mkcId) {
-                true -> temp.add(user)
-                else -> temp.add(it)
-            }
-        }
-        allies.clear()
-        allies.addAll(temp)
-        _sharedAllies.value = temp
+        _sharedPlayers.value = roster.toSortedMap(compareByDescending { it })
     }
 
     fun toggleOfficial(official: Boolean) {
@@ -131,18 +117,15 @@ class PlayerListViewModel @AssistedInject constructor(
             isOfficial = official
         )
         firebaseRepository.getUsers()
-            .onEach {
-                players.filter { it.isSelected.isTrue }.mapNotNull { it.user }.forEach { user ->
-                    val new = user.apply { this.currentWar = war.mid }
-                    val fbUser = it.singleOrNull { it.mkcId == user.mkcId }
-                    firebaseRepository.writeUser(User(new, fbUser?.mid, fbUser?.discordId)).first()
-                    databaseRepository.updateUser(new).first()
-                }
-                allies.filter { it.isSelected.isTrue }.mapNotNull { it.user }.forEach { user ->
-                    val new = user.apply { this.currentWar = war.mid }
-                    val fbUser = it.singleOrNull { it.mkcId == user.mkcId }
-                    firebaseRepository.writeUser(User(new, fbUser?.mid, fbUser?.discordId)).first()
-                    databaseRepository.updateUser(new).first()
+            .onEach { userList ->
+                roster.values.forEach {
+                    val playersSelected = it.filter { it.isSelected.isTrue }.mapNotNull { it.user }
+                    playersSelected.forEach { user ->
+                        val new = user.apply { this.currentWar = war.mid }
+                        val fbUser = userList.singleOrNull { it.mkcId == user.mkcId }
+                        firebaseRepository.writeUser(User(new, fbUser?.mid, fbUser?.discordId)).first()
+                        databaseRepository.updateUser(new).first()
+                    }
                 }
                 preferencesRepository.currentWar = war
                 firebaseRepository.writeCurrentWar(war).first()
@@ -150,18 +133,23 @@ class PlayerListViewModel @AssistedInject constructor(
                 _sharedDialogValue.value = null
                 _sharedStarted.emit(Unit)
             }.launchIn(viewModelScope)
-
     }
 
     init {
         databaseRepository.getRoster()
-            .onEach {
-                _sharedPlayers.value =  it.filter { user -> user.rosterId != "-1"  }
-                    .sortedBy { it.name?.toLowerCase(Locale.ROOT) }
-                    .map { UserSelector(it, false) }
-                _sharedAllies.value =  it.filter { user -> user.rosterId == "-1"  }
-                    .sortedBy { it.name?.toLowerCase(Locale.ROOT) }
-                    .map { UserSelector(it, false) }
+            .filterNotNull()
+            .onEach { list ->
+                list.groupBy { it.rosterId }.forEach { rosterId, players ->
+                    when (rosterId) {
+                        "-1" -> roster["Allies"] = players.sortedBy { it.name.lowercase() }.map { UserSelector(it, false) }
+                        else -> mkCentralRepository.getTeam(rosterId)
+                            .mapNotNull { (it as? NetworkResponse.Success)?.response }
+                            .onEach {
+                                roster[it.team_name] = players.sortedBy { it.name.lowercase() }.map { UserSelector(it, false) }
+                                _sharedPlayers.value = roster.toSortedMap(compareByDescending { it })
+                            }.launchIn(viewModelScope)
+                    }
+                }
             }
             .launchIn(viewModelScope)
 

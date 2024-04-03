@@ -47,11 +47,9 @@ fun TeamSettingsScreen(viewModel: TeamSettingsViewModel = hiltViewModel(), onPla
     val picture = viewModel.sharedPictureLoaded.collectAsState()
     val team = viewModel.sharedTeam.collectAsState()
     val players by viewModel.sharedPlayers.collectAsState()
-    val allies by viewModel.sharedAllies.collectAsState()
     val currentState = viewModel.sharedBottomSheetValue.collectAsState(null)
     val bottomSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
 
-    viewModel.init()
     LaunchedEffect(Unit) {
         viewModel.sharedBottomSheetValue.collect {
             when (it) {
@@ -106,38 +104,17 @@ fun TeamSettingsScreen(viewModel: TeamSettingsViewModel = hiltViewModel(), onPla
         }
 
         LazyColumn(Modifier.offset(y = (-5).dp)) {
-            players.takeIf { it.isNotEmpty() }?.let {
+            players.takeIf { it.isNotEmpty() }?.forEach {
                 stickyHeader {
                     Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier
                         .fillMaxWidth()
                         .height(40.dp)
                         .background(color = colorResource(R.color.harmonia_dark))) {
-                        MKText(font = R.font.montserrat_bold, fontSize = 18, text = "Roster", textColor = R.color.white)
+                        MKText(font = R.font.montserrat_bold, fontSize = 18, text = it.key, textColor = R.color.white)
                     }
                 }
-                items(items = players) {
+                items(items = it.value) {
                     MKCPlayerItem(player = it, onPlayerClick = onPlayerClick)
-                }
-            }
-
-            allies.takeIf { it.isNotEmpty() }?.let {
-                stickyHeader {
-                    Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier
-                        .fillMaxWidth()
-                        .height(40.dp)
-                        .background(color = colorResource(R.color.harmonia_dark))) {
-                        MKText(font = R.font.montserrat_bold, fontSize = 18, text = "Allies", textColor = R.color.white)
-                    }
-                }
-                items(items = allies) {player ->
-                    MKCPlayerItem(
-                        player = player,
-                        onPlayerClick = { id ->
-                            id.takeIf { it.toLong() < 999999 }?.let {
-                                onPlayerClick(it)
-                            }
-                        }
-                    )
                 }
             }
         }
