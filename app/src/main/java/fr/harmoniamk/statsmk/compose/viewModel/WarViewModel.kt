@@ -20,17 +20,14 @@ import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flattenMerge
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.shareIn
 import javax.inject.Inject
 
 @FlowPreview
@@ -66,51 +63,58 @@ class WarViewModel @Inject constructor(
     private val dispoList = mutableListOf<WarDispo>()
 
     init {
-       val currentWar =  firebaseRepository.takeIf { preferencesRepository.mkcTeam != null }?.listenToCurrentWar()?.shareIn(viewModelScope, SharingStarted.Lazily)
-
-       currentWar
-           ?.filterNotNull()
-           ?.onEach {
-               _sharedCreateWarVisible.value = false
-               _sharedCurrentWarState.value = "Récupération de la war en cours..."
-               _sharedCurrentWar.value = it
-               preferencesRepository.currentWar = it.war
-               delay(500)
-           }
-           ?.flatMapLatest { war ->  fetchUseCase.fetchPlayers(forceUpdate = false).flatMapLatest { fetchUseCase.fetchAllies(false) }.takeIf { war.warTracks.isNullOrEmpty() } ?: flowOf() }
-           ?.onEach { _sharedCurrentWarState.value = null }
-           ?.launchIn(viewModelScope)
-
-       currentWar
-            ?.filter { it == null }
-            ?.onEach {
-                if (networkRepository.networkAvailable) {
-                    val isAdmin =  authenticationRepository.userRole >= UserRole.ADMIN.ordinal
-                    _sharedCurrentWar.value = null
-                    preferencesRepository.currentWar = null
-                    _sharedCreateWarVisible.value = isAdmin
+        flowOf(firebaseRepository.getCurrentWar(), firebaseRepository.listenToCurrentWar())
+            .flattenMerge()
+            .filter { networkRepository.networkAvailable }
+            .onEach { war ->
+                when (war) {
+                    null -> {
+                        val isAdmin = authenticationRepository.userRole >= UserRole.ADMIN.ordinal
+                        _sharedCurrentWar.value = null
+                        preferencesRepository.currentWar = null
+                        _sharedCreateWarVisible.value = isAdmin
+                    }
+                    else -> {
+                        _sharedCreateWarVisible.value = false
+                        _sharedCurrentWarState.value = "Récupération de la war en cours..."
+                        val refreshPlayers = fetchUseCase.fetchPlayers(forceUpdate = false)
+                            .flatMapLatest { fetchUseCase.fetchAllies(false) }
+                            .takeIf { war.warTracks.isNullOrEmpty() }
+                        when (refreshPlayers) {
+                            null -> {
+                                _sharedCurrentWarState.value = null
+                                _sharedCurrentWar.value = war
+                                preferencesRepository.currentWar = war.war
+                            }
+                            else -> refreshPlayers.onEach {
+                                _sharedCurrentWarState.value = null
+                                _sharedCurrentWar.value = war
+                                preferencesRepository.currentWar = war.war
+                            }.launchIn(viewModelScope)
+                        }
+                    }
                 }
-            }?.launchIn(viewModelScope)
+            }
     }
 
     fun refresh() {
         _sharedCurrentWarState.value = null
         _sharedTeam.value = preferencesRepository.mkcTeam
-       databaseRepository.getWars()
-           .map { it.filter { war -> war.hasTeam(preferencesRepository.mkcTeam?.id.toString()) } }
+        firebaseRepository.getCurrentWar()
+            .filter { networkRepository.networkAvailable }
+            .onEach {
+                _sharedCurrentWar.value = it
+                preferencesRepository.currentWar = it?.war
+                _sharedCreateWarVisible.value =
+                    it == null && authenticationRepository.userRole >= UserRole.ADMIN.ordinal
+            }.launchIn(viewModelScope)
+
+        databaseRepository.getWars()
             .onEach {
                 delay(100)
                 it.sortedByDescending { it.war?.createdDate?.formatToDate() }
-                .safeSubList(0, 5)
-                .let { _sharedLastWars.emit(it) }
-            }.launchIn(viewModelScope)
-        firebaseRepository.getCurrentWar()
-            .onEach {
-                if (networkRepository.networkAvailable) {
-                    _sharedCurrentWar.value = it
-                    preferencesRepository.currentWar = it?.war
-                    _sharedCreateWarVisible.value = it == null && authenticationRepository.userRole >= UserRole.ADMIN.ordinal
-                }
+                    .safeSubList(0, 5)
+                    .let { _sharedLastWars.emit(it) }
             }.launchIn(viewModelScope)
 
 

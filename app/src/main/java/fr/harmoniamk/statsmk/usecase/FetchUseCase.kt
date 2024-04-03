@@ -7,6 +7,7 @@ import dagger.hilt.components.SingletonComponent
 import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.MKWar
+import fr.harmoniamk.statsmk.model.network.MKCFullPlayer
 import fr.harmoniamk.statsmk.model.network.MKCFullTeam
 import fr.harmoniamk.statsmk.model.network.MKCTeam
 import fr.harmoniamk.statsmk.model.network.MKPlayer
@@ -30,7 +31,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 interface FetchUseCaseInterface {
-    fun fetchPlayer(): Flow<MKCFullTeam>
+    fun fetchPlayer(mkcId: String? = null): Flow<NetworkResponse<MKCFullPlayer>>
+    fun fetchTeam(): Flow<NetworkResponse<MKCFullTeam>>
     fun fetchTeams(): Flow<Unit>
     fun fetchPlayers(forceUpdate: Boolean): Flow<MKCFullTeam>
     fun fetchAllies(forceUpdate: Boolean): Flow<Unit>
@@ -63,15 +65,19 @@ class FetchUseCase @Inject constructor(
     private val users = mutableListOf<User>()
     private val players = mutableListOf<MKPlayer>()
 
-    override fun fetchPlayer(): Flow<MKCFullTeam> =
-        firebaseRepository.getUser(authenticationRepository.user?.uid.orEmpty())
-            .onEach { preferencesRepository.role = it?.role ?: 0 }
-            .flatMapLatest { mkCentralRepository.getPlayer(it?.mkcId.orEmpty()) }
-            .mapNotNull { (it as? NetworkResponse.Success)?.response }
-            .onEach { preferencesRepository.mkcPlayer = it }
-            .flatMapLatest { mkCentralRepository.getTeam(it.current_teams.firstOrNull()?.team_id.toString()) }
-            .mapNotNull { (it as? NetworkResponse.Success)?.response }
-            .onEach { preferencesRepository.mkcTeam = it }
+    override fun fetchPlayer(mkcId: String?): Flow<NetworkResponse<MKCFullPlayer>> =
+        when (mkcId) {
+            null ->
+                firebaseRepository.getUser(authenticationRepository.user?.uid.orEmpty())
+                    .onEach { preferencesRepository.role = it?.role ?: 0 }
+                    .flatMapLatest {  mkCentralRepository.getPlayer(it?.mkcId.orEmpty()) }
+            else ->  mkCentralRepository.getPlayer(mkcId)
+        }.onEach { preferencesRepository.mkcPlayer = (it as? NetworkResponse.Success)?.response }
+
+
+    override fun fetchTeam(): Flow<NetworkResponse<MKCFullTeam>> = mkCentralRepository
+        .getTeam(preferencesRepository.mkcPlayer?.current_teams?.firstOrNull()?.team_id.toString())
+        .onEach { preferencesRepository.mkcTeam = (it as? NetworkResponse.Success)?.response }
 
     override fun fetchTeams(): Flow<Unit> = mkCentralRepository.getTeams("150cc")
         .mapNotNull { (it as? NetworkResponse.Success)?.response }
@@ -123,7 +129,7 @@ class FetchUseCase @Inject constructor(
 
     private  fun addToRosterList(forceUpdate: Boolean, team: MKCFullTeam) = flow<Unit> {
         val rosterList = team.rosterList.orEmpty()
-        if (forceUpdate || rosterList.size != players.filter { it.rosterId == team.id }.size) {
+        if (rosterList.size != players.filter { it.rosterId == team.id }.size) {
             rosterList.forEach {
                 val fbUser = users.singleOrNull { item -> item.mkcId == it.mkcId.split(".").first() }
                 val mkcPlayer = when (forceUpdate || !players.map { it.mkcId }.contains(it.mkcId)) {

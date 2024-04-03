@@ -341,6 +341,7 @@
     <string name="kick_player">Kick this player</string>
     <string name="fetch_player">Fetching player...</string>
     <string name="fetch_allies">Fetching allies...</string>
+    <string name="fetch_team">Fetching team...</string>
     <string name="fetch_players">Fetching roster...</string>
     <string name="fetch_teams">Fetching teams...</string>
     <string name="fetch_wars">Fetching wars...</string>

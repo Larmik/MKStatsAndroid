@@ -55,6 +55,8 @@ class LoginViewModel @Inject constructor(
                 _sharedDialogValue.value = MKDialogState.Loading(R.string.fetch_player)
             }
             .flatMapLatest { fetchUseCase.fetchPlayer() }
+            .onEach { _sharedDialogValue.value = MKDialogState.Loading(R.string.fetch_team) }
+            .flatMapLatest { fetchUseCase.fetchTeam() }
             .onEach {  _sharedDialogValue.value = MKDialogState.Loading(R.string.fetch_players) }
             .flatMapLatest { fetchUseCase.fetchPlayers(forceUpdate = false) }
             .onEach {  _sharedDialogValue.value = MKDialogState.Loading(R.string.fetch_allies) }

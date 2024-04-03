@@ -39,7 +39,6 @@ class SignupViewModel @Inject constructor(
     private val firebaseRepository: FirebaseRepositoryInterface,
     private val preferencesRepository: PreferencesRepositoryInterface,
     private val authenticationRepository: AuthenticationRepositoryInterface,
-    private val mkCentralRepository: MKCentralRepositoryInterface,
     private val fetchUseCase: FetchUseCaseInterface
 ) : ViewModel() {
 
@@ -52,29 +51,27 @@ class SignupViewModel @Inject constructor(
     val sharedToast = _sharedToast.asSharedFlow()
 
     fun onSignup(email: String, password: String, mkcId: String) {
-        _sharedDialogValue.value = MKDialogState.Loading(R.string.creating_user)
-        val imageUrl =
-            "https://firebasestorage.googleapis.com/v0/b/stats-mk.appspot.com/o/mk_stats_logo.png?alt=media&token=930c6fdb-9e42-4b23-a9de-3c069d2f982b"
-        val createUser = authenticationRepository.createUser(email, password)
+        _sharedDialogValue.value = MKDialogState.Loading(R.string.fetch_player)
+        val fetchPlayer = fetchUseCase.fetchPlayer(mkcId)
             .shareIn(viewModelScope, SharingStarted.Lazily)
 
-        val fetchPlayer = createUser
-            .mapNotNull { (it as? AuthUserResponse.Success)?.user?.uid }
-            .mapNotNull { authenticationRepository.user }
+        val fetchTeam = fetchPlayer
+            .mapNotNull { (it as? NetworkResponse.Success)?.response }
+            .onEach { _sharedDialogValue.value = MKDialogState.Loading(R.string.fetch_team) }
+            .flatMapLatest { fetchUseCase.fetchTeam() }
+
+        val createUser = fetchTeam
+            .mapNotNull { (it as? NetworkResponse.Success)?.response }
+            .onEach { _sharedDialogValue.value = MKDialogState.Loading(R.string.creating_user) }
+            .flatMapLatest { authenticationRepository.createUser(email, password) }
+
+        createUser
+            .mapNotNull { (it as? AuthUserResponse.Success)?.user }
             .onEach {
                 preferencesRepository.authEmail = email
                 preferencesRepository.authPassword = password
                 preferencesRepository.firstLaunch = false
-                _sharedDialogValue.value = MKDialogState.Loading(R.string.fetch_player)
             }
-            .flatMapLatest { mkCentralRepository.getPlayer(mkcId) }
-
-        fetchPlayer
-            .mapNotNull { (it as? NetworkResponse.Success)?.response }
-            .onEach { preferencesRepository.mkcPlayer = it }
-            .flatMapLatest { mkCentralRepository.getTeam(it.current_teams.firstOrNull()?.team_id.toString()) }
-            .mapNotNull { (it as? NetworkResponse.Success)?.response }
-            .onEach { preferencesRepository.mkcTeam = it }
             .map {
                 val player = preferencesRepository.mkcPlayer
                 User(
@@ -82,7 +79,7 @@ class SignupViewModel @Inject constructor(
                     name = player?.display_name,
                     currentWar = "-1",
                     discordId = "-1",
-                    picture = player?.profile_picture?.takeIf { it.isNotEmpty() } ?: imageUrl,
+                    picture = player?.profile_picture,
                     role = 0,
                     mkcId = player?.id.toString(),
                     rosterId = player?.current_teams?.getOrNull(0)?.team_id.toString()
@@ -106,13 +103,24 @@ class SignupViewModel @Inject constructor(
             }
             .launchIn(viewModelScope)
 
-        flowOf(
-            createUser.mapNotNull { (it as? AuthUserResponse.Error)?.message },
-            fetchPlayer.mapNotNull { (it as? NetworkResponse.Error)?.error }
-        )
-            .flattenMerge()
-            .onEach { _sharedDialogValue.value = null }
-            .bind(_sharedToast, viewModelScope)
+        createUser
+            .mapNotNull { (it as? AuthUserResponse.Error)?.message }
+            .onEach { _sharedDialogValue.value = MKDialogState.Error(it) {
+                _sharedDialogValue.value = null
+            } }
+            .launchIn(viewModelScope)
+
+        fetchPlayer
+            .mapNotNull { (it as? NetworkResponse.Error) }
+            .onEach { _sharedDialogValue.value = MKDialogState.Error("Le joueur n'a pas été trouvé. Vous devez être inscrit sur MKCentral pour utiliser l'application.") {
+                _sharedDialogValue.value = null
+            } }.launchIn(viewModelScope)
+
+        fetchTeam
+            .mapNotNull { (it as? NetworkResponse.Error) }
+            .onEach { _sharedDialogValue.value = MKDialogState.Error("Le joueur ne fait partie d'aucune équipe. Vous devez faire partie d'une team sur MKCentral pour utiliser l'application.") {
+                _sharedDialogValue.value = null
+            } }.launchIn(viewModelScope)
     }
 
 }

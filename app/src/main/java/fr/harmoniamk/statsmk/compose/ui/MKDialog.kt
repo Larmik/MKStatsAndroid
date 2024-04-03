@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.CircularProgressIndicator
@@ -70,6 +71,11 @@ sealed class MKDialogState(
         positiveButtonClick = onUpdate,
         negativeButtonClick = onDismiss
     )
+
+    class Error(message: String, onDismiss: () -> Unit) : MKDialogState(
+        text = message,
+        negativeButtonClick = onDismiss
+    )
 }
 
 @Composable
@@ -82,7 +88,8 @@ fun MKDialog(state: MKDialogState) {
                     shape = RoundedCornerShape(5.dp)
                 )
                 .padding(vertical = 10.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .height(200.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {

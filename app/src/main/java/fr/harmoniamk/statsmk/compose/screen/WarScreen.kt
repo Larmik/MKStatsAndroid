@@ -53,7 +53,6 @@ fun WarScreen(
 
     MKBaseScreen(title = R.string.team_war, subTitle = team.value?.team_name) {
         when  {
-            team.value == null -> MKText(text = R.string.no_team, modifier = Modifier.padding(vertical = 30.dp))
             lastWars.value == null -> {
                 Column(Modifier.fillMaxWidth().padding(vertical = 10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
                     CircularProgressIndicator(
@@ -89,7 +88,6 @@ fun WarScreen(
                         }
                     }
                 }
-
             }
         }
     }

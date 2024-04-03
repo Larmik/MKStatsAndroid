@@ -121,7 +121,7 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
             if (isActive) trySend(users)
         }
         awaitClose {  }
-    }
+    }.flowOn(Dispatchers.IO)
 
     override fun getUser(id: String): Flow<User?>  = callbackFlow {
         Log.d("MKDebugOnly", "FirebaseRepository getUsers")
@@ -143,7 +143,7 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
             } ?: if (isActive) trySend(null)
         }
         awaitClose {  }
-    }
+    }.flowOn(Dispatchers.IO)
 
     override fun getTeams(): Flow<List<Team>> = callbackFlow {
         Log.d("MKDebugOnly", "FirebaseRepository getTeams")
@@ -158,16 +158,16 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
             if (isActive) trySend(teams)
         }
         awaitClose {  }
-    }
+    }.flowOn(Dispatchers.IO)
 
-    override fun getAllies(): Flow<List<String>> = callbackFlow {
+    override fun getAllies(): Flow<List<String>> = callbackFlow<List<String>> {
         Log.d("MKDebugOnly", "FirebaseRepository getAllies")
         database.child("allies").child(preferencesRepository.mkcTeam?.id.orEmpty()).get().addOnSuccessListener { snapshot ->
             val teams: List<String> = snapshot.children.map { it.value as String }
             if (isActive) trySend(teams)
         }
         awaitClose {  }
-    }
+    }.flowOn(Dispatchers.IO)
 
 
     override fun getNewWars(): Flow<List<NewWar>> = callbackFlow {
@@ -189,7 +189,7 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
             if (isActive) trySend(wars)
         }
         awaitClose {  }
-    }
+    }.flowOn(Dispatchers.IO)
 
     override fun getCurrentWar(): Flow<MKWar?>  = callbackFlow {
         Log.d("MKDebugOnly", "FirebaseRepository getCurrentWar")
@@ -214,7 +214,7 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
 
         }
         awaitClose {  }
-    }
+    }.flowOn(Dispatchers.IO)
 
     override fun getDispos(): Flow<List<WarDispo>> = callbackFlow {
         val postListener = object : ValueEventListener {
@@ -238,7 +238,7 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
         }
         database.addValueEventListener(postListener)
         awaitClose { database.removeEventListener(postListener) }
-    }
+    }.flowOn(Dispatchers.IO)
 
     override fun listenToCurrentWar(): Flow<MKWar?> = callbackFlow {
         val postListener = object : ValueEventListener {
@@ -267,7 +267,7 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
         }
         database.addValueEventListener(postListener)
         awaitClose { database.removeEventListener(postListener) }
-    }
+    }.flowOn(Dispatchers.IO)
 
 
     override fun deleteCurrentWar() = flow {

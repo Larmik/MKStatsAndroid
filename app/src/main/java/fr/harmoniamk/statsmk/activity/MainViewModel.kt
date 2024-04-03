@@ -7,10 +7,7 @@ import fr.harmoniamk.statsmk.BuildConfig
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKDialogState
 import fr.harmoniamk.statsmk.enums.WelcomeScreen
-import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.model.firebase.AuthUserResponse
-import fr.harmoniamk.statsmk.model.firebase.User
-import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.NetworkRepositoryInterface
@@ -100,6 +97,8 @@ class MainViewModel @Inject constructor(
                     .mapNotNull { (it as? AuthUserResponse.Success)?.user }
                     .onEach {  _sharedDialogValue.value = MKDialogState.Loading(R.string.fetch_player) }
                     .flatMapLatest { fetchUseCase.fetchPlayer() }
+                    .onEach { _sharedDialogValue.value = MKDialogState.Loading(R.string.fetch_team) }
+                    .flatMapLatest { fetchUseCase.fetchTeam() }
                     .onEach {  _sharedDialogValue.value = MKDialogState.Loading(R.string.fetch_players) }
                     .flatMapLatest { fetchUseCase.fetchPlayers(forceUpdate = false) }
                     .onEach {  _sharedDialogValue.value = MKDialogState.Loading(R.string.fetch_allies) }

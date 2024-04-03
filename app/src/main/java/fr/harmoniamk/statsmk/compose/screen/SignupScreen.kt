@@ -23,6 +23,7 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKBaseScreen
 import fr.harmoniamk.statsmk.compose.ui.MKButton
 import fr.harmoniamk.statsmk.compose.ui.MKDialog
+import fr.harmoniamk.statsmk.compose.ui.MKText
 import fr.harmoniamk.statsmk.compose.ui.MKTextField
 import fr.harmoniamk.statsmk.compose.viewModel.SignupViewModel
 import kotlinx.coroutines.flow.filterNotNull
@@ -89,6 +90,7 @@ fun SignupScreen(
                 placeHolderRes = R.string.id_mkc,
                 keyboardType = KeyboardType.Number
             )
+            MKText(text = "L'identifiant MKCentral correspond au numéro à la fin de la barre d'adresse lorsque tu es sur ton profil MKCentral. \n (ex: https://www.mariokartcentral.com/mkc/registry/players/40840)", fontSize = 10)
             MKButton(
                 text = R.string.suivant,
                 enabled = emailValue.value.text.isNotEmpty()

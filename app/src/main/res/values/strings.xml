@@ -346,7 +346,8 @@
     <string name="confirm">Confirmer</string>
     <string name="matchs_played">%s matchs joués</string>
     <string name="fetch_player">Récupération du joueur...</string>
-    <string name="fetch_players">Récupération de l\'équipe ...</string>
+    <string name="fetch_team">Récupération de l\'équipe ...</string>
+    <string name="fetch_players">Récupération des joueurs ...</string>
     <string name="fetch_allies">Récupération des allies...</string>
     <string name="fetch_teams">Récupération des équipes...</string>
     <string name="fetch_wars">Récupération des wars...</string>

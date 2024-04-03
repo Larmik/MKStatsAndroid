@@ -3,7 +3,6 @@ package fr.harmoniamk.statsmk.compose.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.model.network.MKCTeam
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
@@ -13,7 +12,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -29,9 +27,8 @@ class TeamListViewModel @Inject constructor(
 
     fun search(searched: String) {
         _sharedTeams.value = teams.filter {
-            it.team_tag?.toLowerCase(Locale.ROOT)
-                ?.contains(searched.toLowerCase(Locale.ROOT)).isTrue || it.team_name?.toLowerCase(
-                Locale.ROOT)?.contains(searched.toLowerCase(Locale.ROOT)) ?: true
+            it.team_tag.lowercase()
+                .contains(searched.lowercase()) || it.team_name.lowercase().contains(searched.lowercase())
         }.sortedBy { it.team_name }.filterNot { vm -> vm.team_id == preferencesRepository.mkcTeam?.id }
     }
 
@@ -39,7 +36,7 @@ class TeamListViewModel @Inject constructor(
         databaseRepository.getNewTeams()
             .onEach {
                 teams.clear()
-                teams.addAll(it.filterNot { team -> team.team_id == preferencesRepository.mkcTeam?.id })
+                teams.addAll(it.filter { team -> team.team_id != preferencesRepository.mkcTeam?.id && (team.player_count >= 6 || team.team_color == 0) })
                 _sharedTeams.value = teams.sortedBy { it.team_name }
             }
             .launchIn(viewModelScope)
