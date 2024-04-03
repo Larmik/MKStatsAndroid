@@ -109,7 +109,7 @@ class DatabaseRepository @Inject constructor(
 
     override fun writeNewTeams(list: List<MKCTeam>): Flow<Unit> {
         Log.d("MKDebugOnly", "DatabaseRepository writeNewTeams")
-        return newTeamLocalDataSource.bulkInsert(list)
+        return newTeamLocalDataSource.bulkInsert(list.filter { it.player_count >= 6 })
     }
 
     override fun writeWars(list: List<MKWar>): Flow<Unit> {

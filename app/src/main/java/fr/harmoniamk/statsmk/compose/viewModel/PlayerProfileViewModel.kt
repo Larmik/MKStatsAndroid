@@ -80,11 +80,14 @@ class PlayerProfileViewModel @AssistedInject constructor(
         mkCentralRepository.getPlayer(id)
             .mapNotNull { (it as? NetworkResponse.Success)?.response }
             .filterNotNull()
-            .zip(databaseRepository.getNewUser(id)) { fullPlayer, localPlayer ->
-                player = fullPlayer
-                _sharedPlayer.value = fullPlayer
+            .onEach {
+                player = it
+                _sharedPlayer.value = it
+            }
+            .flatMapLatest { databaseRepository.getNewUser(id)  }
+            .onEach { localPlayer ->
                 _sharedAllyButton.takeIf { authenticationRepository.userRole >= UserRole.ADMIN.ordinal }?.value = when {
-                    localPlayer?.mkcId?.isEmpty().isTrue -> Pair(fullPlayer.id.toString(), true)
+                    localPlayer?.mkcId?.isEmpty().isTrue -> Pair(player?.id.toString(), true)
                     localPlayer?.rosterId == "-1" -> Pair(localPlayer.mkcId, false)
                     else -> null
                 }

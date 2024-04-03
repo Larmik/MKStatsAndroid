@@ -8,11 +8,13 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import fr.harmoniamk.statsmk.database.MKDatabase
 import fr.harmoniamk.statsmk.model.network.MKCTeam
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -42,9 +44,9 @@ class NewTeamLocalDataSource @Inject constructor(@ApplicationContext private val
 
     private val dao = MKDatabase.getInstance(context).mkcTeamDao()
 
-    override fun getAll(): Flow<List<MKCTeam>> = dao.getAll().map { list -> list.map { MKCTeam(it) } }
+    override fun getAll(): Flow<List<MKCTeam>> = dao.getAll().map { list -> list.map { MKCTeam(it) } }.flowOn(Dispatchers.IO)
 
-    override fun getById(id: String) = dao.getById(id).filterNotNull().map { MKCTeam(it) }
+    override fun getById(id: String) = dao.getById(id).filterNotNull().map { MKCTeam(it) }.flowOn(Dispatchers.IO)
 
     override fun bulkInsert(teams: List<MKCTeam>): Flow<Unit> = flow { emit(dao.bulkInsert(teams.map { it.toEntity() })) }
 

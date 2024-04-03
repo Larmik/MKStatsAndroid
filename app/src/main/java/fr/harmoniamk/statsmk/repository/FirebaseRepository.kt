@@ -100,9 +100,9 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
 
     override fun writeAlly(ally: String): Flow<Unit>  =
         getAllies()
-            .onEach {
+            .map {
                 database.child("allies").child(preferencesRepository.mkcTeam?.id.orEmpty()).child(it.size.toString()).setValue(ally)
-            }.map {  }
+            }
 
     override fun getUsers(): Flow<List<User>> = callbackFlow {
         Log.d("MKDebugOnly", "FirebaseRepository getUsers")
