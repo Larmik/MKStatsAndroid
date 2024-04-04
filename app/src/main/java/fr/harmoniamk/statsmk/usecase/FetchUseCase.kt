@@ -195,17 +195,24 @@ class FetchUseCase @Inject constructor(
                 }
             }.flatMapLatest { databaseRepository.writeRoster(finalRosterWithCurrentWar) }
 
-    override fun fetchWars(): Flow<List<MKWar>> = firebaseRepository.getNewWars()
-        .zip(databaseRepository.getWars()) { remoteDb, localDb ->
-            val finalLocalDb = localDb.filter { it.war?.teamHost == preferencesRepository.mkcTeam?.id }
-            when (finalLocalDb.size == remoteDb.size) {
-                true -> localDb
-                else -> remoteDb
-                    .map { MKWar(it) }
-                    .withName(databaseRepository)
-                    .onEach { databaseRepository.writeWars(it).first() }
-                    .first()
-            }
+    override fun fetchWars(): Flow<List<MKWar>>  {
+        val warFlow = when {
+            preferencesRepository.mkcTeam?.primary_team_id != null -> firebaseRepository.getNewWars(preferencesRepository.mkcTeam?.primary_team_id.toString()).zip(firebaseRepository.getNewWars(preferencesRepository.mkcTeam?.id.orEmpty())) { a, b -> a + b }
+            preferencesRepository.mkcTeam?.secondary_teams != null -> firebaseRepository.getNewWars(
+                preferencesRepository.mkcTeam?.secondary_teams!!.getOrNull(0)?.id.toString()).zip(firebaseRepository.getNewWars(preferencesRepository.mkcTeam?.id.orEmpty())) { a, b -> a + b }
+            else -> firebaseRepository.getNewWars(preferencesRepository.mkcTeam?.id.orEmpty())
         }
-
+        return warFlow
+            .zip(databaseRepository.getWars()) { remoteDb, localDb ->
+                val finalLocalDb = localDb.filter { it.war?.teamHost == preferencesRepository.mkcTeam?.id }
+                when (finalLocalDb.size == remoteDb.size) {
+                    true -> localDb
+                    else -> remoteDb
+                        .map { MKWar(it) }
+                        .withName(databaseRepository)
+                        .onEach { databaseRepository.writeWars(it).first() }
+                        .first()
+                }
+            }
+    }
 }

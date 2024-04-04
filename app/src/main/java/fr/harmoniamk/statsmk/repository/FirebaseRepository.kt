@@ -25,7 +25,7 @@ interface FirebaseRepositoryInterface{
     fun getUser(id: String): Flow<User?>
     fun getTeams(): Flow<List<Team>>
     fun getAllies(): Flow<List<String>>
-    fun getNewWars(): Flow<List<NewWar>>
+    fun getNewWars(teamId: String): Flow<List<NewWar>>
 
 
     //Write and edit methods
@@ -170,12 +170,12 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
     }.flowOn(Dispatchers.IO)
 
 
-    override fun getNewWars(): Flow<List<NewWar>> = callbackFlow {
+    override fun getNewWars(teamId: String): Flow<List<NewWar>> = callbackFlow {
         Log.d("MKDebugOnly", "FirebaseRepository getNewWars")
-         database.child("newWars").child(preferencesRepository.mkcTeam?.id.orEmpty()).get().addOnSuccessListener { snapshot ->
+         database.child("newWars").child(teamId).get().addOnSuccessListener { snapshot ->
             val wars: List<NewWar> = snapshot.children
                 .map { it.value as Map<*, *> }
-                .map {map -> NewWar(
+                .map { map -> NewWar(
                     mid = map["mid"].toString(),
                     playerHostId = map["playerHostId"].toString(),
                     teamHost = map["teamHost"].toString(),

@@ -222,6 +222,7 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
                 },
                 goToMapStats = { trackIndex, teamId, userId ->
                     when {
+                        userId != null && teamId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId/Team/$teamId"))
                         teamId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/Team/$teamId"))
                         userId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId"))
                     }
@@ -249,6 +250,7 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
                     }
                 }, goToMapStats = { trackIndex, teamId, userId ->
                     when {
+                        userId != null && teamId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId/Team/$teamId"))
                         teamId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/Team/$teamId"))
                         userId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId"))
                     }
@@ -283,6 +285,7 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
                 },
                 goToMapStats = { trackIndex, teamId, userId ->
                     when {
+                        userId != null && teamId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId/Team/$teamId"))
                         teamId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/Team/$teamId"))
                         userId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId"))
                     }
@@ -318,6 +321,7 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
                 },
                 goToMapStats = { trackIndex, teamId, userId ->
                     when {
+                        userId != null && teamId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId/Team/$teamId"))
                         teamId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/Team/$teamId"))
                         userId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId"))
                     }
@@ -395,6 +399,7 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
                     }
                 }, goToMapStats = { trackIndex, teamId, userId ->
                     when {
+                        userId != null && teamId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId/Team/$teamId"))
                         teamId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/Team/$teamId"))
                         userId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId"))
                     }
@@ -432,6 +437,7 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
                     }
                 }, goToMapStats = { trackIndex, teamId, userId ->
                     when {
+                        userId != null && teamId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId/Team/$teamId"))
                         teamId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/Team/$teamId"))
                         userId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId"))
                     }
@@ -468,6 +474,7 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
                     }
                 }, goToMapStats = { trackIndex, teamId, userId ->
                     when {
+                        userId != null && teamId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId/Team/$teamId"))
                         teamId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/Team/$teamId"))
                         userId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId"))
                     }
@@ -520,6 +527,7 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
                     }
                 }, goToMapStats = { trackIndex, teamId, userId ->
                     when {
+                        userId != null && teamId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId/Team/$teamId"))
                         teamId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/Team/$teamId"))
                         userId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId"))
                     }

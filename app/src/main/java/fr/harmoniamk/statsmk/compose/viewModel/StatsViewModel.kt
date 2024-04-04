@@ -8,7 +8,6 @@ import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.extension.positionToPoints
 import fr.harmoniamk.statsmk.extension.withFullStats
 import fr.harmoniamk.statsmk.extension.withFullTeamStats
-import fr.harmoniamk.statsmk.fragment.stats.opponentRanking.OpponentRankingItemViewModel
 import fr.harmoniamk.statsmk.model.local.MKStats
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarPosition
@@ -16,7 +15,6 @@ import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import fr.harmoniamk.statsmk.model.local.MapDetails
 import fr.harmoniamk.statsmk.model.local.MapStats
 import fr.harmoniamk.statsmk.model.local.Stats
-import fr.harmoniamk.statsmk.model.local.TrackStats
 import fr.harmoniamk.statsmk.model.network.MKPlayer
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
@@ -77,15 +75,6 @@ class StatsViewModel @Inject constructor(
     val sharedTrackDetailsClick = _sharedTrackDetailsClick.asSharedFlow()
     val sharedOwnTeamId = _sharedOwnTeamId.asStateFlow()
 
-    private var bestMap: TrackStats? = null
-    private var worstMap: TrackStats? = null
-    private var mostPlayedMap: TrackStats? = null
-    private var highestVicory: MKWar? = null
-    private var loudestDefeat: MKWar? = null
-    private var mostPlayedTeam: OpponentRankingItemViewModel? = null
-    private var mostDefeatedTeam: OpponentRankingItemViewModel? = null
-    private var lessDefeatedTeam: OpponentRankingItemViewModel? = null
-
     private val users = mutableListOf<MKPlayer>()
     private val wars = mutableListOf<MKWar>()
     private var item: Stats? = null
@@ -102,11 +91,11 @@ class StatsViewModel @Inject constructor(
             .map {
                 when  {
                     type is StatsType.IndivStats -> it.filter { war -> war.hasPlayer(type.userId.split(".").firstOrNull()) }
-                    type is StatsType.TeamStats -> it.filter { war -> war.hasTeam(preferencesRepository.mkcTeam?.id.toString()) }
+                    type is StatsType.TeamStats -> it.filter { war -> war.hasTeam(preferencesRepository.mkcTeam) }
                     (type as? StatsType.OpponentStats)?.userId != null -> it.filter { war -> war.hasTeam((type as? StatsType.OpponentStats)?.teamId) && war.hasPlayer((type as? StatsType.OpponentStats)?.userId?.split(".")?.firstOrNull()) }
                     type is StatsType.OpponentStats -> it.filter { war -> war.hasTeam((type as? StatsType.OpponentStats)?.teamId) }
-                    type is StatsType.PeriodicStats && isWeek -> it.filter { war -> war.hasTeam(preferencesRepository.mkcTeam?.id.toString()) && war.isThisWeek  }
-                    type is StatsType.PeriodicStats -> it.filter { war -> war.hasTeam(preferencesRepository.mkcTeam?.id.toString()) && war.isThisMonth  }
+                    type is StatsType.PeriodicStats && isWeek -> it.filter { war -> war.hasTeam(preferencesRepository.mkcTeam) && war.isThisWeek  }
+                    type is StatsType.PeriodicStats -> it.filter { war -> war.hasTeam(preferencesRepository.mkcTeam) && war.isThisMonth  }
                     else -> it
                 }
             }
@@ -118,7 +107,9 @@ class StatsViewModel @Inject constructor(
             .flatMapLatest {
                 when {
                     type is StatsType.IndivStats -> it.withFullStats(databaseRepository, type.userId.split(".").firstOrNull())
-                    type is StatsType.OpponentStats -> databaseRepository.getNewTeam(type.teamId).filterNotNull().flatMapLatest { it.withFullTeamStats(wars, databaseRepository, type.userId?.split(".")?.firstOrNull(), isIndiv = true) }
+                    type is StatsType.OpponentStats -> databaseRepository.getNewTeam(type.teamId)
+                        .filterNotNull()
+                        .flatMapLatest { it.withFullTeamStats(wars, databaseRepository, type.userId?.split(".")?.firstOrNull(), isIndiv = true) }
                     else -> it.withFullStats(databaseRepository)
                 }
             }
@@ -154,43 +145,23 @@ class StatsViewModel @Inject constructor(
                     this.lowestPlayerScore = finalList.minByOrNull { it.first }
                 })
             }
-            .flatMapLatest { databaseRepository.getNewTeam((type as StatsType.OpponentStats).teamId) }
-            .onEach { _sharedSubtitle.value = it?.team_name }
+            .flatMapLatest { databaseRepository.getNewUser((type as? StatsType.OpponentStats)?.userId).zip(databaseRepository.getNewTeam((type as? StatsType.OpponentStats)?.teamId)) { user, team ->
+                _sharedSubtitle.value = when {
+                    user != null && team != null -> "${user.name} vs ${team.team_name}"
+                    else -> team?.team_name.orEmpty()
+                }
+            } }
             .launchIn(viewModelScope)
 
         warFlow
             .filter { type is StatsType.IndivStats || type is StatsType.TeamStats || type is StatsType.PeriodicStats }
             .onEach {
-                bestMap = it.bestPlayerMap
-                worstMap = it.worstPlayerMap
-                mostPlayedMap = it.mostPlayedMap
-                highestVicory = it.warStats.highestVictory
-                loudestDefeat = it.warStats.loudestDefeat
                 _sharedOwnTeamId.value = preferencesRepository.mkcTeam?.id?.takeIf { type is StatsType.TeamStats || type is StatsType.PeriodicStats}
                 _sharedStats.emit(it)
                 _sharedSubtitle.value = when (type) {
                     is StatsType.IndivStats -> users.singleOrNull { it.mkcId == (type as? StatsType.IndivStats)?.userId }?.name
                     else -> preferencesRepository.mkcTeam?.team_name
                 }
-            }
-            .flatMapLatest {
-                when (type) {
-                    is StatsType.IndivStats -> listOfNotNull(
-                        it.mostPlayedTeam?.team,
-                        it.mostDefeatedTeam?.team,
-                        it.lessDefeatedTeam?.team
-                    ).withFullTeamStats(wars, databaseRepository, type.userId.split(".").firstOrNull())
-                    else -> listOfNotNull(
-                        it.mostPlayedTeam?.team,
-                        it.mostDefeatedTeam?.team,
-                        it.lessDefeatedTeam?.team
-                    ).withFullTeamStats(wars, databaseRepository)
-                }
-            }
-            .onEach {
-                mostPlayedTeam = it.getOrNull(0)
-                mostDefeatedTeam = it.getOrNull(1)
-                lessDefeatedTeam = it.getOrNull(2)
             }.launchIn(viewModelScope)
 
         warFlow
@@ -200,7 +171,7 @@ class StatsViewModel @Inject constructor(
                 when {
                     onlyIndiv -> wars.filter { war -> war.hasPlayer(type.userId?.split(".")?.firstOrNull()) }
                     type.userId != null && type.teamId != null -> wars.filter { war -> war.hasPlayer(type.userId.split(".").firstOrNull()) && war.hasTeam(type.teamId) }
-                    else -> wars.filter { war -> war.hasTeam(type.teamId ?: preferencesRepository.mkcTeam?.id) }
+                    else -> wars.filter { war -> (type.teamId != null && war.hasTeam(type.teamId)) || war.hasTeam(preferencesRepository.mkcTeam) }
                 }
             }
             .filter {
@@ -209,7 +180,7 @@ class StatsViewModel @Inject constructor(
                         || onlyIndiv
             }
             .mapNotNull { list -> list
-                .filter {  (onlyIndiv && it.hasPlayer((type as StatsType.MapStats).userId?.split(".")?.firstOrNull())) || !onlyIndiv && it.hasTeam(preferencesRepository.mkcTeam?.id) }
+                .filter {  (onlyIndiv && it.hasPlayer((type as StatsType.MapStats).userId?.split(".")?.firstOrNull())) || !onlyIndiv && it.hasTeam(preferencesRepository.mkcTeam) }
                 .filter {  !(type as StatsType.MapStats).isWeek.isTrue || (type.isWeek.isTrue && it.isThisWeek) }
                 .filter {  !(type as StatsType.MapStats).isMonth.isTrue || (type.isMonth.isTrue && it.isThisMonth) }
             }

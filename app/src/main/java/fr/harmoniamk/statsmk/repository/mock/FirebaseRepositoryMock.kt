@@ -54,7 +54,7 @@ emit(null)    }
         emit(listOf())
     }
 
-    override fun getNewWars(): Flow<List<NewWar>> = flow {
+    override fun getNewWars(teamId: String): Flow<List<NewWar>> = flow {
         emit(listOf())
     }
 

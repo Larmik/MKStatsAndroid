@@ -70,8 +70,7 @@ class StatsRankingViewModel @AssistedInject constructor(
     @Assisted("userId") val userId: String?,
     @Assisted("teamId") val teamId: String?,
     private val databaseRepository: DatabaseRepositoryInterface,
-    private val preferencesRepository: PreferencesRepositoryInterface,
-    private val authenticationRepository: AuthenticationRepositoryInterface
+    private val preferencesRepository: PreferencesRepositoryInterface
     ) : ViewModel() {
 
     companion object {
@@ -159,7 +158,7 @@ class StatsRankingViewModel @AssistedInject constructor(
                     .map { it.filterNot { team -> team.team_id == preferencesRepository.mkcTeam?.id.toString() } }
                     .mapNotNull { it.sortedBy { it.team_name } }
                     .flatMapLatest { it.withFullTeamStats(warList, databaseRepository, preferencesRepository.mkcPlayer?.id.toString().split(".").first().takeIf { indivEnabled.isTrue }) }
-                    .mapNotNull { it.filter { vm -> (vm.userId == null && vm.stats.warStats.list.any { war -> war.hasTeam(preferencesRepository.mkcTeam?.id.toString()) }) || vm.userId != null } }
+                    .mapNotNull { it.filter { vm -> (vm.userId == null && vm.stats.warStats.list.any { war -> war.hasTeam(preferencesRepository.mkcTeam) }) || vm.userId != null } }
                     .onEach {
                         _sharedList.value = sortTeams(sortType, it)
                     }.launchIn(viewModelScope)

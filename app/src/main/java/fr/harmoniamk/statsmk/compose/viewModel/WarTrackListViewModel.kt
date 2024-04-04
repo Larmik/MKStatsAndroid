@@ -118,9 +118,9 @@ class WarTrackListViewModel @Inject constructor(
         when {
             userId != null && teamId != null -> list.filter { war -> war.hasPlayer(preferencesRepository.mkcPlayer?.id.toString()) && war.hasTeam(teamId) }
             onlyIndiv -> list.filter { war -> war.hasPlayer(userId ?: preferencesRepository.mkcPlayer?.id.toString()) }
-            else -> list.filter { war -> war.hasTeam(teamId ?: preferencesRepository.mkcTeam?.id) }
+            else -> list.filter { war -> (teamId != null && war.hasTeam(teamId)) || war.hasTeam(preferencesRepository.mkcTeam) }
         }
-        .filter { (onlyIndiv && it.hasPlayer(userId)) || !onlyIndiv && it.hasTeam(preferencesRepository.mkcTeam?.id) }
+        .filter { (onlyIndiv && it.hasPlayer(userId)) || !onlyIndiv && it.hasTeam(preferencesRepository.mkcTeam) }
         .forEach { mkWar ->
             mkWar.warTracks?.filter { track -> track.index == trackIndex }?.forEach { track ->
                 val position = track.track?.warPositions?.singleOrNull { it.playerId == userId }?.position?.takeIf { userId != null }

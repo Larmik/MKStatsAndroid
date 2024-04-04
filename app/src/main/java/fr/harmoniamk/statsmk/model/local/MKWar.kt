@@ -3,6 +3,7 @@ package fr.harmoniamk.statsmk.model.local
 import android.os.Parcelable
 import fr.harmoniamk.statsmk.extension.*
 import fr.harmoniamk.statsmk.model.firebase.NewWar
+import fr.harmoniamk.statsmk.model.network.MKCFullTeam
 import kotlinx.android.parcel.Parcelize
 import java.io.Serializable
 import java.util.*
@@ -35,6 +36,15 @@ data class MKWar(val war: NewWar?) : Serializable, Parcelable {
     fun hasTeam(teamId: String?): Boolean {
         return war?.teamHost == teamId || war?.teamOpponent == teamId
     }
+    fun hasTeam(team: MKCFullTeam?): Boolean {
+        return war?.teamHost == team?.id
+                || war?.teamHost == team?.primary_team_id?.toString()
+                ||team?.secondary_teams?.map { it.id }?.contains(war?.teamHost).isTrue
+                || war?.teamOpponent == team?.id
+                || war?.teamOpponent == team?.primary_team_id?.toString()
+                ||team?.secondary_teams?.map { it.id }?.contains(war?.teamOpponent).isTrue
+    }
+
     var name: String? = null
 
     val isThisWeek: Boolean
