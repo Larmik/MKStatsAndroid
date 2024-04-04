@@ -36,7 +36,9 @@ class TeamListViewModel @Inject constructor(
         databaseRepository.getNewTeams()
             .onEach {
                 teams.clear()
-                teams.addAll(it.filter { team -> team.team_id != preferencesRepository.mkcTeam?.id  })
+                teams.addAll(it
+                    .filter { it.player_count >= 6 }
+                    .filter { team -> team.team_id != preferencesRepository.mkcTeam?.id  })
                 _sharedTeams.value = teams.sortedBy { it.team_name }
             }
             .launchIn(viewModelScope)
