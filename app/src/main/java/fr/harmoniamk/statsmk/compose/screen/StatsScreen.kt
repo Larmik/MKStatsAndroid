@@ -7,12 +7,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -81,40 +83,44 @@ fun StatsScreen(
         Column(modifier = Modifier
             .verticalScroll(rememberScrollState())
             .padding(10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
-            stats.value?.let { MKWarStatsView(mkStats = it) }
-            type.takeIf { it is StatsType.IndivStats || (it as? StatsType.OpponentStats)?.userId != null }?.let {
-                (stats.value as? Stats) ?.let { MKPlayerScoreStatsView(stats = it, onHighestClick = goToWarDetails, onLowestClick = goToWarDetails) }
-            }
-            stats.value?.let { MKWarDetailsStatsView(mkStats = it, type = type) }
-            type.takeIf { it is StatsType.IndivStats || it is StatsType.TeamStats }?.let {
-                (stats.value as? Stats) ?.let {
-                    MKTeamStatsView(stats = it, userId = (type as? StatsType.IndivStats)?.userId, onLessDefeatedClick = goToOpponentStats, onMostDefeatedClick = goToOpponentStats, onMostPlayedClick = goToOpponentStats)
+            when (val mkStats = stats.value) {
+                null ->  CircularProgressIndicator(
+                    modifier = Modifier.padding(vertical = 10.dp), color = colorResource(
+                        id = R.color.harmonia_dark
+                    )
+                )
+                else -> {
+                    MKWarStatsView(mkStats = mkStats)
+                    type.takeIf { it is StatsType.IndivStats || (it as? StatsType.OpponentStats)?.userId != null }?.let {
+                        (stats.value as? Stats) ?.let { MKPlayerScoreStatsView(stats = it, onHighestClick = goToWarDetails, onLowestClick = goToWarDetails) }
+                    }
+                    MKWarDetailsStatsView(mkStats = mkStats, type = type)
+                    type.takeIf { it is StatsType.IndivStats || it is StatsType.TeamStats }?.let {
+                        (stats.value as? Stats) ?.let {
+                            MKTeamStatsView(stats = it, userId = (type as? StatsType.IndivStats)?.userId, onLessDefeatedClick = goToOpponentStats, onMostDefeatedClick = goToOpponentStats, onMostPlayedClick = goToOpponentStats)
+                        }
+                    }
+                    MKTeamScoreStatView(stats = mkStats, onHighestClick = goToWarDetails, onLoudestClick = goToWarDetails)
+                    type.takeIf { it !is StatsType.MapStats }?.let {
+                        (stats.value as? Stats) ?.let { MKMapsStatsView(
+                            stats = it,
+                            type = type,
+                            periodic = period.value,
+                            onMostPlayedClick = goToMapStats,
+                            onBestClick = goToMapStats,
+                            onWorstClick = goToMapStats
+                        ) }
+                    }
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround) {
+                        MKButton(text = R.string.voir_le_d_tail) {
+                            viewModel.onDetailsWarClick()
+                        }
+                        if (type !is StatsType.MapStats)
+                            MKButton(text = R.string.voir_le_d_tail_map) {
+                                viewModel.onDetailsTrackClick()
+                            }
+                    }
                 }
-            }
-            stats.value?.let { MKTeamScoreStatView(stats = it, onHighestClick = goToWarDetails, onLoudestClick = goToWarDetails) }
-            type.takeIf { it !is StatsType.MapStats }?.let {
-                (stats.value as? Stats) ?.let { MKMapsStatsView(
-                    stats = it,
-                    type = type,
-                    periodic = period.value,
-                    onMostPlayedClick = goToMapStats,
-                    onBestClick = goToMapStats,
-                    onWorstClick = goToMapStats
-                ) }
-            }
-            stats.value?.let {
-
-               Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceAround) {
-
-                   MKButton(text = R.string.voir_le_d_tail) {
-                       viewModel.onDetailsWarClick()
-                   }
-                   if (type !is StatsType.MapStats)
-                       MKButton(text = R.string.voir_le_d_tail_map) {
-                           viewModel.onDetailsTrackClick()
-                       }
-               }
-
             }
         }
     }

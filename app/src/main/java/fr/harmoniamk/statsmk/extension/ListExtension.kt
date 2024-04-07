@@ -8,7 +8,6 @@ import fr.harmoniamk.statsmk.model.local.*
 import fr.harmoniamk.statsmk.model.network.MKPlayer
 import fr.harmoniamk.statsmk.model.network.MKCTeam
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.mapNotNull
@@ -20,6 +19,13 @@ fun <T> List<T>.safeSubList(from: Int, to: Int): List<T> = when {
     to < from -> listOf()
     else -> this.subList(from, to)
 }
+
+fun List<Int?>?.sum(): Int {
+    this?.filterNotNull()?.let { list -> return list.sumOf { it } }
+    return 0
+}
+
+/** LISTE MKWAR **/
 
 fun List<MKWar>.withFullStats(databaseRepository: DatabaseRepositoryInterface, userId: String? = null, teamId: String? = null) = flow {
     Log.d("MKDebugOnly", "ListExtension withFullStats: for list")
@@ -132,6 +138,8 @@ fun List<MKWar?>.withName(databaseRepository: DatabaseRepositoryInterface) = flo
     emit(temp)
 }
 
+/** LISTE MKCTEAM **/
+
 fun List<MKCTeam>.withFullTeamStats(
     wars: List<MKWar>?,
     databaseRepository: DatabaseRepositoryInterface,
@@ -145,7 +153,8 @@ fun List<MKCTeam>.withFullTeamStats(
         wars
             ?.filter { (weekOnly && it.isThisWeek) || !weekOnly }
             ?.filter { (monthOnly && it.isThisMonth) || !monthOnly }
-            ?.withFullStats(databaseRepository, teamId = team.team_id, userId = userId)?.first()
+            ?.withFullStats(databaseRepository, teamId = team.team_id, userId = userId)
+            ?.firstOrNull()
             ?.let {
                 if (it.warStats.list.isNotEmpty())
                     temp.add(OpponentRankingItemViewModel(team, it, userId))
@@ -153,6 +162,8 @@ fun List<MKCTeam>.withFullTeamStats(
     }
     emit(temp)
 }
+
+/** LISTE PENALTY **/
 
 fun List<Penalty>.withTeamName(databaseRepository: DatabaseRepositoryInterface) = flow {
     Log.d("MKDebugOnly", "ListExtension withTeamName: for list")
@@ -167,62 +178,7 @@ fun List<Penalty>.withTeamName(databaseRepository: DatabaseRepositoryInterface) 
     emit(temp)
 }
 
-fun WarDispo.withLineUpAndOpponent(databaseRepository: DatabaseRepositoryInterface) = flow {
-    Log.d("MKDebugOnly", "ListExtension withLineUpAndOpponent")
-    this@withLineUpAndOpponent.opponentId?.takeIf { it != "null" }.let { id ->
-        val opponentName = databaseRepository.getNewTeam(id).firstOrNull()?.team_name
-        val lineupNames = mutableListOf<String?>()
-        var hostName: String? = null
-        this@withLineUpAndOpponent.lineUp?.forEach {
-            val playerName = databaseRepository.getNewUser(it.userId).firstOrNull()?.name
-            lineupNames.add(playerName)
-        }
-        this@withLineUpAndOpponent.host?.takeIf { it != "null" }?.let {
-            hostName = when (this@withLineUpAndOpponent.host?.contains("-")) {
-                true -> this@withLineUpAndOpponent.host
-                else -> databaseRepository.getNewUser(this@withLineUpAndOpponent.host)
-                    .firstOrNull()?.name
-            }
-        }
-        emit(this@withLineUpAndOpponent.apply {
-            this.lineupNames = lineupNames.filterNotNull()
-            this.opponentName = opponentName
-            this.hostName = hostName
-        })
-    }
-}
 
-fun NewWar?.withName(databaseRepository: DatabaseRepositoryInterface) = flow {
-    Log.d("MKDebugOnly", "ListExtension withName: for war")
-    this@withName?.let {
-        val hostName = databaseRepository.getNewTeam(it.teamHost).firstOrNull()?.team_tag
-        val opponentName = databaseRepository.getNewTeam(it.teamOpponent).firstOrNull()?.team_tag
-        emit(MKWar(it).apply { this.name = "$hostName - $opponentName" })
-    } ?: emit(null)
-}
-
-fun MKCTeam.withFullTeamStats(
-    wars: List<MKWar>?,
-    databaseRepository: DatabaseRepositoryInterface,
-    userId: String? = null,
-    weekOnly: Boolean = false,
-    monthOnly: Boolean = false,
-    isIndiv: Boolean = false
-) = flow {
-    Log.d("MKDebugOnly", "ListExtension withFullTeamStats: for team")
-    wars
-        ?.filter { (weekOnly && it.isThisWeek) || !weekOnly }
-        ?.filter { (monthOnly && it.isThisMonth) || !monthOnly }
-        ?.withFullStats(databaseRepository, teamId = this@withFullTeamStats.team_id, userId = userId)
-        ?.first()
-        ?.takeIf { it.warStats.list.isNotEmpty() }
-        ?.let { emit(it) }
-}
-
-fun List<Int?>?.sum(): Int {
-    this?.filterNotNull()?.let { list -> return list.sumOf { it } }
-    return 0
-}
 
 /** Parsing methods for firebase POJOs **/
 

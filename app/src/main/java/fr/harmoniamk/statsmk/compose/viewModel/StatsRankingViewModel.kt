@@ -102,7 +102,7 @@ class StatsRankingViewModel @AssistedInject constructor(
         fun create(@Assisted("userId") userId: String?, @Assisted("teamId") teamId: String?): StatsRankingViewModel
     }
 
-    private val _sharedList = MutableStateFlow<List<RankingItemViewModel>>(listOf())
+    private val _sharedList = MutableStateFlow<List<RankingItemViewModel>?>(null)
     private val _sharedUserId = MutableStateFlow<String?>(null)
     private val _sharedTeamId = MutableStateFlow<String?>(null)
     private val _sharedGoToStats = MutableSharedFlow<RankingItemViewModel?>()
@@ -165,7 +165,11 @@ class StatsRankingViewModel @AssistedInject constructor(
                     .flatMapLatest { databaseRepository.getNewTeams() }
                     .map { it.filterNot { team -> team.team_id == preferencesRepository.mkcTeam?.id.toString() } }
                     .mapNotNull { it.sortedBy { it.team_name } }
-                    .flatMapLatest { it.withFullTeamStats(warList, databaseRepository, preferencesRepository.mkcPlayer?.id.toString().split(".").first().takeIf { indivEnabled.isTrue }) }
+                    .flatMapLatest { it.withFullTeamStats(
+                        wars = warList,
+                        databaseRepository = databaseRepository,
+                        userId = preferencesRepository.mkcPlayer?.id.toString().split(".").first().takeIf { indivEnabled.isTrue })
+                    }
                     .mapNotNull { it.filter { vm -> (vm.userId == null && vm.stats.warStats.list.any { war -> war.hasTeam(preferencesRepository.mkcTeam) }) || vm.userId != null } }
                     .onEach {
                         _sharedList.value = sortTeams(sortType, it)
@@ -209,7 +213,7 @@ class StatsRankingViewModel @AssistedInject constructor(
                     }
                     .map {
                         _sharedList.value = sortTracks(sortType, it, indivEnabled.isTrue, finalUserId.orEmpty())
-                        _sharedTeamId.value =  teamId ?: preferencesRepository.mkcTeam?.id.toString()
+                        _sharedTeamId.value = teamId
                         _sharedUserId.value = finalUserId
                     }
                     .launchIn(viewModelScope)

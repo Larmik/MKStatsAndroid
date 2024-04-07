@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
@@ -19,11 +20,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.model.local.RankingItemViewModel
 import fr.harmoniamk.statsmk.compose.ui.MKBaseScreen
@@ -138,25 +139,33 @@ fun StatsRankingScreen(
                 contentDescription = null
             )
         }
-        LazyColumn {
-            items(list.value) { rankingItem ->
-                when (rankingItem) {
-                    is PlayerRankingItemViewModel -> {
-                        MKPlayerItem(playerRanking = rankingItem, onRootClick = { viewModel.onItemClick(rankingItem) })
-                    }
 
-                    is OpponentRankingItemViewModel -> {
-                        MKTeamItem(teamRanking = rankingItem, onClick = { viewModel.onItemClick(rankingItem) })
-                    }
+        when (list.value) {
+            null -> CircularProgressIndicator(
+                modifier = Modifier.padding(vertical = 10.dp), color = colorResource(
+                    id = R.color.harmonia_dark
+                )
+            )
+            else -> LazyColumn {
+                items(list.value.orEmpty()) { rankingItem ->
+                    when (rankingItem) {
+                        is PlayerRankingItemViewModel -> {
+                            MKPlayerItem(playerRanking = rankingItem, onRootClick = { viewModel.onItemClick(rankingItem) })
+                        }
 
-                    is TrackStats -> {
-                        MKTrackItem(
-                            modifier = Modifier.padding(bottom = 5.dp),
-                            trackRanking = rankingItem,
-                            onClick = {
-                                viewModel.onItemClick(rankingItem)
-                            }
-                        )
+                        is OpponentRankingItemViewModel -> {
+                            MKTeamItem(teamRanking = rankingItem, onClick = { viewModel.onItemClick(rankingItem) })
+                        }
+
+                        is TrackStats -> {
+                            MKTrackItem(
+                                modifier = Modifier.padding(bottom = 5.dp),
+                                trackRanking = rankingItem,
+                                onClick = {
+                                    viewModel.onItemClick(rankingItem)
+                                }
+                            )
+                        }
                     }
                 }
             }

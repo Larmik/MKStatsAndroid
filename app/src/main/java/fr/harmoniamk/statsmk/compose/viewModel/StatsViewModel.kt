@@ -117,7 +117,7 @@ class StatsViewModel @Inject constructor(
                     type is StatsType.IndivStats -> it.withFullStats(databaseRepository, type.userId.split(".").firstOrNull())
                     type is StatsType.OpponentStats -> databaseRepository.getNewTeam(type.teamId)
                         .filterNotNull()
-                        .flatMapLatest { it.withFullTeamStats(wars, databaseRepository, type.userId?.split(".")?.firstOrNull(), isIndiv = true) }
+                        .flatMapLatest { it.withFullTeamStats(wars, databaseRepository, type.userId?.split(".")?.firstOrNull()) }
                     else -> it.withFullStats(databaseRepository)
                 }
             }
