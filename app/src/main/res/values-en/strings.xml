@@ -381,5 +381,5 @@
     <string name="refresh_data">Refresh data</string>
     <string name="id_mkc">MKCentral ID</string>
     <string name="confirmez_le_mot_de_passe">Confimez le mot de passe</string>
-
+    <string name="all">All</string>
 </resources>

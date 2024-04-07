@@ -19,6 +19,7 @@ import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.MKCentralRepositoryInterface
+import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,7 +29,6 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.zip
 
 @FlowPreview
 @ExperimentalCoroutinesApi
@@ -37,6 +37,7 @@ class PlayerProfileViewModel @AssistedInject constructor(
     mkCentralRepository: MKCentralRepositoryInterface,
     private val databaseRepository: DatabaseRepositoryInterface,
     private val firebaseRepository: FirebaseRepositoryInterface,
+    private val preferencesRepository: PreferencesRepositoryInterface,
     authenticationRepository: AuthenticationRepositoryInterface
 ) : ViewModel() {
 
@@ -95,7 +96,8 @@ class PlayerProfileViewModel @AssistedInject constructor(
     }
 
     fun onAddAlly() {
-      firebaseRepository.writeAlly(player?.id.toString())
+        val teamId = preferencesRepository.mkcTeam?.primary_team_id ?: preferencesRepository.mkcTeam?.id
+      firebaseRepository.writeAlly(teamId.toString(), player?.id.toString())
             .flatMapLatest { databaseRepository.writeUser(MKPlayer(player)) }
             .onEach { _sharedAllyButton.value = null }
             .launchIn(viewModelScope)

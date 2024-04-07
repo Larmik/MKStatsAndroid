@@ -27,6 +27,7 @@ import fr.harmoniamk.statsmk.compose.ui.stats.MKTeamScoreStatView
 import fr.harmoniamk.statsmk.compose.ui.stats.MKTeamStatsView
 import fr.harmoniamk.statsmk.compose.ui.stats.MKWarDetailsStatsView
 import fr.harmoniamk.statsmk.compose.ui.stats.MKWarStatsView
+import fr.harmoniamk.statsmk.compose.viewModel.Periodics
 import fr.harmoniamk.statsmk.compose.viewModel.StatsType
 import fr.harmoniamk.statsmk.compose.viewModel.StatsViewModel
 import fr.harmoniamk.statsmk.enums.Maps
@@ -38,42 +39,43 @@ fun StatsScreen(
     viewModel: StatsViewModel = hiltViewModel(),
     type: StatsType,
     onWarDetailsClick: (StatsType, Boolean?) -> Unit,
-    onTrackDetailsClick: (String?, String?) -> Unit,
+    onTrackDetailsClick: (String?, String?, String?) -> Unit,
     goToWarDetails: (String?) -> Unit,
     goToOpponentStats: (String?, String?) -> Unit,
-    goToMapStats: (Int, String?, String?) -> Unit
+    goToMapStats: (Int, String?, String?, String) -> Unit
 
 ) {
     val stats = viewModel.sharedStats.collectAsState()
     val subtitle = viewModel.sharedSubtitle.collectAsState()
-    val isWeek = viewModel.sharedWeekEnabled.collectAsState()
-    val ownTeamId = viewModel.sharedOwnTeamId.collectAsState()
+    val period = viewModel.sharedPeriodEnabled.collectAsState()
 
-    viewModel.init(type, isWeek.value)
+    viewModel.init(type, (type as? StatsType.MapStats)?.periodic ?: period.value)
 
     LaunchedEffect(Unit) {
         viewModel.sharedWarDetailsClick.collect {
-            onWarDetailsClick(type, isWeek.value)
+            onWarDetailsClick(type, period.value == Periodics.Week.name)
         }
     }
     LaunchedEffect(Unit) {
         viewModel.sharedTrackDetailsClick.collect {
             val userId = (type as? StatsType.IndivStats)?.userId
             val teamId = (type as? StatsType.OpponentStats)?.teamId
-            onTrackDetailsClick(userId, teamId)
+            onTrackDetailsClick(userId, teamId, period.value)
         }
     }
     MKBaseScreen(title = type.title, subTitle = subtitle.value) {
         (type as? StatsType.MapStats)?.trackIndex?.let {
             MKTrackItem(map = Maps.values().getOrNull(it))
         }
-        (type as? StatsType.PeriodicStats)?.let {
+        if (type is StatsType.IndivStats || type is StatsType.TeamStats) {
             MKSegmentedSelector(buttons = listOf(
-                Pair(stringResource(id = R.string.hebdo)) { viewModel.init(type, true) },
-                Pair(stringResource(id = R.string.mensuel)) { viewModel.init(type, false) },
-            ), indexSelected = when (isWeek.value) {
-                true -> 0
-                else -> 1
+                Pair(stringResource(id = R.string.all)) { viewModel.init(type, Periodics.All.name) },
+                Pair(stringResource(id = R.string.hebdo)) { viewModel.init(type, Periodics.Week.name) },
+                Pair(stringResource(id = R.string.mensuel)) { viewModel.init(type, Periodics.Month.name) },
+            ), indexSelected = when (period.value) {
+                Periodics.All.name -> 0
+                Periodics.Week.name -> 1
+                else -> 2
             })
         }
         Column(modifier = Modifier
@@ -84,14 +86,21 @@ fun StatsScreen(
                 (stats.value as? Stats) ?.let { MKPlayerScoreStatsView(stats = it, onHighestClick = goToWarDetails, onLowestClick = goToWarDetails) }
             }
             stats.value?.let { MKWarDetailsStatsView(mkStats = it, type = type) }
-            type.takeIf { it is StatsType.IndivStats || it is StatsType.TeamStats ||it is StatsType.PeriodicStats }?.let {
+            type.takeIf { it is StatsType.IndivStats || it is StatsType.TeamStats }?.let {
                 (stats.value as? Stats) ?.let {
                     MKTeamStatsView(stats = it, userId = (type as? StatsType.IndivStats)?.userId, onLessDefeatedClick = goToOpponentStats, onMostDefeatedClick = goToOpponentStats, onMostPlayedClick = goToOpponentStats)
                 }
             }
             stats.value?.let { MKTeamScoreStatView(stats = it, onHighestClick = goToWarDetails, onLoudestClick = goToWarDetails) }
             type.takeIf { it !is StatsType.MapStats }?.let {
-                (stats.value as? Stats) ?.let { MKMapsStatsView(stats = it, type = type, ownTeamId = ownTeamId.value, onMostPlayedClick = goToMapStats, onBestClick = goToMapStats, onWorstClick = goToMapStats) }
+                (stats.value as? Stats) ?.let { MKMapsStatsView(
+                    stats = it,
+                    type = type,
+                    periodic = period.value,
+                    onMostPlayedClick = goToMapStats,
+                    onBestClick = goToMapStats,
+                    onWorstClick = goToMapStats
+                ) }
             }
             stats.value?.let {
 

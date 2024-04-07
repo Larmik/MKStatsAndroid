@@ -74,7 +74,7 @@ fun MKWarDetailsStatsView(mkStats: MKStats, type: StatsType) {
                             else -> stats?.averagePointsLabel.toString()
                         }, font = R.font.orbitron_semibold, fontSize = 20, textColor = diffColor)
                 }
-                type.takeIf { it is StatsType.PeriodicStats || it is StatsType.OpponentStats }?.let {
+                type.takeIf { it is StatsType.OpponentStats }?.let {
                     Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
                         MKText(text = R.string.maps_gagn_es, fontSize = 12)
                         MKText(text = stats?.mapsWon.toString(), fontSize = 16, font = R.font.montserrat_bold)

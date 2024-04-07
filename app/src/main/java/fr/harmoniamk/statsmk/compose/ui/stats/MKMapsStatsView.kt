@@ -18,10 +18,10 @@ import fr.harmoniamk.statsmk.model.local.Stats
 fun MKMapsStatsView(
     stats: Stats,
     type: StatsType,
-    ownTeamId: String?,
-    onMostPlayedClick: (Int, String?, String?) -> Unit,
-    onBestClick: (Int, String?, String?) -> Unit,
-    onWorstClick: (Int, String?, String?) -> Unit
+    periodic: String,
+    onMostPlayedClick: (Int, String?, String?, String) -> Unit,
+    onBestClick: (Int, String?, String?, String) -> Unit,
+    onWorstClick: (Int, String?, String?, String) -> Unit
 ) {
     val isIndiv = type is StatsType.IndivStats || (type as? StatsType.OpponentStats)?.userId != null
     val bestMap = when (isIndiv) {
@@ -34,7 +34,7 @@ fun MKMapsStatsView(
     }
     val userId =
         (type as? StatsType.IndivStats)?.userId ?: (type as? StatsType.OpponentStats)?.userId
-    val teamId = (type as? StatsType.OpponentStats)?.teamId ?: ownTeamId
+    val teamId = (type as? StatsType.OpponentStats)?.teamId
 
     Column {
         MKText(text = "Circuits", font = R.font.montserrat_bold, fontSize = 16)
@@ -51,7 +51,7 @@ fun MKMapsStatsView(
                 trackRanking = stats.mostPlayedMap,
                 isVertical = true,
                 isIndiv = type is StatsType.IndivStats || (type as? StatsType.OpponentStats)?.userId != null,
-                onClick = { onMostPlayedClick(it, teamId, userId) })
+                onClick = { onMostPlayedClick(it, teamId, userId, periodic) })
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
                     MKText(
@@ -63,7 +63,7 @@ fun MKMapsStatsView(
                         trackRanking = bestMap,
                         isVertical = true,
                         isIndiv = type is StatsType.IndivStats || (type as? StatsType.OpponentStats)?.userId != null,
-                        onClick = { onBestClick(it, teamId, userId) })
+                        onClick = { onBestClick(it, teamId, userId, periodic) })
                 }
                 Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
                     MKText(
@@ -75,7 +75,7 @@ fun MKMapsStatsView(
                         trackRanking = worstMap,
                         isVertical = true,
                         isIndiv = type is StatsType.IndivStats || (type as? StatsType.OpponentStats)?.userId != null,
-                        onClick = { onWorstClick(it, teamId, userId) })
+                        onClick = { onWorstClick(it, teamId, userId, periodic) })
                 }
             }
         }

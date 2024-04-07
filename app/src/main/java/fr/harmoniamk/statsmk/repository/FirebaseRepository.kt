@@ -24,7 +24,7 @@ interface FirebaseRepositoryInterface{
     //SplashScreen/Login
     fun getUser(id: String): Flow<User?>
     fun getTeams(): Flow<List<Team>>
-    fun getAllies(): Flow<List<String>>
+    fun getAllies(teamId: String): Flow<List<String>>
     fun getNewWars(teamId: String): Flow<List<NewWar>>
 
 
@@ -33,7 +33,7 @@ interface FirebaseRepositoryInterface{
     fun writeNewWar(war: NewWar): Flow<Unit>
     fun writeCurrentWar(war: NewWar): Flow<Unit>
     fun writeDispo(dispo: WarDispo): Flow<Unit>
-    fun writeAlly(ally : String): Flow<Unit>
+    fun writeAlly(teamId: String, ally : String): Flow<Unit>
 
     //Get firebase users, only on currentWar
     fun getUsers(): Flow<List<User>>
@@ -98,8 +98,8 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
         emit(Unit)
     }
 
-    override fun writeAlly(ally: String): Flow<Unit>  =
-        getAllies()
+    override fun writeAlly(teamId: String, ally: String): Flow<Unit>  =
+        getAllies(teamId)
             .map {
                 database.child("allies").child(preferencesRepository.mkcTeam?.id.orEmpty()).child(it.size.toString()).setValue(ally)
             }
@@ -160,9 +160,9 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
         awaitClose {  }
     }.flowOn(Dispatchers.IO)
 
-    override fun getAllies(): Flow<List<String>> = callbackFlow<List<String>> {
+    override fun getAllies(teamId: String): Flow<List<String>> = callbackFlow<List<String>> {
         Log.d("MKDebugOnly", "FirebaseRepository getAllies")
-        database.child("allies").child(preferencesRepository.mkcTeam?.id.orEmpty()).get().addOnSuccessListener { snapshot ->
+        database.child("allies").child(teamId).get().addOnSuccessListener { snapshot ->
             val teams: List<String> = snapshot.children.map { it.value as String }
             if (isActive) trySend(teams)
         }

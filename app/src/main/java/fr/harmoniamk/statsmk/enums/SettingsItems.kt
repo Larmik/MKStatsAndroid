@@ -17,7 +17,6 @@ sealed class MenuItems(val titleRes: Int, val route: String? = null, val type: L
    class PlayerStats() : MenuItems(R.string.statistiques_des_joueurs, "Home/Stats/Players", ListItemType.stats)
    class OpponentStats() : MenuItems(R.string.statistiques_des_adversaires, "Home/Stats/Opponents", ListItemType.stats)
    class MapStats() : MenuItems(R.string.statistiques_des_circuits, "Home/Stats/Maps/Ranking", ListItemType.stats)
-   class PeriodicStats() : MenuItems(R.string.statistiques_p_riodiques, "Home/Stats/Periodic", ListItemType.stats)
    class ChangeMail() : MenuItems(R.string.changer_mon_email, null, ListItemType.profile)
    class ChangePassword() : MenuItems(R.string.changer_mon_mot_de_passe, null, ListItemType.profile)
    class ChangePicture() : MenuItems(R.string.changer_ma_photo_de_profil, null, ListItemType.profile)

@@ -35,7 +35,7 @@ class FirebaseRepositoryMock(
         emit(Unit)
     }
 
-    override fun writeAlly(ally:String): Flow<Unit> = flow {
+    override fun writeAlly(teamId: String, ally:String): Flow<Unit> = flow {
         emit(Unit)
     }
 
@@ -50,7 +50,7 @@ emit(null)    }
         emit(listOf())
     }
 
-    override fun getAllies(): Flow<List<String>> = flow {
+    override fun getAllies(teamId: String): Flow<List<String>> = flow {
         emit(listOf())
     }
 

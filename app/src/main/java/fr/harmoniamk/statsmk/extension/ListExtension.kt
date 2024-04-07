@@ -220,9 +220,8 @@ fun MKCTeam.withFullTeamStats(
 }
 
 fun List<Int?>?.sum(): Int {
-    var sum = 0
-    this?.filterNotNull()?.forEach { sum += it }
-    return sum
+    this?.filterNotNull()?.let { list -> return list.sumOf { it } }
+    return 0
 }
 
 /** Parsing methods for firebase POJOs **/

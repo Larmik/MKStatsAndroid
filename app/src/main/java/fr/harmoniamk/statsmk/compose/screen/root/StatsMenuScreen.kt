@@ -15,12 +15,11 @@ import fr.harmoniamk.statsmk.enums.MenuItems
 fun StatsMenuScreen(viewModel: StatsMenuViewModel = hiltViewModel(), onItemClick: (String) -> Unit) {
     MKBaseScreen(title = R.string.stats) {
         listOfNotNull(
-            MenuItems.IndivStats(viewModel.sharedId.collectAsState().value.orEmpty()),
+            MenuItems.IndivStats(viewModel.sharedId.collectAsState().value),
             MenuItems.TeamStats().takeIf { viewModel.sharedTeam.collectAsState().value != null },
             MenuItems.PlayerStats().takeIf { viewModel.sharedTeam.collectAsState().value != null },
             MenuItems.OpponentStats(),
             MenuItems.MapStats(),
-            MenuItems.PeriodicStats().takeIf { viewModel.sharedTeam.collectAsState().value != null },
         ).forEach { MKListItem(item = it, separator = true, onNavigate = onItemClick) {} }
     }
 }

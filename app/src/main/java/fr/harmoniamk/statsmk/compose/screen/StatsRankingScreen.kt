@@ -45,8 +45,9 @@ import kotlinx.coroutines.flow.filterNotNull
 fun StatsRankingScreen(
     userId: String? = null,
     teamId: String? = null,
+    periodic: String,
     state: StatsRankingState,
-    goToStats: (RankingItemViewModel, String?, String?) -> Unit
+    goToStats: (RankingItemViewModel, String?, String?, String?) -> Unit
 ) {
     val viewModel: StatsRankingViewModel = StatsRankingViewModel.viewModel(userId, teamId)
     val searchState = remember { mutableStateOf(TextFieldValue("")) }
@@ -60,7 +61,11 @@ fun StatsRankingScreen(
             confirmValueChange = { it == ModalBottomSheetValue.Expanded || it == ModalBottomSheetValue.HalfExpanded })
     val list = viewModel.sharedList.collectAsState()
 
-    viewModel.init(state, indiv.value)
+    viewModel.init(
+        state = state,
+        indivEnabled = indiv.value,
+        periodic = periodic
+    )
 
     LaunchedEffect(Unit) {
         viewModel.sharedBottomSheetValue.collect {
@@ -72,7 +77,7 @@ fun StatsRankingScreen(
     }
     LaunchedEffect(Unit) {
         viewModel.sharedGoToStats.filterNotNull().collect {
-           goToStats(it,  userId ?: newUserId.value, teamId ?: newTeamId.value)
+           goToStats(it,  userId ?: newUserId.value, teamId ?: newTeamId.value, periodic)
         }
     }
 
@@ -86,15 +91,23 @@ fun StatsRankingScreen(
                 onDismiss = viewModel::dismissBottomSheet,
                 onEditPosition = {},
                 onEditTrack = {},
-                onSorted = { viewModel.onSorted(state, it) }
+                onSorted = { viewModel.onSorted(state, it, periodic) }
             )
         }) {
         state.takeIf { it !is StatsRankingState.PlayerRankingState }?.let {
             if (userId == null)
                 MKSegmentedSelector(
                     buttons = listOf(
-                        Pair(stringResource(id = R.string.equipe)) { viewModel.init(it, false) },
-                        Pair(stringResource(id = R.string.individuel)) { viewModel.init(it, true) }
+                        Pair(stringResource(id = R.string.equipe)) { viewModel.init(
+                            state = it,
+                            indivEnabled = false,
+                            periodic = periodic
+                        ) },
+                        Pair(stringResource(id = R.string.individuel)) { viewModel.init(
+                            state = it,
+                            indivEnabled = true,
+                            periodic = periodic
+                        ) }
                     ),
                     indexSelected = when (indiv.value) {
                         true -> 1

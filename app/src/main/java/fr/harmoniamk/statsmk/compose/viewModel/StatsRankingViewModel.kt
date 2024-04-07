@@ -28,7 +28,6 @@ import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import fr.harmoniamk.statsmk.model.local.TrackStats
-import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -61,7 +60,7 @@ sealed class StatsRankingState(val title: Int, val placeholderRes: Int, val sort
     class MapsRankingState: StatsRankingState(
         title = R.string.statistiques_des_circuits,
         placeholderRes = R.string.rechercher_un_nom_ou_une_abr_viation,
-        sort = Sort.TrackSort()
+        sort = Sort.TrackSort(),
     )
 }
 
@@ -127,7 +126,7 @@ class StatsRankingViewModel @AssistedInject constructor(
     private val opponents = mutableListOf<OpponentRankingItemViewModel>()
     private val maps = mutableListOf<TrackStats>()
 
-    fun init(state: StatsRankingState?, indivEnabled: Boolean, type: SortType? = null) {
+    fun init(state: StatsRankingState?, indivEnabled: Boolean, periodic: String, type: SortType? = null) {
         _sharedIndivEnabled.value = indivEnabled
         type?.let { this.sortType = it }
         when (state) {
@@ -142,7 +141,13 @@ class StatsRankingViewModel @AssistedInject constructor(
                     .onEach {
                         val temp = mutableListOf<PlayerRankingItemViewModel>()
                         it.forEach { user ->
-                            val stats = warList.filter { war -> war.hasPlayer(user.mkcId.split(".").first()) }.withFullStats(databaseRepository, userId = user.mkcId.split(".").first()).first()
+                            val stats = warList.filter {
+                                war -> war.hasPlayer(user.mkcId.split(".").first())
+                                    && (periodic == Periodics.All.name
+                                    || (periodic == Periodics.Week.name && war.isThisWeek)
+                                    ||( periodic == Periodics.Month.name && war.isThisMonth)
+                                            )
+                            }.withFullStats(databaseRepository, userId = user.mkcId.split(".").first()).first()
                             temp.add(PlayerRankingItemViewModel(user, stats))
                         }
                         _sharedList.value = sortPlayers(sortType, temp)
@@ -150,6 +155,9 @@ class StatsRankingViewModel @AssistedInject constructor(
             }
             is StatsRankingState.OpponentRankingState -> {
                 databaseRepository.getWars()
+                    .map { it.filter { war -> periodic == Periodics.All.name
+                            || (periodic == Periodics.Week.name && war.isThisWeek)
+                            ||( periodic == Periodics.Month.name && war.isThisMonth)} }
                     .onEach {
                         warList.clear()
                         warList.addAll(it)
@@ -164,11 +172,7 @@ class StatsRankingViewModel @AssistedInject constructor(
                     }.launchIn(viewModelScope)
             }
             is StatsRankingState.MapsRankingState -> {
-                val finalTeamId = teamId ?: preferencesRepository.mkcTeam?.id.toString()
                 val finalUserId = userId?.split(".")?.first() ?: preferencesRepository.mkcPlayer?.id.toString().takeIf { indivEnabled }?.split(".")?.first()
-                _sharedTeamId.value =  finalTeamId
-                _sharedUserId.value = finalUserId
-
                 databaseRepository.getRoster()
                     .filterNotNull()
                     .onEach { _sharedUserName.value = it.singleOrNull { it.mkcId == userId }?.name }
@@ -180,22 +184,33 @@ class StatsRankingViewModel @AssistedInject constructor(
                     .launchIn(viewModelScope)
 
                 databaseRepository.getWars()
+                    .map {  it.filter { war -> periodic == Periodics.All.name
+                            || (periodic == Periodics.Week.name && war.isThisWeek)
+                            ||( periodic == Periodics.Month.name && war.isThisMonth)} }
                     .filter {
                         (!onlyIndiv
-                                && it.map { war -> war.war?.teamHost }.contains(finalTeamId)
-                                || it.map { war -> war.war?.teamOpponent }.contains(finalTeamId))
+                                && (teamId?.takeIf { it.isNotEmpty() } != null && it.map { war -> war.hasTeam(teamId) }.any { it })
+                                || (teamId.isNullOrEmpty() && it.map { war -> war.hasTeam(preferencesRepository.mkcTeam)}.any { it }))
                                 || onlyIndiv
                     }
-                    .mapNotNull { list -> list.filter { ((onlyIndiv && it.hasPlayer(finalUserId)) || !onlyIndiv) && ((!indivEnabled.isTrue && it.hasTeam(finalTeamId)) || (indivEnabled.isTrue && it.hasPlayer(finalUserId) && it.hasTeam(finalTeamId)))} }
+                    .mapNotNull { list -> list.filter {
+                        (
+                                (onlyIndiv && it.hasPlayer(finalUserId)) || !onlyIndiv)
+                                && ((!indivEnabled.isTrue && (teamId?.takeIf { it.isNotEmpty() } == null && it.hasTeam(teamId))
+                                || (teamId.isNullOrEmpty() && it.hasTeam(preferencesRepository.mkcTeam)))
+                                || (indivEnabled.isTrue && it.hasPlayer(finalUserId))
+                                || (teamId?.takeIf { it.isNotEmpty() } != null && it.hasTeam(teamId)))} }
                     .map { list ->
                         val allTracksPlayed = mutableListOf<NewWarTrack>()
-                        list.filter { teamId == null || it.hasTeam(teamId) }.mapNotNull { it.war?.warTracks }.forEach {
+                        list.filter { (teamId == null && it.hasTeam(preferencesRepository.mkcTeam)) || it.hasTeam(teamId) }.mapNotNull { it.war?.warTracks }.forEach {
                             allTracksPlayed.addAll(it)
                         }
                         allTracksPlayed
                     }
                     .map {
                         _sharedList.value = sortTracks(sortType, it, indivEnabled.isTrue, finalUserId.orEmpty())
+                        _sharedTeamId.value =  teamId ?: preferencesRepository.mkcTeam?.id.toString()
+                        _sharedUserId.value = finalUserId
                     }
                     .launchIn(viewModelScope)
             }
@@ -211,8 +226,8 @@ class StatsRankingViewModel @AssistedInject constructor(
         _sharedBottomsheetValue.value = null
     }
 
-    fun onSorted(state: StatsRankingState, sortType: SortType) {
-        init(state, _sharedIndivEnabled.value, sortType)
+    fun onSorted(state: StatsRankingState, sortType: SortType, periodic: String) {
+        init(state = state, indivEnabled = _sharedIndivEnabled.value, periodic = periodic, type = sortType)
     }
 
     fun onItemClick(item: RankingItemViewModel) {

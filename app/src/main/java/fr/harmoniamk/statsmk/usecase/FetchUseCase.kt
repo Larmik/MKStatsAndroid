@@ -157,8 +157,13 @@ class FetchUseCase @Inject constructor(
             }
         }
     }
-    override fun fetchAllies(forceUpdate: Boolean): Flow<Unit> =
-        firebaseRepository.getAllies()
+    override fun fetchAllies(forceUpdate: Boolean): Flow<Unit> {
+        val alliesFlow = when {
+            preferencesRepository.mkcTeam?.primary_team_id != null -> firebaseRepository.getAllies(preferencesRepository.mkcTeam?.primary_team_id.toString())
+            preferencesRepository.mkcTeam?.secondary_teams != null -> firebaseRepository.getAllies(preferencesRepository.mkcTeam?.secondary_teams!!.getOrNull(0)?.id.toString())
+            else -> firebaseRepository.getAllies(preferencesRepository.mkcTeam?.id.orEmpty())
+        }
+        return alliesFlow
             .onEach {
                 if (it.size != players.filter { it.rosterId == "-1" }.size) {
                     it.forEach { allyId ->
@@ -194,6 +199,7 @@ class FetchUseCase @Inject constructor(
                     finalRosterWithCurrentWar.add(player.apply { this.currentWar = currentWar ?: "-1" })
                 }
             }.flatMapLatest { databaseRepository.writeRoster(finalRosterWithCurrentWar) }
+    }
 
     override fun fetchWars(): Flow<List<MKWar>>  {
         val warFlow = when {
@@ -204,7 +210,7 @@ class FetchUseCase @Inject constructor(
         }
         return warFlow
             .zip(databaseRepository.getWars()) { remoteDb, localDb ->
-                val finalLocalDb = localDb.filter { it.war?.teamHost == preferencesRepository.mkcTeam?.id }
+                val finalLocalDb = localDb.filter { it.hasTeam(preferencesRepository.mkcTeam) }
                 when (finalLocalDb.size == remoteDb.size) {
                     true -> localDb
                     else -> remoteDb

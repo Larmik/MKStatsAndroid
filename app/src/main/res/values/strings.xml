@@ -136,7 +136,7 @@
     <string name="d_j_sur_l_appli">Déjà sur l\'appli ?</string>
     <string name="nouvelle_war">Nouvelle war</string>
     <string name="toutes_les_wars_en_quipe">Toutes les wars en équipe</string>
-    <string name="rechercher_un_advsersaire">Rechercher un advsersaire…</string>
+    <string name="rechercher_un_advsersaire">Rechercher un adversaire…</string>
     <string name="options_de_tri">Options</string>
     <string name="date">Date</string>
     <string name="adversaire">Adversaire</string>
@@ -406,4 +406,5 @@
     <string name="refresh_data">Rafraîchir les données</string>
     <string name="id_mkc">Identifiant MKCentral</string>
     <string name="confirmez_le_mot_de_passe">Confimez le mot de passe</string>
+    <string name="all">Tout</string>
 </resources>

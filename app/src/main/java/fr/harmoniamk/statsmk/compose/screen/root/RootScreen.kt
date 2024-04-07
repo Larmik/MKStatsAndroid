@@ -188,13 +188,13 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
 
         /** Opponent stats navigation **/
         composable("Home/Stats/Opponents") {
-            StatsRankingScreen(state = StatsRankingState.OpponentRankingState()) { item, _, _ ->
+            StatsRankingScreen(state = StatsRankingState.OpponentRankingState(), periodic = "All") { item, _, _, _ ->
                 navController.navigate("Home/Stats/Opponents/${(item as? OpponentRankingItemViewModel)?.team?.team_id.orEmpty()}/${(item as? OpponentRankingItemViewModel)?.userId.orEmpty()}")
             }
         }
         /** Players stats navigation **/
         composable("Home/Stats/Players") {
-            StatsRankingScreen(state = StatsRankingState.PlayerRankingState()) { item, _, _ ->
+            StatsRankingScreen(state = StatsRankingState.PlayerRankingState(), periodic = "All") { item, _, _, _ ->
                 navController.navigate("Home/Stats/Players/${(item as? PlayerRankingItemViewModel)?.user?.mkcId.orEmpty()}")
             }
         }
@@ -207,10 +207,11 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
             StatsScreen(
                 type = StatsType.IndivStats(userId = it.arguments?.getString("id").orEmpty()),
                 onWarDetailsClick = { type, _ -> navController.navigate("Home/War/AllWars/Player/${(type as? StatsType.IndivStats)?.userId}") },
-                onTrackDetailsClick = { userId, teamId ->
+                onTrackDetailsClick = { userId, teamId, periodic ->
                     when {
-                        userId?.takeIf { it.isNotEmpty() } != null -> navController.navigate("Home/Stats/Maps/Ranking/User/$userId")
-                        teamId?.takeIf { it.isNotEmpty() } != null -> navController.navigate("Home/Stats/Maps/Ranking/Team/$teamId")
+                        userId?.takeIf { it.isNotEmpty() } != null -> navController.navigate("Home/Stats/Maps/Ranking/User/$userId/Periodic/$periodic")
+                        teamId?.takeIf { it.isNotEmpty() } != null -> navController.navigate("Home/Stats/Maps/Ranking/Team/$teamId/Periodic/$periodic")
+                        else -> navController.navigate("Home/Stats/Maps/Ranking/Periodic/$periodic")
                     }
                 }, goToWarDetails = { navController.navigate("Home/War/$it") },
                 goToOpponentStats = { teamId, userId ->
@@ -220,11 +221,11 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
                         else -> {}
                     }
                 },
-                goToMapStats = { trackIndex, teamId, userId ->
+                goToMapStats = { trackIndex, teamId, userId, periodic ->
                     when {
-                        userId != null && teamId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId/Team/$teamId"))
-                        teamId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/Team/$teamId"))
-                        userId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId"))
+                        userId != null && teamId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId/Team/$teamId/Periodic/$periodic"))
+                        userId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId/Periodic/$periodic"))
+                        else -> navController.navigate(("Home/Stats/Maps/$trackIndex/Team/$teamId/Periodic/$periodic"))
                     }
                 }
             )
@@ -243,16 +244,17 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
                         else -> {}
                     }
                 },
-                onTrackDetailsClick = { userId, teamId ->
+                onTrackDetailsClick = { userId, teamId, periodic ->
                     when {
-                        userId?.takeIf { it.isNotEmpty() } != null -> navController.navigate("Home/Stats/Maps/Ranking/User/$userId")
-                        teamId?.takeIf { it.isNotEmpty() } != null -> navController.navigate("Home/Stats/Maps/Ranking/Team/$teamId")
+                        userId?.takeIf { it.isNotEmpty() } != null -> navController.navigate("Home/Stats/Maps/Ranking/User/$userId/Periodic/$periodic")
+                        teamId?.takeIf { it.isNotEmpty() } != null  -> navController.navigate("Home/Stats/Maps/Ranking/Team/$teamId/Periodic/$periodic")
+                        else  -> navController.navigate("Home/Stats/Maps/Ranking/Periodic/$periodic")
                     }
-                }, goToMapStats = { trackIndex, teamId, userId ->
+                }, goToMapStats = { trackIndex, teamId, userId, periodic ->
                     when {
-                        userId != null && teamId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId/Team/$teamId"))
-                        teamId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/Team/$teamId"))
-                        userId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId"))
+                        userId != null && teamId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId/Team/$teamId/Periodic/$periodic"))
+                        userId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId/Periodic/$periodic"))
+                        else -> navController.navigate(("Home/Stats/Maps/$trackIndex/Team/$teamId/Periodic/$periodic"))
                     }
                 }
             )
@@ -277,17 +279,18 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
                         else -> {}
                     }
                 },
-                onTrackDetailsClick = { userId, teamId ->
+                onTrackDetailsClick = { userId, teamId, periodic ->
                     when {
-                        userId?.takeIf { it.isNotEmpty() } != null -> navController.navigate("Home/Stats/Maps/Ranking/User/$userId")
-                        teamId?.takeIf { it.isNotEmpty() } != null -> navController.navigate("Home/Stats/Maps/Ranking/Team/$teamId")
+                        userId?.takeIf { it.isNotEmpty() } != null -> navController.navigate("Home/Stats/Maps/Ranking/User/$userId/Periodic/$periodic")
+                        teamId?.takeIf { it.isNotEmpty() } != null -> navController.navigate("Home/Stats/Maps/Ranking/Team/$teamId/Periodic/$periodic")
+                       else -> navController.navigate("Home/Stats/Maps/Ranking/Periodic/$periodic")
                     }
                 },
-                goToMapStats = { trackIndex, teamId, userId ->
+                goToMapStats = { trackIndex, teamId, userId, periodic ->
                     when {
-                        userId != null && teamId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId/Team/$teamId"))
-                        teamId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/Team/$teamId"))
-                        userId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId"))
+                        userId != null && teamId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId/Team/$teamId/Periodic/$periodic"))
+                        userId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId/Periodic/$periodic"))
+                        else -> navController.navigate(("Home/Stats/Maps/$trackIndex/Team/$teamId/Periodic/$periodic"))
                     }
                 }
             )
@@ -302,7 +305,7 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
             StatsScreen(
                 type = StatsType.OpponentStats(
                     teamId = it.arguments?.getString("teamId").orEmpty(),
-                    userId = it.arguments?.getString("userId").orEmpty()
+                    userId = it.arguments?.getString("userId").orEmpty(),
                 ),
                 onWarDetailsClick = { type, _ -> navController.navigate("Home/War/AllWars/Team/${(type as? StatsType.OpponentStats)?.teamId}/${(type as? StatsType.OpponentStats)?.userId}") },
                 goToWarDetails = { navController.navigate("Home/War/$it") },
@@ -313,71 +316,87 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
                         else -> {}
                     }
                 },
-                onTrackDetailsClick = { userId, teamId ->
+                onTrackDetailsClick = { userId, teamId, periodic ->
                     when {
-                        userId?.takeIf { it.isNotEmpty() } != null -> navController.navigate("Home/Stats/Maps/Ranking/User/$userId")
-                        teamId?.takeIf { it.isNotEmpty() } != null -> navController.navigate("Home/Stats/Maps/Ranking/Team/$teamId")
+                        userId?.takeIf { it.isNotEmpty() } != null -> navController.navigate("Home/Stats/Maps/Ranking/User/$userId/Periodic/$periodic")
+                        teamId?.takeIf { it.isNotEmpty() } != null -> navController.navigate("Home/Stats/Maps/Ranking/Team/$teamId/Periodic/$periodic")
+                        else -> navController.navigate("Home/Stats/Maps/Ranking/Periodic/$periodic")
                     }
                 },
-                goToMapStats = { trackIndex, teamId, userId ->
+                goToMapStats = { trackIndex, teamId, userId, periodic ->
                     when {
-                        userId != null && teamId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId/Team/$teamId"))
-                        teamId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/Team/$teamId"))
-                        userId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId"))
+                        userId != null && teamId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId/Team/$teamId/Periodic/$periodic"))
+                        userId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId/Periodic/$periodic"))
+                        else -> navController.navigate(("Home/Stats/Maps/$trackIndex/Team/$teamId/Periodic/$periodic"))
                     }
                 })
         }
 
         /** Maps stats navigation **/
-        composable("Home/Stats/Maps/Ranking") {
-
-            StatsRankingScreen(state = StatsRankingState.MapsRankingState()) { item, userId, teamId ->
+        composable("Home/Stats/Maps/Ranking/Periodic/{periodic}",  arguments = listOf(
+            navArgument("periodic") { type = NavType.StringType },
+        )) {
+            StatsRankingScreen(
+                state = StatsRankingState.MapsRankingState(),
+                periodic = it.arguments?.getString("periodic") ?: "All"
+            ) { item, userId, teamId, periodic ->
                 when {
-                    userId?.takeIf { it.isNotEmpty() } != null -> navController.navigate("Home/Stats/Maps/${(item as? TrackStats)?.trackIndex}/User/$userId")
-                    teamId?.takeIf { it.isNotEmpty() } != null -> navController.navigate("Home/Stats/Maps/${(item as? TrackStats)?.trackIndex}/Team/$teamId")
+                    userId?.takeIf { it.isNotEmpty() } != null -> navController.navigate("Home/Stats/Maps/${(item as? TrackStats)?.trackIndex}/User/$userId/Periodic/$periodic")
+                    else -> navController.navigate("Home/Stats/Maps/${(item as? TrackStats)?.trackIndex}/Team/$teamId/Periodic/$periodic")
                 }
             }
         }
         composable(
-            "Home/Stats/Maps/Ranking/User/{userId}", arguments = listOf(
+            "Home/Stats/Maps/Ranking/User/{userId}/Periodic/{periodic}", arguments = listOf(
                 navArgument("userId") { type = NavType.StringType },
-            )
+                navArgument("periodic") { type = NavType.StringType },
+
+                )
         ) {
             StatsRankingScreen(
                 state = StatsRankingState.MapsRankingState(),
-                userId = it.arguments?.getString("userId")
-            ) { item, userId, teamId ->
+                userId = it.arguments?.getString("userId"),
+                periodic = it.arguments?.getString("periodic") ?: "All"
+            ) { item, userId, teamId, periodic ->
                 when {
-                    userId?.takeIf { it.isNotEmpty() } != null -> navController.navigate("Home/Stats/Maps/${(item as? TrackStats)?.trackIndex}/User/$userId")
-                    teamId?.takeIf { it.isNotEmpty() } != null -> navController.navigate("Home/Stats/Maps/${(item as? TrackStats)?.trackIndex}/Team/$teamId")
+                    userId?.takeIf { it.isNotEmpty() } != null -> navController.navigate("Home/Stats/Maps/${(item as? TrackStats)?.trackIndex}/User/$userId/Periodic/$periodic")
+                    teamId?.takeIf { it.isNotEmpty() } != null -> navController.navigate("Home/Stats/Maps/${(item as? TrackStats)?.trackIndex}/Team/$teamId/Periodic/$periodic")
                 }
             }
         }
         composable(
-            "Home/Stats/Maps/Ranking/Team/{teamId}", arguments = listOf(
-                navArgument("teamId") { type = NavType.StringType },
-            )
+            "Home/Stats/Maps/Ranking/Team/{teamId}/Periodic/{periodic}", arguments = listOf(
+                navArgument("teamId") {
+                    type = NavType.StringType
+                    nullable = true
+              },
+                navArgument("periodic") { type = NavType.StringType },
+
+                )
         ) {
             StatsRankingScreen(
                 state = StatsRankingState.MapsRankingState(),
-                teamId = it.arguments?.getString("teamId")
-            ) { item, userId, teamId ->
+                teamId = it.arguments?.getString("teamId"),
+                periodic = it.arguments?.getString("periodic") ?: "All"
+            ) { item, userId, teamId, periodic ->
                 when {
-                    teamId?.takeIf { it.isNotEmpty() } != null && userId?.takeIf { it.isNotEmpty() } == null -> navController.navigate("Home/Stats/Maps/${(item as? TrackStats)?.trackIndex}/Team/$teamId")
-                    teamId?.takeIf { it.isNotEmpty() } != null && userId?.takeIf { it.isNotEmpty() } != null -> navController.navigate("Home/Stats/Maps/${(item as? TrackStats)?.trackIndex}/User/$userId/Team/$teamId")
-                    userId?.takeIf { it.isNotEmpty() } != null -> navController.navigate("Home/Stats/Maps/${(item as? TrackStats)?.trackIndex}/User/$userId")
+                    teamId?.takeIf { it.isNotEmpty() } != null && userId?.takeIf { it.isNotEmpty() } == null -> navController.navigate("Home/Stats/Maps/${(item as? TrackStats)?.trackIndex}/Team/$teamId/Periodic/$periodic")
+                    teamId?.takeIf { it.isNotEmpty() } != null && userId?.takeIf { it.isNotEmpty() } != null -> navController.navigate("Home/Stats/Maps/${(item as? TrackStats)?.trackIndex}/User/$userId/Team/$teamId/Periodic/$periodic")
+                    userId?.takeIf { it.isNotEmpty() } != null -> navController.navigate("Home/Stats/Maps/${(item as? TrackStats)?.trackIndex}/User/$userId/Periodic/$periodic")
                 }
             }
         }
         composable(
-            "Home/Stats/Maps/{trackId}/User/{userId}", arguments = listOf(
+            "Home/Stats/Maps/{trackId}/User/{userId}/Periodic/{periodic}", arguments = listOf(
                 navArgument("trackId") { type = NavType.IntType },
                 navArgument("userId") { type = NavType.StringType },
+                navArgument("periodic") { type = NavType.StringType }
             )
         ) {
             StatsScreen(type = StatsType.MapStats(
                 trackIndex = it.arguments?.getInt("trackId") ?: 0,
-                userId = it.arguments?.getString("userId").orEmpty()
+                userId = it.arguments?.getString("userId").orEmpty(),
+                periodic = it.arguments?.getString("periodic").orEmpty()
             ),
                 onWarDetailsClick = { type, _ ->
                     (type as? StatsType.MapStats)?.userId?.let {
@@ -392,30 +411,36 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
                         else -> {}
                     }
                 },
-                onTrackDetailsClick = { userId, teamId ->
+                onTrackDetailsClick = { userId, teamId, periodic ->
                     when {
-                        userId?.takeIf { it.isNotEmpty() } != null -> navController.navigate("Home/Stats/Maps/Ranking/User/$userId")
-                        teamId?.takeIf { it.isNotEmpty() } != null -> navController.navigate("Home/Stats/Maps/Ranking/Team/$teamId")
+                        userId?.takeIf { it.isNotEmpty() } != null -> navController.navigate("Home/Stats/Maps/Ranking/User/$userId/Periodic/$periodic")
+                        teamId?.takeIf { it.isNotEmpty() } != null -> navController.navigate("Home/Stats/Maps/Ranking/Team/$teamId/Periodic/$periodic")
+                        else -> navController.navigate("Home/Stats/Maps/Ranking//Periodic/$periodic")
                     }
-                }, goToMapStats = { trackIndex, teamId, userId ->
+                }, goToMapStats = { trackIndex, teamId, userId, periodic ->
                     when {
-                        userId != null && teamId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId/Team/$teamId"))
-                        teamId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/Team/$teamId"))
-                        userId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId"))
+                        userId != null && teamId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId/Team/$teamId/Periodic/$periodic"))
+                        userId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId/Periodic/$periodic"))
+                        else -> navController.navigate(("Home/Stats/Maps/$trackIndex/Team/$teamId/Periodic/$periodic"))
                     }
                 })
         }
         composable(
-            "Home/Stats/Maps/{trackId}/User/{userId}/Team/{teamId}", arguments = listOf(
+            "Home/Stats/Maps/{trackId}/User/{userId}/Team/{teamId}/Periodic/{periodic}", arguments = listOf(
                 navArgument("trackId") { type = NavType.IntType },
                 navArgument("userId") { type = NavType.StringType },
-                navArgument("teamId") { type = NavType.StringType }
+                navArgument("periodic") { type = NavType.StringType },
+                navArgument("teamId") {
+                    type = NavType.StringType
+                    nullable = true
+                }
             )
         ) {
             StatsScreen(type = StatsType.MapStats(
                 trackIndex = it.arguments?.getInt("trackId") ?: 0,
                 userId = it.arguments?.getString("userId").orEmpty(),
                 teamId = it.arguments?.getString("teamId").orEmpty(),
+                periodic = it.arguments?.getString("periodic").orEmpty()
             ),
                 onWarDetailsClick = { type, _ ->
                     (type as? StatsType.MapStats)?.userId?.let {
@@ -430,29 +455,35 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
                         else -> {}
                     }
                 },
-                onTrackDetailsClick = { userId, teamId ->
+                onTrackDetailsClick = { userId, teamId, periodic ->
                     when {
-                        userId?.takeIf { it.isNotEmpty() } != null -> navController.navigate("Home/Stats/Maps/Ranking/User/$userId")
-                        teamId?.takeIf { it.isNotEmpty() } != null -> navController.navigate("Home/Stats/Maps/Ranking/Team/$teamId")
+                        userId?.takeIf { it.isNotEmpty() } != null -> navController.navigate("Home/Stats/Maps/Ranking/User/$userId/Periodic/$periodic")
+                        teamId?.takeIf { it.isNotEmpty() } != null -> navController.navigate("Home/Stats/Maps/Ranking/Team/$teamId/Periodic/$periodic")
+                        else -> navController.navigate("Home/Stats/Maps/Ranking/Periodic/$periodic")
                     }
-                }, goToMapStats = { trackIndex, teamId, userId ->
+                }, goToMapStats = { trackIndex, teamId, userId, periodic ->
                     when {
-                        userId != null && teamId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId/Team/$teamId"))
-                        teamId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/Team/$teamId"))
-                        userId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId"))
+                        userId != null && teamId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId/Team/$teamId/Periodic/$periodic"))
+                        userId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId/Periodic/$periodic"))
+                        else -> navController.navigate(("Home/Stats/Maps/$trackIndex/Team/$teamId/Periodic/$periodic"))
                     }
                 })
         }
         composable(
-            "Home/Stats/Maps/{trackId}/Team/{teamId}", arguments = listOf(
+            "Home/Stats/Maps/{trackId}/Team/{teamId}/Periodic/{periodic}", arguments = listOf(
                 navArgument("trackId") { type = NavType.IntType },
-                navArgument("teamId") { type = NavType.StringType },
+                navArgument("periodic") { type = NavType.StringType },
+                navArgument("teamId") {
+                    type = NavType.StringType
+                    nullable = true
+              },
             )
         ) {
             StatsScreen(
                 type = StatsType.MapStats(
                     trackIndex = it.arguments?.getInt("trackId") ?: 0,
-                    teamId = it.arguments?.getString("teamId").orEmpty()
+                    teamId = it.arguments?.getString("teamId").orEmpty(),
+                    periodic = it.arguments?.getString("periodic").orEmpty()
                 ),
                 onWarDetailsClick = { type, _ ->
                     (type as? StatsType.MapStats)?.teamId?.let {
@@ -467,16 +498,17 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
                         else -> {}
                     }
                 },
-                onTrackDetailsClick = { userId, teamId ->
+                onTrackDetailsClick = { userId, teamId, periodic ->
                     when {
-                        userId?.takeIf { it.isNotEmpty() } != null -> navController.navigate("Home/Stats/Maps/Ranking/User/$userId")
-                        teamId?.takeIf { it.isNotEmpty() } != null -> navController.navigate("Home/Stats/Maps/Ranking/Team/$teamId")
+                        userId?.takeIf { it.isNotEmpty() } != null -> navController.navigate("Home/Stats/Maps/Ranking/User/$userId/Periodic/$periodic")
+                        teamId?.takeIf { it.isNotEmpty() } != null -> navController.navigate("Home/Stats/Maps/Ranking/Team/$teamId/Periodic/$periodic")
+                        else -> navController.navigate("Home/Stats/Maps/Ranking/Periodic/$periodic")
                     }
-                }, goToMapStats = { trackIndex, teamId, userId ->
+                }, goToMapStats = { trackIndex, teamId, userId, periodic ->
                     when {
-                        userId != null && teamId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId/Team/$teamId"))
-                        teamId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/Team/$teamId"))
-                        userId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId"))
+                        userId != null && teamId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId/Team/$teamId/Periodic/$periodic"))
+                        userId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId/Periodic/$periodic"))
+                        else -> navController.navigate(("Home/Stats/Maps/$trackIndex/Team/$teamId/Periodic/$periodic"))
                     }
                 })
         }
@@ -497,7 +529,10 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
             route = "Home/Stats/Maps/{trackId}/Team/{teamId}/Details",
             arguments = listOf(
                 navArgument("trackId") { type = NavType.IntType },
-                navArgument("teamId") { type = NavType.StringType },
+                navArgument("teamId") {
+                    type = NavType.StringType
+                    nullable = true
+                },
             )
         ) {
             WarTrackListScreen(
@@ -505,33 +540,6 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
                 teamId = it.arguments?.getString("teamId")
             )
 
-        }
-
-        /** Periodic stats navigation **/
-        composable("Home/Stats/Periodic") {
-            StatsScreen(
-                type = StatsType.PeriodicStats(),
-                onWarDetailsClick = { _, isWeek -> navController.navigate("Home/War/AllWars/Periodic/$isWeek") },
-                goToWarDetails = { navController.navigate("Home/War/$it") },
-                goToOpponentStats = { teamId, userId ->
-                    when {
-                        userId != null && teamId != null -> navController.navigate("Home/Stats/Opponents/$teamId/$userId")
-                        teamId != null -> navController.navigate("Home/Stats/Opponents/$teamId/")
-                        else -> {}
-                    }
-                },
-                onTrackDetailsClick = { userId, teamId ->
-                    when {
-                        userId?.takeIf { it.isNotEmpty() } != null -> navController.navigate("Home/Stats/Maps/Ranking/User/$userId")
-                        teamId?.takeIf { it.isNotEmpty() } != null -> navController.navigate("Home/Stats/Maps/Ranking/Team/$teamId")
-                    }
-                }, goToMapStats = { trackIndex, teamId, userId ->
-                    when {
-                        userId != null && teamId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId/Team/$teamId"))
-                        teamId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/Team/$teamId"))
-                        userId != null -> navController.navigate(("Home/Stats/Maps/$trackIndex/User/$userId"))
-                    }
-                })
         }
 
         /** War list navigation **/
@@ -543,19 +551,24 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
         composable(
             route = "Home/War/AllWars/Team/{teamId}",
             arguments = listOf(
-                navArgument("teamId") { type = NavType.StringType },
+                navArgument("teamId") {
+                    type = NavType.StringType
+                    nullable = true
+                },
             )
         ) {
             WarListScreen(
                 teamId = it.arguments?.getString("teamId")
             ) { navController.navigate("Home/War/$it") }
         }
-        /** War list navigation **/
 
         composable(
             route = "Home/War/AllWars/Team/{teamId}/{userId}",
             arguments = listOf(
-                navArgument("teamId") { type = NavType.StringType },
+                navArgument("teamId") {
+                    type = NavType.StringType
+                    nullable = true
+                },
                 navArgument("userId") { type = NavType.StringType },
             )
         ) {

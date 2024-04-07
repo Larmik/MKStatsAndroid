@@ -1,6 +1,8 @@
 package fr.harmoniamk.statsmk.activity
 
+import android.annotation.SuppressLint
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
@@ -26,10 +28,12 @@ class MainActivity : AppCompatActivity() {
 
     private val viewModel: MainViewModel by viewModels()
 
+    @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashscreen = installSplashScreen()
         splashscreen.setKeepOnScreenCondition { true }
         super.onCreate(savedInstanceState)
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         viewModel.bind()
         viewModel.sharedWelcomeScreen
             .distinctUntilChanged()

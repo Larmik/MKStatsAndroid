@@ -114,9 +114,9 @@ class WarListViewModel @Inject constructor(
             userId != null && teamId != null -> list.filter { war -> war.hasPlayer(userId) && war.hasTeam(teamId)}
             userId != null -> list.filter { war -> war.hasPlayer(userId)}
             teamId != null -> list.filter { war -> war.hasTeam(teamId)}
-            isWeek.isTrue -> list.filter { war -> war.war?.teamHost == preferencesRepository.mkcTeam?.id && war.isThisWeek }
-            isWeek == false ->  list.filter { war -> war.war?.teamHost == preferencesRepository.mkcTeam?.id && war.isThisMonth }
-            else -> list.filter { war -> war.war?.teamHost == preferencesRepository.mkcTeam?.id}
+            isWeek.isTrue -> list.filter { war -> war.hasTeam(preferencesRepository.mkcTeam) && war.isThisWeek }
+            isWeek == false ->  list.filter { war -> war.hasTeam(preferencesRepository.mkcTeam) && war.isThisMonth }
+            else -> list.filter { war -> war.hasTeam(preferencesRepository.mkcTeam)}
         }.sortedByDescending { it.war?.mid }
         val filteredWars = applyFilters(list = wars, filters)
         emit(when (sort) {
