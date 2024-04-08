@@ -39,8 +39,8 @@ interface FirebaseRepositoryInterface{
     fun getUsers(): Flow<List<User>>
 
     //Get/Listen current war by team Id, only on home and currentWar
-    fun getCurrentWar(): Flow<MKWar?>
-    fun listenToCurrentWar(): Flow<MKWar?>
+    fun getCurrentWar(teamId: String): Flow<MKWar?>
+    fun listenToCurrentWar(teamId: String): Flow<MKWar?>
     //only on current war
     fun deleteCurrentWar(): Flow<Unit>
 
@@ -191,9 +191,9 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
         awaitClose {  }
     }.flowOn(Dispatchers.IO)
 
-    override fun getCurrentWar(): Flow<MKWar?>  = callbackFlow {
+    override fun getCurrentWar(teamId: String): Flow<MKWar?>  = callbackFlow {
         Log.d("MKDebugOnly", "FirebaseRepository getCurrentWar")
-          database.child("currentWars").child(preferencesRepository.mkcTeam?.id.orEmpty()).get().addOnSuccessListener { snapshot ->
+          database.child("currentWars").child(teamId).get().addOnSuccessListener { snapshot ->
               (snapshot.value as? Map<*,*>)?.let { value ->
                   launch {
                       val war = NewWar(
@@ -240,12 +240,12 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
         awaitClose { database.removeEventListener(postListener) }
     }.flowOn(Dispatchers.IO)
 
-    override fun listenToCurrentWar(): Flow<MKWar?> = callbackFlow {
+    override fun listenToCurrentWar(teamId: String): Flow<MKWar?> = callbackFlow {
         val postListener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 launch {
                     Log.d("MKDebugOnly", "FirebaseRepository listenCurrentWar")
-                    val war = when (val value = dataSnapshot.child("currentWars").child(preferencesRepository.mkcTeam?.id.orEmpty()).value as? Map<*,*>) {
+                    val war = when (val value = dataSnapshot.child("currentWars").child(teamId).value as? Map<*,*>) {
                         null -> null
                         else -> NewWar(
                             mid = value["mid"].toString(),

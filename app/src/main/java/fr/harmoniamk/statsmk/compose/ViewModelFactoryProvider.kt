@@ -3,6 +3,7 @@ package fr.harmoniamk.statsmk.compose
 import dagger.hilt.EntryPoint
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import fr.harmoniamk.statsmk.compose.viewModel.CurrentWarViewModel
 import fr.harmoniamk.statsmk.compose.viewModel.PlayerListViewModel
 import fr.harmoniamk.statsmk.compose.viewModel.PlayerProfileViewModel
 import fr.harmoniamk.statsmk.compose.viewModel.PositionViewModel
@@ -29,4 +30,5 @@ interface ViewModelFactoryProvider {
     val statsRankingViewModel: StatsRankingViewModel.Factory
     val playerProfileViewModel: PlayerProfileViewModel.Factory
     val teamProfileViewModel: TeamProfileViewModel.Factory
+    val currentWarViewModel: CurrentWarViewModel.Factory
 }

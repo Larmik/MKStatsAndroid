@@ -49,7 +49,7 @@ class PlayerListViewModel @AssistedInject constructor(
     private val _sharedPlayers = MutableStateFlow<Map<String, List<UserSelector>>>(mapOf())
     private val _sharedDialogValue = MutableStateFlow<MKDialogState?>(null)
     private val _sharedWarName = MutableStateFlow<String?>(null)
-    private val _sharedStarted = MutableSharedFlow<Unit>()
+    private val _sharedStarted = MutableSharedFlow<String>()
 
     val sharedPlayers = _sharedPlayers.asStateFlow()
     val sharedWarName = _sharedWarName.asStateFlow()
@@ -131,7 +131,7 @@ class PlayerListViewModel @AssistedInject constructor(
                 firebaseRepository.writeCurrentWar(war).first()
                 delay(1000)
                 _sharedDialogValue.value = null
-                _sharedStarted.emit(Unit)
+                _sharedStarted.emit(war.teamHost.orEmpty())
             }.launchIn(viewModelScope)
     }
 

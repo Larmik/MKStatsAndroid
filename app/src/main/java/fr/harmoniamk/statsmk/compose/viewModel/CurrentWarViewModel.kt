@@ -1,10 +1,17 @@
 package fr.harmoniamk.statsmk.compose.viewModel
 
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
+import dagger.hilt.android.EntryPointAccessors
 import fr.harmoniamk.statsmk.R
+import fr.harmoniamk.statsmk.compose.ViewModelFactoryProvider
 import fr.harmoniamk.statsmk.compose.ui.MKBottomSheetState
 import fr.harmoniamk.statsmk.compose.ui.MKDialogState
 import fr.harmoniamk.statsmk.extension.bind
@@ -32,23 +39,47 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flattenMerge
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import java.util.Locale
-import javax.inject.Inject
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
-@HiltViewModel
-class CurrentWarViewModel @Inject constructor(
+class CurrentWarViewModel @AssistedInject constructor(
+    @Assisted("teamId") val teamId: String,
     private val firebaseRepository: FirebaseRepositoryInterface,
     private val preferencesRepository: PreferencesRepositoryInterface,
     private val databaseRepository: DatabaseRepositoryInterface
 ) : ViewModel() {
+
+    companion object {
+        @Suppress("UNCHECKED_CAST")
+        fun provideFactory(
+            assistedFactory: Factory,
+            teamId: String
+        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return assistedFactory.create(teamId) as T
+            }
+        }
+
+        @Composable
+        fun viewModel(teamId: String): CurrentWarViewModel {
+            val factory: Factory = EntryPointAccessors.fromApplication<ViewModelFactoryProvider>(context = LocalContext.current).currentWarViewModel
+            return androidx.lifecycle.viewmodel.compose.viewModel(
+                factory = provideFactory(
+                    assistedFactory = factory,
+                    teamId = teamId
+                )
+            )
+        }
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(@Assisted("teamId") teamId: String): CurrentWarViewModel
+    }
 
     private val _sharedCurrentWar = MutableStateFlow<MKWar?>(null)
     private val _sharedButtonVisible = MutableStateFlow(false)
@@ -74,37 +105,24 @@ class CurrentWarViewModel @Inject constructor(
     val currentPlayers = mutableListOf<MKPlayer>()
 
     init {
-        firebaseRepository.getUsers()
-            .map { it.filter { user -> user.currentWar == preferencesRepository.currentWar?.mid }.sortedBy { it.name?.toLowerCase(Locale.ROOT) } }
-            .onEach {
-                users.clear()
-                users.addAll(it)
-            }
-            .flatMapLatest { databaseRepository.getRoster() }
-            .onEach {
-                currentPlayers.clear()
-                currentPlayers.addAll(it)
-            }
-
-            .launchIn(viewModelScope)
-
-        flowOf(firebaseRepository.getCurrentWar(), firebaseRepository.listenToCurrentWar())
-            .flattenMerge()
+        firebaseRepository.listenToCurrentWar(teamId)
             .flatMapLatest { it?.war.withName(databaseRepository) }
             .filterNotNull()
             .onEach {
+                preferencesRepository.currentWar = it.war
                 val penalties = it.war?.penalties?.withTeamName(databaseRepository)?.firstOrNull()
                 val warWithPenas = it.war?.copy(penalties = penalties).withName(databaseRepository).firstOrNull()
-                preferencesRepository.currentWar = warWithPenas?.war
+                val warTracksList = it.war?.warTracks.orEmpty().map { MKWarTrack(it) }
+                users.clear()
+                currentPlayers.clear()
+                users.addAll(firebaseRepository.getUsers().firstOrNull()?.filter { user -> user.currentWar == it.war?.mid }?.sortedBy { it.name?.toLowerCase(Locale.ROOT) }.orEmpty())
+                currentPlayers.addAll(databaseRepository.getRoster().firstOrNull().orEmpty())
                 _sharedCurrentWar.emit(warWithPenas)
                 _sharedTracks.emit(warWithPenas?.war?.warTracks.orEmpty().map { MKWarTrack(it) })
-                _sharedWarPlayers.takeIf { warWithPenas?.war?.warTracks == null }?.emit(currentPlayers.filter { player -> users.singleOrNull { it.mkcId == player.mkcId }?.currentWar == preferencesRepository.currentWar?.mid }.map { CurrentPlayerModel(it, 0, tracksPlayed = 0) })
+                _sharedWarPlayers.takeIf { warWithPenas?.war?.warTracks == null }?.emit(currentPlayers.filter { player -> users.singleOrNull { it.mkcId == player.mkcId }?.currentWar == it.war?.mid }.map { CurrentPlayerModel(it, 0, tracksPlayed = 0) })
                 _sharedButtonVisible.emit(warWithPenas?.war?.playerHostId.equals(preferencesRepository.mkcPlayer?.id.toString()))
-            }
-            .mapNotNull { it.war?.warTracks.orEmpty().map { MKWarTrack(it) } }
-            .onEach {list ->
-                _sharedTracks.emit(list)
-                _sharedWarPlayers.takeIf { list.isNotEmpty() }?.emit(initPlayersList(list))
+                _sharedTracks.emit(warTracksList)
+                _sharedWarPlayers.takeIf { warTracksList.isNotEmpty() }?.emit(initPlayersList(warTracksList, it.war?.mid.orEmpty()))
             }.launchIn(viewModelScope)
     }
 
@@ -137,17 +155,17 @@ class CurrentWarViewModel @Inject constructor(
     }
 
     fun onValidateWar() {
-        _sharedDialogValue.value = MKDialogState.ValidateWar(
-            onValidateWar = {
-                viewModelScope.launch {
-                    _sharedDialogValue.value = MKDialogState.Loading(R.string.creating_war)
-                    preferencesRepository.currentWar?.let { war ->
+        preferencesRepository.currentWar?.let { war ->
+            _sharedDialogValue.value = MKDialogState.ValidateWar(
+                onValidateWar = {
+                    viewModelScope.launch {
+                        _sharedDialogValue.value = MKDialogState.Loading(R.string.creating_war)
                         firebaseRepository.writeNewWar(war).first()
                         firebaseRepository.deleteCurrentWar().first()
                         val mkWar = listOf(MKWar(war)).withName(databaseRepository).first()
                         mkWar.singleOrNull()?.let { databaseRepository.writeWar(it).first() }
                         currentPlayers
-                            .filter { player -> users.singleOrNull { it.mkcId == player.mkcId }?.currentWar == preferencesRepository.currentWar?.mid }
+                            .filter { player -> users.singleOrNull { it.mkcId == player.mkcId }?.currentWar == war.mid }
                             .forEach {user ->
                                 val new = user.apply { this.currentWar = "-1" }
                                 val fbUser = firebaseRepository.getUsers().firstOrNull()?.singleOrNull { it.mkcId == user.mkcId }
@@ -159,17 +177,17 @@ class CurrentWarViewModel @Inject constructor(
                             .onEach { _sharedDialogValue.value = null }
                             .bind(_sharedGoToWarResume, viewModelScope)
                     }
-                }
-            },
-            onDismiss = { _sharedDialogValue.value = null }
-        )
+                },
+                onDismiss = { _sharedDialogValue.value = null }
+            )
+        }
     }
 
     fun dismissBottomSheet() {
         _sharedBottomSheetValue.value = null
     }
 
-    private fun initPlayersList(trackList: List<MKWarTrack>): List<CurrentPlayerModel> {
+    private fun initPlayersList(trackList: List<MKWarTrack>, warId: String): List<CurrentPlayerModel> {
         val finalList = mutableListOf<CurrentPlayerModel>()
         val positions = mutableListOf<Pair<MKPlayer?, Int>>()
         val shocks = mutableStateListOf<Shock>()
@@ -212,7 +230,7 @@ class CurrentWarViewModel @Inject constructor(
             ))
         }
         currentPlayers.filter {
-            it.currentWar == preferencesRepository.currentWar?.mid && !finalList.map { it.player?.mkcId }.contains(it.mkcId)
+            it.currentWar == warId && !finalList.map { it.player?.mkcId }.contains(it.mkcId)
         }.forEach { finalList.add(CurrentPlayerModel(player = it, score = 0, tracksPlayed = 0)) }
         return finalList
     }

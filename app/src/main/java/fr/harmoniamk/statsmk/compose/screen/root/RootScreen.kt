@@ -58,7 +58,7 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
         composable(route = "Home") {
             HomeScreen(
                 onBack = onBack,
-                onCurrentWarClick = { navController.navigate("Home/War/Current") },
+                onCurrentWarClick = { navController.navigate("Home/War/Current/$it") },
                 onWarClick = { navController.navigate(route = "Home/War/$it") },
                 onCreateWarClick = { navController.navigate("Home/War/AddWar") },
                 onSettingsItemClick = { navController.navigate(it) }
@@ -77,19 +77,20 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
             arguments = listOf(navArgument("team") { type = NavType.StringType })
         ) {
             PlayerListScreen(
-                it.arguments?.getString("team"),
-                onWarStarted = { navController.navigate(route = "Home/War/Current") })
+                teamId = it.arguments?.getString("team"),
+                onWarStarted = { navController.navigate(route = "Home/War/Current/$it") })
         }
 
         /** Navigation of Current War **/
-        composable(route = "Home/War/Current") {
+        composable(route = "Home/War/Current/{teamId}") {
             CurrentWarScreen(
+                teamId = it.arguments?.getString("teamId").orEmpty(),
                 onNextTrack = { navController.navigate("Home/War/Current/AddTrack") },
                 onBack = { navController.popBackStack("Home", inclusive = false) },
                 onTrackClick = { navController.navigate("Home/War/Current/TrackDetails/$it") },
-                onRedirectToResume = {
-                    navController.navigate(route = "Home/War/$it") {
-                        popUpTo("Home/War/Current") {
+                onRedirectToResume = { warId ->
+                    navController.navigate(route = "Home/War/$warId") {
+                        popUpTo("Home/War/Current/${it.arguments?.getString("teamId").orEmpty()}") {
                             inclusive = true
                         }
                     }

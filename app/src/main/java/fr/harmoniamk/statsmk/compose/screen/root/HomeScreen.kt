@@ -33,7 +33,7 @@ import kotlinx.coroutines.FlowPreview
 @Composable
 fun HomeScreen(
     onBack: () -> Unit,
-    onCurrentWarClick: () -> Unit,
+    onCurrentWarClick: (String) -> Unit,
     onWarClick: (String?) -> Unit,
     onCreateWarClick: () -> Unit,
     onSettingsItemClick: (String) -> Unit

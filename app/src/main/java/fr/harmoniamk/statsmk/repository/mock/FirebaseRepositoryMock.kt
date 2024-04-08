@@ -58,7 +58,7 @@ emit(null)    }
         emit(listOf())
     }
 
-    override fun getCurrentWar(): Flow<MKWar?> = flow {
+    override fun getCurrentWar(teamId: String): Flow<MKWar?> = flow {
         emit(null)
     }
 
@@ -66,7 +66,7 @@ emit(null)    }
         emit(listOf())
     }
 
-    override fun listenToCurrentWar(): Flow<MKWar?> = flow {
+    override fun listenToCurrentWar(teamId: String): Flow<MKWar?> = flow {
         emit(MKWar(
             NewWar.mock(
                 penalties = penalties,

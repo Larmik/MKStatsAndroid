@@ -19,7 +19,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKBaseScreen
 import fr.harmoniamk.statsmk.compose.ui.MKBottomSheet
@@ -34,24 +33,19 @@ import fr.harmoniamk.statsmk.compose.ui.MKShockView
 import fr.harmoniamk.statsmk.compose.ui.MKText
 import fr.harmoniamk.statsmk.compose.ui.MKTrackItem
 import fr.harmoniamk.statsmk.compose.viewModel.CurrentWarViewModel
-import fr.harmoniamk.statsmk.model.firebase.Penalty
-import fr.harmoniamk.statsmk.model.firebase.Shock
-import fr.harmoniamk.statsmk.repository.mock.AuthenticationRepositoryMock
-import fr.harmoniamk.statsmk.repository.mock.DatabaseRepositoryMock
-import fr.harmoniamk.statsmk.repository.mock.FirebaseRepositoryMock
-import fr.harmoniamk.statsmk.repository.mock.PreferencesRepositoryMock
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 
 @Composable
 @OptIn(ExperimentalMaterialApi::class)
 fun CurrentWarScreen(
-    viewModel: CurrentWarViewModel = hiltViewModel(),
+    teamId: String,
     onNextTrack: () -> Unit,
     onBack: () -> Unit,
     onTrackClick: (String) -> Unit,
     onRedirectToResume: (String) -> Unit
 ) {
+    val viewModel = CurrentWarViewModel.viewModel(teamId)
     val war = viewModel.sharedCurrentWar.collectAsState()
     val players = viewModel.sharedWarPlayers.collectAsState()
     val tracks = viewModel.sharedTracks.collectAsState()
@@ -141,14 +135,7 @@ fun CurrentWarScreen(
 @Composable
 fun CurrentWarScreenPreview() {
     CurrentWarScreen(
-        viewModel = CurrentWarViewModel(
-            firebaseRepository = FirebaseRepositoryMock(
-                penalties = listOf(Penalty("12345", 20)),
-                shocks = listOf(Shock("12345", 1))
-            ),
-            databaseRepository = DatabaseRepositoryMock(),
-            preferencesRepository = PreferencesRepositoryMock()
-        ),
+       teamId = "123",
         onNextTrack = {},
         onBack = {},
         onTrackClick = {},

@@ -53,7 +53,7 @@ fun TrackListScreen(
                     onClick = { index ->
                         when (editing) {
                             true -> viewModel.editTrack(
-                                war = war.value?.war,
+                                war = war.value,
                                 indexInList = trackIndex,
                                 newTrackIndex = index
                             )

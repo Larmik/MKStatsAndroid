@@ -32,7 +32,7 @@ import kotlinx.coroutines.flow.filterNotNull
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
-fun PlayerListScreen(teamId: String?, onWarStarted: () -> Unit) {
+fun PlayerListScreen(teamId: String?, onWarStarted: (String) -> Unit) {
     val viewModel: PlayerListViewModel = viewModel(id = teamId)
     val players = viewModel.sharedPlayers.collectAsState()
     val warName = viewModel.sharedWarName.collectAsState()
@@ -41,7 +41,7 @@ fun PlayerListScreen(teamId: String?, onWarStarted: () -> Unit) {
 
     LaunchedEffect(Unit) {
         viewModel.sharedStarted.filterNotNull().collect {
-            onWarStarted()
+            onWarStarted(it)
         }
     }
     loadingState.value?.let { MKDialog(state = it) }

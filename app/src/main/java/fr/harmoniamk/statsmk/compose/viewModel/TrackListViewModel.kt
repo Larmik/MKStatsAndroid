@@ -63,14 +63,14 @@ class TrackListViewModel @AssistedInject constructor(@Assisted private val editi
 
     private val _sharedSearchedItems = MutableStateFlow(Maps.values().toList())
     private val _sharedQuit = MutableSharedFlow<Unit>()
-    private val _sharedCurrentWar = MutableStateFlow<MKWar?>(null)
+    private val _sharedCurrentWar = MutableStateFlow<NewWar?>(null)
 
     val sharedSearchedItems = _sharedSearchedItems.asStateFlow()
     val sharedQuit = _sharedQuit.asSharedFlow()
     val sharedCurrentWar = _sharedCurrentWar.asStateFlow()
 
     init {
-        firebaseRepository.takeIf { editing }?.listenToCurrentWar()?.bind(_sharedCurrentWar, viewModelScope)
+        _sharedCurrentWar.value = preferencesRepository.takeIf { editing }?.currentWar
     }
 
     fun search(searched: String) {
