@@ -5,13 +5,11 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKDialogState
-import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.model.firebase.AuthUserResponse
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.network.NetworkResponse
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
-import fr.harmoniamk.statsmk.repository.MKCentralRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import fr.harmoniamk.statsmk.usecase.FetchUseCaseInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -21,9 +19,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flattenMerge
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
@@ -64,6 +61,7 @@ class SignupViewModel @Inject constructor(
             .mapNotNull { (it as? NetworkResponse.Success)?.response }
             .onEach { _sharedDialogValue.value = MKDialogState.Loading(R.string.creating_user) }
             .flatMapLatest { authenticationRepository.createUser(email, password) }
+            .shareIn(viewModelScope, SharingStarted.Lazily)
 
         createUser
             .mapNotNull { (it as? AuthUserResponse.Success)?.user }
@@ -74,13 +72,18 @@ class SignupViewModel @Inject constructor(
             }
             .map {
                 val player = preferencesRepository.mkcPlayer
+                val role = when (preferencesRepository.mkcTeam?.rosterList?.singleOrNull { it.mkcId.split(".").getOrNull(0) == player?.id.toString() }?.isLeader == "1.0") {
+                    true -> 2
+                    else -> 0
+                }
+                preferencesRepository.role = role
                 User(
                     mid = authenticationRepository.user?.uid.orEmpty(),
                     name = player?.display_name,
                     currentWar = "-1",
                     discordId = "-1",
                     picture = player?.profile_picture,
-                    role = 0,
+                    role = role,
                     mkcId = player?.id.toString(),
                     rosterId = player?.current_teams?.getOrNull(0)?.team_id.toString()
                 )
@@ -104,6 +107,7 @@ class SignupViewModel @Inject constructor(
             .launchIn(viewModelScope)
 
         createUser
+            .debounce(500)
             .mapNotNull { (it as? AuthUserResponse.Error)?.message }
             .onEach { _sharedDialogValue.value = MKDialogState.Error(it) {
                 _sharedDialogValue.value = null

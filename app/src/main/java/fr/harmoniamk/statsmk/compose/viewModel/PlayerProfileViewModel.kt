@@ -98,7 +98,7 @@ class PlayerProfileViewModel @AssistedInject constructor(
     fun onAddAlly() {
         val teamId = preferencesRepository.mkcTeam?.primary_team_id ?: preferencesRepository.mkcTeam?.id
       firebaseRepository.writeAlly(teamId.toString(), player?.id.toString())
-            .flatMapLatest { databaseRepository.writeUser(MKPlayer(player)) }
+            .flatMapLatest { databaseRepository.writeUser(MKPlayer(player).copy(rosterId = "-1")) }
             .onEach { _sharedAllyButton.value = null }
             .launchIn(viewModelScope)
     }

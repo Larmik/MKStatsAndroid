@@ -141,20 +141,6 @@ data class MKPlayer(
         rosterId = rosterId
     )
 
-    constructor(player: MKPlayer, role: Int?, picture: String?) : this(
-        mid = player.mid,
-        mkcId = player.mkcId,
-        name = player.name,
-        fc = player.fc,
-        status = player.status,
-        registerDate = player.registerDate,
-        country = player.country,
-        isLeader = player.isLeader,
-        role = role ?: 0,
-        currentWar = player.currentWar,
-        picture = picture.orEmpty(),
-        rosterId = player.rosterId
-    )
 }
 
 @Keep
