@@ -8,8 +8,7 @@ import kotlinx.android.parcel.Parcelize
 import java.io.Serializable
 import java.util.*
 
-@Parcelize
-data class MKWar(val war: NewWar?) : Serializable, Parcelable {
+data class MKWar(val war: NewWar?) : Serializable {
 
     val warTracks = war?.warTracks?.map { MKWarTrack(it) }
     val trackPlayed = warTracks?.size ?: 0
@@ -36,13 +35,16 @@ data class MKWar(val war: NewWar?) : Serializable, Parcelable {
     fun hasTeam(teamId: String?): Boolean {
         return war?.teamHost == teamId || war?.teamOpponent == teamId
     }
-    fun hasTeam(team: MKCFullTeam?): Boolean {
-        return war?.teamHost == team?.id
-                || war?.teamHost == team?.primary_team_id?.toString()
-                ||team?.secondary_teams?.map { it.id }?.contains(war?.teamHost).isTrue
-                || war?.teamOpponent == team?.id
-                || war?.teamOpponent == team?.primary_team_id?.toString()
-                ||team?.secondary_teams?.map { it.id }?.contains(war?.teamOpponent).isTrue
+    fun hasTeam(team: MKCFullTeam?, rosterOnly: Boolean = false): Boolean {
+        return when (rosterOnly) {
+            true -> war?.teamHost == team?.id || war?.teamOpponent == team?.id
+            else -> war?.teamHost == team?.id
+                    || war?.teamHost == team?.primary_team_id?.toString()
+                    ||team?.secondary_teams?.map { it.id }?.contains(war?.teamHost).isTrue
+                    || war?.teamOpponent == team?.id
+                    || war?.teamOpponent == team?.primary_team_id?.toString()
+                    || team?.secondary_teams?.map { it.id }?.contains(war?.teamOpponent).isTrue
+        }
     }
 
     var name: String? = null

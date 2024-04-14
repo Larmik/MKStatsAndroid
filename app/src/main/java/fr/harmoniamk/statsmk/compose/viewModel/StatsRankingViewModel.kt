@@ -170,7 +170,7 @@ class StatsRankingViewModel @AssistedInject constructor(
                         databaseRepository = databaseRepository,
                         userId = preferencesRepository.mkcPlayer?.id.toString().split(".").first().takeIf { indivEnabled.isTrue })
                     }
-                    .mapNotNull { it.filter { vm -> (vm.userId == null && vm.stats.warStats.list.any { war -> war.hasTeam(preferencesRepository.mkcTeam) }) || vm.userId != null } }
+                    .mapNotNull { it.filter { vm -> (vm.userId == null && vm.stats.warStats.list.any { war -> war.hasTeam(preferencesRepository.mkcTeam, preferencesRepository.rosterOnly) }) || vm.userId != null } }
                     .onEach {
                         _sharedList.value = sortTeams(sortType, it)
                     }.launchIn(viewModelScope)
@@ -194,19 +194,19 @@ class StatsRankingViewModel @AssistedInject constructor(
                     .filter {
                         (!onlyIndiv
                                 && (teamId?.takeIf { it.isNotEmpty() } != null && it.map { war -> war.hasTeam(teamId) }.any { it })
-                                || (teamId.isNullOrEmpty() && it.map { war -> war.hasTeam(preferencesRepository.mkcTeam)}.any { it }))
+                                || (teamId.isNullOrEmpty() && it.map { war -> war.hasTeam(preferencesRepository.mkcTeam, preferencesRepository.rosterOnly)}.any { it }))
                                 || onlyIndiv
                     }
                     .mapNotNull { list -> list.filter {
                         (
                                 (onlyIndiv && it.hasPlayer(finalUserId)) || !onlyIndiv)
                                 && ((!indivEnabled.isTrue && (teamId?.takeIf { it.isNotEmpty() } == null && it.hasTeam(teamId))
-                                || (teamId.isNullOrEmpty() && it.hasTeam(preferencesRepository.mkcTeam)))
+                                || (teamId.isNullOrEmpty() && it.hasTeam(preferencesRepository.mkcTeam, preferencesRepository.rosterOnly)))
                                 || (indivEnabled.isTrue && it.hasPlayer(finalUserId))
                                 || (teamId?.takeIf { it.isNotEmpty() } != null && it.hasTeam(teamId)))} }
                     .map { list ->
                         val allTracksPlayed = mutableListOf<NewWarTrack>()
-                        list.filter { (teamId == null && it.hasTeam(preferencesRepository.mkcTeam)) || it.hasTeam(teamId) }.mapNotNull { it.war?.warTracks }.forEach {
+                        list.filter { (teamId == null && it.hasTeam(preferencesRepository.mkcTeam, preferencesRepository.rosterOnly)) || it.hasTeam(teamId) }.mapNotNull { it.war?.warTracks }.forEach {
                             allTracksPlayed.addAll(it)
                         }
                         allTracksPlayed

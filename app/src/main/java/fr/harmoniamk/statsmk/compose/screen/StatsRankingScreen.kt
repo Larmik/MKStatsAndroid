@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
@@ -20,16 +19,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import fr.harmoniamk.statsmk.R
-import fr.harmoniamk.statsmk.model.local.RankingItemViewModel
 import fr.harmoniamk.statsmk.compose.ui.MKBaseScreen
 import fr.harmoniamk.statsmk.compose.ui.MKBottomSheet
 import fr.harmoniamk.statsmk.compose.ui.MKPlayerItem
+import fr.harmoniamk.statsmk.compose.ui.MKProgress
 import fr.harmoniamk.statsmk.compose.ui.MKSegmentedSelector
 import fr.harmoniamk.statsmk.compose.ui.MKTeamItem
 import fr.harmoniamk.statsmk.compose.ui.MKTextField
@@ -38,6 +36,7 @@ import fr.harmoniamk.statsmk.compose.viewModel.StatsRankingState
 import fr.harmoniamk.statsmk.compose.viewModel.StatsRankingViewModel
 import fr.harmoniamk.statsmk.fragment.stats.opponentRanking.OpponentRankingItemViewModel
 import fr.harmoniamk.statsmk.fragment.stats.playerRanking.PlayerRankingItemViewModel
+import fr.harmoniamk.statsmk.model.local.RankingItemViewModel
 import fr.harmoniamk.statsmk.model.local.TrackStats
 import kotlinx.coroutines.flow.filterNotNull
 
@@ -141,11 +140,7 @@ fun StatsRankingScreen(
         }
 
         when (list.value) {
-            null -> CircularProgressIndicator(
-                modifier = Modifier.padding(vertical = 10.dp), color = colorResource(
-                    id = R.color.harmonia_dark
-                )
-            )
+            null -> MKProgress()
             else -> LazyColumn {
                 items(list.value.orEmpty()) { rankingItem ->
                     when (rankingItem) {

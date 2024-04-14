@@ -19,7 +19,6 @@ data class MKCTeamResponse(
 
 @Keep
 @JsonClass(generateAdapter = true)
-@Parcelize
 data class MKCTeam(
     val team_id: String,
     val team_name: String,
@@ -31,7 +30,7 @@ data class MKCTeam(
     val player_count: Int,
     val founding_date: String,
     val founding_date_human: String
-) : Parcelable {
+)  {
 
     fun toEntity() = MKCTeamEntity(
         id = team_id,

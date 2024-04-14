@@ -1,16 +1,12 @@
 package fr.harmoniamk.statsmk.compose.screen
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
@@ -32,6 +28,7 @@ import fr.harmoniamk.statsmk.compose.ui.MKButton
 import fr.harmoniamk.statsmk.compose.ui.MKPlayerItem
 import fr.harmoniamk.statsmk.compose.ui.MKText
 import fr.harmoniamk.statsmk.compose.ui.MKTextField
+import fr.harmoniamk.statsmk.compose.viewModel.ColorsViewModel
 import fr.harmoniamk.statsmk.compose.viewModel.SubPlayerViewModel
 import fr.harmoniamk.statsmk.extension.isTrue
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -42,6 +39,7 @@ import kotlinx.coroutines.FlowPreview
 )
 @Composable
 fun SubPlayerScreen(viewModel: SubPlayerViewModel = hiltViewModel(), onDismiss: () -> Unit) {
+    val colorsViewModel: ColorsViewModel = hiltViewModel()
     val currentPlayers = viewModel.sharedPlayers.collectAsState()
     val allies = viewModel.sharedAllies.collectAsState()
     val playerSelected = viewModel.sharedPlayerSelected.collectAsState()
@@ -68,7 +66,7 @@ fun SubPlayerScreen(viewModel: SubPlayerViewModel = hiltViewModel(), onDismiss: 
         LazyColumn(Modifier.weight(1f)) {
             if (allies.value.isNotEmpty())
                 stickyHeader {
-                    Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().height(40.dp).background(color = colorResource(R.color.harmonia_dark))) {
+                    Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().height(40.dp).background(color = colorsViewModel.secondaryColor)) {
                         MKText(font = R.font.montserrat_bold, fontSize = 18, text = "Roster", textColor = R.color.white)
                     }
                 }
@@ -90,7 +88,7 @@ fun SubPlayerScreen(viewModel: SubPlayerViewModel = hiltViewModel(), onDismiss: 
             }
             allies.value.takeIf { it.isNotEmpty() }?.let {
                 stickyHeader {
-                    Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().height(40.dp).background(color = colorResource(R.color.harmonia_dark))) {
+                    Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().height(40.dp).background(color = colorsViewModel.secondaryColor)) {
                         MKText(font = R.font.montserrat_bold, fontSize = 18, text = "Allies", textColor = R.color.white)
                     }
                 }

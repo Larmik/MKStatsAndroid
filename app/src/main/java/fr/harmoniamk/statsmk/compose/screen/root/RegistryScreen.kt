@@ -19,6 +19,7 @@ fun RegistryScreen(viewModel: StatsMenuViewModel = hiltViewModel(), onItemClick:
             MenuItems.ManageTeams(),
             MenuItems.Players(),
             MenuItems.Profile(),
+            MenuItems.Settings()
         ).forEach {
             MKListItem(item = it, separator = true, onNavigate = onItemClick) {}
         }

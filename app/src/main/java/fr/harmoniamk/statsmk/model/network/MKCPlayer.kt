@@ -47,7 +47,7 @@ data class MKCDate(
 
 @Keep
 @JsonClass(generateAdapter = true)
-@Parcelize
+
 data class MKPlayer(
     val mid: String,
     val mkcId: String,
@@ -61,7 +61,7 @@ data class MKPlayer(
     var currentWar: String,
     val picture: String,
     val rosterId: String
-) : Parcelable {
+)  {
 
     val flag = "https://www.mariokartcentral.com/mkc/images/flags/${country.lowercase()}.png"
 
@@ -126,17 +126,17 @@ data class MKPlayer(
         rosterId = ""
     )
 
-    constructor(player: MKCFullPlayer?, role: Int, isLeader: String, currentWar: String, rosterId: String) : this(
-        mid = player?.id.toString(),
+    constructor(player: MKCFullPlayer?, user: User?, rosterId: String) : this(
+        mid = user?.mid ?: player?.id.toString(),
         mkcId = player?.id.toString(),
         name = player?.display_name.orEmpty(),
         fc = player?.switch_fc.orEmpty(),
         status = player?.player_status.orEmpty(),
         registerDate = player?.registered_at?.date.orEmpty(),
         country = player?.country_code.orEmpty(),
-        isLeader = isLeader,
-        role = role,
-        currentWar = currentWar,
+        isLeader = if ((user?.role ?: 0) == 2) "1" else "0",
+        role = user?.role ?: -1,
+        currentWar = user?.currentWar ?: "-1",
         picture = player?.profile_picture.orEmpty(),
         rosterId = rosterId
     )

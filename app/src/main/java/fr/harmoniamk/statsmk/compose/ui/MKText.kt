@@ -18,7 +18,7 @@ import fr.harmoniamk.statsmk.R
 
 private const val TEXT_SCALE_REDUCTION_INTERVAL = 0.9f
 @Composable
-fun MKText(modifier: Modifier = Modifier, text: Any, font: Int = R.font.montserrat_regular, fontSize: Int = 14, textColor: Int = R.color.harmonia_dark, maxLines: Int = Integer.MAX_VALUE) {
+fun MKText(modifier: Modifier = Modifier, text: Any, font: Int = R.font.montserrat_regular, fontSize: Int = 14, textColor: Int = R.color.black, maxLines: Int = Integer.MAX_VALUE, textAlign: TextAlign = TextAlign.Center) {
     val targetTextSizeHeight = TextUnit(fontSize.toFloat(), TextUnitType.Sp)
     val textSize = remember { mutableStateOf(targetTextSizeHeight) }
     Text(
@@ -28,7 +28,7 @@ fun MKText(modifier: Modifier = Modifier, text: Any, font: Int = R.font.montserr
         },
         fontFamily = FontFamily(Font(font)),
         modifier = modifier,
-        textAlign = TextAlign.Center,
+        textAlign = textAlign,
         fontSize = textSize.value,
         color = colorResource(id = textColor),
         overflow = TextOverflow.Ellipsis,

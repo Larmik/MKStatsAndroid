@@ -28,12 +28,12 @@ fun MKScoreView(modifier: Modifier = Modifier, track: MKWarTrack? = null, war: M
         else -> ""
     }
     val diffColor = when {
-        isSmaller && !colored -> R.color.harmonia_dark
+        isSmaller && !colored -> R.color.black
         war?.displayedDiff?.contains("-").isTrue -> R.color.lose
         war?.displayedDiff?.contains("+").isTrue -> R.color.win
         track?.displayedDiff?.contains("-").isTrue -> R.color.lose
         track?.displayedDiff?.contains("+").isTrue -> R.color.win
-        else -> R.color.harmonia_dark
+        else -> R.color.black
     }
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier) {
         MKText(text = score, modifier = Modifier.padding(horizontal = if (isSmaller) 0.dp else 10.dp), fontSize = if (isSmaller) 14 else 22, font = R.font.orbitron_semibold)

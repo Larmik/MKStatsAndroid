@@ -38,11 +38,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val authenticationRepository: AuthenticationRepositoryInterface,
-    private val storageRepository: StorageRepository,
     private val preferencesRepository: PreferencesRepositoryInterface,
-    private val firebaseRepository: FirebaseRepositoryInterface,
-    private val databaseRepository: DatabaseRepositoryInterface,
-    private val networkRepository: NetworkRepositoryInterface) : ViewModel() {
+    private val databaseRepository: DatabaseRepositoryInterface) : ViewModel() {
 
     private val _sharedDisconnect = MutableSharedFlow<Unit>()
      private val _sharedBottomSheetValue = MutableStateFlow<MKBottomSheetState?>(null)
@@ -109,23 +106,6 @@ class ProfileViewModel @Inject constructor(
                 _sharedDialogValue.value = null
             }
         )
-    }
-
-    fun onPictureEdited(pictureUri: Uri?) {
-        pictureUri?.let { uri ->
-            var url: String? = null
-            storageRepository.uploadPicture(authenticationRepository.user?.uid, uri)
-                .filter { it is UploadPictureResponse.Success }
-                .mapNotNull { authenticationRepository.user?.uid }
-                .flatMapLatest { storageRepository.getPicture(it) }
-                .mapNotNull { url = (it as? PictureResponse.Success)?.url; url }
-                .flatMapLatest { firebaseRepository.getUser(authenticationRepository.user?.uid.orEmpty()) }
-                .filterNotNull()
-                .flatMapLatest { firebaseRepository.writeUser(it.apply { this.picture = url }) }
-                .flatMapLatest { authenticationRepository.updateProfile(authenticationRepository.user?.displayName.toString(), url) }
-               // .onEach { _sharedPictureLoaded.emit(url) }
-                .launchIn(viewModelScope)
-        }
     }
 
 }

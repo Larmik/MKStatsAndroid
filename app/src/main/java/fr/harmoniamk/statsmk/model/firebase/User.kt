@@ -5,7 +5,7 @@ import com.google.firebase.auth.FirebaseUser
 import fr.harmoniamk.statsmk.model.network.MKPlayer
 import kotlinx.android.parcel.Parcelize
 
-@Parcelize
+
 data class User(
     val mid: String,
     var name: String? = null,
@@ -15,7 +15,7 @@ data class User(
     var mkcId: String? = null,
     var discordId: String?,
     var rosterId: String? = null
-) : Parcelable {
+)  {
 
     constructor(player: MKPlayer?, mid: String?, discordId: String?) : this(
         mid = mid ?: player?.mkcId.orEmpty(),

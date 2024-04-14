@@ -10,22 +10,36 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKText
+import fr.harmoniamk.statsmk.extension.fromHex
 import fr.harmoniamk.statsmk.model.local.MKStats
 import fr.harmoniamk.statsmk.model.local.MapStats
 import fr.harmoniamk.statsmk.model.local.Stats
+import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import javax.inject.Inject
 import kotlin.math.roundToInt
+
+@OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
+@HiltViewModel
+class PieChartViewModel @Inject constructor(preferencesRepository: PreferencesRepositoryInterface) : ViewModel() {
+    val color = preferencesRepository.mainColor
+}
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @Composable
 fun MKPieChart(
     modifier: Modifier = Modifier,
+    viewModel: PieChartViewModel = hiltViewModel(),
     stats: MKStats?
 ) {
     val warStats = (stats as? Stats)?.warStats
@@ -58,7 +72,7 @@ fun MKPieChart(
                 startAngle += sweepAngles[i]
             }
         }
-        Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center, modifier = Modifier.background(color = colorResource(id = R.color.harmonia_clear), shape = RoundedCornerShape(90.dp)).size(90.dp)) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center, modifier = Modifier.background(color = Color.fromHex("#${viewModel.color}"), shape = RoundedCornerShape(90.dp)).size(90.dp)) {
             MKText(text = "Winrate:")
             MKText(text = (((win?.toFloat() ?: 0f) * 100) / sumOfValues).roundToInt().toString() + " %", font = R.font.orbitron_regular, fontSize = 16)
         }

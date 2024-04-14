@@ -407,4 +407,14 @@
     <string name="id_mkc">Identifiant MKCentral</string>
     <string name="confirmez_le_mot_de_passe">Confimez le mot de passe</string>
     <string name="all">Tout</string>
+    <string name="purge_users">Purger les utilisateurs</string>
+    <string name="help"><![CDATA[Aide & Contact]]></string>
+    <string name="credits">Crédits</string>
+    <string name="coffee">Offrir un café</string>
+    <string name="options">Options</string>
+    <string name="theme">Thème</string>
+    <string name="stats_display_mode">Calcul des statistiques</string>
+    <string name="main_color">Couleur principale (claire, textes affichés en noir)</string>
+    <string name="secondary_color">Couleur secondaire (contrastée, textes affichés en blanc)</string>
+    <string name="hexa">Code couleur</string>
 </resources>

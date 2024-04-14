@@ -66,6 +66,7 @@ class WarViewModel @Inject constructor(
     private var scheduledWar: WarDispo? = null
     private val dispoList = mutableListOf<WarDispo>()
 
+
     init {
         preferencesRepository.mkcTeam?.takeIf { networkRepository.networkAvailable }?.let { team ->
             _sharedTeam.value = team

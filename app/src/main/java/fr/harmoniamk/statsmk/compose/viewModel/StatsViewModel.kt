@@ -80,6 +80,8 @@ class StatsViewModel @Inject constructor(
     private var item: Stats? = null
     var onlyIndiv =  preferencesRepository.mkcTeam?.id == null
 
+    val pieChartBackground = preferencesRepository.mainColor
+
     fun init(type: StatsType, periodic: String) {
         _sharedPeriodEnabled.value = (type as? StatsType.MapStats)?.periodic ?: periodic
         val warFlow = databaseRepository.getRoster()
@@ -97,7 +99,7 @@ class StatsViewModel @Inject constructor(
                                 || periodic == Periodics.Month.name && war.isThisMonth)
                     }
                     type is StatsType.TeamStats -> it.filter {
-                        war -> war.hasTeam(preferencesRepository.mkcTeam)
+                        war -> war.hasTeam(preferencesRepository.mkcTeam, preferencesRepository.rosterOnly)
                             && (periodic == Periodics.All.name
                             || periodic == Periodics.Week.name && war.isThisWeek
                             || periodic == Periodics.Month.name && war.isThisMonth)
@@ -179,15 +181,15 @@ class StatsViewModel @Inject constructor(
                     onlyIndiv -> wars.filter { war -> war.hasPlayer(type.userId?.split(".")?.firstOrNull()) }
                     type.userId != null && type.teamId?.takeIf { it.isNotEmpty() } != null -> wars.filter { war -> war.hasPlayer(type.userId.split(".").firstOrNull()) && war.hasTeam(type.teamId) }
                     type.teamId?.takeIf { it.isNotEmpty() } != null -> wars.filter { war -> war.hasTeam(type.teamId) }
-                    else -> wars.filter { war ->  war.hasTeam(preferencesRepository.mkcTeam) }
+                    else -> wars.filter { war ->  war.hasTeam(preferencesRepository.mkcTeam, preferencesRepository.rosterOnly) }
                 }
             }
             .filter {
-                (!onlyIndiv && it.map { war -> war.hasTeam(preferencesRepository.mkcTeam) }.any { it })
+                (!onlyIndiv && it.map { war -> war.hasTeam(preferencesRepository.mkcTeam, preferencesRepository.rosterOnly) }.any { it })
                         || onlyIndiv
             }
             .mapNotNull { list -> list
-                .filter {  (onlyIndiv && it.hasPlayer((type as StatsType.MapStats).userId?.split(".")?.firstOrNull())) || !onlyIndiv && it.hasTeam(preferencesRepository.mkcTeam) }
+                .filter {  (onlyIndiv && it.hasPlayer((type as StatsType.MapStats).userId?.split(".")?.firstOrNull())) || !onlyIndiv && it.hasTeam(preferencesRepository.mkcTeam, preferencesRepository.rosterOnly) }
                 .filter {  periodic == Periodics.All.name || (periodic == Periodics.Week.name && it.isThisWeek) || periodic == Periodics.Month.name && it.isThisMonth }
             }
             .map {

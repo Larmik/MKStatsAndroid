@@ -44,7 +44,7 @@ fun MKWarDetailsStatsView(mkStats: MKStats, type: StatsType) {
     Column(
         modifier = Modifier
             .padding(bottom = 20.dp)
-            .border(1.dp, colorResource(id = R.color.harmonia_dark), RoundedCornerShape(5.dp))
+            .border(1.dp, colorResource(id = R.color.black), RoundedCornerShape(5.dp))
             .background(
                 color = colorResource(id = R.color.transparent_white),
                 shape = RoundedCornerShape(5.dp)

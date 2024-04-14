@@ -4,17 +4,23 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.ui.graphics.Color
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
+import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.screen.root.RootScreen
 import fr.harmoniamk.statsmk.compose.ui.MKDialog
 import fr.harmoniamk.statsmk.compose.ui.MKDialogState
+import fr.harmoniamk.statsmk.compose.viewModel.ColorsViewModel
+import fr.harmoniamk.statsmk.extension.fromHex
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -27,6 +33,7 @@ import kotlinx.coroutines.flow.onEach
 class MainActivity : AppCompatActivity() {
 
     private val viewModel: MainViewModel by viewModels()
+    private val colorsViewModel: ColorsViewModel by viewModels()
 
     @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,7 +46,13 @@ class MainActivity : AppCompatActivity() {
             .distinctUntilChanged()
             .onEach {
                 splashscreen.setKeepOnScreenCondition { false }
-                setContent { RootScreen(startDestination = it.name) { finish() } }
+                setContent {
+                    val systemUiController = rememberSystemUiController()
+                    systemUiController.setSystemBarsColor(
+                        color = colorsViewModel.secondaryColor
+                    )
+                    RootScreen(startDestination = it.name) { finish() }
+                }
             }.launchIn(lifecycleScope)
 
         viewModel.sharedDialogValue

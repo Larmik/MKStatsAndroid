@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
@@ -38,6 +37,7 @@ import fr.harmoniamk.statsmk.compose.ui.MKBaseScreen
 import fr.harmoniamk.statsmk.compose.ui.MKBottomSheet
 import fr.harmoniamk.statsmk.compose.ui.MKDialog
 import fr.harmoniamk.statsmk.compose.ui.MKListItem
+import fr.harmoniamk.statsmk.compose.ui.MKProgress
 import fr.harmoniamk.statsmk.compose.ui.MKText
 import fr.harmoniamk.statsmk.compose.viewModel.ProfileViewModel
 import fr.harmoniamk.statsmk.enums.MenuItems
@@ -51,10 +51,7 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), onLogout: () ->
     val email = viewModel.sharedEmail.collectAsState()
     val currentState = viewModel.sharedBottomSheetValue.collectAsState(null)
     val dialogState = viewModel.sharedDialogValue.collectAsState(null)
-    val launcher = rememberLauncherForActivityResult(
-        ActivityResultContracts.PickVisualMedia(),
-        onResult = viewModel::onPictureEdited
-    )
+
     val player = viewModel.sharedPlayer.collectAsState()
     val bottomSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
 
@@ -88,11 +85,7 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), onLogout: () ->
             modifier = Modifier.verticalScroll(rememberScrollState())
         ) {
             when (player.value) {
-                null ->  CircularProgressIndicator(
-                    modifier = Modifier.padding(vertical = 10.dp), color = colorResource(
-                        id = R.color.harmonia_dark
-                    )
-                )
+                null ->  MKProgress()
                 else -> {
                     when (player.value?.profile_picture?.takeIf { it.isNotEmpty() }) {
                         null -> Image(
@@ -198,7 +191,6 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), onLogout: () ->
                 listOf(
                     MenuItems.ChangeMail(),
                     MenuItems.ChangePassword(),
-                   // MenuItems.ChangePicture(),
                     MenuItems.Logout()
                 )
                     .forEach {
@@ -206,13 +198,6 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), onLogout: () ->
                         when (it) {
                             is MenuItems.ChangeMail -> viewModel.onEditEmail()
                             is MenuItems.ChangePassword -> viewModel.onEditPassword()
-                            is MenuItems.ChangePicture -> {
-                                launcher.launch(
-                                    PickVisualMediaRequest(
-                                        mediaType = ActivityResultContracts.PickVisualMedia.ImageOnly
-                                    )
-                                )
-                            }
                             is MenuItems.Logout -> viewModel.onLogout()
                             else -> {}
                         }

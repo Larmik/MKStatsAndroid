@@ -45,7 +45,7 @@ fun Int?.positionColor() = when (this) {
     9,10 -> R.color.pos_9_10
     11 -> R.color.pos_11
     12 -> R.color.pos_12
-    else -> R.color.harmonia_dark
+    else -> R.color.black
 }
 
 fun Int.warScoreToDiff() : String {

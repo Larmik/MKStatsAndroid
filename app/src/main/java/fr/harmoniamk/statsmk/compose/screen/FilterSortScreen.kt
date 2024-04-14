@@ -23,6 +23,7 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKBaseScreen
 import fr.harmoniamk.statsmk.compose.ui.MKButton
 import fr.harmoniamk.statsmk.compose.ui.MKText
+import fr.harmoniamk.statsmk.compose.viewModel.ColorsViewModel
 import fr.harmoniamk.statsmk.compose.viewModel.Filter
 import fr.harmoniamk.statsmk.compose.viewModel.FilterSortViewModel
 import fr.harmoniamk.statsmk.compose.viewModel.Sort
@@ -34,6 +35,8 @@ import kotlinx.coroutines.flow.filterNotNull
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun FilterSortScreen(viewModel: FilterSortViewModel = hiltViewModel(), sort: Sort, filter: Filter, onDismiss: () -> Unit, onSorted: (SortType) -> Unit, onFiltered: (List<FilterType>) -> Unit) {
+
+    val colorsViewModel: ColorsViewModel = hiltViewModel()
 
     val sortState = viewModel.sortState.collectAsState()
     val filterState = viewModel.filterState.collectAsState()
@@ -60,12 +63,12 @@ fun FilterSortScreen(viewModel: FilterSortViewModel = hiltViewModel(), sort: Sor
                     val isSelected =
                         sortState.value == it || (sortState.value == null && it == list.first())
                     val bgColor = when (isSelected) {
-                        true -> R.color.harmonia_dark
-                        else -> R.color.transparent_white
+                        true -> colorsViewModel.secondaryColor
+                        else -> colorResource(R.color.transparent_white)
                     }
                     val textColor = when (isSelected) {
                         true -> R.color.white
-                        else -> R.color.harmonia_dark
+                        else -> R.color.black
                     }
                     Card(
                         modifier = Modifier
@@ -76,7 +79,7 @@ fun FilterSortScreen(viewModel: FilterSortViewModel = hiltViewModel(), sort: Sor
                                 onSorted(it)
                            },
                         elevation = 0.dp,
-                        backgroundColor = colorResource(id = bgColor)
+                        backgroundColor = bgColor
                     ) {
                             Row(
                                 Modifier.wrapContentWidth(),
@@ -101,12 +104,12 @@ fun FilterSortScreen(viewModel: FilterSortViewModel = hiltViewModel(), sort: Sor
                 it.forEach {
                     val isSelected = filterState.value?.contains(it)
                     val bgColor = when (isSelected) {
-                        true -> R.color.harmonia_dark
-                        else -> R.color.transparent_white
+                        true -> colorsViewModel.secondaryColor
+                        else -> colorResource(R.color.transparent_white)
                     }
                     val textColor = when (isSelected) {
                         true -> R.color.white
-                        else -> R.color.harmonia_dark
+                        else -> R.color.black
                     }
                     Card(
                         modifier = Modifier
@@ -114,7 +117,7 @@ fun FilterSortScreen(viewModel: FilterSortViewModel = hiltViewModel(), sort: Sor
                             .height(40.dp)
                             .clickable { viewModel.switchFilter(it, isSelected.isTrue) },
                         elevation = 0.dp,
-                        backgroundColor = colorResource(id = bgColor)
+                        backgroundColor = bgColor
                     ) {
                             Row(
                                 Modifier.wrapContentWidth(),

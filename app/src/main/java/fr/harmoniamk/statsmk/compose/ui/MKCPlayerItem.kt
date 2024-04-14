@@ -51,7 +51,7 @@ fun MKCPlayerItem(player: MKPlayer, onPlayerClick: (String) -> Unit) {
                     modifier = Modifier.widthIn(0.dp, 120.dp),
                     text = player.name,
                     font = R.font.montserrat_bold,
-                    textColor = R.color.harmonia_dark,
+                    textColor = R.color.black,
                     maxLines = 1
                 )
             }

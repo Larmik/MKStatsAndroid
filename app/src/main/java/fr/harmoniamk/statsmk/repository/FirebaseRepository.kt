@@ -13,6 +13,7 @@ import dagger.hilt.components.SingletonComponent
 import fr.harmoniamk.statsmk.extension.*
 import fr.harmoniamk.statsmk.model.firebase.*
 import fr.harmoniamk.statsmk.model.local.MKWar
+import fr.harmoniamk.statsmk.usecase.Tag
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
@@ -35,6 +36,7 @@ interface FirebaseRepositoryInterface{
     fun writeDispo(dispo: WarDispo): Flow<Unit>
     fun writeAlly(teamId: String, ally : String): Flow<Unit>
 
+    fun writeTags(tags: List<Tag>) : Flow<Unit>
     //Get firebase users, only on currentWar
     fun getUsers(): Flow<List<User>>
 
@@ -43,6 +45,7 @@ interface FirebaseRepositoryInterface{
     fun listenToCurrentWar(teamId: String): Flow<MKWar?>
     //only on current war
     fun deleteCurrentWar(): Flow<Unit>
+    fun deleteUser(users: List<User>) : Flow<Unit>
 
     fun getDispos(): Flow<List<WarDispo>>
 }
@@ -103,6 +106,11 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
             .map {
                 database.child("allies").child(preferencesRepository.mkcTeam?.id.orEmpty()).child(it.size.toString()).setValue(ally)
             }
+
+    override fun writeTags(tags: List<Tag>): Flow<Unit> = flow {
+        database.child("tags").setValue(tags)
+        emit(Unit)
+    }
 
     override fun getUsers(): Flow<List<User>> = callbackFlow {
         Log.d("MKDebugOnly", "FirebaseRepository getUsers")
@@ -276,6 +284,14 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
             database.child("currentWars").child(it).removeValue()
             emit(Unit)
         }
+    }
+
+    override fun deleteUser(users: List<User>): Flow<Unit> = flow {
+        users.forEach {user ->
+            user.mkcId?.let { database.child("users").child(it).removeValue() }
+        }
+        emit(Unit)
+
     }
 
     override val coroutineContext: CoroutineContext

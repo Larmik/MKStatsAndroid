@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -29,6 +28,7 @@ import coil.compose.AsyncImage
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKBaseScreen
 import fr.harmoniamk.statsmk.compose.ui.MKButton
+import fr.harmoniamk.statsmk.compose.ui.MKProgress
 import fr.harmoniamk.statsmk.compose.ui.MKText
 import fr.harmoniamk.statsmk.compose.viewModel.PlayerProfileViewModel.Companion.viewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -42,6 +42,8 @@ fun PlayerProfileScreen(id: String) {
     val email = viewModel.sharedEmail.collectAsState()
     val player = viewModel.sharedPlayer.collectAsState()
     val allyButton = viewModel.sharedAllyButton.collectAsState()
+    val role = viewModel.sharedRole.collectAsState()
+    val adminButton = viewModel.sharedAdminButton.collectAsState()
 
     MKBaseScreen(title = R.string.profil) {
         Column(
@@ -49,11 +51,7 @@ fun PlayerProfileScreen(id: String) {
             modifier = Modifier.verticalScroll(rememberScrollState())
         ) {
             when (player.value) {
-                null ->  CircularProgressIndicator(
-                    modifier = Modifier.padding(vertical = 10.dp), color = colorResource(
-                        id = R.color.harmonia_dark
-                    )
-                )
+                null ->  MKProgress()
                 else -> {
                     when (player.value?.profile_picture?.takeIf { it.isNotEmpty() }) {
                         null -> Image(
@@ -138,6 +136,12 @@ fun PlayerProfileScreen(id: String) {
                         }
                         player.value?.discord_tag?.let {
                             MKText(text = stringResource(id = R.string.discord_tag))
+                            MKText(text = it, fontSize = 16, font = R.font.montserrat_bold,
+                                modifier = Modifier.padding(bottom = 15.dp)
+                            )
+                        }
+                        role.value?.let {
+                            MKText(text = stringResource(id = R.string.r_le))
                             MKText(text = it, fontSize = 16, font = R.font.montserrat_bold)
                         }
                     }
@@ -150,9 +154,13 @@ fun PlayerProfileScreen(id: String) {
                     allyButton.value?.let {
                         when (it.second) {
                             true ->   MKButton(text = stringResource(R.string.ajouter_en_tant_qu_ally), onClick = viewModel::onAddAlly)
-                            else -> {
-                                //Retirer un ally
-                            }
+                            else ->   MKText(text = "Ce joueur est un ally.", modifier = Modifier.padding(top = 10.dp))
+                        }
+                    }
+                    adminButton.value?.let {
+                        when (it) {
+                            true -> MKButton(text = "Basculer en tant que membre", onClick ={ viewModel.onAdmin(false) })
+                            else -> MKButton(text = "Basculer en tant qu'admin", onClick ={ viewModel.onAdmin(true) })
                         }
                     }
                 }

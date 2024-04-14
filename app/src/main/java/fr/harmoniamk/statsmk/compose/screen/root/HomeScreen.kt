@@ -10,10 +10,12 @@ import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -21,12 +23,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import fr.harmoniamk.statsmk.R
-import fr.harmoniamk.statsmk.compose.screen.SettingsScreen
 import fr.harmoniamk.statsmk.compose.screen.WarScreen
 import fr.harmoniamk.statsmk.compose.ui.MKText
+import fr.harmoniamk.statsmk.compose.viewModel.ColorsViewModel
 import fr.harmoniamk.statsmk.enums.BottomNavItem
+import fr.harmoniamk.statsmk.extension.fromHex
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
@@ -39,18 +43,18 @@ fun HomeScreen(
     onSettingsItemClick: (String) -> Unit
 ) {
     val navController = rememberNavController()
+    val colorViewModel: ColorsViewModel = hiltViewModel()
 
     val items = listOf(
         BottomNavItem.War,
         BottomNavItem.Stats,
         BottomNavItem.Registry,
-        BottomNavItem.Settings,
     )
     BackHandler { onBack() }
     Scaffold(
         bottomBar = {
             BottomNavigation(
-                backgroundColor = colorResource(id = R.color.harmonia_dark),
+                backgroundColor = colorViewModel.secondaryColor,
             ) {
                 val navBackStackEntry by navController.currentBackStackEntryAsState()
                 val currentDestination = navBackStackEntry?.destination
@@ -103,9 +107,7 @@ fun HomeScreen(
             composable(route = "Home/Registry") {
                 RegistryScreen(onItemClick = onSettingsItemClick)
             }
-            composable(route = "Home/Settings") {
-                SettingsScreen()
-            }
+
         }
     }
 }

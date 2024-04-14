@@ -7,20 +7,19 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKBaseScreen
 import fr.harmoniamk.statsmk.compose.ui.MKButton
+import fr.harmoniamk.statsmk.compose.ui.MKProgress
 import fr.harmoniamk.statsmk.compose.ui.MKSegmentedSelector
 import fr.harmoniamk.statsmk.compose.ui.MKTrackItem
 import fr.harmoniamk.statsmk.compose.ui.stats.MKMapsStatsView
@@ -84,11 +83,7 @@ fun StatsScreen(
             .verticalScroll(rememberScrollState())
             .padding(10.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             when (val mkStats = stats.value) {
-                null ->  CircularProgressIndicator(
-                    modifier = Modifier.padding(vertical = 10.dp), color = colorResource(
-                        id = R.color.harmonia_dark
-                    )
-                )
+                null ->  MKProgress()
                 else -> {
                     MKWarStatsView(mkStats = mkStats)
                     type.takeIf { it is StatsType.IndivStats || (it as? StatsType.OpponentStats)?.userId != null }?.let {

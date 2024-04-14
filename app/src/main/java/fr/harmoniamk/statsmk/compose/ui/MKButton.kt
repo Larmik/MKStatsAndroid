@@ -9,17 +9,21 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import fr.harmoniamk.statsmk.R
+import fr.harmoniamk.statsmk.compose.viewModel.ColorsViewModel
 
 @Composable
 fun MKButton(text: Any, enabled: Boolean = true, hasBackground: Boolean = true, onClick: () -> Unit) {
+    val colorsViewModel: ColorsViewModel = hiltViewModel()
+
     val bgcolor = when (hasBackground) {
-        true -> colorResource(id = R.color.harmonia_dark)
+        true -> colorsViewModel.secondaryColor
         else -> colorResource(id = R.color.transparent)
     }
     val textColor = when (hasBackground) {
         true -> colorResource(id = R.color.white)
-        else -> colorResource(id = R.color.harmonia_dark)
+        else -> colorResource(id = R.color.black)
     }
     val elevation = when (hasBackground) {
         true -> ButtonDefaults.elevation()

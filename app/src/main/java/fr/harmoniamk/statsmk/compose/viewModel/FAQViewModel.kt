@@ -1,0 +1,24 @@
+package fr.harmoniamk.statsmk.compose.viewModel
+
+import androidx.lifecycle.ViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
+import fr.harmoniamk.statsmk.compose.ui.FAQ
+import javax.inject.Inject
+
+@HiltViewModel
+class FAQViewModel @Inject constructor(
+): ViewModel() {
+
+    val faqCells = listOf(
+        FAQ("Fonctionnement de l'application", "Mario Kart Stats est destinée aux joueurs compétitifs de Mario Kart 8 Deluxe sur Switch. Elle permet à chaque joueur d'une équipe d'avoir accès à des statistiques détaillées de leurs résultats. <br> <br> Le principe est simple. Chaque équipe saisit les positions de chaque joueur sur les 12 circuits qui composent un match. L'application va alors générer des statistiques sur de nombreux aspects du jeu : <br><br><b> - Les wars <br> - Les adversaires rencontrés <br> - Les joueurs <br> - Les circuits <br> <br></b> L'équipe aura alors accès à tous ses résultats ainsi qu'à ces stats, et tous les joueurs pourront les consulter. <br>"),
+        FAQ("Liaison MKCentral", "Afin de faciliter la gestion des équipes et rendre l'application disponible au plus grand nombre, celle-ci se base sur les données de MKCentral (site officiel de la communauté), et nécessite donc un compte MKCentral pour fonctionner. Grâce à ce flux, toutes les équipes recensées sur le site sont disponibles et sélectionnables pour rentrer vos wars dans l'application. <br> Un accès aux profils des équipes et joueurs est également disponible dans l'onglet Registre <br>"),
+        FAQ("Rôles et autorisations", "Un utilisateur inscrit peut avoir trois rôles différents : <br> <br> <b> - Membre <br> - Admin <br> - Leader <br><br> </b> Lors de la liaison MKCentral, si le joueur est leader ou manager d'une équipe, il aura le rôle <b>Leader</b>, sinon il aura le rôle <b>Membre</b>. <br> Les leaders peuvent ensuite donner le rôle <b>Admin</b> au membres de leur choix. <br> <br> Le rôle <b>Membre</b> permet de consulter les résultats des wars, les statistiques et les profils des équipes et joueurs. <br> <br> Le rôle <b>Admin</b> permet de saisir et d'éditer des wars dans l'application. Il permet également d'ajouter des allies dans l'équipe. <br><br> Le rôle <b>Leader</b> permet de modifier le rôle de n'importe quel membre (hormis les autres leaders) <br> <br> Votre rôle est affiché dans votre <b>profil</b>"),
+        FAQ("Je ne peux pas saisir de wars", "Si le bouton <b> Créer une war </b> n'est pas visible sur l'écran d'accueil, il peut y avoir deux causes : <br> <br> - Une war a déjà été créée par votre roster. <br> - Vous n'avez pas le rôle requis. <br> <br> Vérifiez ces deux points, et demandez à un leader de modifier votre rôle si besoin. <br> Pensez à effectuer un rafraîchissement des données pour récupérer la modification."),
+        FAQ("Admins: Ajouter un ally", "Nous avons souvent besoin d'allies lorsque l'équipe ne peut pas être au complet pour le match. Etant donné que ce sont des joueurs occasionnels qui ne font pas partie de l'équipe, nous allons devoir les rajouter à la main.<br> Voici comment faire : <br> <br> - Allez dans le <b>Registre</b> -> <b>Joueurs</b> <br> - Recherchez votre joueur <br> - Dans sa page profil, cliquez sur <b>Ajouter en tant qu'ally</b> <br> <br> Vous devriez retrouver vos allies lors des créations de wars et dans l'écran <b>Mon équipe</b>, en dessous du (des) roster(s)."),
+        FAQ("Leaders: Ajouter un admin", "Si un membre vous demande l'accès à la saisie de wars, vous pouvez modifier son rôle directement dans sa page profil, depuis l'écran <b>Mon équipe</b>."),
+        FAQ("Bugs connus", "La liste des bugs ci-dessous des connue, inutile de faire un report si vous en rencontrez un : <br> <br> - Lors de deux pénalités à la suite, l'équipe sélectionnée précédemment est gardée en mémoire, mais l'affichage est réinitialisé. <b>Il faut recliquer sur la bonne équipe, même si l'affichage correspond.</b> <br> <br> - Des ralentisements ou plantages peuvent avoir lieu lorsque l'on navigue dans le détails des wars et qu'on en consulte beaucoup à la suite. <br> <br> - Parfois des rôles se réinitialisent et des admins ou leaders perdent leurs droits. N'hésitez pas à le signaler dans le salon <b>application</b> sur <b>Discord</b>, ou demandez à un leader de vous réattribuer votre rôle.<br> <br> - Sur cetains téléphones la popup de chargement au démarrage ne s'affiche pas."),
+        FAQ("Reports et suggestions", "Si vous rencontrez des bungs non mentionnés ci-dessus ou que quelque chose cloche, postez-le dans le topic <b>Reports</b> du salon <b>faq-application</b> sur <b>Discord</b>. <br> Vous aiderez ainsi à faire de ce projet un outil de qualité. <br> <br> Vous pouvez également apporter des suggestions d'amélioration si vous avez des idées (ajout de nouvelles fonctionnalité, calcul d'autres statistiques qui peuvent vous être utiles, etc...)"),
+
+    )
+
+}

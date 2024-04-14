@@ -9,6 +9,7 @@ import fr.harmoniamk.statsmk.model.firebase.WarDispo
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.mock.mock
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
+import fr.harmoniamk.statsmk.usecase.Tag
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -38,6 +39,9 @@ class FirebaseRepositoryMock(
     override fun writeAlly(teamId: String, ally:String): Flow<Unit> = flow {
         emit(Unit)
     }
+
+    override fun writeTags(tags: List<Tag>): Flow<Unit> = flow {
+emit(Unit)    }
 
     override fun getUsers(): Flow<List<User>> = flow {
         emit(listOf())
@@ -77,6 +81,10 @@ emit(null)    }
     }
 
     override fun deleteCurrentWar(): Flow<Unit> = flow {
+        emit(Unit)
+    }
+
+    override fun deleteUser(users: List<User>): Flow<Unit> = flow {
         emit(Unit)
     }
 }

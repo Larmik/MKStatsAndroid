@@ -1,6 +1,5 @@
 package fr.harmoniamk.statsmk.compose.screen
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -12,7 +11,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -25,6 +23,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKBaseScreen
 import fr.harmoniamk.statsmk.compose.ui.MKCurrentWarCell
+import fr.harmoniamk.statsmk.compose.ui.MKProgress
 import fr.harmoniamk.statsmk.compose.ui.MKSegmentedButtons
 import fr.harmoniamk.statsmk.compose.ui.MKText
 import fr.harmoniamk.statsmk.compose.ui.MKWarItem
@@ -55,11 +54,7 @@ fun WarScreen(
         when  {
             isLoading.value -> {
                 Column(Modifier.fillMaxWidth().padding(vertical = 10.dp).verticalScroll(rememberScrollState()), horizontalAlignment = Alignment.CenterHorizontally) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.padding(vertical = 10.dp), color = colorResource(
-                            id = R.color.harmonia_dark
-                        )
-                    )
+                   MKProgress()
                     MKText(text = "Récupération des derniers résultats...", fontSize = 12)
                 }
             }
@@ -92,7 +87,7 @@ fun WarScreen(
                                         .fillMaxWidth()
                                         .height(40.dp)
                                         .background(color = colorResource(R.color.transparent))) {
-                                        MKText(text = teamName, textColor = R.color.harmonia_dark)
+                                        MKText(text = teamName, textColor = R.color.black)
                                     }
                                 }
                                 items(items = wars) {

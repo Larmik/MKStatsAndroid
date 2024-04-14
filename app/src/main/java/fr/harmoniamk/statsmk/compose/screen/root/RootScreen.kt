@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import fr.harmoniamk.statsmk.compose.screen.CurrentWarScreen
+import fr.harmoniamk.statsmk.compose.screen.FAQScreen
 import fr.harmoniamk.statsmk.compose.screen.LoginScreen
 import fr.harmoniamk.statsmk.compose.screen.OpponentSettingsScreen
 import fr.harmoniamk.statsmk.compose.screen.PlayerListScreen
@@ -15,6 +16,7 @@ import fr.harmoniamk.statsmk.compose.screen.PlayerProfileScreen
 import fr.harmoniamk.statsmk.compose.screen.PlayersSettingsScreen
 import fr.harmoniamk.statsmk.compose.screen.PositionScreen
 import fr.harmoniamk.statsmk.compose.screen.ProfileScreen
+import fr.harmoniamk.statsmk.compose.screen.SettingsScreen
 import fr.harmoniamk.statsmk.compose.screen.SignupScreen
 import fr.harmoniamk.statsmk.compose.screen.StatsRankingScreen
 import fr.harmoniamk.statsmk.compose.screen.StatsScreen
@@ -72,10 +74,7 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
                 onTeamClick = { navController.navigate("Home/War/AddWar/$it/AddPlayers") }
             )
         }
-        composable(
-            route = "Home/War/AddWar/{team}/AddPlayers",
-            arguments = listOf(navArgument("team") { type = NavType.StringType })
-        ) {
+        composable(route = "Home/War/AddWar/{team}/AddPlayers", arguments = listOf(navArgument("team") { type = NavType.StringType })) {
             PlayerListScreen(
                 teamId = it.arguments?.getString("team"),
                 onWarStarted = { navController.navigate(route = "Home/War/Current/$it") })
@@ -157,36 +156,44 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
                 onBack = { navController.popBackStack() })
         }
 
-        /** Settings navigation **/
-        composable("Home/Settings/Team") {
-            TeamSettingsScreen(onPlayerClick = { navController.navigate("Home/Settings/PlayerProfile/$it") })
+        /** Registry navigation **/
+        composable("Home/Registry/Team") {
+            TeamSettingsScreen(onPlayerClick = { navController.navigate("Home/Registry/PlayerProfile/$it") })
         }
         composable(
-            route = "Home/Settings/PlayerProfile/{id}",
+            route = "Home/Registry/PlayerProfile/{id}",
             arguments = listOf(navArgument("id") { type = NavType.StringType })
         ) {
             val playerId = it.arguments?.getString("id")
             PlayerProfileScreen(id = playerId.orEmpty())
         }
         composable(
-            route = "Home/Settings/TeamProfile/{id}",
+            route = "Home/Registry/TeamProfile/{id}",
             arguments = listOf(navArgument("id") { type = NavType.StringType })
         ) {
             val playerId = it.arguments?.getString("id")
-            TeamProfileScreen(id = playerId.orEmpty(), onPlayerClick = { navController.navigate("Home/Settings/PlayerProfile/$it") })
+            TeamProfileScreen(id = playerId.orEmpty(), onPlayerClick = { navController.navigate("Home/Registry/PlayerProfile/$it") })
         }
-        composable("Home/Settings/Players") {
-            PlayersSettingsScreen(onBack = { navController.popBackStack() }, onPlayerClick = { navController.navigate("Home/Settings/PlayerProfile/$it") })
+        composable("Home/Registry/Players") {
+            PlayersSettingsScreen(onBack = { navController.popBackStack() }, onPlayerClick = { navController.navigate("Home/Registry/PlayerProfile/$it") })
         }
-        composable("Home/Settings/Opponents") {
-            OpponentSettingsScreen(onTeamClick = { navController.navigate("Home/Settings/TeamProfile/$it") })
+        composable("Home/Registry/Opponents") {
+            OpponentSettingsScreen(onTeamClick = { navController.navigate("Home/Registry/TeamProfile/$it") })
         }
-        composable("Home/Settings/Profile") {
+        composable("Home/Registry/Profile") {
             ProfileScreen(onLogout = {
                 navController.navigate("Login")
             })
         }
-
+        composable("Home/Registry/Settings") {
+            SettingsScreen(onSettingsItemClick = { navController.navigate(it)} )
+        }
+        composable("Home/Registry/Settings/Help") {
+            FAQScreen()
+        }
+        composable("Home/Registry/Settings/Credits") {
+            CreditsScreen()
+        }
         /** Opponent stats navigation **/
         composable("Home/Stats/Opponents") {
             StatsRankingScreen(state = StatsRankingState.OpponentRankingState(), periodic = "All") { item, _, _, _ ->

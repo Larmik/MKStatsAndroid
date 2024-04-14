@@ -24,11 +24,13 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.zip
 import javax.inject.Inject
 import javax.inject.Singleton
+data class Tag(val tag: String, val teamId: String)
 
 interface FetchUseCaseInterface {
     fun fetchPlayer(mkcId: String? = null): Flow<NetworkResponse<MKCFullPlayer>>
@@ -37,6 +39,8 @@ interface FetchUseCaseInterface {
     fun fetchPlayers(forceUpdate: Boolean): Flow<MKCFullTeam>
     fun fetchAllies(forceUpdate: Boolean): Flow<Unit>
     fun fetchWars(): Flow<List<MKWar>>
+    fun fetchTags(): Flow<Unit>
+    fun purgePlayers(): Flow<Unit>
 }
 
 @FlowPreview
@@ -79,14 +83,27 @@ class FetchUseCase @Inject constructor(
         .getTeam(preferencesRepository.mkcPlayer?.current_teams?.firstOrNull()?.team_id.toString())
         .onEach { preferencesRepository.mkcTeam = (it as? NetworkResponse.Success)?.response }
 
-    override fun fetchTeams(): Flow<Unit> = mkCentralRepository.getTeams("150cc")
-        .mapNotNull { (it as? NetworkResponse.Success)?.response }
-        .flatMapLatest { databaseRepository.writeNewTeams(it) }
-        .flatMapLatest { mkCentralRepository.getTeams("historical") }
-        .mapNotNull { (it as? NetworkResponse.Success)?.response }
-        .flatMapLatest { databaseRepository.writeNewTeams(it) }
-        .flatMapLatest { firebaseRepository.getTeams() }
-        .flatMapLatest { databaseRepository.writeNewTeams(it.map { MKCTeam(it) }) }
+    override fun fetchTeams(): Flow<Unit>  {
+        val teamList = mutableListOf<MKCTeam>()
+        val teamFlow = mkCentralRepository.getTeams("150cc").zip(mkCentralRepository.getTeams("historical")) { a, b ->
+            teamList.addAll((a as? NetworkResponse.Success)?.response.orEmpty())
+            teamList.addAll((b as? NetworkResponse.Success)?.response.orEmpty())
+        }.flatMapLatest { firebaseRepository.getTeams() }
+            .map {
+                teamList.addAll(it.map { MKCTeam(it) })
+                teamList.toList()
+            }
+        return teamFlow
+            .zip(databaseRepository.getNewTeams()) { remoteDb, localDb ->
+                when (localDb.size == remoteDb.size) {
+                    true -> return@zip localDb
+                    else -> {
+                        databaseRepository.writeNewTeams(remoteDb).first()
+                        return@zip remoteDb
+                    }
+                }
+            }.map {  }
+    }
 
     override fun fetchPlayers(forceUpdate: Boolean): Flow<MKCFullTeam> = firebaseRepository.getUsers()
         .zip(databaseRepository.getRoster()) { userList, playerList ->
@@ -131,7 +148,7 @@ class FetchUseCase @Inject constructor(
         val rosterList = team.rosterList.orEmpty()
         if (rosterList.size != players.filter { it.rosterId == team.id }.size) {
             rosterList.forEach {
-                val fbUser = users.singleOrNull { item -> item.mkcId == it.mkcId.split(".").first() }
+                val fbUser = users.lastOrNull { item -> item.mkcId == it.mkcId.split(".").first() }
                 val mkcPlayer = when (forceUpdate || !players.map { it.mkcId }.contains(it.mkcId)) {
                     false -> players.firstOrNull { player -> player.mkcId == it.mkcId }?.copy(
                         role = fbUser?.role ?: 0,
@@ -145,9 +162,7 @@ class FetchUseCase @Inject constructor(
                             null -> MKPlayer(fbUser)
                             else -> MKPlayer(
                                 player = player.response,
-                                role = fbUser?.role ?: 0,
-                                isLeader = "",
-                                currentWar = fbUser?.currentWar ?: "-1",
+                                user = fbUser,
                                 rosterId = team.id
                             )
                         }
@@ -157,6 +172,7 @@ class FetchUseCase @Inject constructor(
             }
         }
     }
+
     override fun fetchAllies(forceUpdate: Boolean): Flow<Unit> {
         val alliesFlow = when {
             preferencesRepository.mkcTeam?.primary_team_id != null -> firebaseRepository.getAllies(preferencesRepository.mkcTeam?.primary_team_id.toString())
@@ -180,9 +196,7 @@ class FetchUseCase @Inject constructor(
                                     null -> MKPlayer(fbUser)
                                     else -> MKPlayer(
                                         player = player.response,
-                                        role = fbUser?.role ?: 0,
-                                        isLeader = "",
-                                        currentWar = fbUser?.currentWar ?: "-1",
+                                        user = fbUser,
                                         rosterId = "-1"
                                     )
                                 }
@@ -221,4 +235,16 @@ class FetchUseCase @Inject constructor(
                 }
             }
     }
+
+    override fun fetchTags(): Flow<Unit> = mkCentralRepository.getTeams("150cc")
+        .mapNotNull { (it as? NetworkResponse.Success)?.response }
+        .map { it.map { Tag(it.team_tag, it.team_id) } }
+        .zip(firebaseRepository.getTeams()) { a, b ->  a + b.map { Tag(it.shortName.orEmpty(), it.mid)  } }
+        .flatMapLatest { firebaseRepository.writeTags(it) }
+
+    override fun purgePlayers(): Flow<Unit> =
+        firebaseRepository.getUsers()
+            .map { it.filter { user -> user.mid.toIntOrNull() != null && (user.discordId?.length ?: 0) < 10  && user.currentWar == "-1"} }
+            .flatMapLatest { firebaseRepository.deleteUser(it) }
+
 }

@@ -12,7 +12,6 @@ import java.util.Date
 
 interface MKStats
 
-@Parcelize
 data class Stats(
     val warStats: WarStats,
     val mostPlayedTeam: TeamStats?,
@@ -21,7 +20,7 @@ data class Stats(
     val warScores: List<WarScore>,
     val maps: List<TrackStats>,
     val averageForMaps: List<TrackStats>,
-): Parcelable, MKStats {
+): MKStats {
      val highestScore: WarScore? = warScores.maxByOrNull { it.score }
      val lowestScore: WarScore? = warScores.minByOrNull { it.score }
      val bestMap: TrackStats? = averageForMaps.filter { it.totalPlayed >= 2 }.maxByOrNull { it.teamScore ?: 0 }
@@ -40,15 +39,13 @@ data class Stats(
     var lowestPlayerScore: Pair<Int, String?>? = null
  }
 
-@Parcelize
 class WarScore(
     val war: MKWar,
     val score: Int
-): Parcelable {
+) {
     val opponentLabel = "vs ${war.name?.split('-')?.lastOrNull()?.trim()}"
 }
 
-@Parcelize
 data class TrackStats(
     override val stats: Stats? = null,
     val map: Maps? = null,
@@ -58,15 +55,13 @@ data class TrackStats(
     val totalPlayed: Int = 0,
     val winRate: Int? = null,
     val shockCount: Int? = null
-): Parcelable, RankingItemViewModel
+): RankingItemViewModel
 
-@Parcelize
-class TeamStats(val team: MKCTeam?, val totalPlayed: Int?): Parcelable {
+class TeamStats(val team: MKCTeam?, val totalPlayed: Int?) {
     val teamName = team?.team_name
 }
 
-@Parcelize
-class WarStats(val list : List<MKWar>): Parcelable {
+class WarStats(val list : List<MKWar>) {
     private val shockFeatureDate = Date().set(Calendar.MONTH, 3).set(Calendar.DAY_OF_MONTH, 22).set(Calendar.YEAR, 2023)
     val warsPlayed = list.count()
     val warsPlayedSinceShocks = list.filter { it.war?.createdDate?.formatToDate("dd/MM/yyyy - HH'h'mm")?.after(shockFeatureDate).isTrue }.size
@@ -77,12 +72,12 @@ class WarStats(val list : List<MKWar>): Parcelable {
     val loudestDefeat = list.minByOrNull { war -> war.scoreHost }.takeIf { it?.displayedDiff?.contains("-").isTrue }
 }
 
-@Parcelize
+
 class MapDetails(
     val war: MKWar,
     val warTrack: MKWarTrack,
     val position: Int?
-): Parcelable
+)
 
 @FlowPreview
 @ExperimentalCoroutinesApi

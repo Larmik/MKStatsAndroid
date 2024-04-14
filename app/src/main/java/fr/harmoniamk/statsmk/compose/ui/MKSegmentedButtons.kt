@@ -19,10 +19,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import fr.harmoniamk.statsmk.R
+import fr.harmoniamk.statsmk.compose.viewModel.ColorsViewModel
 
 @Composable
 fun MKSegmentedButtons(modifier: Modifier = Modifier, buttons: List<Pair<Int, () -> Unit>>) {
+    val colorsViewModel: ColorsViewModel = hiltViewModel()
+
     if (buttons.isNotEmpty())
         Row(
             modifier
@@ -42,7 +46,7 @@ fun MKSegmentedButtons(modifier: Modifier = Modifier, buttons: List<Pair<Int, ()
                     Spacer(
                         Modifier
                             .width(1.dp)
-                            .background(color = colorResource(id = R.color.harmonia_dark))
+                            .background(color = colorsViewModel.secondaryColor)
                             .fillMaxHeight())
             }
         }

@@ -32,6 +32,9 @@ class PreferencesRepositoryMock : PreferencesRepositoryInterface {
     override var indivEnabled: Boolean
         get() = true
         set(value) {}
+    override var rosterOnly: Boolean
+        get() = false
+        set(value) {}
     override var fcmToken: String?
         get() = null
         set(value) {}
@@ -45,6 +48,12 @@ class PreferencesRepositoryMock : PreferencesRepositoryInterface {
         get() = 0
         set(value) {}
     override var lastUpdate: String
+        get() = ""
+        set(value) {}
+    override var mainColor: String
+        get() = ""
+        set(value) {}
+    override var secondaryColor: String
         get() = ""
         set(value) {}
 }

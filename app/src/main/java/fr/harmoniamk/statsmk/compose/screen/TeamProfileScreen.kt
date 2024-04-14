@@ -26,11 +26,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKBaseScreen
 import fr.harmoniamk.statsmk.compose.ui.MKCPlayerItem
 import fr.harmoniamk.statsmk.compose.ui.MKText
+import fr.harmoniamk.statsmk.compose.viewModel.ColorsViewModel
 import fr.harmoniamk.statsmk.compose.viewModel.TeamProfileViewModel.Companion.viewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -39,6 +41,8 @@ import kotlinx.coroutines.FlowPreview
 @Composable
 fun TeamProfileScreen(id: String, onPlayerClick: (String) -> Unit) {
     val viewModel = viewModel(id)
+    val colorsViewModel: ColorsViewModel = hiltViewModel()
+
     val picture = viewModel.sharedPictureLoaded.collectAsState()
     val team = viewModel.sharedTeam.collectAsState()
     val players by viewModel.sharedPlayers.collectAsState()
@@ -83,7 +87,7 @@ fun TeamProfileScreen(id: String, onPlayerClick: (String) -> Unit) {
                     Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier
                         .fillMaxWidth()
                         .height(40.dp)
-                        .background(color = colorResource(R.color.harmonia_dark))) {
+                        .background(color = colorsViewModel.secondaryColor)) {
                         MKText(font = R.font.montserrat_bold, fontSize = 18, text = "Roster", textColor = R.color.white)
                     }
                 }

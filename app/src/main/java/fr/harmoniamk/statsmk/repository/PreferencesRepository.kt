@@ -30,11 +30,14 @@ interface PreferencesRepositoryInterface {
     var authPassword: String?
     var firstLaunch: Boolean
     var indivEnabled: Boolean
+    var rosterOnly: Boolean
     var fcmToken: String?
     var mkcPlayer: MKCFullPlayer?
     var mkcTeam: MKCFullTeam?
     var role: Int
     var lastUpdate: String
+    var mainColor: String
+    var secondaryColor: String
 }
 
 @FlowPreview
@@ -82,6 +85,9 @@ class PreferencesRepository @Inject constructor(
     override var indivEnabled: Boolean
         get() = preferences.getBoolean("indivEnabled", true)
         set(value) = preferences.edit().putBoolean("indivEnabled", value).apply()
+    override var rosterOnly: Boolean
+        get() = preferences.getBoolean("rosterOnly", false)
+        set(value) = preferences.edit().putBoolean("rosterOnly", value).apply()
     override var fcmToken: String?
         get() = preferences.getString("fcmToken", null)
         set(value) {preferences.edit().putString("fcmToken", value).apply()}
@@ -97,4 +103,10 @@ class PreferencesRepository @Inject constructor(
     override var lastUpdate: String
         get() = preferences.getString("lastUpdate", "").orEmpty()
         set(value) {preferences.edit().putString("lastUpdate", value).apply()}
+    override var mainColor: String
+        get() = preferences.getString("mainColor", "B0E0E6") ?: "B0E0E6"
+        set(value) {preferences.edit().putString("mainColor", value).apply()}
+    override var secondaryColor: String
+        get() = preferences.getString("secondaryColor", "051C3F") ?: "051C3F"
+        set(value) {preferences.edit().putString("secondaryColor", value).apply()}
 }

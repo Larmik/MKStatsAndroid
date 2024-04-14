@@ -6,8 +6,7 @@ import fr.harmoniamk.statsmk.model.local.Stats
 import fr.harmoniamk.statsmk.model.network.MKPlayer
 import kotlinx.android.parcel.Parcelize
 
-@Parcelize
-data class PlayerRankingItemViewModel(val user: MKPlayer, override val stats: Stats) : Parcelable, RankingItemViewModel {
+data class PlayerRankingItemViewModel(val user: MKPlayer, override val stats: Stats) : RankingItemViewModel {
 
     val warsPlayedLabel: String
         get() = stats.warStats.warsPlayed.toString()

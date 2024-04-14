@@ -21,8 +21,10 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import fr.harmoniamk.statsmk.R
+import fr.harmoniamk.statsmk.compose.viewModel.ColorsViewModel
 import fr.harmoniamk.statsmk.extension.positionColor
 import fr.harmoniamk.statsmk.fragment.stats.playerRanking.PlayerRankingItemViewModel
 import fr.harmoniamk.statsmk.model.local.MKWarPosition
@@ -39,15 +41,16 @@ fun MKPlayerItem(
     onAddShock: (String) -> Unit = { },
     onRemoveShock: (String) -> Unit = { },
     onRootClick: () -> Unit = { }) {
-    val backgroundColor = colorResource(id =
-        when (isSelected) {
-            true -> R.color.harmonia_dark
-            else -> R.color.white_alphaed
-        }
-    )
+    val colorsViewModel: ColorsViewModel = hiltViewModel()
+
+    val backgroundColor = when (isSelected) {
+        true -> colorsViewModel.secondaryColor
+        else -> colorResource(R.color.white_alphaed)
+    }
+
     val textColor = when (isSelected) {
         true -> R.color.white
-        else -> R.color.harmonia_dark
+        else -> R.color.black
     }
     Card(
         Modifier

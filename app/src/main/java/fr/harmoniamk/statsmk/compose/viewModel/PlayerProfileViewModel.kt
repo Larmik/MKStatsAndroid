@@ -12,7 +12,9 @@ import dagger.hilt.android.EntryPointAccessors
 import fr.harmoniamk.statsmk.compose.ViewModelFactoryProvider
 import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.extension.isTrue
+import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.network.MKCFullPlayer
+import fr.harmoniamk.statsmk.model.network.MKCPlayer
 import fr.harmoniamk.statsmk.model.network.MKPlayer
 import fr.harmoniamk.statsmk.model.network.NetworkResponse
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
@@ -27,6 +29,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 
@@ -38,7 +41,7 @@ class PlayerProfileViewModel @AssistedInject constructor(
     private val databaseRepository: DatabaseRepositoryInterface,
     private val firebaseRepository: FirebaseRepositoryInterface,
     private val preferencesRepository: PreferencesRepositoryInterface,
-    authenticationRepository: AuthenticationRepositoryInterface
+    private val authenticationRepository: AuthenticationRepositoryInterface
 ) : ViewModel() {
 
     companion object {
@@ -72,10 +75,17 @@ class PlayerProfileViewModel @AssistedInject constructor(
     private val _sharedEmail = MutableStateFlow<String?>(null)
     private val _sharedPlayer = MutableStateFlow<MKCFullPlayer?>(null)
     private val _sharedAllyButton = MutableStateFlow<Pair<String, Boolean>?>(null)
+    private val _sharedAdminButton = MutableStateFlow<Boolean?>(null)
+    private val _sharedRole = MutableStateFlow<String?>(null)
     val sharedEmail = _sharedEmail.asStateFlow()
     val sharedPlayer = _sharedPlayer.asStateFlow()
     val sharedAllyButton = _sharedAllyButton.asStateFlow()
+    val sharedAdminButton = _sharedAdminButton.asStateFlow()
+    val sharedRole = _sharedRole.asStateFlow()
+
     var player: MKCFullPlayer? = null
+    var localPlayer: MKPlayer? = null
+
 
     init {
         mkCentralRepository.getPlayer(id)
@@ -87,11 +97,31 @@ class PlayerProfileViewModel @AssistedInject constructor(
             }
             .flatMapLatest { databaseRepository.getNewUser(id)  }
             .onEach { localPlayer ->
+                this.localPlayer = localPlayer
                 _sharedAllyButton.takeIf { authenticationRepository.userRole >= UserRole.ADMIN.ordinal }?.value = when {
                     localPlayer?.mkcId?.isEmpty().isTrue -> Pair(player?.id.toString(), true)
                     localPlayer?.rosterId == "-1" -> Pair(localPlayer.mkcId, false)
                     else -> null
                 }
+                _sharedAdminButton.takeIf {
+                    authenticationRepository.userRole >= UserRole.LEADER.ordinal
+                            && localPlayer?.mid?.toIntOrNull() == null
+                            && (localPlayer?.role ?: 0) < 2
+                }?.value = when (localPlayer?.role) {
+                    1 -> true
+                    0 -> false
+                    else -> null
+                }
+                localPlayer?.let {
+                    _sharedRole.value = when {
+                        it.mid.toIntOrNull() != null -> null
+                        it.role == 1 -> "Admin"
+                        it.role == 2 -> "Leader"
+                        it.role == 3 -> "Dieu"
+                        else -> "Membre"
+                    }
+                }
+
             }.launchIn(viewModelScope)
     }
 
@@ -101,6 +131,39 @@ class PlayerProfileViewModel @AssistedInject constructor(
             .flatMapLatest { databaseRepository.writeUser(MKPlayer(player).copy(rosterId = "-1")) }
             .onEach { _sharedAllyButton.value = null }
             .launchIn(viewModelScope)
+    }
+
+    fun onAdmin(admin: Boolean) {
+        val newRole = when (admin) {
+            true -> 1
+            else -> 0
+        }
+        localPlayer?.mid?.let {
+            firebaseRepository.getUser(it)
+                .mapNotNull {  it?.copy(role = newRole) }
+                .flatMapLatest { firebaseRepository.writeUser(it) }
+                .mapNotNull { localPlayer?.copy(role = newRole) }
+                .onEach {
+                    _sharedAdminButton.takeIf {
+                        authenticationRepository.userRole >= UserRole.LEADER.ordinal
+                                && localPlayer?.mid?.toIntOrNull() == null
+                                && (localPlayer?.role ?: 0) < 2
+                    }?.value = when (localPlayer?.role) {
+                        1 -> true
+                        0 -> false
+                        else -> null
+                    }
+                    _sharedRole.value = when {
+                        it.mid.toIntOrNull() != null -> "Non inscrit"
+                        it.role == 1 -> "Admin"
+                        it.role == 2 -> "Leader"
+                        it.role == 3 -> "Dieu"
+                        else -> "Membre"
+                    }
+                }
+                .flatMapLatest { databaseRepository.writeUser(it) }
+                .launchIn(viewModelScope)
+        }
     }
 
 }

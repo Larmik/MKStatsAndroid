@@ -8,8 +8,7 @@ import fr.harmoniamk.statsmk.extension.sum
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
 import kotlinx.android.parcel.Parcelize
 
-@Parcelize
-data class MKWarTrack(val track: NewWarTrack?): Parcelable {
+data class MKWarTrack(val track: NewWarTrack?) {
 
     val index
         get() = track?.trackIndex

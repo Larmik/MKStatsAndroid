@@ -6,7 +6,6 @@ import kotlinx.android.parcel.Parcelize
 import kotlinx.android.parcel.RawValue
 import java.io.Serializable
 
-@Parcelize
 data class NewWar(
     val mid: String,
     val playerHostId: String? = null,
@@ -16,7 +15,7 @@ data class NewWar(
     var warTracks: @RawValue List<NewWarTrack>? = null,
     var penalties:  @RawValue List<Penalty>? = null,
     val isOfficial: Boolean? = null
-) : Serializable, Parcelable {
+) : Serializable {
 
     companion object
 

@@ -37,6 +37,7 @@ import fr.harmoniamk.statsmk.compose.ui.MKBottomSheet
 import fr.harmoniamk.statsmk.compose.ui.MKCPlayerItem
 import fr.harmoniamk.statsmk.compose.ui.MKSegmentedButtons
 import fr.harmoniamk.statsmk.compose.ui.MKText
+import fr.harmoniamk.statsmk.compose.viewModel.ColorsViewModel
 import fr.harmoniamk.statsmk.compose.viewModel.TeamSettingsViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -44,6 +45,8 @@ import kotlinx.coroutines.FlowPreview
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class, ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
 fun TeamSettingsScreen(viewModel: TeamSettingsViewModel = hiltViewModel(), onPlayerClick: (String) -> Unit) {
+    val colorsViewModel: ColorsViewModel = hiltViewModel()
+
     val picture = viewModel.sharedPictureLoaded.collectAsState()
     val team = viewModel.sharedTeam.collectAsState()
     val players by viewModel.sharedPlayers.collectAsState()
@@ -109,7 +112,7 @@ fun TeamSettingsScreen(viewModel: TeamSettingsViewModel = hiltViewModel(), onPla
                     Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier
                         .fillMaxWidth()
                         .height(40.dp)
-                        .background(color = colorResource(R.color.harmonia_dark))) {
+                        .background(color = colorsViewModel.secondaryColor)) {
                         MKText(font = R.font.montserrat_bold, fontSize = 18, text = it.key, textColor = R.color.white)
                     }
                 }

@@ -39,7 +39,6 @@ abstract class MKDatabase : RoomDatabase() {
                     MKDatabase::class.java,
                     "mk_db"
                 )
-                    .allowMainThreadQueries()
                     .fallbackToDestructiveMigration()
                     .build()
 
