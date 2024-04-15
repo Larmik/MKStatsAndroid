@@ -2,11 +2,19 @@ package fr.harmoniamk.statsmk.compose.screen.root
 
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import fr.harmoniamk.statsmk.activity.MainActivity
+import fr.harmoniamk.statsmk.activity.MainViewModel
+import fr.harmoniamk.statsmk.compose.screen.CoffeeScreen
 import fr.harmoniamk.statsmk.compose.screen.CurrentWarScreen
 import fr.harmoniamk.statsmk.compose.screen.FAQScreen
 import fr.harmoniamk.statsmk.compose.screen.LoginScreen
@@ -29,19 +37,36 @@ import fr.harmoniamk.statsmk.compose.screen.WarDetailsScreen
 import fr.harmoniamk.statsmk.compose.screen.WarListScreen
 import fr.harmoniamk.statsmk.compose.screen.WarTrackListScreen
 import fr.harmoniamk.statsmk.compose.screen.WarTrackResultScreen
+import fr.harmoniamk.statsmk.compose.ui.MKDialog
+import fr.harmoniamk.statsmk.compose.ui.MKDialogState
+import fr.harmoniamk.statsmk.compose.viewModel.CoffeePurchaseState
 import fr.harmoniamk.statsmk.compose.viewModel.StatsRankingState
 import fr.harmoniamk.statsmk.compose.viewModel.StatsType
+import fr.harmoniamk.statsmk.extension.getActivity
 import fr.harmoniamk.statsmk.fragment.stats.opponentRanking.OpponentRankingItemViewModel
 import fr.harmoniamk.statsmk.fragment.stats.playerRanking.PlayerRankingItemViewModel
 import fr.harmoniamk.statsmk.model.local.TrackStats
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.filterNotNull
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @ExperimentalMaterialApi
 @Composable
 fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
     val navController = rememberNavController()
+    val context = LocalContext.current
+    val mainViewModel: MainViewModel by lazy { ViewModelProvider(context.getActivity() as MainActivity)[MainViewModel::class.java] }
+    val coffeeDialog = remember { mutableStateOf<MKDialogState?>(null) }
+    
+    LaunchedEffect(Unit) {
+        mainViewModel.sharedCoffeeState.filterNotNull().collect {
+            coffeeDialog.value =  MKDialogState.Error(it.message) {
+                coffeeDialog.value = null
+            }
+        }
+    }
+    coffeeDialog.value?.let { MKDialog(it) }
     NavHost(navController = navController, startDestination = startDestination) {
         composable(route = "Login") {
             LoginScreen(
@@ -193,6 +218,9 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
         }
         composable("Home/Registry/Settings/Credits") {
             CreditsScreen()
+        }
+        composable("Home/Registry/Settings/Coffee") {
+            CoffeeScreen()
         }
         /** Opponent stats navigation **/
         composable("Home/Stats/Opponents") {
@@ -459,7 +487,7 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
                 goToOpponentStats = { teamId, userId ->
                     when {
                         userId != null && teamId != null -> navController.navigate("Home/Stats/Opponents/$teamId/$userId")
-                        teamId != null -> navController.navigate("Home/Stats/Opponents/$teamId/")
+                        teamId != null -> navController.navigate("Home/Stats/Opponents/$teamId")
                         else -> {}
                     }
                 },
@@ -494,8 +522,8 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
                     periodic = it.arguments?.getString("periodic").orEmpty()
                 ),
                 onWarDetailsClick = { type, _ ->
-                    (type as? StatsType.MapStats)?.teamId?.let {
-                        navController.navigate("Home/Stats/Maps/${type.trackIndex}/Team/${type.teamId}/Details")
+                    (type as? StatsType.MapStats)?.teamId?.takeIf { it.isNotEmpty() }?.let {
+                        navController.navigate("Home/Stats/Maps/${type.trackIndex}/Team/$it/Details")
                     }
                 },
                 goToWarDetails = { navController.navigate("Home/War/$it") },

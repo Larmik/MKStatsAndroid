@@ -72,10 +72,15 @@ class SettingsViewModel @Inject constructor(
     }
 
     fun showTheme() {
-        _sharedBottomSheetValue.value = MKBottomSheetState.Theme(preferencesRepository.mainColor, preferencesRepository.secondaryColor)
+        when (preferencesRepository.coffees >= 15) {
+            true ->  _sharedBottomSheetValue.value = MKBottomSheetState.Theme(preferencesRepository.mainColor, preferencesRepository.secondaryColor)
+            else ->  _sharedDialogValue.value = MKDialogState.Error("La personnalisation des thèmes est accessible aux utilisateurs de niveau 2. Augmente ton niveau grâce à tes contributions dans Paramètres -> Offrir un café !"){
+                _sharedDialogValue.value = null
+            }
+        }
     }
-    fun dismissBottomSheet()
-    {
+
+    fun dismissBottomSheet() {
         _sharedBottomSheetValue.value = null
     }
 

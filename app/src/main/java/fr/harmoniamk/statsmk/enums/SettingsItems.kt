@@ -3,7 +3,7 @@ package fr.harmoniamk.statsmk.enums
 import fr.harmoniamk.statsmk.R
 
 enum class ListItemType {
-    settings, stats, profile, registry, options
+    settings, stats, profile, registry
 }
 
 
@@ -23,7 +23,6 @@ sealed class MenuItems(val titleRes: Int, val route: String? = null, val type: L
 
    class ChangeMail() : MenuItems(R.string.changer_mon_email, null, ListItemType.profile)
    class ChangePassword() : MenuItems(R.string.changer_mon_mot_de_passe, null, ListItemType.profile)
-   class ChangePicture() : MenuItems(R.string.changer_ma_photo_de_profil, null, ListItemType.profile)
    class Logout() : MenuItems(R.string.se_d_connecter, null, ListItemType.profile)
 
    class Theme() : MenuItems(R.string.theme, null, ListItemType.settings)
@@ -33,5 +32,5 @@ sealed class MenuItems(val titleRes: Int, val route: String? = null, val type: L
    class Help(): MenuItems(R.string.help, "Home/Registry/Settings/Help", ListItemType.settings)
    class StatsDisplayMode(): MenuItems(R.string.stats_display_mode, null, ListItemType.settings)
    class Credit(): MenuItems(R.string.credits, "Home/Registry/Settings/Credits", ListItemType.settings)
-   class Coffee() : MenuItems(R.string.coffee, null, ListItemType.settings)
+   class Coffee() : MenuItems(R.string.coffee, "Home/Registry/Settings/Coffee", ListItemType.settings)
 }

@@ -295,7 +295,7 @@ class StatsRankingViewModel @AssistedInject constructor(
 
     private fun sortPlayers(type: SortType?, list: List<PlayerRankingItemViewModel>) : List<PlayerRankingItemViewModel> {
         val pairList =  when (type) {
-            PlayerSortType.WINRATE -> list.sortedByDescending { (it.stats.warStats.warsWon*100)/it.stats.warStats.warsPlayed}
+            PlayerSortType.WINRATE -> list.filter { it.stats.warStats.warsPlayed > 0 }.sortedByDescending { (it.stats.warStats.warsWon*100)/it.stats.warStats.warsPlayed}
             PlayerSortType.TOTAL_WIN -> list.sortedByDescending { it.stats.warStats.warsPlayed }
             PlayerSortType.AVERAGE -> list.sortedByDescending { it.stats.averagePoints }
             else -> list.sortedBy { it.user.name.lowercase() }
@@ -308,7 +308,7 @@ class StatsRankingViewModel @AssistedInject constructor(
 
     private fun sortTeams(type: SortType?, list: List<OpponentRankingItemViewModel>): List<OpponentRankingItemViewModel>  {
         val pairList = when (type) {
-            PlayerSortType.WINRATE -> list.sortedByDescending { (it.stats.warStats.warsWon*100)/it.stats.warStats.warsPlayed}
+            PlayerSortType.WINRATE -> list.filter { it.stats.warStats.warsPlayed > 0 }.sortedByDescending { (it.stats.warStats.warsWon*100)/it.stats.warStats.warsPlayed}
             PlayerSortType.TOTAL_WIN -> list.sortedByDescending { it.stats.warStats.warsPlayed }
             PlayerSortType.AVERAGE -> list.sortedByDescending { it.stats.averagePoints }
             else -> list.sortedBy { it.team?.team_name }

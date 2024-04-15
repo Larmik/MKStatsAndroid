@@ -1,5 +1,6 @@
 package fr.harmoniamk.statsmk.repository.mock
 
+import fr.harmoniamk.statsmk.model.firebase.Coffee
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.firebase.Penalty
 import fr.harmoniamk.statsmk.model.firebase.Shock
@@ -62,6 +63,17 @@ emit(null)    }
         emit(listOf())
     }
 
+    override fun writeCoffee(coffee: Coffee){
+
+    }
+
+    override fun listenCoffees(): Flow<List<Coffee>> = flow {
+        emit(listOf())
+    }
+
+    override fun getCoffees(): Flow<List<Coffee>> = flow {
+        emit(listOf())
+    }
     override fun getCurrentWar(teamId: String): Flow<MKWar?> = flow {
         emit(null)
     }

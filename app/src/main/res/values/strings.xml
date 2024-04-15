@@ -417,4 +417,7 @@
     <string name="main_color">Couleur principale (claire, textes affichés en noir)</string>
     <string name="secondary_color">Couleur secondaire (contrastée, textes affichés en blanc)</string>
     <string name="hexa">Code couleur</string>
+    <string name="coffee_in_progress">Distribution du café en cours ...</string>
+    <string name="coffee_success">Café bien reçu ! Merci infiniment pour le soutien.</string>
+    <string name="coffee_pending">Il y a du monde au comptoir pour récupérer le café. Il sera disponible dans quelques minutes.</string>
 </resources>

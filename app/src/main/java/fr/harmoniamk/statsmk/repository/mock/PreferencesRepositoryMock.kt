@@ -56,4 +56,10 @@ class PreferencesRepositoryMock : PreferencesRepositoryInterface {
     override var secondaryColor: String
         get() = ""
         set(value) {}
+    override var isPendingPurchase: Boolean
+        get() = false
+        set(value) {}
+    override var coffees: Int
+        get() = 0
+        set(value) {}
 }

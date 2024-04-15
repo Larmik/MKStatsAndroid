@@ -1,8 +1,5 @@
 package fr.harmoniamk.statsmk.compose.ui
 
-import android.content.Context
-import android.text.Html
-import android.util.TypedValue
 import android.view.Gravity
 import android.widget.TextView
 import androidx.compose.animation.AnimatedVisibility
@@ -28,18 +25,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
-import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.res.ResourcesCompat
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.extension.MKHtml.fromHtml
-import kotlin.math.max
 
 
 data class FAQ(val title: String, val message: String)
@@ -90,7 +83,6 @@ fun FAQCell(faq: FAQ) {
             ) {
                 HtmlText(html = faq.message, modifier = Modifier.padding(10.dp))
             }
-
         }
     }
 }
@@ -101,6 +93,7 @@ fun HtmlText(
     modifier: Modifier = Modifier,
     html: String,
     textStyle: TextStyle = TextStyle.Default.copy(textAlign = TextAlign.Start),
+    gravity: Int = Gravity.START
 ) {
     AndroidView(
         modifier = modifier,
@@ -110,7 +103,7 @@ fun HtmlText(
             TextView(context).apply {
                 textSize = textStyle.fontSize.value
                 setTextColor(context.resources.getColor(R.color.black))
-                setGravity(Gravity.START)
+                setGravity(gravity)
                 typeface = font
             }
         }

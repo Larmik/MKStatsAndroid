@@ -28,7 +28,10 @@ interface FirebaseRepositoryInterface{
     fun getAllies(teamId: String): Flow<List<String>>
     fun getNewWars(teamId: String): Flow<List<NewWar>>
 
-
+    //Coffee
+    fun writeCoffee(coffee: Coffee)
+    fun listenCoffees(): Flow<List<Coffee>>
+    fun getCoffees(): Flow<List<Coffee>>
     //Write and edit methods
     fun writeUser(user: User): Flow<Unit>
     fun writeNewWar(war: NewWar): Flow<Unit>
@@ -100,6 +103,22 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
         database.child("dispos").child(preferencesRepository.mkcTeam?.id ?: "").child(index.toString()).setValue(dispo)
         emit(Unit)
     }
+
+    override fun getCoffees(): Flow<List<Coffee>> = callbackFlow {
+        Log.d("MKDebugOnly", "FirebaseRepository getCoffees")
+        database.child("coffees").get().addOnSuccessListener { snapshot ->
+            val coffees: List<Coffee> = snapshot.children
+                .map { it.value as Map<*, *> }
+                .map { Coffee(
+                    date = it["date"].toString().toLong(),
+                    userId = it["userId"].toString(),
+                    quantity = it["quantity"].toString().toInt(),
+                    productId = it["productId"].toString()
+                ) }
+            if (isActive) trySend(coffees)
+        }
+        awaitClose {  }
+    }.flowOn(Dispatchers.IO)
 
     override fun writeAlly(teamId: String, ally: String): Flow<Unit>  =
         getAllies(teamId)
@@ -196,6 +215,34 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
                 }
             if (isActive) trySend(wars)
         }
+        awaitClose {  }
+    }.flowOn(Dispatchers.IO)
+
+    override fun writeCoffee(coffee: Coffee) {
+        database.child("coffees").child(coffee.date.toString()).setValue(coffee)
+    }
+
+    override fun listenCoffees(): Flow<List<Coffee>> = callbackFlow {
+        val postListener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                launch {
+                    Log.d("MKDebugOnly", "FirebaseRepository coffees")
+                    val coffees: List<Coffee> = dataSnapshot.child("coffees").children
+                        .map { it.value as Map<*, *> }
+                        .map { Coffee(
+                            date = it["date"].toString().toLong(),
+                            userId = it["userId"].toString(),
+                            quantity = it["quantity"].toString().toInt(),
+                            productId = it["productId"].toString()
+                        ) }
+                    if (isActive) trySend(coffees)
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+            }
+        }
+        database.addValueEventListener(postListener)
         awaitClose {  }
     }.flowOn(Dispatchers.IO)
 

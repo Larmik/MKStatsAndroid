@@ -1,8 +1,6 @@
 package fr.harmoniamk.statsmk.model.firebase
 
-import android.os.Parcelable
 import fr.harmoniamk.statsmk.database.entities.WarEntity
-import kotlinx.android.parcel.Parcelize
 import kotlinx.android.parcel.RawValue
 import java.io.Serializable
 

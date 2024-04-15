@@ -6,9 +6,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.BuildConfig
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKDialogState
+import fr.harmoniamk.statsmk.compose.viewModel.CoffeePurchaseState
 import fr.harmoniamk.statsmk.enums.WelcomeScreen
 import fr.harmoniamk.statsmk.model.firebase.AuthUserResponse
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
+import fr.harmoniamk.statsmk.repository.BillingRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.NetworkRepositoryInterface
 import fr.harmoniamk.statsmk.repository.NotificationsRepositoryInterface
@@ -47,16 +49,34 @@ class MainViewModel @Inject constructor(
     private val databaseRepository: DatabaseRepositoryInterface,
     private val networkRepository: NetworkRepositoryInterface,
     private val remoteConfigRepository: RemoteConfigRepositoryInterface,
-    private val notificationsRepository: NotificationsRepositoryInterface
+    private val notificationsRepository: NotificationsRepositoryInterface,
+    private val billingRepository: BillingRepositoryInterface
 ) : ViewModel() {
 
     private val _sharedWelcomeScreen = MutableSharedFlow<WelcomeScreen>()
     private val _sharedShowUpdatePopup = MutableSharedFlow<Unit>()
     private val _sharedDialogValue = MutableStateFlow<MKDialogState?>(null)
+    private val _sharedCoffeeState = MutableStateFlow<CoffeePurchaseState?>(null)
 
     val sharedWelcomeScreen = _sharedWelcomeScreen.asSharedFlow()
     val sharedShowUpdatePopup = _sharedShowUpdatePopup.asSharedFlow()
     val sharedDialogValue = _sharedDialogValue.asStateFlow()
+    val sharedCoffeeState = _sharedCoffeeState.asStateFlow()
+
+    fun connectBillingClient() {
+        billingRepository.listenPurchases()
+            .onEach {
+                (it as? CoffeePurchaseState.Success)?.coffee?.let {
+                    when (it.productId) {
+                        "a_coffee" -> preferencesRepository.coffees += it.quantity
+                        "three_coffees" -> preferencesRepository.coffees += it.quantity * 3
+                        "five_coffees" -> preferencesRepository.coffees += it.quantity * 5
+                        "ten_coffees" -> preferencesRepository.coffees += it.quantity * 10
+                    }
+                }
+                _sharedCoffeeState.value = it
+            }.launchIn(viewModelScope)
+    }
 
     fun bind() {
 
