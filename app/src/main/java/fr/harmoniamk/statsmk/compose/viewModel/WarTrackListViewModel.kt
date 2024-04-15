@@ -116,11 +116,12 @@ class WarTrackListViewModel @Inject constructor(
         onlyIndiv = userId != null || preferencesRepository.mkcTeam?.id == null
 
         when {
-            userId != null && teamId != null -> list.filter { war -> war.hasPlayer(preferencesRepository.mkcPlayer?.id.toString()) && war.hasTeam(teamId) }
+            userId != null && teamId != null -> list.filter { war -> war.hasPlayer(userId) && war.hasTeam(teamId) }
+            onlyIndiv && teamId != null-> list.filter { war -> war.hasPlayer(preferencesRepository.mkcPlayer?.id.toString()) && war.hasTeam(teamId)}
             onlyIndiv -> list.filter { war -> war.hasPlayer(userId ?: preferencesRepository.mkcPlayer?.id.toString()) }
-            else -> list.filter { war -> (teamId != null && war.hasTeam(teamId)) || war.hasTeam(preferencesRepository.mkcTeam) }
+            else -> list.filter { war -> (teamId != null && war.hasTeam(teamId)) || war.hasTeam(preferencesRepository.mkcTeam, preferencesRepository.rosterOnly) }
         }
-        .filter { (onlyIndiv && it.hasPlayer(userId)) || !onlyIndiv && it.hasTeam(preferencesRepository.mkcTeam) }
+        .filter { (onlyIndiv && it.hasPlayer(userId)) || !onlyIndiv && it.hasTeam(preferencesRepository.mkcTeam, preferencesRepository.rosterOnly) }
         .forEach { mkWar ->
             mkWar.warTracks?.filter { track -> track.index == trackIndex }?.forEach { track ->
                 val position = track.track?.warPositions?.singleOrNull { it.playerId == userId }?.position?.takeIf { userId != null }
