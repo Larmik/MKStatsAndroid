@@ -16,17 +16,20 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import fr.harmoniamk.statsmk.R
+import fr.harmoniamk.statsmk.compose.viewModel.ColorsViewModel
 import fr.harmoniamk.statsmk.extension.safeSubList
 import fr.harmoniamk.statsmk.model.local.CurrentPlayerModel
 
 @Composable
 fun MKPlayerList(players: List<CurrentPlayerModel>, trackCount: Int) {
+    val colorsViewModel: ColorsViewModel = hiltViewModel()
     val splitIndex = when (players.size % 2) {
         0 -> players.size/2
         else -> players.size/2 + 1
     }
-    Card(elevation = 0.dp, backgroundColor = colorResource(R.color.transparent_white), modifier = Modifier.padding(10.dp)) {
+    Card(elevation = 0.dp, backgroundColor = colorsViewModel.secondaryColorAlphaed, modifier = Modifier.padding(10.dp)) {
         Row(Modifier.padding(10.dp)) {
             LazyColumn(Modifier.weight(1f)) {
                 items(players.safeSubList(0, splitIndex)) {
@@ -40,7 +43,7 @@ fun MKPlayerList(players: List<CurrentPlayerModel>, trackCount: Int) {
                                 true -> "${it.player?.name.orEmpty()} (${it.tracksPlayed})"
                                 else -> it.player?.name.orEmpty()
                             }
-                            MKText(modifier = Modifier.padding(horizontal = 5.dp),text = text, maxLines = 1)
+                            MKText(modifier = Modifier.padding(horizontal = 5.dp),text = text, maxLines = 1, newTextColor = colorsViewModel.mainTextColor)
 
                         }
                         MKText(text = it.score.toString(), font = R.font.montserrat_bold)

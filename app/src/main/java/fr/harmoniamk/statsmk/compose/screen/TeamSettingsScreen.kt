@@ -113,7 +113,7 @@ fun TeamSettingsScreen(viewModel: TeamSettingsViewModel = hiltViewModel(), onPla
                         .fillMaxWidth()
                         .height(40.dp)
                         .background(color = colorsViewModel.secondaryColor)) {
-                        MKText(font = R.font.montserrat_bold, fontSize = 18, text = it.key, textColor = R.color.white)
+                        MKText(font = R.font.montserrat_bold, fontSize = 18, text = it.key, newTextColor = colorsViewModel.secondaryTextColor)
                     }
                 }
                 items(items = it.value) {

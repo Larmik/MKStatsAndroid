@@ -414,8 +414,8 @@
     <string name="options">Options</string>
     <string name="theme">Thème</string>
     <string name="stats_display_mode">Calcul des statistiques</string>
-    <string name="main_color">Couleur principale (claire, textes affichés en noir)</string>
-    <string name="secondary_color">Couleur secondaire (contrastée, textes affichés en blanc)</string>
+    <string name="main_color">Couleur principale</string>
+    <string name="secondary_color">Couleur secondaire</string>
     <string name="hexa">Code couleur</string>
     <string name="coffee_in_progress">Distribution du café en cours ...</string>
     <string name="coffee_success">Café bien reçu ! Merci infiniment pour le soutien.</string>

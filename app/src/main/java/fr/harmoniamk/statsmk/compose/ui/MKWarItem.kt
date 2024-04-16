@@ -21,7 +21,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import fr.harmoniamk.statsmk.R
+import fr.harmoniamk.statsmk.compose.viewModel.ColorsViewModel
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.local.MKWar
@@ -29,11 +31,12 @@ import fr.harmoniamk.statsmk.model.mock.mock
 
 @Composable
 fun MKWarItem(war: MKWar, isForStats: Boolean = false, onClick: (String?) -> Unit) {
+    val colorsViewModel: ColorsViewModel = hiltViewModel()
     val bgColor = when (isForStats) {
-        true -> R.color.transparent
-        else -> R.color.white_alphaed
+        true -> colorResource(R.color.transparent)
+        else -> colorsViewModel.secondaryColorAlphaed
     }
-    Card(backgroundColor = colorResource(id = bgColor), modifier = Modifier
+    Card(backgroundColor = bgColor, modifier = Modifier
         .padding(bottom = 5.dp)
         .clickable { onClick(war.war?.mid) }, elevation = 0.dp) {
         when (isForStats) {

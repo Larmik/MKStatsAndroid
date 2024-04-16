@@ -10,21 +10,23 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import fr.harmoniamk.statsmk.BuildConfig
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKBaseScreen
 import fr.harmoniamk.statsmk.compose.ui.MKText
+import fr.harmoniamk.statsmk.compose.viewModel.ColorsViewModel
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun CreditsScreen() {
+    val colorsViewModel: ColorsViewModel = hiltViewModel()
     MKBaseScreen(title = R.string.credits) {
         MKText(text = "Mario Kart Stats", font = R.font.montserrat_bold, fontSize = 24)
         MKText(text = "Version ${BuildConfig.VERSION_NAME}", fontSize = 18)
         MKText(text = "Made with ❤\uFE0F by Larii", modifier = Modifier.padding(vertical = 20.dp))
-        Column(Modifier.background(colorResource(R.color.transparent_white))) {
+        Column(Modifier.background(colorsViewModel.secondaryColorTransparent)) {
             Column(
                 Modifier
                     .fillMaxWidth()

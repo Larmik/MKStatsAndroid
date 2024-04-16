@@ -24,7 +24,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import fr.harmoniamk.statsmk.R
+import fr.harmoniamk.statsmk.compose.viewModel.ColorsViewModel
 import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.extension.pointsToPosition
@@ -47,16 +49,17 @@ fun MKTrackItem(
     onClick: (Int) -> Unit = {},
     goToDetails: (String) -> Unit = {}
 ) {
+    val colorsViewModel: ColorsViewModel = hiltViewModel()
     val bgColor = when {
-        trackRanking != null && isVertical -> R.color.transparent
-        else -> R.color.white_alphaed
+        trackRanking != null && isVertical -> colorResource(R.color.transparent)
+        else -> colorsViewModel.secondaryColorAlphaed
     }
     val trackIndex = map?.ordinal ?: trackRanking?.trackIndex ?: trackRanking?.map?.ordinal
 
     Card(
         elevation = 0.dp,
-        backgroundColor = colorResource(bgColor),
-        border = BorderStroke(2.dp, colorResource(id = track?.backgroundColor ?: bgColor)),
+        backgroundColor = bgColor,
+        border = BorderStroke(2.dp, track?.backgroundColor() ?: bgColor),
         modifier = modifier.clickable {
             trackIndex?.let { onClick(it) }
             track?.track?.mid?.let { goToDetails(it) }
@@ -101,7 +104,7 @@ fun MKTrackItem(
                                 track = it, isSmaller = true, colored = false, modifier = Modifier
                                     .fillMaxWidth()
                                     .background(
-                                        color = colorResource(R.color.white_alphaed),
+                                        color = colorsViewModel.secondaryColorAlphaed,
                                         shape = RoundedCornerShape(5.dp)
                                     )
                             )

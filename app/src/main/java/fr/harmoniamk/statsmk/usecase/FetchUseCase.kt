@@ -75,22 +75,25 @@ class FetchUseCase @Inject constructor(
                 firebaseRepository.getUser(authenticationRepository.user?.uid.orEmpty())
                     .onEach {
                         preferencesRepository.role = it?.role ?: 0
-                        firebaseRepository.getCoffees().firstOrNull()?.let { list ->
-                            var total = 0
-                            list.filter { coffee -> coffee.userId == it?.mkcId }.forEach { coffee ->
-                                when (coffee.productId) {
-                                    "a_coffee" -> total += coffee.quantity
-                                    "three_coffees" -> total += coffee.quantity * 3
-                                    "five_coffees" -> total += coffee.quantity * 5
-                                    "ten_coffees" -> total += coffee.quantity * 10
-                                }
-                            }
-                            preferencesRepository.coffees = total
-                        }
+
                     }
                     .flatMapLatest {  mkCentralRepository.getPlayer(it?.mkcId.orEmpty()) }
             else ->  mkCentralRepository.getPlayer(mkcId)
-        }.onEach { preferencesRepository.mkcPlayer = (it as? NetworkResponse.Success)?.response }
+        }.onEach {
+            preferencesRepository.mkcPlayer = (it as? NetworkResponse.Success)?.response
+            firebaseRepository.getCoffees().firstOrNull()?.let { list ->
+                var total = 0
+                list.filter { coffee -> coffee.userId == authenticationRepository.user?.uid }.forEach { coffee ->
+                    when (coffee.productId) {
+                        "a_coffee" -> total += coffee.quantity
+                        "three_coffees" -> total += coffee.quantity * 3
+                        "five_coffees" -> total += coffee.quantity * 5
+                        "ten_coffees" -> total += coffee.quantity * 10
+                    }
+                }
+                preferencesRepository.coffees = total
+            }
+        }
 
 
     override fun fetchTeam(): Flow<NetworkResponse<MKCFullTeam>> = mkCentralRepository

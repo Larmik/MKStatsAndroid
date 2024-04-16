@@ -15,8 +15,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKText
+import fr.harmoniamk.statsmk.compose.viewModel.ColorsViewModel
 import fr.harmoniamk.statsmk.compose.viewModel.StatsType
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.extension.pointsToPosition
@@ -33,6 +35,7 @@ import kotlinx.coroutines.FlowPreview
 fun MKWarDetailsStatsView(mkStats: MKStats, type: StatsType) {
     val stats = mkStats as? Stats
     val mapStats = mkStats as? MapStats
+    val colorsViewModel: ColorsViewModel = hiltViewModel()
 
     val diffColor = when {
         type is StatsType.IndivStats || (type as? StatsType.OpponentStats)?.userId != null -> R.color.black
@@ -46,7 +49,7 @@ fun MKWarDetailsStatsView(mkStats: MKStats, type: StatsType) {
             .padding(bottom = 20.dp)
             .border(1.dp, colorResource(id = R.color.black), RoundedCornerShape(5.dp))
             .background(
-                color = colorResource(id = R.color.transparent_white),
+                color = colorsViewModel.secondaryColorTransparent,
                 shape = RoundedCornerShape(5.dp)
             )
     ) {

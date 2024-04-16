@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -25,6 +26,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.viewModel.ColorsViewModel
+import fr.harmoniamk.statsmk.extension.fromHex
 import fr.harmoniamk.statsmk.extension.positionColor
 import fr.harmoniamk.statsmk.fragment.stats.playerRanking.PlayerRankingItemViewModel
 import fr.harmoniamk.statsmk.model.local.MKWarPosition
@@ -45,12 +47,12 @@ fun MKPlayerItem(
 
     val backgroundColor = when (isSelected) {
         true -> colorsViewModel.secondaryColor
-        else -> colorResource(R.color.white_alphaed)
+        else -> colorsViewModel.secondaryColorAlphaed
     }
 
     val textColor = when (isSelected) {
-        true -> R.color.white
-        else -> R.color.black
+        true -> colorsViewModel.secondaryTextColor
+        else -> colorsViewModel.mainTextColor
     }
     Card(
         Modifier
@@ -70,8 +72,8 @@ fun MKPlayerItem(
             }
 
             Row(Modifier.weight(1f), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
-                playerRanking?.user?.name?.let { MKText(modifier = Modifier.widthIn(0.dp, 120.dp), text = it, font = R.font.montserrat_bold, textColor = textColor, maxLines = 1) }
-                player?.name?.let { MKText(modifier = Modifier.widthIn(0.dp, 120.dp), text = it, font = R.font.montserrat_bold, textColor = textColor, maxLines = 1) }
+                playerRanking?.user?.name?.let { MKText(modifier = Modifier.widthIn(0.dp, 120.dp), text = it, font = R.font.montserrat_bold, newTextColor = textColor, maxLines = 1) }
+                player?.name?.let { MKText(modifier = Modifier.widthIn(0.dp, 120.dp), text = it, font = R.font.montserrat_bold, newTextColor = textColor, maxLines = 1) }
                 shockCount.takeIf { it > 0 }?.let {
                     Image(painter = painterResource(id = R.drawable.shock), contentDescription = null, modifier = Modifier
                         .size(25.dp)

@@ -56,6 +56,12 @@ class PreferencesRepositoryMock : PreferencesRepositoryInterface {
     override var secondaryColor: String
         get() = ""
         set(value) {}
+    override var mainTextColor: String
+        get() = ""
+        set(value) {}
+    override var secondaryTextColor: String
+        get() = ""
+        set(value) {}
     override var isPendingPurchase: Boolean
         get() = false
         set(value) {}

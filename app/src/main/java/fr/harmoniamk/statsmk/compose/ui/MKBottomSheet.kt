@@ -55,7 +55,7 @@ sealed class MKBottomSheetState {
     class ResetPassword : MKBottomSheetState()
     class StatsDisplayMode(val initialValue: Boolean): MKBottomSheetState()
     class FilterSort(val sort: Sort, val filter: Filter): MKBottomSheetState()
-    class Theme(val initialMain: String, val initialSecondary: String): MKBottomSheetState()
+    class Theme(val initialMain: String, val initialSecondary: String, val initialMainText: String, val initialSecondaryText: String): MKBottomSheetState()
 }
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class, ExperimentalMaterialApi::class)
@@ -69,7 +69,7 @@ fun MKBottomSheet(
     onSorted: (SortType) -> Unit = { },
     onFiltered: (List<FilterType>) -> Unit = { },
     onDisplayModeValidated: (Boolean) -> Unit = { },
-    onColorsSelected: (String, String) -> Unit = { _,_ ->}
+    onColorsSelected: (String, String, String, String) -> Unit = { _,_,_,_ ->}
 ) {
     val colorsViewModel: ColorsViewModel = hiltViewModel()
     when (state) {
@@ -130,7 +130,7 @@ fun MKBottomSheet(
                 },
                     colors = SwitchDefaults.colors(
                         checkedThumbColor = colorsViewModel.secondaryColor,
-                        checkedTrackColor = colorResource(R.color.harmonia_dark_alphaed)
+                        checkedTrackColor = colorsViewModel.secondaryColorAlphaed
                     ),
                 )
                 MKText(modifier = Modifier.padding(20.dp), text = when (rosterOnly.value) {
@@ -154,44 +154,88 @@ fun MKBottomSheet(
         is MKBottomSheetState.Theme -> {
             val mainColor = remember { mutableStateOf(TextFieldValue(state.initialMain)) }
             val secondaryColor = remember { mutableStateOf(TextFieldValue(state.initialSecondary)) }
+            val mainTextColor = remember { mutableStateOf(TextFieldValue(state.initialMainText)) }
+            val secondaryTextColor = remember { mutableStateOf(TextFieldValue(state.initialSecondaryText)) }
             val hexaRegex = Regex("[A-Fa-f0-9]{6}")
             MKBaseScreen(title = "Thème", subTitle = "Couleurs") {
-                MKText(modifier = Modifier.padding(20.dp), text = stringResource(R.string.main_color))
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    MKText(text = "#", fontSize = 18, font = R.font.montserrat_bold)
-                    MKTextField(
-                        value = mainColor.value,
-                        modifier = Modifier.fillMaxWidth(0.3f).padding(horizontal = 10.dp),
-                        onValueChange = { mainColor.value = it },
-                        placeHolderRes = R.string.hexa,
-                    )
-                    Box(Modifier.size(50.dp).background(colorResource(R.color.white), shape = RoundedCornerShape(5.dp))) {
-                        mainColor.value.text.takeIf { it.matches(hexaRegex) }?.let {
-                            Spacer(Modifier.size(42.dp).align(Alignment.Center).background(color = Color.fromHex("#$it"), shape = RoundedCornerShape(5.dp)))
+                MKText(modifier = Modifier.padding(20.dp), text = stringResource(R.string.main_color), font = R.font.montserrat_bold)
+
+                        MKText(text = "Fond")
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                            MKText(text = "#", fontSize = 18, font = R.font.montserrat_bold)
+                            MKTextField(
+                                value = mainColor.value,
+                                modifier = Modifier.fillMaxWidth(0.5f).padding(horizontal = 10.dp),
+                                onValueChange = { mainColor.value = it },
+                                placeHolderRes = R.string.hexa,
+                            )
+                            Box(Modifier.size(40.dp).background(colorResource(R.color.white), shape = RoundedCornerShape(5.dp))) {
+                                mainColor.value.text.takeIf { it.matches(hexaRegex) }?.let {
+                                    Spacer(Modifier.size(32.dp).align(Alignment.Center).background(color = Color.fromHex("#$it"), shape = RoundedCornerShape(5.dp)))
+                                }
+                            }
                         }
-                    }
+
+
+                        MKText(text = "Texte")
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            MKText(text = "#", fontSize = 18, font = R.font.montserrat_bold)
+                            MKTextField(
+                                value = mainTextColor.value,
+                                modifier = Modifier.fillMaxWidth(0.5f).padding(horizontal = 10.dp),
+                                onValueChange = { mainTextColor.value = it },
+                                placeHolderRes = R.string.hexa,
+                            )
+                            Box(Modifier.size(40.dp).background(colorResource(R.color.white), shape = RoundedCornerShape(5.dp))) {
+                                mainTextColor.value.text.takeIf { it.matches(hexaRegex) }?.let {
+                                    Spacer(Modifier.size(32.dp).align(Alignment.Center).background(color = Color.fromHex("#$it"), shape = RoundedCornerShape(5.dp)))
+                                }
+                            }
+
+
 
 
                 }
- MKText(modifier = Modifier.padding(20.dp), text = stringResource(R.string.secondary_color))
+ MKText(modifier = Modifier.padding(20.dp), text = stringResource(R.string.secondary_color), font = R.font.montserrat_bold)
+                        MKText(text = "Fond")
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    MKText(text = "#", fontSize = 18, font = R.font.montserrat_bold)
-                    MKTextField(
-                        modifier = Modifier.fillMaxWidth(0.3f).padding(horizontal = 10.dp),
-                        value = secondaryColor.value,
-                        onValueChange = { secondaryColor.value = it },
-                        placeHolderRes = R.string.hexa,
-                    )
-                    Box(Modifier.size(50.dp).background(colorResource(R.color.white), shape = RoundedCornerShape(5.dp))) {
-                        secondaryColor.value.text.takeIf { it.matches(hexaRegex) }?.let {
-                            Spacer(Modifier.size(42.dp).align(Alignment.Center).background(color = Color.fromHex("#$it"), shape = RoundedCornerShape(5.dp)))
+                            MKText(text = "#", fontSize = 20, font = R.font.montserrat_bold)
+                            MKTextField(
+                                value = secondaryColor.value,
+                                modifier = Modifier.fillMaxWidth(0.5f).padding(horizontal = 10.dp),
+                                onValueChange = { secondaryColor.value = it },
+                                placeHolderRes = R.string.hexa,
+                            )
+                            Box(Modifier.size(40.dp).background(colorResource(R.color.white), shape = RoundedCornerShape(5.dp))) {
+                                secondaryColor.value.text.takeIf { it.matches(hexaRegex) }?.let {
+                                    Spacer(Modifier.size(32.dp).align(Alignment.Center).background(color = Color.fromHex("#$it"), shape = RoundedCornerShape(5.dp)))
+                                }
+                            }
                         }
-                    }
+                        MKText(text = "Texte")
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                            MKText(text = "#", fontSize = 20, font = R.font.montserrat_bold)
+                            MKTextField(
+                                value = secondaryTextColor.value,
+                                modifier = Modifier.fillMaxWidth(0.5f).padding(horizontal = 10.dp),
+                                onValueChange = { secondaryTextColor.value = it },
+                                placeHolderRes = R.string.hexa,
+                            )
+                            Box(Modifier.size(40.dp).background(colorResource(R.color.white), shape = RoundedCornerShape(5.dp))) {
+                                secondaryTextColor.value.text.takeIf { it.matches(hexaRegex) }?.let {
+                                    Spacer(Modifier.size(32.dp).align(Alignment.Center).background(color = Color.fromHex("#$it"), shape = RoundedCornerShape(5.dp)))
+                                }
+                            }
+
+
+
+
+
                 }
 
                 Row {
                     MKButton(text = "Valider", enabled = mainColor.value.text.matches(hexaRegex) && secondaryColor.value.text.matches(hexaRegex)) {
-                        onColorsSelected(mainColor.value.text, secondaryColor.value.text)
+                        onColorsSelected(mainColor.value.text, secondaryColor.value.text, mainTextColor.value.text, secondaryTextColor.value.text)
                     }
                     MKButton(
                         text = "Retour",

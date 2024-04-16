@@ -39,6 +39,7 @@ import fr.harmoniamk.statsmk.compose.ui.MKDialog
 import fr.harmoniamk.statsmk.compose.ui.MKListItem
 import fr.harmoniamk.statsmk.compose.ui.MKProgress
 import fr.harmoniamk.statsmk.compose.ui.MKText
+import fr.harmoniamk.statsmk.compose.viewModel.ColorsViewModel
 import fr.harmoniamk.statsmk.compose.viewModel.ProfileViewModel
 import fr.harmoniamk.statsmk.enums.MenuItems
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -54,6 +55,7 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), onLogout: () ->
 
     val player = viewModel.sharedPlayer.collectAsState()
     val bottomSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+    val colorsViewModel: ColorsViewModel = hiltViewModel()
 
     LaunchedEffect(Unit) {
         viewModel.sharedDisconnect.collect {
@@ -127,7 +129,7 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), onLogout: () ->
                         modifier = Modifier
                             .fillMaxWidth(0.95f)
                             .height(1.dp)
-                            .background(color = colorResource(id = R.color.white))
+                            .background(color = colorsViewModel.mainTextColor)
                     )
                     Column(
                         modifier = Modifier
@@ -173,19 +175,13 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), onLogout: () ->
                             MKText(text = it, fontSize = 16, font = R.font.montserrat_bold)
                         }
                     }
-                    Spacer(
-                        modifier = Modifier
-                            .fillMaxWidth(0.95f)
-                            .height(1.dp)
-                            .background(color = colorResource(id = R.color.white))
-                    )
                 }
             }
             Spacer(
                 modifier = Modifier
                     .fillMaxWidth(0.95f)
                     .height(1.dp)
-                    .background(color = colorResource(id = R.color.white))
+                    .background(color = colorsViewModel.mainTextColor)
             )
             Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.Start) {
                 listOf(

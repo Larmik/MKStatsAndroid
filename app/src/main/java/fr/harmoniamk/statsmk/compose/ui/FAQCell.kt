@@ -25,13 +25,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.res.ResourcesCompat
+import androidx.hilt.navigation.compose.hiltViewModel
 import fr.harmoniamk.statsmk.R
+import fr.harmoniamk.statsmk.compose.viewModel.ColorsViewModel
 import fr.harmoniamk.statsmk.extension.MKHtml.fromHtml
 
 
@@ -39,6 +42,7 @@ data class FAQ(val title: String, val message: String)
 
 @Composable
 fun FAQCell(faq: FAQ) {
+    val colorsViewModel: ColorsViewModel = hiltViewModel()
     val expandTransition = remember {
         expandVertically(
             expandFrom = Alignment.Top,
@@ -65,7 +69,7 @@ fun FAQCell(faq: FAQ) {
             }, animationSpec = tween(durationMillis = 150)
         )
     }
-    Card(Modifier.padding(5.dp)) {
+    Card(Modifier.padding(5.dp), backgroundColor = colorsViewModel.secondaryColorAlphaed) {
         Column(Modifier.padding(10.dp)) {
             Row(
                 Modifier
@@ -74,7 +78,7 @@ fun FAQCell(faq: FAQ) {
                 MKText(text = faq.title, fontSize = 16)
                 Image(painterResource(R.drawable.arrowdown), contentDescription = null, modifier = Modifier
                     .size(25.dp)
-                    .rotate(rotation.value))
+                    .rotate(rotation.value), colorFilter = ColorFilter.tint(colorsViewModel.mainTextColor))
             }
             AnimatedVisibility(
                 visible = isExpanded.value,
@@ -95,6 +99,7 @@ fun HtmlText(
     textStyle: TextStyle = TextStyle.Default.copy(textAlign = TextAlign.Start),
     gravity: Int = Gravity.START
 ) {
+    val colorViewModel: ColorsViewModel = hiltViewModel()
     AndroidView(
         modifier = modifier,
         update = { it.text = fromHtml(it.context, html) },
@@ -102,7 +107,7 @@ fun HtmlText(
             val font = ResourcesCompat.getFont(context, R.font.montserrat_regular)
             TextView(context).apply {
                 textSize = textStyle.fontSize.value
-                setTextColor(context.resources.getColor(R.color.black))
+                setTextColor(colorViewModel.htmlTextColor)
                 setGravity(gravity)
                 typeface = font
             }

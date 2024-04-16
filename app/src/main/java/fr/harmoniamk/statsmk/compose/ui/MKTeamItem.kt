@@ -17,7 +17,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import fr.harmoniamk.statsmk.R
+import fr.harmoniamk.statsmk.compose.viewModel.ColorsViewModel
 import fr.harmoniamk.statsmk.extension.toTeamColor
 import fr.harmoniamk.statsmk.fragment.stats.opponentRanking.OpponentRankingItemViewModel
 
@@ -25,16 +27,17 @@ import fr.harmoniamk.statsmk.fragment.stats.opponentRanking.OpponentRankingItemV
 fun MKTeamItem(teamRanking: OpponentRankingItemViewModel? = null, onClick: (String) -> Unit) {
     val finalTeam = teamRanking?.team
     val teamId = teamRanking?.team?.team_id.orEmpty()
+    val colorsViewModel: ColorsViewModel = hiltViewModel()
     Card(
         Modifier
             .padding(5.dp)
-            .clickable {onClick(teamId) }, backgroundColor = colorResource(id = R.color.white_alphaed)) {
+            .clickable {onClick(teamId) }, backgroundColor = colorsViewModel.secondaryColorAlphaed) {
                 Row(modifier = Modifier
                     .padding(horizontal = 20.dp, vertical = 10.dp)
                     .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                     finalTeam?.team_tag?.let {
                         Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.defaultMinSize(minWidth = 70.dp).background(color = finalTeam.team_color.toTeamColor(), shape = RoundedCornerShape(5.dp))) {
-                            MKText(text = it, fontSize = 16, font = R.font.montserrat_bold, textColor = R.color.white, modifier = Modifier.padding(5.dp))
+                            MKText(text = it, fontSize = 16, font = R.font.montserrat_bold, newTextColor = colorsViewModel.secondaryTextColor, modifier = Modifier.padding(5.dp))
                         }
                     }
                     finalTeam?.team_name?.let { MKText(text = it, font = R.font.montserrat_bold, fontSize = 18, modifier = Modifier.weight(1f)) }

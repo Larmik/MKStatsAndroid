@@ -72,12 +72,12 @@ fun HomeScreen(
                         label = {
                             MKText(
                                 text = screen.title,
-                                textColor = if (selected) R.color.white else R.color.boo,
+                                newTextColor = if (selected) colorViewModel.secondaryTextColor else colorResource(R.color.boo),
                                 fontSize = 12
                             )
                         },
                         selected = selected,
-                        selectedContentColor = colorResource(id = R.color.white),
+                        selectedContentColor = colorViewModel.secondaryTextColor,
                         unselectedContentColor = colorResource(id = R.color.boo),
                         onClick = {
                             navController.navigate(screen.route) {

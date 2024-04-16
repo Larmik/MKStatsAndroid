@@ -28,7 +28,7 @@ fun List<Int?>?.sum(): Int {
 /** LISTE MKWAR **/
 
 fun List<MKWar>.withFullStats(databaseRepository: DatabaseRepositoryInterface, userId: String? = null, teamId: String? = null) = flow {
-    Log.d("MKDebugOnly", "ListExtension withFullStats: for list")
+    Log.d("MKDebugOnly", "ListExtension for MKWar withFullStats")
 
     val maps = mutableListOf<TrackStats>()
     val warScores = mutableListOf<WarScore>()
@@ -148,7 +148,7 @@ fun List<MKCTeam>.withFullTeamStats(
     monthOnly: Boolean = false
 ) = flow {
     val temp = mutableListOf<OpponentRankingItemViewModel>()
-    Log.d("MKDebugOnly", "ListExtension withFullTeamStats")
+    Log.d("MKDebugOnly", "ListExtension for MKCTeam withFullTeamStats")
     this@withFullTeamStats.forEach { team ->
         wars
             ?.filter { (weekOnly && it.isThisWeek) || !weekOnly }
@@ -166,7 +166,7 @@ fun List<MKCTeam>.withFullTeamStats(
 /** LISTE PENALTY **/
 
 fun List<Penalty>.withTeamName(databaseRepository: DatabaseRepositoryInterface) = flow {
-    Log.d("MKDebugOnly", "ListExtension withTeamName: for list")
+    Log.d("MKDebugOnly", "ListExtension for Penalty withTeamName")
     val temp = mutableListOf<Penalty>()
     this@withTeamName.forEach {
         val team = databaseRepository.getNewTeam(it.teamId).firstOrNull()

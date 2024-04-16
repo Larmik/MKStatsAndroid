@@ -27,6 +27,7 @@ import fr.harmoniamk.statsmk.compose.ui.MKProgress
 import fr.harmoniamk.statsmk.compose.ui.MKSegmentedButtons
 import fr.harmoniamk.statsmk.compose.ui.MKText
 import fr.harmoniamk.statsmk.compose.ui.MKWarItem
+import fr.harmoniamk.statsmk.compose.viewModel.ColorsViewModel
 import fr.harmoniamk.statsmk.compose.viewModel.WarViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -39,6 +40,7 @@ fun WarScreen(
     onWarClick: (String?) -> Unit,
     onCreateWarClick: () -> Unit
 ) {
+    val colorsViewModel : ColorsViewModel = hiltViewModel()
     val currentWars = viewModel.sharedCurrentWars.collectAsState()
     val isLoading = viewModel.sharedLoading.collectAsState()
     val lastWars = viewModel.sharedLastWars.collectAsState()
@@ -87,7 +89,7 @@ fun WarScreen(
                                         .fillMaxWidth()
                                         .height(40.dp)
                                         .background(color = colorResource(R.color.transparent))) {
-                                        MKText(text = teamName, textColor = R.color.black)
+                                        MKText(text = teamName, newTextColor = colorsViewModel.mainTextColor)
                                     }
                                 }
                                 items(items = wars) {

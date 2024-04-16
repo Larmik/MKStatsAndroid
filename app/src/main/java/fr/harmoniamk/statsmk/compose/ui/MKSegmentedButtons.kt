@@ -33,14 +33,14 @@ fun MKSegmentedButtons(modifier: Modifier = Modifier, buttons: List<Pair<Int, ()
                 .fillMaxWidth()
                 .height(50.dp)
                 .padding(bottom = 10.dp)
-                .background(color = colorResource(id = R.color.transparent_white), shape = RoundedCornerShape(bottomStart = 5.dp, bottomEnd = 5.dp)), verticalAlignment = Alignment.CenterVertically) {
+                .background(color = colorsViewModel.secondaryColorTransparent, shape = RoundedCornerShape(bottomStart = 5.dp, bottomEnd = 5.dp)), verticalAlignment = Alignment.CenterVertically) {
             buttons.forEach {
                 Box(contentAlignment = Alignment.Center, modifier = Modifier
                     .weight(1f)
                     .fillMaxHeight()
                     .clickable { it.second() }
                     ) {
-                    MKText(text = it.first, modifier = Modifier.fillMaxWidth(), font = R.font.roboto)
+                    MKText(text = it.first, modifier = Modifier.fillMaxWidth(), font = R.font.roboto, newTextColor = colorsViewModel.mainTextColor)
                 }
                 if (buttons.indexOf(it) < buttons.size - 1)
                     Spacer(

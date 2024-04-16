@@ -16,12 +16,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import fr.harmoniamk.statsmk.R
+import fr.harmoniamk.statsmk.compose.viewModel.ColorsViewModel
 import fr.harmoniamk.statsmk.extension.positionColor
 import fr.harmoniamk.statsmk.model.local.MapDetails
 
 @Composable
 fun MKWarTrackItem(details: MapDetails, isIndiv: Boolean) {
+    val colorsViewModel: ColorsViewModel = hiltViewModel()
     val borderColor = when {
         isIndiv -> R.color.transparent
         details.warTrack.displayedDiff.contains("+") -> R.color.win
@@ -35,7 +38,7 @@ fun MKWarTrackItem(details: MapDetails, isIndiv: Boolean) {
             .padding(bottom = 5.dp)
             .border(2.dp, color = colorResource(id = borderColor), shape = RoundedCornerShape(5.dp))
             .background(
-                color = colorResource(id = R.color.white_alphaed),
+                color = colorsViewModel.secondaryColorAlphaed,
                 shape = RoundedCornerShape(5.dp)
             ), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
         Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(10.dp)) {

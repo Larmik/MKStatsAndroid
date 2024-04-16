@@ -22,8 +22,8 @@ fun MKButton(text: Any, enabled: Boolean = true, hasBackground: Boolean = true, 
         else -> colorResource(id = R.color.transparent)
     }
     val textColor = when (hasBackground) {
-        true -> colorResource(id = R.color.white)
-        else -> colorResource(id = R.color.black)
+        true -> colorsViewModel.secondaryTextColor
+        else -> colorsViewModel.mainTextColor
     }
     val elevation = when (hasBackground) {
         true -> ButtonDefaults.elevation()
@@ -38,15 +38,13 @@ fun MKButton(text: Any, enabled: Boolean = true, hasBackground: Boolean = true, 
             backgroundColor = bgcolor,
             disabledBackgroundColor = colorResource(R.color.boo),
             contentColor = textColor,
-            disabledContentColor = colorResource(R.color.white)
+            disabledContentColor = colorsViewModel.mainTextColor
         ),
         content = {
-            Text(
-                text = when (text) {
-                    is Int -> stringResource(text)
-                    is String -> text
-                    else -> ""
-                }
+            MKText(
+                text = text,
+                newTextColor = textColor,
+                font = R.font.roboto
             )
         }
     )

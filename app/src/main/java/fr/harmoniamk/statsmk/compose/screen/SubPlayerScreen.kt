@@ -67,7 +67,7 @@ fun SubPlayerScreen(viewModel: SubPlayerViewModel = hiltViewModel(), onDismiss: 
             if (allies.value.isNotEmpty())
                 stickyHeader {
                     Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().height(40.dp).background(color = colorsViewModel.secondaryColor)) {
-                        MKText(font = R.font.montserrat_bold, fontSize = 18, text = "Roster", textColor = R.color.white)
+                        MKText(font = R.font.montserrat_bold, fontSize = 18, text = "Roster", newTextColor = colorsViewModel.secondaryTextColor)
                     }
                 }
             items(currentPlayers.value) {
@@ -89,7 +89,7 @@ fun SubPlayerScreen(viewModel: SubPlayerViewModel = hiltViewModel(), onDismiss: 
             allies.value.takeIf { it.isNotEmpty() }?.let {
                 stickyHeader {
                     Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().height(40.dp).background(color = colorsViewModel.secondaryColor)) {
-                        MKText(font = R.font.montserrat_bold, fontSize = 18, text = "Allies", textColor = R.color.white)
+                        MKText(font = R.font.montserrat_bold, fontSize = 18, text = "Allies", newTextColor = colorsViewModel.secondaryTextColor)
                     }
                 }
                 items(it) {

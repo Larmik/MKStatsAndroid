@@ -36,7 +36,7 @@ fun WarDispo.withLineUpAndOpponent(databaseRepository: DatabaseRepositoryInterfa
 }
 
 fun NewWar?.withName(databaseRepository: DatabaseRepositoryInterface) = flow {
-    Log.d("MKDebugOnly", "ListExtension withName: for war")
+    Log.d("MKDebugOnly", "ObjectExtension for NewWar with name")
     this@withName?.let {
         val hostName = databaseRepository.getNewTeam(it.teamHost).firstOrNull()?.team_tag
         val opponentName = databaseRepository.getNewTeam(it.teamOpponent).firstOrNull()?.team_tag
@@ -51,7 +51,7 @@ fun MKCTeam.withFullTeamStats(
     weekOnly: Boolean = false,
     monthOnly: Boolean = false,
 ) = flow {
-    Log.d("MKDebugOnly", "ListExtension withFullTeamStats: for team")
+    Log.d("MKDebugOnly", "ObjectExtension for MKCTeam with full team stats")
     wars
         ?.filter { (weekOnly && it.isThisWeek) || !weekOnly }
         ?.filter { (monthOnly && it.isThisMonth) || !monthOnly }

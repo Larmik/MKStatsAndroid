@@ -38,6 +38,8 @@ interface PreferencesRepositoryInterface {
     var lastUpdate: String
     var mainColor: String
     var secondaryColor: String
+    var mainTextColor: String
+    var secondaryTextColor: String
     var isPendingPurchase: Boolean
     var coffees: Int
 }
@@ -111,6 +113,12 @@ class PreferencesRepository @Inject constructor(
     override var secondaryColor: String
         get() = preferences.getString("secondaryColor", "051C3F") ?: "051C3F"
         set(value) {preferences.edit().putString("secondaryColor", value).apply()}
+    override var mainTextColor: String
+        get() = preferences.getString("mainTextColor", "000000") ?: "000000"
+        set(value) {preferences.edit().putString("mainTextColor", value).apply()}
+    override var secondaryTextColor: String
+        get() = preferences.getString("secondaryTextColor", "FFFFFF") ?: "FFFFFF"
+        set(value) {preferences.edit().putString("secondaryTextColor", value).apply()}
     override var isPendingPurchase: Boolean
         get() = preferences.getBoolean("isPendingPurchase", false)
         set(value) = preferences.edit().putBoolean("isPendingPurchase", value).apply()

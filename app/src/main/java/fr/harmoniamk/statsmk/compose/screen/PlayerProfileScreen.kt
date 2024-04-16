@@ -24,12 +24,14 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKBaseScreen
 import fr.harmoniamk.statsmk.compose.ui.MKButton
 import fr.harmoniamk.statsmk.compose.ui.MKProgress
 import fr.harmoniamk.statsmk.compose.ui.MKText
+import fr.harmoniamk.statsmk.compose.viewModel.ColorsViewModel
 import fr.harmoniamk.statsmk.compose.viewModel.PlayerProfileViewModel.Companion.viewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -45,6 +47,7 @@ fun PlayerProfileScreen(id: String) {
     val role = viewModel.sharedRole.collectAsState()
     val adminButton = viewModel.sharedAdminButton.collectAsState()
 
+    val colorsViewModel: ColorsViewModel = hiltViewModel()
     MKBaseScreen(title = R.string.profil) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -93,7 +96,7 @@ fun PlayerProfileScreen(id: String) {
                         modifier = Modifier
                             .fillMaxWidth(0.95f)
                             .height(1.dp)
-                            .background(color = colorResource(id = R.color.white))
+                            .background(color = colorsViewModel.mainTextColor)
                     )
                     Column(
                         modifier = Modifier
@@ -149,7 +152,7 @@ fun PlayerProfileScreen(id: String) {
                         modifier = Modifier
                             .fillMaxWidth(0.95f)
                             .height(1.dp)
-                            .background(color = colorResource(id = R.color.white))
+                            .background(color = colorsViewModel.mainTextColor)
                     )
                     allyButton.value?.let {
                         when (it.second) {

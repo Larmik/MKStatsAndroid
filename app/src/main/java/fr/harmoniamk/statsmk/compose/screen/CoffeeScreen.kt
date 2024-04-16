@@ -64,7 +64,7 @@ fun CoffeeScreen(viewModel: CoffeeViewModel = hiltViewModel()) {
         Column(Modifier.background(color = colorViewModel.secondaryColor), horizontalAlignment = Alignment.CenterHorizontally) {
             MKText(
                 text = "N'hésitez pas à me soutenir si vous aimez l'application.",
-                textColor = R.color.white,
+                newTextColor = colorViewModel.secondaryTextColor,
                 modifier = Modifier.padding(10.dp).fillMaxWidth(),
                 textAlign = TextAlign.Center
             )
@@ -96,7 +96,7 @@ fun CoffeeScreen(viewModel: CoffeeViewModel = hiltViewModel()) {
                     .height(170.dp)
                     .fillMaxWidth()
                     .background(
-                        color = colorResource(R.color.white_alphaed),
+                        color = colorViewModel.secondaryColorAlphaed,
                         shape = RoundedCornerShape(5.dp)
                     ), horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -214,7 +214,7 @@ fun CoffeeScreen(viewModel: CoffeeViewModel = hiltViewModel()) {
                         .weight(1f)
                         .fillMaxHeight()
                         .background(
-                            colorResource(R.color.white_alphaed),
+                            colorViewModel.secondaryColorAlphaed,
                             shape = RoundedCornerShape(5.dp)
                         ),
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -237,7 +237,7 @@ fun CoffeeScreen(viewModel: CoffeeViewModel = hiltViewModel()) {
                         .weight(1f)
                         .fillMaxHeight()
                         .background(
-                            colorResource(R.color.white_alphaed),
+                            colorViewModel.secondaryColorAlphaed,
                             shape = RoundedCornerShape(5.dp)
                         ),
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -268,6 +268,7 @@ fun CoffeeButton(
     productId: String,
     onClick: (Activity, String) -> Unit
 ) {
+    val colorsViewModel: ColorsViewModel = hiltViewModel()
     val activity = LocalContext.current.getActivity()
     val numberLabel = when (productId) {
         "three_coffees" -> "x3"
@@ -285,7 +286,7 @@ fun CoffeeButton(
     Column(
         modifier
             .padding(5.dp)
-            .background(colorResource(R.color.white_alphaed), shape = RoundedCornerShape(5.dp))
+            .background(colorsViewModel.secondaryColorAlphaed, shape = RoundedCornerShape(5.dp))
             .clickable {
                 activity?.let {
                     onClick(it, productId)
@@ -306,12 +307,11 @@ fun CoffeeButton(
                 modifier = Modifier.size(25.dp)
             )
             productId.takeIf { it != "a_coffee" }?.let {
-
-                MKText(text = numberLabel, font = R.font.orbitron_semibold)
+                MKText(text = numberLabel, font = R.font.orbitron_semibold, newTextColor = colorsViewModel.secondaryTextColor)
             }
 
         }
-        MKText(text = label, font = R.font.roboto)
+        MKText(text = label, font = R.font.roboto, newTextColor = colorsViewModel.secondaryTextColor)
         Spacer(Modifier.size(5.dp))
     }
 }
@@ -321,8 +321,7 @@ fun CoffeeUserItem(pair: Pair<String, Int>) {
     Row(
         Modifier
             .fillMaxWidth()
-            .padding(5.dp)
-            .background(colorResource(R.color.white_alphaed), shape = RoundedCornerShape(5.dp)),
+            .padding(5.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {

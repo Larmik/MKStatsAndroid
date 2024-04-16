@@ -1,6 +1,9 @@
 package fr.harmoniamk.statsmk.model.local
 
 import android.os.Parcelable
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.extension.positionToPoints
@@ -39,10 +42,10 @@ data class MKWarTrack(val track: NewWarTrack?) {
     val displayedDiff: String
         get() = if (diffScore > 0) "+$diffScore" else "$diffScore"
 
-    val backgroundColor : Int
-        get() = when {
-            diffScore > 0 -> R.color.win
-            diffScore < 0 -> R.color.lose
-            else -> R.color.white_alphaed
+    @Composable
+    fun backgroundColor() : Color = when {
+            diffScore > 0 -> colorResource(R.color.win)
+            diffScore < 0 -> colorResource(R.color.lose)
+            else -> colorResource(R.color.transparent)
         }
 }

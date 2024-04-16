@@ -12,8 +12,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKText
+import fr.harmoniamk.statsmk.compose.viewModel.ColorsViewModel
 import fr.harmoniamk.statsmk.model.local.MKStats
 import fr.harmoniamk.statsmk.model.local.MapStats
 import fr.harmoniamk.statsmk.model.local.Stats
@@ -28,12 +30,14 @@ fun MKWinTieLossCell(stats: MKStats?) {
     val win = warStats?.warsWon ?: mapStats?.trackWon
     val tie = warStats?.warsTied ?: mapStats?.trackTie
     val loss = warStats?.warsLoss ?: mapStats?.trackLoss
+    
+    val colorsViewModel: ColorsViewModel = hiltViewModel()
 
     Column(
         modifier = Modifier
             .border(1.dp, colorResource(id = R.color.black), RoundedCornerShape(5.dp))
             .background(
-                color = colorResource(id = R.color.transparent_white),
+                color = colorsViewModel.secondaryColorTransparent,
                 shape = RoundedCornerShape(5.dp)
             )
     ) {

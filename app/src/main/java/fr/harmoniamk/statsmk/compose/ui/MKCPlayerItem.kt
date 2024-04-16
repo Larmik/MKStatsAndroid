@@ -23,14 +23,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import fr.harmoniamk.statsmk.R
+import fr.harmoniamk.statsmk.compose.viewModel.ColorsViewModel
 import fr.harmoniamk.statsmk.extension.fromHex
 import fr.harmoniamk.statsmk.model.network.MKPlayer
 
 @Composable
 fun MKCPlayerItem(player: MKPlayer, onPlayerClick: (String) -> Unit) {
-    Card(backgroundColor = colorResource(R.color.white_alphaed), modifier = Modifier.padding(bottom = 5.dp).clickable { onPlayerClick(player.mkcId) }) {
+    val colorsViewModel: ColorsViewModel = hiltViewModel()
+    Card( backgroundColor = colorsViewModel.secondaryColorAlphaed, modifier = Modifier.padding(bottom = 5.dp).clickable { onPlayerClick(player.mkcId) }) {
         Row(
             modifier = Modifier
                 .padding(10.dp)
@@ -51,7 +54,7 @@ fun MKCPlayerItem(player: MKPlayer, onPlayerClick: (String) -> Unit) {
                     modifier = Modifier.widthIn(0.dp, 120.dp),
                     text = player.name,
                     font = R.font.montserrat_bold,
-                    textColor = R.color.black,
+                    newTextColor = colorsViewModel.mainTextColor,
                     maxLines = 1
                 )
             }
@@ -68,7 +71,7 @@ fun MKCPlayerItem(player: MKPlayer, onPlayerClick: (String) -> Unit) {
                     MKText(
                         text = "Leader",
                         fontSize = 12,
-                        textColor = R.color.white,
+                        newTextColor = colorsViewModel.secondaryTextColor,
                         font = R.font.montserrat_bold
                     )
                 }

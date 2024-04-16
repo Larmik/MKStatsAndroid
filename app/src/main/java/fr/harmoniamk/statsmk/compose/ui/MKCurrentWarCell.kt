@@ -43,7 +43,7 @@ fun MKCurrentWarCell(current: CurrentWar, onClick: (String) -> Unit) {
     Card(
         shape = RoundedCornerShape(5.dp),
         backgroundColor = colorsViewModel.secondaryColor,
-        contentColor = colorResource(id = R.color.white),
+        contentColor = colorsViewModel.secondaryTextColor,
         elevation = 0.dp,
         modifier = Modifier.padding(10.dp).clickable { onClick(war.war?.teamHost.orEmpty()) }
     ) {
@@ -56,7 +56,7 @@ fun MKCurrentWarCell(current: CurrentWar, onClick: (String) -> Unit) {
                     text = current.teamName,
                     font = R.font.montserrat_regular,
                     fontSize = 12,
-                    textColor = R.color.white
+                    newTextColor = colorsViewModel.secondaryTextColor
                 )
                 Row(
                     horizontalArrangement = Arrangement.SpaceAround,
@@ -69,13 +69,13 @@ fun MKCurrentWarCell(current: CurrentWar, onClick: (String) -> Unit) {
                             font = R.font.montserrat_bold,
                             modifier = Modifier.padding(vertical = 5.dp),
                             fontSize = 16,
-                            textColor = R.color.white
+                            newTextColor = colorsViewModel.secondaryTextColor
                         )
                         MKText(
                             text = teamScore,
                             font = R.font.orbitron_semibold,
                             fontSize = 22,
-                            textColor = R.color.white
+                            newTextColor = colorsViewModel.secondaryTextColor
                         )
                     }
                     MKText(
@@ -90,13 +90,13 @@ fun MKCurrentWarCell(current: CurrentWar, onClick: (String) -> Unit) {
                             font = R.font.montserrat_bold,
                             modifier = Modifier.padding(vertical = 5.dp),
                             fontSize = 16,
-                            textColor = R.color.white
+                            newTextColor = colorsViewModel.secondaryTextColor
                         )
                         MKText(
                             text = opponentScore,
                             font = R.font.orbitron_semibold,
                             fontSize = 22,
-                            textColor = R.color.white
+                            newTextColor = colorsViewModel.secondaryTextColor
                         )
                     }
                 }
@@ -104,7 +104,7 @@ fun MKCurrentWarCell(current: CurrentWar, onClick: (String) -> Unit) {
                     text = "Maps restantes: $remaining",
                     font = R.font.montserrat_regular,
                     fontSize = 12,
-                    textColor = R.color.white
+                    newTextColor = colorsViewModel.secondaryTextColor
                 )
             }
     }

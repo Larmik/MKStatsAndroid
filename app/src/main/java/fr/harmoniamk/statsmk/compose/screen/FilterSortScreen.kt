@@ -64,11 +64,11 @@ fun FilterSortScreen(viewModel: FilterSortViewModel = hiltViewModel(), sort: Sor
                         sortState.value == it || (sortState.value == null && it == list.first())
                     val bgColor = when (isSelected) {
                         true -> colorsViewModel.secondaryColor
-                        else -> colorResource(R.color.transparent_white)
+                        else -> colorsViewModel.secondaryColorTransparent
                     }
                     val textColor = when (isSelected) {
-                        true -> R.color.white
-                        else -> R.color.black
+                        true -> colorsViewModel.secondaryTextColor
+                        else ->colorsViewModel.mainTextColor
                     }
                     Card(
                         modifier = Modifier
@@ -86,7 +86,7 @@ fun FilterSortScreen(viewModel: FilterSortViewModel = hiltViewModel(), sort: Sor
                                 horizontalArrangement = Arrangement.Center,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                MKText(text = it.resId, textColor = textColor)
+                                MKText(text = it.resId, newTextColor = textColor)
                             }
                     }
                     Spacer(Modifier.width(1.dp))
@@ -105,11 +105,11 @@ fun FilterSortScreen(viewModel: FilterSortViewModel = hiltViewModel(), sort: Sor
                     val isSelected = filterState.value?.contains(it)
                     val bgColor = when (isSelected) {
                         true -> colorsViewModel.secondaryColor
-                        else -> colorResource(R.color.transparent_white)
+                        else -> colorsViewModel.secondaryColorTransparent
                     }
                     val textColor = when (isSelected) {
-                        true -> R.color.white
-                        else -> R.color.black
+                        true -> colorsViewModel.secondaryTextColor
+                        else -> colorsViewModel.mainTextColor
                     }
                     Card(
                         modifier = Modifier
@@ -124,7 +124,7 @@ fun FilterSortScreen(viewModel: FilterSortViewModel = hiltViewModel(), sort: Sor
                                 horizontalArrangement = Arrangement.Center,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                MKText(text = it.resId, textColor = textColor)
+                                MKText(text = it.resId, newTextColor = textColor)
                             }
                         }
                     Spacer(Modifier.width(1.dp))

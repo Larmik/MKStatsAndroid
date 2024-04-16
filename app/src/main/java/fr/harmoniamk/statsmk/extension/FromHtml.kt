@@ -27,7 +27,6 @@ object MKHtml {
         val bold = ResourcesCompat.getFont(context, R.font.montserrat_bold)!!
         val normal = ResourcesCompat.getFont(context, R.font.montserrat_regular)!!
         for (s in getSpans(0, length, StyleSpan::class.java)) {
-            setSpan(ForegroundColorSpan(Color.BLACK), getSpanStart(s), getSpanEnd(s), 0)
             if (s.style == Typeface.BOLD)
                 setSpan(bold.getTypefaceSpan(), getSpanStart(s), getSpanEnd(s), 0)
             else

@@ -11,10 +11,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKScoreView
 import fr.harmoniamk.statsmk.compose.ui.MKText
 import fr.harmoniamk.statsmk.compose.ui.MKWarItem
+import fr.harmoniamk.statsmk.compose.viewModel.ColorsViewModel
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.model.local.MKStats
 import fr.harmoniamk.statsmk.model.local.MapStats
@@ -29,6 +31,7 @@ fun MKTeamScoreStatView(
     onHighestClick: (String?) -> Unit,
     onLoudestClick: (String?) -> Unit)
 {
+    val colorsviewModel: ColorsViewModel = hiltViewModel()
     val warVictory = (stats as? Stats)?.warStats?.highestVictory
     val warDefeat = (stats as? Stats)?.warStats?.loudestDefeat
     val tops = (stats as? MapStats)?.topsTable
@@ -41,7 +44,7 @@ fun MKTeamScoreStatView(
             .padding(bottom = 20.dp)
             .border(1.dp, colorResource(id = R.color.black), RoundedCornerShape(5.dp))
             .background(
-                color = colorResource(id = R.color.transparent_white),
+                color = colorsviewModel.secondaryColorTransparent,
                 shape = RoundedCornerShape(5.dp)
             )) {
         warVictory?.let { war ->

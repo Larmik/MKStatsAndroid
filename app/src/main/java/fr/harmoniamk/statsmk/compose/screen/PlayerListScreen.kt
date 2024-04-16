@@ -70,7 +70,7 @@ fun PlayerListScreen(teamId: String?, onWarStarted: (String) -> Unit) {
                                     font = R.font.montserrat_bold,
                                     fontSize = 18,
                                     text = it.key,
-                                    textColor = R.color.white
+                                    newTextColor = colorsViewModel.secondaryTextColor
                                 )
                             }
                         }

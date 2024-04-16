@@ -88,7 +88,7 @@ fun TeamProfileScreen(id: String, onPlayerClick: (String) -> Unit) {
                         .fillMaxWidth()
                         .height(40.dp)
                         .background(color = colorsViewModel.secondaryColor)) {
-                        MKText(font = R.font.montserrat_bold, fontSize = 18, text = "Roster", textColor = R.color.white)
+                        MKText(font = R.font.montserrat_bold, fontSize = 18, text = "Roster", newTextColor = colorsViewModel.secondaryTextColor)
                     }
                 }
                 items(items = players) {

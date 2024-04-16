@@ -15,15 +15,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import fr.harmoniamk.statsmk.R
+import fr.harmoniamk.statsmk.compose.viewModel.ColorsViewModel
 import fr.harmoniamk.statsmk.extension.toTeamColor
 import fr.harmoniamk.statsmk.model.network.MKCTeam
 
 @Composable
 fun MKCTeamItem(team: MKCTeam? = null, onClick: (String) -> Unit) {
-
+    val colorsViewModel: ColorsViewModel = hiltViewModel()
     Card(
-        backgroundColor = colorResource(R.color.white_alphaed),
+        backgroundColor = colorsViewModel.secondaryColorAlphaed,
         modifier = Modifier.padding(bottom = 5.dp).clickable { team?.let { onClick(it.team_id) } },
     ) {
         Row(
@@ -44,7 +46,7 @@ fun MKCTeamItem(team: MKCTeam? = null, onClick: (String) -> Unit) {
                     text = team?.team_tag.orEmpty(),
                     fontSize = 16,
                     font = R.font.montserrat_bold,
-                    textColor = R.color.white,
+                    newTextColor = colorsViewModel.secondaryTextColor,
                     modifier = Modifier.padding(5.dp)
                 )
             }
