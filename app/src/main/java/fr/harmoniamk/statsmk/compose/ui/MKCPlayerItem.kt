@@ -33,7 +33,9 @@ import fr.harmoniamk.statsmk.model.network.MKPlayer
 @Composable
 fun MKCPlayerItem(player: MKPlayer, onPlayerClick: (String) -> Unit) {
     val colorsViewModel: ColorsViewModel = hiltViewModel()
-    Card( backgroundColor = colorsViewModel.secondaryColorAlphaed, modifier = Modifier.padding(bottom = 5.dp).clickable { onPlayerClick(player.mkcId) }) {
+    Card(
+        elevation = 0.dp,
+        backgroundColor = colorsViewModel.secondaryColorAlphaed, modifier = Modifier.padding(bottom = 5.dp).clickable { onPlayerClick(player.mkcId) }) {
         Row(
             modifier = Modifier
                 .padding(10.dp)

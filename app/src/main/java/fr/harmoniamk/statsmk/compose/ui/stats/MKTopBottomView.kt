@@ -33,7 +33,7 @@ fun MKTopBottomView(indiv: Boolean, tops: List<Pair<String, Int>>?, bottoms:  Li
 
                 Row(Modifier.fillMaxWidth().padding(vertical = 2.dp, horizontal = padding), horizontalArrangement = SpaceBetween, verticalAlignment = CenterVertically) {
                     when (indiv) {
-                        true ->  MKText(text = it.first, font = R.font.mk_position, textColor = it.first.toIntOrNull().positionColor(), fontSize = 20)
+                        true ->  MKText(text = it.first, font = R.font.mk_position, newTextColor = it.first.toIntOrNull().positionColor(), fontSize = 20)
                         else ->  MKText(text = it.first)
                     }
                     MKText(text = it.second.toString(), font = R.font.orbitron_semibold, fontSize = 16)
@@ -45,7 +45,7 @@ fun MKTopBottomView(indiv: Boolean, tops: List<Pair<String, Int>>?, bottoms:  Li
             bottoms?.forEach {
                 Row(Modifier.fillMaxWidth().padding(vertical = 2.dp, horizontal = padding), horizontalArrangement = SpaceBetween, verticalAlignment = CenterVertically) {
                     when (indiv) {
-                        true ->  MKText(text = it.first, font = R.font.mk_position, textColor = it.first.toIntOrNull().positionColor(), fontSize = 20)
+                        true ->  MKText(text = it.first, font = R.font.mk_position, newTextColor = it.first.toIntOrNull().positionColor(), fontSize = 20)
                         else ->  MKText(text = it.first)
                     }
 

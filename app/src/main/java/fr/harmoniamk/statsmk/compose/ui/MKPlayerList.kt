@@ -29,7 +29,9 @@ fun MKPlayerList(players: List<CurrentPlayerModel>, trackCount: Int) {
         0 -> players.size/2
         else -> players.size/2 + 1
     }
-    Card(elevation = 0.dp, backgroundColor = colorsViewModel.secondaryColorAlphaed, modifier = Modifier.padding(10.dp)) {
+    Card(
+        elevation = 0.dp,
+        backgroundColor = colorsViewModel.secondaryColorAlphaed, modifier = Modifier.padding(10.dp)) {
         Row(Modifier.padding(10.dp)) {
             LazyColumn(Modifier.weight(1f)) {
                 items(players.safeSubList(0, splitIndex)) {

@@ -1,6 +1,7 @@
 package fr.harmoniamk.statsmk.compose.ui
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -53,9 +54,14 @@ sealed class MKBottomSheetState {
     class Penalty : MKBottomSheetState()
     class EditUser : MKBottomSheetState()
     class ResetPassword : MKBottomSheetState()
-    class StatsDisplayMode(val initialValue: Boolean): MKBottomSheetState()
-    class FilterSort(val sort: Sort, val filter: Filter): MKBottomSheetState()
-    class Theme(val initialMain: String, val initialSecondary: String, val initialMainText: String, val initialSecondaryText: String): MKBottomSheetState()
+    class StatsDisplayMode(val initialValue: Boolean) : MKBottomSheetState()
+    class FilterSort(val sort: Sort, val filter: Filter) : MKBottomSheetState()
+    class Theme(
+        val initialMain: String,
+        val initialSecondary: String,
+        val initialMainText: String,
+        val initialSecondaryText: String
+    ) : MKBottomSheetState()
 }
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class, ExperimentalMaterialApi::class)
@@ -69,7 +75,7 @@ fun MKBottomSheet(
     onSorted: (SortType) -> Unit = { },
     onFiltered: (List<FilterType>) -> Unit = { },
     onDisplayModeValidated: (Boolean) -> Unit = { },
-    onColorsSelected: (String, String, String, String) -> Unit = { _,_,_,_ ->}
+    onColorsSelected: (String, String, String, String) -> Unit = { _, _, _, _ -> }
 ) {
     val colorsViewModel: ColorsViewModel = hiltViewModel()
     when (state) {
@@ -83,6 +89,7 @@ fun MKBottomSheet(
                 )
             }
         }
+
         is MKBottomSheetState.EditPositions -> {
             trackIndex?.let {
                 PositionScreen(
@@ -93,6 +100,7 @@ fun MKBottomSheet(
                 )
             }
         }
+
         is MKBottomSheetState.EditShocks -> {
             trackIndex?.let {
                 WarTrackResultScreen(
@@ -103,40 +111,58 @@ fun MKBottomSheet(
                 )
             }
         }
+
         is MKBottomSheetState.SubPlayer -> {
             SubPlayerScreen(onDismiss = onDismiss)
         }
+
         is MKBottomSheetState.Penalty -> {
             PenaltyScreen(onDismiss = onDismiss)
         }
+
         is MKBottomSheetState.EditUser -> {
             EditUserScreen(onDismiss = onDismiss)
         }
+
         is MKBottomSheetState.ResetPassword -> {
             ResetPasswordScreen(onDismiss = onDismiss)
         }
+
         is MKBottomSheetState.FilterSort -> {
-            FilterSortScreen(sort = state.sort, filter = state.filter, onDismiss = onDismiss, onSorted = onSorted, onFiltered = onFiltered)
+            FilterSortScreen(
+                sort = state.sort,
+                filter = state.filter,
+                onDismiss = onDismiss,
+                onSorted = onSorted,
+                onFiltered = onFiltered
+            )
         }
+
         is MKBottomSheetState.StatsDisplayMode -> {
             val rosterOnly = remember { mutableStateOf(state.initialValue) }
             MKBaseScreen(title = "Calcul des statistiques", subTitle = "Option multi-roster") {
-                MKText(modifier = Modifier.padding(20.dp), text = when (rosterOnly.value) {
-                    true -> "Les statistiques sont calculées en fonction des wars de votre roster actuel seulement."
-                    else -> "Les statistiques sont calculées en fonction des wars de tous les rosters de votre équipe."
-                })
-                Switch(checked = !rosterOnly.value, onCheckedChange = {
-                    rosterOnly.value = !rosterOnly.value
-                },
+                MKText(
+                    modifier = Modifier.padding(20.dp), text = when (rosterOnly.value) {
+                        true -> "Les statistiques sont calculées en fonction des wars de votre roster actuel seulement."
+                        else -> "Les statistiques sont calculées en fonction des wars de tous les rosters de votre équipe."
+                    }
+                )
+                Switch(
+                    checked = !rosterOnly.value,
+                    onCheckedChange = {
+                        rosterOnly.value = !rosterOnly.value
+                    },
                     colors = SwitchDefaults.colors(
                         checkedThumbColor = colorsViewModel.secondaryColor,
                         checkedTrackColor = colorsViewModel.secondaryColorAlphaed
                     ),
                 )
-                MKText(modifier = Modifier.padding(20.dp), text = when (rosterOnly.value) {
-                    true -> "Activez le paramètre pour prendre en compte tous les rosters."
-                    else -> "Désactivez le paramètre pour ne prendre en compte que votre roster."
-                }, font = R.font.montserrat_bold)
+                MKText(
+                    modifier = Modifier.padding(20.dp), text = when (rosterOnly.value) {
+                        true -> "Activez le paramètre pour prendre en compte tous les rosters."
+                        else -> "Désactivez le paramètre pour ne prendre en compte que votre roster."
+                    }, font = R.font.montserrat_bold
+                )
 
                 Row {
                     MKButton(text = "Valider") {
@@ -151,91 +177,128 @@ fun MKBottomSheet(
 
             }
         }
+
         is MKBottomSheetState.Theme -> {
             val mainColor = remember { mutableStateOf(TextFieldValue(state.initialMain)) }
             val secondaryColor = remember { mutableStateOf(TextFieldValue(state.initialSecondary)) }
-            val mainTextColor = remember { mutableStateOf(TextFieldValue(state.initialMainText)) }
-            val secondaryTextColor = remember { mutableStateOf(TextFieldValue(state.initialSecondaryText)) }
+            val mainTextColor = remember { mutableStateOf(state.initialMainText) }
+            val secondaryTextColor = remember { mutableStateOf(state.initialSecondaryText) }
             val hexaRegex = Regex("[A-Fa-f0-9]{6}")
             MKBaseScreen(title = "Thème", subTitle = "Couleurs") {
-                MKText(modifier = Modifier.padding(20.dp), text = stringResource(R.string.main_color), font = R.font.montserrat_bold)
+                MKText(
+                    modifier = Modifier.padding(20.dp),
+                    text = stringResource(R.string.main_color),
+                    font = R.font.montserrat_bold
+                )
 
-                        MKText(text = "Fond")
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                            MKText(text = "#", fontSize = 18, font = R.font.montserrat_bold)
-                            MKTextField(
-                                value = mainColor.value,
-                                modifier = Modifier.fillMaxWidth(0.5f).padding(horizontal = 10.dp),
-                                onValueChange = { mainColor.value = it },
-                                placeHolderRes = R.string.hexa,
-                            )
-                            Box(Modifier.size(40.dp).background(colorResource(R.color.white), shape = RoundedCornerShape(5.dp))) {
-                                mainColor.value.text.takeIf { it.matches(hexaRegex) }?.let {
-                                    Spacer(Modifier.size(32.dp).align(Alignment.Center).background(color = Color.fromHex("#$it"), shape = RoundedCornerShape(5.dp)))
-                                }
-                            }
-                        }
-
-
-                        MKText(text = "Texte")
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            MKText(text = "#", fontSize = 18, font = R.font.montserrat_bold)
-                            MKTextField(
-                                value = mainTextColor.value,
-                                modifier = Modifier.fillMaxWidth(0.5f).padding(horizontal = 10.dp),
-                                onValueChange = { mainTextColor.value = it },
-                                placeHolderRes = R.string.hexa,
-                            )
-                            Box(Modifier.size(40.dp).background(colorResource(R.color.white), shape = RoundedCornerShape(5.dp))) {
-                                mainTextColor.value.text.takeIf { it.matches(hexaRegex) }?.let {
-                                    Spacer(Modifier.size(32.dp).align(Alignment.Center).background(color = Color.fromHex("#$it"), shape = RoundedCornerShape(5.dp)))
-                                }
-                            }
-
-
-
-
-                }
- MKText(modifier = Modifier.padding(20.dp), text = stringResource(R.string.secondary_color), font = R.font.montserrat_bold)
-                        MKText(text = "Fond")
+                MKText(text = "Fond")
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                            MKText(text = "#", fontSize = 20, font = R.font.montserrat_bold)
-                            MKTextField(
-                                value = secondaryColor.value,
-                                modifier = Modifier.fillMaxWidth(0.5f).padding(horizontal = 10.dp),
-                                onValueChange = { secondaryColor.value = it },
-                                placeHolderRes = R.string.hexa,
+                    MKText(text = "#", fontSize = 18, font = R.font.montserrat_bold)
+                    MKTextField(
+                        value = mainColor.value,
+                        modifier = Modifier
+                            .fillMaxWidth(0.5f)
+                            .padding(horizontal = 10.dp),
+                        onValueChange = { mainColor.value = it },
+                        placeHolderRes = R.string.hexa,
+                    )
+                    Box(
+                        Modifier
+                            .size(40.dp)
+                            .background(
+                                colorResource(R.color.white),
+                                shape = RoundedCornerShape(5.dp)
                             )
-                            Box(Modifier.size(40.dp).background(colorResource(R.color.white), shape = RoundedCornerShape(5.dp))) {
-                                secondaryColor.value.text.takeIf { it.matches(hexaRegex) }?.let {
-                                    Spacer(Modifier.size(32.dp).align(Alignment.Center).background(color = Color.fromHex("#$it"), shape = RoundedCornerShape(5.dp)))
-                                }
-                            }
+                    ) {
+                        mainColor.value.text.takeIf { it.matches(hexaRegex) }?.let {
+                            Spacer(
+                                Modifier
+                                    .size(32.dp)
+                                    .align(Alignment.Center)
+                                    .background(
+                                        color = Color.fromHex("#$it"),
+                                        shape = RoundedCornerShape(5.dp)
+                                    )
+                            )
                         }
-                        MKText(text = "Texte")
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                            MKText(text = "#", fontSize = 20, font = R.font.montserrat_bold)
-                            MKTextField(
-                                value = secondaryTextColor.value,
-                                modifier = Modifier.fillMaxWidth(0.5f).padding(horizontal = 10.dp),
-                                onValueChange = { secondaryTextColor.value = it },
-                                placeHolderRes = R.string.hexa,
-                            )
-                            Box(Modifier.size(40.dp).background(colorResource(R.color.white), shape = RoundedCornerShape(5.dp))) {
-                                secondaryTextColor.value.text.takeIf { it.matches(hexaRegex) }?.let {
-                                    Spacer(Modifier.size(32.dp).align(Alignment.Center).background(color = Color.fromHex("#$it"), shape = RoundedCornerShape(5.dp)))
-                                }
-                            }
-
-
-
-
-
+                    }
                 }
 
-                Row {
-                    MKButton(text = "Valider", enabled = mainColor.value.text.matches(hexaRegex) && secondaryColor.value.text.matches(hexaRegex)) {
-                        onColorsSelected(mainColor.value.text, secondaryColor.value.text, mainTextColor.value.text, secondaryTextColor.value.text)
+
+                MKText(text = "Texte", modifier = Modifier.padding(top = 20.dp))
+                MKSegmentedSelector(
+                    modifier = Modifier.padding(vertical = 10.dp, horizontal = 30.dp).border(width = 1.dp, color = colorsViewModel.secondaryColor),
+                    buttons = listOf(
+                        Pair("Noir", { mainTextColor.value = "000000" }),
+                        Pair("Blanc", { mainTextColor.value = "FFFFFF" })
+                    ), indexSelected = when (mainTextColor.value) {
+                        "000000" -> 0
+                        else -> 1
+                    }
+                )
+
+                MKText(
+                    modifier = Modifier.padding(20.dp),
+                    text = stringResource(R.string.secondary_color),
+                    font = R.font.montserrat_bold
+                )
+                MKText(text = "Fond")
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    MKText(text = "#", fontSize = 20, font = R.font.montserrat_bold)
+                    MKTextField(
+                        value = secondaryColor.value,
+                        modifier = Modifier
+                            .fillMaxWidth(0.5f)
+                            .padding(horizontal = 10.dp),
+                        onValueChange = { secondaryColor.value = it },
+                        placeHolderRes = R.string.hexa,
+                    )
+                    Box(
+                        Modifier
+                            .size(40.dp)
+                            .background(
+                                colorResource(R.color.white),
+                                shape = RoundedCornerShape(5.dp)
+                            )
+                    ) {
+                        secondaryColor.value.text.takeIf { it.matches(hexaRegex) }?.let {
+                            Spacer(
+                                Modifier
+                                    .size(32.dp)
+                                    .align(Alignment.Center)
+                                    .background(
+                                        color = Color.fromHex("#$it"),
+                                        shape = RoundedCornerShape(5.dp)
+                                    )
+                            )
+                        }
+                    }
+                }
+                MKText(text = "Texte", modifier = Modifier.padding(top = 20.dp))
+                MKSegmentedSelector(
+                    modifier = Modifier.padding(vertical = 10.dp, horizontal = 30.dp).border(width = 1.dp, color = colorsViewModel.secondaryColor),
+                    buttons = listOf(
+                        Pair("Noir", { secondaryTextColor.value = "000000" }),
+                        Pair("Blanc", { secondaryTextColor.value = "FFFFFF" })
+                    ), indexSelected = when (secondaryTextColor.value) {
+                        "000000" -> 0
+                        else -> 1
+                    }
+                )
+
+                Row(modifier = Modifier.padding(top = 20.dp)) {
+                    MKButton(
+                        text = "Valider",
+                        enabled = mainColor.value.text.matches(hexaRegex) && secondaryColor.value.text.matches(
+                            hexaRegex
+                        )
+                    ) {
+                        onColorsSelected(
+                            mainColor.value.text,
+                            secondaryColor.value.text,
+                            mainTextColor.value,
+                            secondaryTextColor.value
+                        )
                     }
                     MKButton(
                         text = "Retour",
@@ -246,6 +309,7 @@ fun MKBottomSheet(
 
             }
         }
+
         else -> {}
     }
 }

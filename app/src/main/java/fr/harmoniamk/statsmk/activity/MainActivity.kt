@@ -12,6 +12,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.google.android.gms.ads.MobileAds
 import dagger.hilt.android.AndroidEntryPoint
 import fr.harmoniamk.statsmk.compose.screen.root.RootScreen
 import fr.harmoniamk.statsmk.compose.ui.MKDialog
@@ -39,6 +40,7 @@ class MainActivity : AppCompatActivity() {
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         viewModel.bind()
         viewModel.connectBillingClient()
+        MobileAds.initialize(this) { }
         viewModel.sharedWelcomeScreen
             .distinctUntilChanged()
             .onEach {

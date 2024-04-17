@@ -29,7 +29,8 @@ fun MKTeamItem(teamRanking: OpponentRankingItemViewModel? = null, onClick: (Stri
     val teamId = teamRanking?.team?.team_id.orEmpty()
     val colorsViewModel: ColorsViewModel = hiltViewModel()
     Card(
-        Modifier
+        elevation = 0.dp,
+        modifier = Modifier
             .padding(5.dp)
             .clickable {onClick(teamId) }, backgroundColor = colorsViewModel.secondaryColorAlphaed) {
                 Row(modifier = Modifier

@@ -13,6 +13,9 @@
         android:theme="@style/SplashScreen"
         android:dataExtractionRules="@xml/data_extraction_rules">
 
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-4434581119642671~9226927130"/>
         <activity
             android:name=".activity.MainActivity"
             android:theme="@style/SplashScreen"

@@ -25,6 +25,7 @@ import fr.harmoniamk.statsmk.model.network.MKCTeam
 fun MKCTeamItem(team: MKCTeam? = null, onClick: (String) -> Unit) {
     val colorsViewModel: ColorsViewModel = hiltViewModel()
     Card(
+        elevation = 0.dp,
         backgroundColor = colorsViewModel.secondaryColorAlphaed,
         modifier = Modifier.padding(bottom = 5.dp).clickable { team?.let { onClick(it.team_id) } },
     ) {

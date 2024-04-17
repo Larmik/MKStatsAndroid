@@ -37,6 +37,7 @@ import fr.harmoniamk.statsmk.activity.MainActivity
 import fr.harmoniamk.statsmk.activity.MainViewModel
 import fr.harmoniamk.statsmk.compose.ui.HtmlText
 import fr.harmoniamk.statsmk.compose.ui.MKBaseScreen
+import fr.harmoniamk.statsmk.compose.ui.MKButton
 import fr.harmoniamk.statsmk.compose.ui.MKText
 import fr.harmoniamk.statsmk.compose.viewModel.CoffeePurchaseState
 import fr.harmoniamk.statsmk.compose.viewModel.CoffeeViewModel
@@ -76,6 +77,10 @@ fun CoffeeScreen(viewModel: CoffeeViewModel = hiltViewModel()) {
                 CoffeeButton(Modifier.weight(1f), "five_coffees", viewModel::startBilling)
                 CoffeeButton(Modifier.weight(1f), "ten_coffees", viewModel::startBilling)
             }
+            if (viewModel.isGod)
+                MKButton("Regarder une vidéo") {
+                    viewModel.showAd(context)
+                }
         }
         if (state.value is CoffeePurchaseState.Pending)
             Row(

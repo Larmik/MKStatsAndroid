@@ -69,7 +69,9 @@ fun FAQCell(faq: FAQ) {
             }, animationSpec = tween(durationMillis = 150)
         )
     }
-    Card(Modifier.padding(5.dp), backgroundColor = colorsViewModel.secondaryColorAlphaed) {
+    Card(Modifier.padding(5.dp), backgroundColor = colorsViewModel.secondaryColorAlphaed,
+        elevation = 0.dp
+    ) {
         Column(Modifier.padding(10.dp)) {
             Row(
                 Modifier

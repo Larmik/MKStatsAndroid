@@ -19,10 +19,10 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.viewModel.ColorsViewModel
 
 @Composable
-fun MKSegmentedSelector(buttons: List<Pair<String, () -> Unit>>, indexSelected: Int = 0) {
+fun MKSegmentedSelector(modifier: Modifier = Modifier, buttons: List<Pair<String, () -> Unit>>, indexSelected: Int = 0) {
     val colorsViewModel: ColorsViewModel = hiltViewModel()
     val selectedIndex = remember { mutableStateOf(indexSelected) }
-    Row(Modifier.fillMaxWidth()) {
+    Row(modifier.fillMaxWidth()) {
         buttons.forEachIndexed { index, button ->
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,

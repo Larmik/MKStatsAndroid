@@ -126,7 +126,7 @@ class TrackDetailsViewModel @AssistedInject constructor(
                     positions.add(MKWarPosition(position = pos, mkcPlayer = users.singleOrNull { it.mkcId == pos.playerId }))
                 }
                 _sharedPositions.emit(positions.sortedBy { it.position.position })
-                _sharedButtonsVisible.value = warId == "Current" && networkRepository.networkAvailable && (isAdmin.isTrue || isLeader)
+                _sharedButtonsVisible.value = warId == "Current" && networkRepository.networkAvailable && preferencesRepository.currentWar?.playerHostId == authenticationRepository.user?.uid
             }.launchIn(viewModelScope)
     }
 

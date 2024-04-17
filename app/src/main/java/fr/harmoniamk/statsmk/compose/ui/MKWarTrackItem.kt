@@ -55,7 +55,7 @@ fun MKWarTrackItem(details: MapDetails, isIndiv: Boolean) {
             }
             Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.padding(10.dp)) {
                 when (isIndiv) {
-                    true -> MKText(text = details.position.toString(), fontSize = 24, font = R.font.mk_position, textColor = details.position.positionColor())
+                    true -> MKText(text = details.position.toString(), fontSize = 24, font = R.font.mk_position, newTextColor = details.position.positionColor())
                     else -> MKScoreView(track = details.warTrack, isSmaller = true)
                 }
             }

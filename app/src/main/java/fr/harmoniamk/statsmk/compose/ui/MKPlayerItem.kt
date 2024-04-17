@@ -55,7 +55,8 @@ fun MKPlayerItem(
         else -> colorsViewModel.mainTextColor
     }
     Card(
-        Modifier
+        elevation = 0.dp,
+        modifier = Modifier
             .padding(5.dp)
             .clickable { onRootClick() }, backgroundColor = backgroundColor) {
         Row(modifier = Modifier

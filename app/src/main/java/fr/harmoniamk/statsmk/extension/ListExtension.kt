@@ -8,8 +8,10 @@ import fr.harmoniamk.statsmk.model.local.*
 import fr.harmoniamk.statsmk.model.network.MKPlayer
 import fr.harmoniamk.statsmk.model.network.MKCTeam
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.mapNotNull
 import kotlin.collections.count
 import kotlin.collections.map
@@ -28,7 +30,6 @@ fun List<Int?>?.sum(): Int {
 /** LISTE MKWAR **/
 
 fun List<MKWar>.withFullStats(databaseRepository: DatabaseRepositoryInterface, userId: String? = null, teamId: String? = null) = flow {
-    Log.d("MKDebugOnly", "ListExtension for MKWar withFullStats")
 
     val maps = mutableListOf<TrackStats>()
     val warScores = mutableListOf<WarScore>()
@@ -41,18 +42,15 @@ fun List<MKWar>.withFullStats(databaseRepository: DatabaseRepositoryInterface, u
     }
 
     val mostPlayedTeamId = wars
-        .asSequence()
         .groupBy { it.war?.teamOpponent }
         .toList().maxByOrNull { it.second.size }
 
     val mostDefeatedTeamId = wars
-        .asSequence()
         .filterNot { it.displayedDiff.contains('-') }
         .groupBy { it.war?.teamOpponent }
         .toList().maxByOrNull { it.second.size }
 
     val lessDefeatedTeamId = wars
-        .asSequence()
         .filter { it.displayedDiff.contains('-') }
         .groupBy { it.war?.teamOpponent }
         .toList().maxByOrNull { it.second.size }
@@ -103,6 +101,7 @@ fun List<MKWar>.withFullStats(databaseRepository: DatabaseRepositoryInterface, u
             averageForMaps.add(stats)
         }
 
+
     val mostPlayedTeamData = databaseRepository.getNewTeam(mostPlayedTeamId?.first)
         .mapNotNull { TeamStats(it, mostPlayedTeamId?.second?.size) }
         .firstOrNull()
@@ -123,20 +122,19 @@ fun List<MKWar>.withFullStats(databaseRepository: DatabaseRepositoryInterface, u
         lessDefeatedTeam = lessDefeatedTeamData
     )
     emit(newStats)
-}
+}.flowOn(Dispatchers.IO)
+
 fun List<MKWar?>.withName(databaseRepository: DatabaseRepositoryInterface) = flow {
     val temp = mutableListOf<MKWar>()
-    Log.d("MKDebugOnly", "ListExtension withName: for list")
     this@withName.forEach { war ->
         war?.let {
             val hostName = databaseRepository.getNewTeam(it.war?.teamHost).firstOrNull()?.team_tag
-            val opponentName =
-                databaseRepository.getNewTeam(it.war?.teamOpponent).firstOrNull()?.team_tag
+            val opponentName = databaseRepository.getNewTeam(it.war?.teamOpponent).firstOrNull()?.team_tag
             temp.add(it.apply { this.name = "$hostName - $opponentName" })
         }
     }
     emit(temp)
-}
+}.flowOn(Dispatchers.IO)
 
 /** LISTE MKCTEAM **/
 
@@ -148,7 +146,6 @@ fun List<MKCTeam>.withFullTeamStats(
     monthOnly: Boolean = false
 ) = flow {
     val temp = mutableListOf<OpponentRankingItemViewModel>()
-    Log.d("MKDebugOnly", "ListExtension for MKCTeam withFullTeamStats")
     this@withFullTeamStats.forEach { team ->
         wars
             ?.filter { (weekOnly && it.isThisWeek) || !weekOnly }
@@ -161,12 +158,11 @@ fun List<MKCTeam>.withFullTeamStats(
             }
     }
     emit(temp)
-}
+}.flowOn(Dispatchers.IO)
 
 /** LISTE PENALTY **/
 
 fun List<Penalty>.withTeamName(databaseRepository: DatabaseRepositoryInterface) = flow {
-    Log.d("MKDebugOnly", "ListExtension for Penalty withTeamName")
     val temp = mutableListOf<Penalty>()
     this@withTeamName.forEach {
         val team = databaseRepository.getNewTeam(it.teamId).firstOrNull()
