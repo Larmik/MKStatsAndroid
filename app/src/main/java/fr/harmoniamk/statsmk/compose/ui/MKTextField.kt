@@ -52,7 +52,7 @@ fun MKTextField(
         textColor = colorResource(id = R.color.black),
         cursorColor = colorResource(id = R.color.black),
         trailingIconColor = colorResource(id = R.color.black),
-        backgroundColor = colorResource(id = R.color.white_alphaed),
+        backgroundColor = colorResource(id = R.color.white),
         focusedIndicatorColor = colorResource(id = R.color.transparent),
         unfocusedIndicatorColor = colorResource(id = R.color.transparent),
         disabledIndicatorColor = colorResource(id = R.color.transparent)

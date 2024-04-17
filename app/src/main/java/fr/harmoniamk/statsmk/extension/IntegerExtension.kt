@@ -1,6 +1,8 @@
 package fr.harmoniamk.statsmk.extension
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import fr.harmoniamk.statsmk.R
 
 fun Int?.positionToPoints() = when (this) {
@@ -34,7 +36,8 @@ fun Int?.pointsToPosition() = when (this) {
     else -> 0
 }
 
-fun Int?.positionColor() = when (this) {
+@Composable
+fun Int?.positionColor() = colorResource(when (this) {
     1 -> R.color.pos_1
     2 -> R.color.pos_2
     3 -> R.color.pos_3
@@ -46,7 +49,7 @@ fun Int?.positionColor() = when (this) {
     11 -> R.color.pos_11
     12 -> R.color.pos_12
     else -> R.color.black
-}
+})
 
 fun Int.warScoreToDiff() : String {
     val halfDiff = when {

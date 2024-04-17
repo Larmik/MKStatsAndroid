@@ -19,7 +19,5 @@ class ColorsViewModel @Inject constructor(preferencesRepository: PreferencesRepo
     val secondaryColor = Color.fromHex("#${preferencesRepository.secondaryColor}")
     val mainTextColor = Color.fromHex("#${preferencesRepository.mainTextColor}")
     val secondaryTextColor = Color.fromHex("#${preferencesRepository.secondaryTextColor}")
-
-    val secondaryColorTransparent = secondaryColor.copy(alpha = 0.5f)
-    val secondaryColorAlphaed = secondaryColor.copy(alpha = 0.3f)
+    val secondaryColorAlphaed = secondaryColor.copy(alpha = 0.2f)
 }

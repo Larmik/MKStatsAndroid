@@ -64,7 +64,7 @@ fun FilterSortScreen(viewModel: FilterSortViewModel = hiltViewModel(), sort: Sor
                         sortState.value == it || (sortState.value == null && it == list.first())
                     val bgColor = when (isSelected) {
                         true -> colorsViewModel.secondaryColor
-                        else -> colorsViewModel.secondaryColorTransparent
+                        else -> colorsViewModel.secondaryColorAlphaed
                     }
                     val textColor = when (isSelected) {
                         true -> colorsViewModel.secondaryTextColor
@@ -105,7 +105,7 @@ fun FilterSortScreen(viewModel: FilterSortViewModel = hiltViewModel(), sort: Sor
                     val isSelected = filterState.value?.contains(it)
                     val bgColor = when (isSelected) {
                         true -> colorsViewModel.secondaryColor
-                        else -> colorsViewModel.secondaryColorTransparent
+                        else -> colorsViewModel.secondaryColorAlphaed
                     }
                     val textColor = when (isSelected) {
                         true -> colorsViewModel.secondaryTextColor

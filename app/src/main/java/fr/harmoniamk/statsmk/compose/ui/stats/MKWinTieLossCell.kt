@@ -35,9 +35,9 @@ fun MKWinTieLossCell(stats: MKStats?) {
 
     Column(
         modifier = Modifier
-            .border(1.dp, colorResource(id = R.color.black), RoundedCornerShape(5.dp))
+            .border(1.dp, colorsViewModel.mainTextColor, RoundedCornerShape(5.dp))
             .background(
-                color = colorsViewModel.secondaryColorTransparent,
+                color = colorsViewModel.secondaryColorAlphaed,
                 shape = RoundedCornerShape(5.dp)
             )
     ) {

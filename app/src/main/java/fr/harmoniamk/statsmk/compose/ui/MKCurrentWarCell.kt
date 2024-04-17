@@ -36,9 +36,9 @@ fun MKCurrentWarCell(current: CurrentWar, onClick: (String) -> Unit) {
     val diff = war.displayedDiff
     val remaining = 12 - (war.warTracks?.size ?: 0)
     val diffColor = when {
-        war.displayedDiff.contains("-") -> R.color.lose
-        war.displayedDiff.contains("+") -> R.color.win
-        else -> R.color.white
+        war.displayedDiff.contains("-") -> colorResource(R.color.lose)
+        war.displayedDiff.contains("+") -> colorResource(R.color.win)
+        else -> colorsViewModel.secondaryTextColor
     }
     Card(
         shape = RoundedCornerShape(5.dp),
@@ -82,7 +82,7 @@ fun MKCurrentWarCell(current: CurrentWar, onClick: (String) -> Unit) {
                         text = diff,
                         font = R.font.orbitron_semibold,
                         fontSize = 18,
-                        textColor = diffColor
+                        newTextColor = diffColor
                     )
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         MKText(

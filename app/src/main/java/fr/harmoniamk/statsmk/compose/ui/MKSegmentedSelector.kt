@@ -32,7 +32,7 @@ fun MKSegmentedSelector(buttons: List<Pair<String, () -> Unit>>, indexSelected: 
                     .height(50.dp)
                     .background(
                         color =  when (selectedIndex.value == index) {
-                                true -> colorsViewModel.secondaryColorTransparent
+                                true -> colorsViewModel.secondaryColor.copy(alpha = 0.6f)
                                 else ->colorResource(R.color.transparent)
                             }
 

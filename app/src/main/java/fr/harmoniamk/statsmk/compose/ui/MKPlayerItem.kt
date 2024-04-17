@@ -85,7 +85,7 @@ fun MKPlayerItem(
                 }
             }
             position?.let {
-                MKText(text = it.position.position.toString(), font = R.font.mk_position, textColor = it.position.position.positionColor(), fontSize = 26, modifier = Modifier.padding(end = 15.dp))
+                MKText(text = it.position.position.toString(), font = R.font.mk_position, newTextColor = it.position.position.positionColor(), fontSize = 26, modifier = Modifier.padding(end = 15.dp))
                 shockVisible.takeIf{ it }?.let {
                     Row(horizontalArrangement = Arrangement.Center) {
                         MKText(text = R.string.minus, font = R.font.orbitron_semibold, fontSize = 26, modifier = Modifier

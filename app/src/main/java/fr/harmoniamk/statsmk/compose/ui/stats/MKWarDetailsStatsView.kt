@@ -38,18 +38,18 @@ fun MKWarDetailsStatsView(mkStats: MKStats, type: StatsType) {
     val colorsViewModel: ColorsViewModel = hiltViewModel()
 
     val diffColor = when {
-        type is StatsType.IndivStats || (type as? StatsType.OpponentStats)?.userId != null -> R.color.black
-        stats?.averagePointsLabel?.contains("+").isTrue || mapStats?.teamScore?.trackScoreToDiff()?.contains("+").isTrue -> R.color.win
-        stats?.averagePointsLabel?.contains("-").isTrue || mapStats?.teamScore?.trackScoreToDiff()?.contains("-").isTrue -> R.color.lose
-        else -> R.color.black
+        type is StatsType.IndivStats || (type as? StatsType.OpponentStats)?.userId != null -> colorsViewModel.mainTextColor
+        stats?.averagePointsLabel?.contains("+").isTrue || mapStats?.teamScore?.trackScoreToDiff()?.contains("+").isTrue -> colorResource(R.color.win)
+        stats?.averagePointsLabel?.contains("-").isTrue || mapStats?.teamScore?.trackScoreToDiff()?.contains("-").isTrue -> colorResource(R.color.lose)
+        else -> colorsViewModel.mainTextColor
     }
 
     Column(
         modifier = Modifier
             .padding(bottom = 20.dp)
-            .border(1.dp, colorResource(id = R.color.black), RoundedCornerShape(5.dp))
+            .border(1.dp, colorsViewModel.mainTextColor, RoundedCornerShape(5.dp))
             .background(
-                color = colorsViewModel.secondaryColorTransparent,
+                color = colorsViewModel.secondaryColorAlphaed,
                 shape = RoundedCornerShape(5.dp)
             )
     ) {
@@ -75,7 +75,7 @@ fun MKWarDetailsStatsView(mkStats: MKStats, type: StatsType) {
                             type is StatsType.IndivStats -> stats?.averagePoints.toString()
                             (type as? StatsType.OpponentStats)?.userId != null -> stats?.averagePoints.toString()
                             else -> stats?.averagePointsLabel.toString()
-                        }, font = R.font.orbitron_semibold, fontSize = 20, textColor = diffColor)
+                        }, font = R.font.orbitron_semibold, fontSize = 20, newTextColor = diffColor)
                 }
                 type.takeIf { it is StatsType.OpponentStats }?.let {
                     Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -107,7 +107,7 @@ fun MKWarDetailsStatsView(mkStats: MKStats, type: StatsType) {
                     }, fontSize = when {
                         type is StatsType.IndivStats || (type as? StatsType.MapStats)?.userId != null || (type as? StatsType.OpponentStats)?.userId != null -> 26
                         else -> 20
-                    }, textColor = when {
+                    }, newTextColor = when {
                         type is StatsType.IndivStats || (type as? StatsType.MapStats)?.userId != null  || (type as? StatsType.OpponentStats)?.userId != null  -> (stats?.averagePlayerPosition ?: mapStats?.playerPosition).positionColor()
                         else -> diffColor
                     }

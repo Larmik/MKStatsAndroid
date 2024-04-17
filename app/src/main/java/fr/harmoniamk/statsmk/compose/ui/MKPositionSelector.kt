@@ -20,7 +20,7 @@ import fr.harmoniamk.statsmk.extension.positionColor
 fun MKPositionSelector(position: Int, modifier: Modifier = Modifier, isVisible: Boolean = true, onClick: (Int) -> Unit) {
     val colorsViewModel: ColorsViewModel = hiltViewModel()
     Card(backgroundColor = colorsViewModel.secondaryColorAlphaed, modifier = modifier.padding(5.dp).clickable { onClick(position) }.alpha(if (isVisible) 1f else 0f)) {
-        MKText(text = position.toString(), textColor = position.positionColor(), fontSize = 80, font = R.font.mk_position, modifier = Modifier.padding(10.dp))
+        MKText(text = position.toString(), newTextColor = position.positionColor(), fontSize = 80, font = R.font.mk_position, modifier = Modifier.padding(10.dp))
     }
 }
 

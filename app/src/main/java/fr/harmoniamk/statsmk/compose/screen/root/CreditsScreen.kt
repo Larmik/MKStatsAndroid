@@ -26,7 +26,7 @@ fun CreditsScreen() {
         MKText(text = "Mario Kart Stats", font = R.font.montserrat_bold, fontSize = 24)
         MKText(text = "Version ${BuildConfig.VERSION_NAME}", fontSize = 18)
         MKText(text = "Made with ❤\uFE0F by Larii", modifier = Modifier.padding(vertical = 20.dp))
-        Column(Modifier.background(colorsViewModel.secondaryColorTransparent)) {
+        Column(Modifier.background(colorsViewModel.secondaryColorAlphaed)) {
             Column(
                 Modifier
                     .fillMaxWidth()

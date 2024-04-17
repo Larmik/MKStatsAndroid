@@ -128,12 +128,12 @@ fun MKTrackItem(
                                         true -> R.font.mk_position
                                         else -> R.font.orbitron_semibold
                                     },
-                                    textColor = when (isIndiv) {
+                                    newTextColor = when (isIndiv) {
                                         true -> it.playerScore.pointsToPosition().positionColor()
                                         else -> when {
-                                            it.teamScore?.trackScoreToDiff()?.contains("+").isTrue -> R.color.win
-                                            it.teamScore?.trackScoreToDiff()?.contains("-").isTrue -> R.color.lose
-                                            else -> R.color.black
+                                            it.teamScore?.trackScoreToDiff()?.contains("+").isTrue -> colorResource(R.color.win)
+                                            it.teamScore?.trackScoreToDiff()?.contains("-").isTrue -> colorResource(R.color.lose)
+                                            else -> colorsViewModel.mainTextColor
                                         }
                                     },
                                     fontSize = when (isIndiv) {

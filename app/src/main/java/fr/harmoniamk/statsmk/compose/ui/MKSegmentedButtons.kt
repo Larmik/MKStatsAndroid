@@ -33,7 +33,7 @@ fun MKSegmentedButtons(modifier: Modifier = Modifier, buttons: List<Pair<Int, ()
                 .fillMaxWidth()
                 .height(50.dp)
                 .padding(bottom = 10.dp)
-                .background(color = colorsViewModel.secondaryColorTransparent, shape = RoundedCornerShape(bottomStart = 5.dp, bottomEnd = 5.dp)), verticalAlignment = Alignment.CenterVertically) {
+                .background(color = colorsViewModel.secondaryColor.copy(alpha = 0.6f), shape = RoundedCornerShape(bottomStart = 5.dp, bottomEnd = 5.dp)), verticalAlignment = Alignment.CenterVertically) {
             buttons.forEach {
                 Box(contentAlignment = Alignment.Center, modifier = Modifier
                     .weight(1f)

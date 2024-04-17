@@ -5,9 +5,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import fr.harmoniamk.statsmk.R
+import fr.harmoniamk.statsmk.compose.viewModel.ColorsViewModel
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
@@ -17,6 +20,7 @@ import fr.harmoniamk.statsmk.model.mock.mock
 
 @Composable
 fun MKScoreView(modifier: Modifier = Modifier, track: MKWarTrack? = null, war: MKWar? = null, isSmaller: Boolean = false, colored: Boolean = false) {
+    val colorsViewModel: ColorsViewModel = hiltViewModel()
     val score = when {
         war != null -> war.displayedScore
         track != null -> track.displayedResult
@@ -28,16 +32,16 @@ fun MKScoreView(modifier: Modifier = Modifier, track: MKWarTrack? = null, war: M
         else -> ""
     }
     val diffColor = when {
-        isSmaller && !colored -> R.color.black
-        war?.displayedDiff?.contains("-").isTrue -> R.color.lose
-        war?.displayedDiff?.contains("+").isTrue -> R.color.win
-        track?.displayedDiff?.contains("-").isTrue -> R.color.lose
-        track?.displayedDiff?.contains("+").isTrue -> R.color.win
-        else -> R.color.black
+        isSmaller && !colored -> colorsViewModel.mainTextColor
+        war?.displayedDiff?.contains("-").isTrue -> colorResource(R.color.lose)
+        war?.displayedDiff?.contains("+").isTrue -> colorResource(R.color.win)
+        track?.displayedDiff?.contains("-").isTrue -> colorResource(R.color.lose)
+        track?.displayedDiff?.contains("+").isTrue -> colorResource(R.color.win)
+        else -> colorsViewModel.mainTextColor
     }
     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = modifier) {
         MKText(text = score, modifier = Modifier.padding(horizontal = if (isSmaller) 0.dp else 10.dp), fontSize = if (isSmaller) 14 else 22, font = R.font.orbitron_semibold)
-        MKText(text = diff, modifier = Modifier.padding(horizontal = if (isSmaller) 0.dp else 10.dp), fontSize = if (isSmaller) 11 else 18, font = R.font.orbitron_regular, textColor = diffColor)
+        MKText(text = diff, modifier = Modifier.padding(horizontal = if (isSmaller) 0.dp else 10.dp), fontSize = if (isSmaller) 11 else 18, font = R.font.orbitron_regular, newTextColor = diffColor)
     }
 }
 
