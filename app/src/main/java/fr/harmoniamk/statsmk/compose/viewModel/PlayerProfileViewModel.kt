@@ -94,6 +94,7 @@ class PlayerProfileViewModel @AssistedInject constructor(
             .onEach {
                 player = it
                 _sharedPlayer.value = it
+                _sharedRole.value = null
             }
             .flatMapLatest { databaseRepository.getNewUser(id)  }
             .onEach { localPlayer ->
@@ -103,25 +104,21 @@ class PlayerProfileViewModel @AssistedInject constructor(
                     localPlayer?.rosterId == "-1" -> Pair(localPlayer.mkcId, false)
                     else -> null
                 }
-                _sharedAdminButton.takeIf {
-                    authenticationRepository.userRole >= UserRole.LEADER.ordinal
-                            && localPlayer?.mid?.toIntOrNull() == null
-                            && (localPlayer?.role ?: 0) < 2
-                }?.value = when (localPlayer?.role) {
-                    1 -> true
-                    0 -> false
-                    else -> null
-                }
-                localPlayer?.let {
+                localPlayer?.takeIf { it.mid.isNotEmpty() && it.mid.toIntOrNull() == null && it.rosterId != "-1" }?.let {player ->
+                    _sharedAdminButton
+                        .takeIf { authenticationRepository.userRole >= UserRole.LEADER.ordinal && player.role  < 2 }
+                        ?.value = when (player.role) {
+                            1 -> true
+                            0 -> false
+                            else -> null
+                        }
                     _sharedRole.value = when {
-                        it.mid.toIntOrNull() != null -> null
-                        it.role == 1 -> "Admin"
-                        it.role == 2 -> "Leader"
-                        it.role == 3 -> "Dieu"
+                        player.role == 1 -> "Admin"
+                        player.role == 2 -> "Leader"
+                        player.role == 3 -> "Dieu"
                         else -> "Membre"
                     }
                 }
-
             }.launchIn(viewModelScope)
     }
 

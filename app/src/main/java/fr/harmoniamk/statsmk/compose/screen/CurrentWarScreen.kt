@@ -52,7 +52,10 @@ fun CurrentWarScreen(
     val buttonVisible = viewModel.sharedButtonVisible.collectAsState()
     val currentState = viewModel.sharedBottomSheetValue.collectAsState()
     val dialogState = viewModel.sharedDialogValue.collectAsState()
-    val bottomSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
+    val bottomSheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden,
+        confirmValueChange = { it == ModalBottomSheetValue.Expanded || it == ModalBottomSheetValue.HalfExpanded }
+    )
     val buttons = listOf(
         Pair(R.string.remplacement, viewModel::onSubPlayer),
         Pair(R.string.p_nalit, viewModel::onPenalty),

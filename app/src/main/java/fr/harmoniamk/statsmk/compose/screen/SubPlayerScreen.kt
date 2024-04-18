@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
@@ -63,7 +64,10 @@ fun SubPlayerScreen(viewModel: SubPlayerViewModel = hiltViewModel(), onDismiss: 
                 viewModel.onSearch(it.text)
             }, placeHolderRes = R.string.rechercher_un_joueur)
         }
-        LazyColumn(Modifier.weight(1f)) {
+        LazyColumn(modifier = when (playerSelected.value) {
+            null -> Modifier.wrapContentHeight()
+            else -> Modifier.weight(1f)
+        }) {
             if (allies.value.isNotEmpty())
                 stickyHeader {
                     Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().height(40.dp).background(color = colorsViewModel.secondaryColor)) {
@@ -86,7 +90,7 @@ fun SubPlayerScreen(viewModel: SubPlayerViewModel = hiltViewModel(), onDismiss: 
                     }
                 )
             }
-            allies.value.takeIf { it.isNotEmpty() }?.let {
+            allies.value.takeIf { it.isNotEmpty() && playerSelected.value != null }?.let {
                 stickyHeader {
                     Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth().height(40.dp).background(color = colorsViewModel.secondaryColor)) {
                         MKText(font = R.font.montserrat_bold, fontSize = 18, text = "Allies", newTextColor = colorsViewModel.secondaryTextColor)
@@ -110,12 +114,16 @@ fun SubPlayerScreen(viewModel: SubPlayerViewModel = hiltViewModel(), onDismiss: 
                 }
             }
         }
-        playerSelected.value?.let {
-            MKButton(
-                text = String.format(stringResource(id = R.string.sub_confirm), it.name),
-                enabled = currentPlayers.value.any { it.isSelected.isTrue },
-                onClick = viewModel::onSubClick
-            )
+        Row {
+            playerSelected.value?.let {
+                MKButton(
+                    text = String.format(stringResource(id = R.string.sub_confirm), it.name),
+                    enabled = currentPlayers.value.any { it.isSelected.isTrue },
+                    onClick = viewModel::onSubClick
+                )
+            }
+            MKButton(hasBackground = false, text = R.string.annuler, onClick = viewModel::onBack)
         }
+
     }
 }

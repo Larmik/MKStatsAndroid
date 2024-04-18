@@ -1,6 +1,7 @@
 package fr.harmoniamk.statsmk.compose.screen
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
@@ -51,11 +52,15 @@ fun PenaltyScreen(viewModel: PenaltyViewModel = hiltViewModel(), onDismiss: () -
                 amountValue.value = it
                 viewModel.onAmount(it.text)
             })
-        MKButton(
-            text = R.string.infliger_la_p_nalit,
-            enabled = amountValue.value.text.toIntOrNull() != null
-        ) {
-            viewModel.onPenaltyAdded()
+        Row {
+            MKButton(
+                text = R.string.infliger_la_p_nalit,
+                enabled = amountValue.value.text.toIntOrNull() != null
+            ) {
+                viewModel.onPenaltyAdded()
+            }
+            MKButton(hasBackground = false, text = R.string.annuler, onClick = onDismiss)
         }
+
     }
 }
