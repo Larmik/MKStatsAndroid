@@ -13,6 +13,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,6 +32,8 @@ import fr.harmoniamk.statsmk.compose.viewModel.ColorsViewModel
 import fr.harmoniamk.statsmk.compose.viewModel.WarViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class, ExperimentalMaterialApi::class)
 @Composable
@@ -38,19 +41,24 @@ fun WarScreen(
     viewModel: WarViewModel = hiltViewModel(),
     onCurrentWarClick: (String) -> Unit,
     onWarClick: (String?) -> Unit,
-    onCreateWarClick: () -> Unit
+    onCreateWarClick: (String) -> Unit
 ) {
     val colorsViewModel : ColorsViewModel = hiltViewModel()
     val currentWars = viewModel.sharedCurrentWars.collectAsState()
     val isLoading = viewModel.sharedLoading.collectAsState()
     val lastWars = viewModel.sharedLastWars.collectAsState()
     val team = viewModel.sharedTeam.collectAsState()
-    val createWarVisible = viewModel.sharedCreateWarVisible.collectAsState()
     val dispos = viewModel.sharedDispos.collectAsState()
     val buttons = listOfNotNull(
-        Pair(R.string.cr_er_une_war, onCreateWarClick).takeIf { createWarVisible.value },
         Pair(R.string.ajouter_les_dispos, {}).takeIf { !dispos.value.isNullOrEmpty() },
     )
+    val newButtons = viewModel.sharedButtons.collectAsState()
+
+    LaunchedEffect(Unit) {
+       viewModel.sharedCreateWar.distinctUntilChanged().filterNotNull().collect {
+           onCreateWarClick(it)
+       }
+    }
 
     MKBaseScreen(title = R.string.team_war, subTitle = team.value?.team_name) {
         when  {
@@ -61,7 +69,7 @@ fun WarScreen(
                 }
             }
             else -> {
-                MKSegmentedButtons(buttons = buttons)
+                MKSegmentedButtons(buttons = newButtons.value, height = 70)
                 when (currentWars.value.isEmpty()) {
                     true -> {}
                     else -> {

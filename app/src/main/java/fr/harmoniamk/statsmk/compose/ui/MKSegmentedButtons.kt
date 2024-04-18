@@ -24,14 +24,14 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.viewModel.ColorsViewModel
 
 @Composable
-fun MKSegmentedButtons(modifier: Modifier = Modifier, buttons: List<Pair<Int, () -> Unit>>) {
+fun MKSegmentedButtons(modifier: Modifier = Modifier, buttons: List<Pair<String, () -> Unit>>, height: Int = 50){
     val colorsViewModel: ColorsViewModel = hiltViewModel()
 
     if (buttons.isNotEmpty())
         Row(
             modifier
                 .fillMaxWidth()
-                .height(50.dp)
+                .height(height.dp)
                 .padding(10.dp)
                 .background(color = colorsViewModel.secondaryColor.copy(alpha = 0.6f), shape = RoundedCornerShape(5.dp)), verticalAlignment = Alignment.CenterVertically) {
             buttons.forEach {
@@ -52,11 +52,3 @@ fun MKSegmentedButtons(modifier: Modifier = Modifier, buttons: List<Pair<Int, ()
         }
 }
 
-@Preview
-@Composable
-fun MKSegmentedButtonsPreview() {
-    MKSegmentedButtons(buttons = listOf(
-        Pair(R.string.cr_er_une_war, {}),
-        Pair(R.string.le_coin_dispos, {}),
-    ))
-}

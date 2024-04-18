@@ -87,26 +87,35 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
                 onBack = onBack,
                 onCurrentWarClick = { navController.navigate("Home/War/Current/$it") },
                 onWarClick = { navController.navigate(route = "Home/War/$it") },
-                onCreateWarClick = { navController.navigate("Home/War/AddWar") },
+                onCreateWarClick = { navController.navigate("Home/War/AddWar/$it") },
                 onSettingsItemClick = { navController.navigate(it) }
             )
         }
 
 
         /** Navigation of add war **/
-        composable(route = "Home/War/AddWar") {
+        composable(
+            route = "Home/War/AddWar/{teamHost}",
+            arguments = listOf(navArgument("teamHost") { type = NavType.StringType })
+        ) {
+            val teamHost = it.arguments?.getString("teamHost")
             TeamListScreen(
-                onTeamClick = { navController.navigate("Home/War/AddWar/$it/AddPlayers") }
+                onTeamClick = { navController.navigate("Home/War/AddWar/$teamHost/$it") }
             )
         }
-        composable(route = "Home/War/AddWar/{team}/AddPlayers", arguments = listOf(navArgument("team") { type = NavType.StringType })) {
+        composable(route = "Home/War/AddWar/{teamHost}/{teamOpponent}",
+            arguments = listOf(
+                navArgument("teamHost") { type = NavType.StringType },
+                navArgument("teamOpponent") { type = NavType.StringType }),
+        ) {
             PlayerListScreen(
-                teamId = it.arguments?.getString("team"),
+                teamHostId = it.arguments?.getString("teamHost"),
+                teamOpponentId = it.arguments?.getString("teamOpponent"),
                 onWarStarted = { navController.navigate(route = "Home/War/Current/$it") })
         }
 
         /** Navigation of Current War **/
-        composable(route = "Home/War/Current/{teamId}") {
+        composable(route = "Home/War/Current/{teamId}",    arguments = listOf(navArgument("teamId") { type = NavType.StringType })) {
             CurrentWarScreen(
                 teamId = it.arguments?.getString("teamId").orEmpty(),
                 onNextTrack = { navController.navigate("Home/War/Current/AddTrack") },

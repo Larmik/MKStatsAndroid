@@ -33,13 +33,15 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.zip
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class PlayerListViewModel @AssistedInject constructor(
-    @Assisted private val id: String,
+    @Assisted("teamHostId") private val teamHostId: String,
+    @Assisted("teamOpponentId") private val teamOpponentId: String,
     private val preferencesRepository: PreferencesRepositoryInterface,
     private val databaseRepository: DatabaseRepositoryInterface,
     private val firebaseRepository: FirebaseRepositoryInterface,
@@ -64,20 +66,22 @@ class PlayerListViewModel @AssistedInject constructor(
         @Suppress("UNCHECKED_CAST")
         fun provideFactory(
             assistedFactory: Factory,
-            id: String?
+            teamHostId: String?,
+            teamOpponentId: String?
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return assistedFactory.create(id) as T
+                return assistedFactory.create(teamHostId, teamOpponentId) as T
             }
         }
 
         @Composable
-        fun viewModel(id: String?): PlayerListViewModel {
+        fun viewModel(teamHostId: String?, teamOpponentId: String?): PlayerListViewModel {
             val factory: Factory = EntryPointAccessors.fromApplication<ViewModelFactoryProvider>(context = LocalContext.current).playerListViewModel
             return androidx.lifecycle.viewmodel.compose.viewModel(
                 factory = provideFactory(
                     assistedFactory = factory,
-                    id = id
+                    teamHostId = teamHostId,
+                    teamOpponentId = teamOpponentId
                 )
             )
         }
@@ -85,7 +89,7 @@ class PlayerListViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory {
-        fun create(id: String?): PlayerListViewModel
+        fun create(@Assisted("teamHostId") teamHostId: String?, @Assisted("teamOpponentId") teamOpponentId: String?): PlayerListViewModel
     }
 
     fun selectUser(user: UserSelector) {
@@ -110,9 +114,9 @@ class PlayerListViewModel @AssistedInject constructor(
         _sharedDialogValue.value = MKDialogState.Loading(R.string.creating_war)
         val war =  NewWar(
             mid = System.currentTimeMillis().toString(),
-            teamHost = preferencesRepository.mkcTeam?.id,
+            teamHost = teamHostId,
             playerHostId = preferencesRepository.mkcPlayer?.id.toString(),
-            teamOpponent = id,
+            teamOpponent = teamOpponentId,
             createdDate = date,
             isOfficial = official
         )
@@ -153,9 +157,9 @@ class PlayerListViewModel @AssistedInject constructor(
             }
             .launchIn(viewModelScope)
 
-        databaseRepository.getNewTeam(id)
-            .onEach {
-                _sharedWarName.value = "${preferencesRepository.mkcTeam?.team_name} - ${it?.team_name}"
+        databaseRepository.getNewTeam(teamHostId)
+            .zip( databaseRepository.getNewTeam(teamOpponentId)) { host, oponent ->
+                _sharedWarName.value = "${host?.team_tag} - ${oponent?.team_tag}"
             }.launchIn(viewModelScope)
     }
 

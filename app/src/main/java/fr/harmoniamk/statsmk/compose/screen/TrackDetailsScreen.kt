@@ -13,6 +13,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKBaseScreen
@@ -40,9 +41,10 @@ fun TrackDetailsScreen(warId: String, warTrackId: String, onBack: () -> Unit) {
         rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden)
     val coroutineScope = rememberCoroutineScope()
     val buttons = listOf(
-        Pair(R.string.editer_circuit, viewModel::onEditTrack),
-        Pair(R.string.editer_positions, viewModel::onEditPositions),
-        Pair(R.string.editer_shocks, viewModel::onEditShocks),
+        Pair(
+            stringResource(R.string.editer_circuit), viewModel::onEditTrack),
+        Pair(stringResource(R.string.editer_positions), viewModel::onEditPositions),
+        Pair(stringResource(R.string.editer_shocks), viewModel::onEditShocks),
     )
     LaunchedEffect(Unit) {
         viewModel.sharedBottomSheetValue.collect {

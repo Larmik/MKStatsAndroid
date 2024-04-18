@@ -32,6 +32,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.zip
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @FlowPreview
@@ -46,17 +47,19 @@ class WarViewModel @Inject constructor(
     private val fetchUseCase: FetchUseCaseInterface
 ) : ViewModel() {
 
+    private val _sharedButtons = MutableStateFlow<List<Pair<String, () -> Unit>>>(listOf())
     private val _sharedCurrentWars = MutableStateFlow<List<CurrentWar>>(listOf())
     private val _sharedLoading = MutableStateFlow(true)
     private val _sharedLastWars = MutableStateFlow<Map<String, List<MKWar>>?>(null)
+    private val _sharedCreateWar = MutableSharedFlow<String>()
     private val _sharedTeam = MutableStateFlow<MKCFullTeam?>(null)
-    private val _sharedCreateWarVisible = MutableStateFlow(false)
 
     val sharedCurrentWars = _sharedCurrentWars.asStateFlow()
     val sharedLastWars = _sharedLastWars.asStateFlow()
     val sharedLoading = _sharedLoading.asStateFlow()
     val sharedTeam = _sharedTeam.asStateFlow()
-    val sharedCreateWarVisible = _sharedCreateWarVisible.asStateFlow()
+    val sharedButtons = _sharedButtons.asStateFlow()
+    val sharedCreateWar = _sharedCreateWar.asSharedFlow()
 
     //A faire plus tard
     private val _sharedDispos = MutableStateFlow<List<WarDispo>?>(null)
@@ -65,6 +68,12 @@ class WarViewModel @Inject constructor(
     val sharedNextScheduledWar = _sharedNextScheduledWar.asSharedFlow()
     private var scheduledWar: WarDispo? = null
     private val dispoList = mutableListOf<WarDispo>()
+
+    fun onCreateWar(teamId: String) {
+        viewModelScope.launch {
+            _sharedCreateWar.emit(teamId)
+        }
+    }
 
 
     init {
@@ -84,8 +93,22 @@ class WarViewModel @Inject constructor(
                 .filter { it.filterNotNull().isEmpty() }
                 .onEach {
                     _sharedLoading.value = false
-                    _sharedCreateWarVisible.value = isAdmin
                     _sharedCurrentWars.value = listOf()
+                    val createWarsButtons = mutableListOf<Pair<String, () -> Unit>>()
+                    when {
+                        team.primary_team_id != null -> {
+                            val primaryTeam = databaseRepository.getNewTeam(team.primary_team_id.toString()).firstOrNull()
+                            createWarsButtons.add(Pair("Créer une war : \n ${primaryTeam?.team_name}", { onCreateWar(primaryTeam?.team_id.orEmpty()) }))
+                            createWarsButtons.add(Pair("Créer une war : \n ${team.team_name}", { onCreateWar(team.id) }))
+                        }
+                        !team.secondary_teams.isNullOrEmpty() -> {
+                            val secondaryTeam = databaseRepository.getNewTeam(team.secondary_teams.getOrNull(0)?.id.toString()).firstOrNull()
+                            createWarsButtons.add(Pair("Créer une war : \n ${team.team_name}", { onCreateWar(team.id) }))
+                            createWarsButtons.add(Pair("Créer une war : \n ${secondaryTeam?.team_name}", { onCreateWar(secondaryTeam?.team_id.orEmpty()) }))
+                        }
+                        else -> createWarsButtons.add(Pair("Créer une war", { onCreateWar(team.id) }))
+                    }
+                    _sharedButtons.value = createWarsButtons.filter { isAdmin }
                 }.launchIn(viewModelScope)
 
             currentWarsFlow
@@ -94,7 +117,20 @@ class WarViewModel @Inject constructor(
                 .filter { it.isNotEmpty() }
                 .onEach { wars ->
                     _sharedLoading.value = true
-                    _sharedCreateWarVisible.value = isAdmin && wars.none { it.hasTeam(team.id) }
+                    val createWarsButtons = mutableListOf<Pair<String, () -> Unit>>()
+                    when {
+                        team.primary_team_id != null -> {
+                            val primaryTeam = databaseRepository.getNewTeam(team.primary_team_id.toString()).firstOrNull()
+                            createWarsButtons.takeIf{ wars.none { it.hasTeam(primaryTeam?.team_id) } }?.add(Pair("Créer une war : \n ${primaryTeam?.team_name}", { onCreateWar(primaryTeam?.team_id.orEmpty()) }))
+                            createWarsButtons.takeIf{ wars.none { it.hasTeam(team.id) } }?.add(Pair("Créer une war : \n ${team.team_name}", { onCreateWar(team.id) }))
+                        }
+                        !team.secondary_teams.isNullOrEmpty() -> {
+                            val secondaryTeam = databaseRepository.getNewTeam(team.secondary_teams.getOrNull(0)?.id.toString()).firstOrNull()
+                            createWarsButtons.takeIf{ wars.none { it.hasTeam(team.id) } }?.add(Pair("Créer une war : \n ${team.team_name}", { onCreateWar(team.id) }))
+                            createWarsButtons.takeIf{ wars.none { it.hasTeam(secondaryTeam?.team_id) } }?.add(Pair("Créer une war : \n ${secondaryTeam?.team_name}", { onCreateWar(secondaryTeam?.team_id.orEmpty()) }))
+                        }
+                    }
+                    _sharedButtons.value = createWarsButtons.filter { isAdmin }
                     val currentWars = mutableListOf<CurrentWar>()
                     wars.forEach { war ->
                         val refreshPlayers = fetchUseCase.fetchPlayers(forceUpdate = false)

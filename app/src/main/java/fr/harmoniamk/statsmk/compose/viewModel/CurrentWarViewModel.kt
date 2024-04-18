@@ -146,7 +146,7 @@ class CurrentWarViewModel @AssistedInject constructor(
                         firebaseRepository.writeUser(User(newUser, fbUser?.mid, fbUser?.discordId)).firstOrNull()
                         databaseRepository.updateUser(newUser).firstOrNull()
                     }
-                    firebaseRepository.deleteCurrentWar().firstOrNull()
+                    firebaseRepository.deleteCurrentWar(teamId).firstOrNull()
                     _sharedBackToWars.emit(Unit)
                 }.launchIn(viewModelScope)
             },
@@ -161,7 +161,7 @@ class CurrentWarViewModel @AssistedInject constructor(
                     viewModelScope.launch {
                         _sharedDialogValue.value = MKDialogState.Loading(R.string.creating_war)
                         firebaseRepository.writeNewWar(war).first()
-                        firebaseRepository.deleteCurrentWar().first()
+                        firebaseRepository.deleteCurrentWar(teamId).first()
                         val mkWar = listOf(MKWar(war)).withName(databaseRepository).first()
                         mkWar.singleOrNull()?.let { databaseRepository.writeWar(it).first() }
                         currentPlayers

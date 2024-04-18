@@ -33,8 +33,8 @@ import kotlinx.coroutines.flow.filterNotNull
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalFoundationApi::class)
 @Composable
-fun PlayerListScreen(teamId: String?, onWarStarted: (String) -> Unit) {
-    val viewModel: PlayerListViewModel = viewModel(id = teamId)
+fun PlayerListScreen(teamHostId: String?, teamOpponentId: String?, onWarStarted: (String) -> Unit) {
+    val viewModel: PlayerListViewModel = viewModel(teamHostId, teamOpponentId)
     val colorsViewModel: ColorsViewModel = hiltViewModel()
     val players = viewModel.sharedPlayers.collectAsState()
     val warName = viewModel.sharedWarName.collectAsState()

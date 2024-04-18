@@ -17,6 +17,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import fr.harmoniamk.statsmk.R
@@ -57,9 +58,9 @@ fun CurrentWarScreen(
         confirmValueChange = { it == ModalBottomSheetValue.Expanded || it == ModalBottomSheetValue.HalfExpanded }
     )
     val buttons = listOf(
-        Pair(R.string.remplacement, viewModel::onSubPlayer),
-        Pair(R.string.p_nalit, viewModel::onPenalty),
-        Pair(R.string.annuler_le_match, viewModel::onCancelClick),
+        Pair(stringResource(R.string.remplacement), viewModel::onSubPlayer),
+        Pair(stringResource(R.string.p_nalit), viewModel::onPenalty),
+        Pair(stringResource(R.string.annuler_le_match), viewModel::onCancelClick),
     )
     LaunchedEffect(Unit) {
         viewModel.sharedBottomSheetValue.collect {

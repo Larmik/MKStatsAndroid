@@ -92,7 +92,7 @@ emit(null)    }
         )
     }
 
-    override fun deleteCurrentWar(): Flow<Unit> = flow {
+    override fun deleteCurrentWar(teamId: String): Flow<Unit> = flow {
         emit(Unit)
     }
 

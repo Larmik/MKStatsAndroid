@@ -39,7 +39,7 @@ fun HomeScreen(
     onBack: () -> Unit,
     onCurrentWarClick: (String) -> Unit,
     onWarClick: (String?) -> Unit,
-    onCreateWarClick: () -> Unit,
+    onCreateWarClick: (String) -> Unit,
     onSettingsItemClick: (String) -> Unit
 ) {
     val navController = rememberNavController()

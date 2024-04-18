@@ -47,7 +47,7 @@ interface FirebaseRepositoryInterface{
     fun getCurrentWar(teamId: String): Flow<MKWar?>
     fun listenToCurrentWar(teamId: String): Flow<MKWar?>
     //only on current war
-    fun deleteCurrentWar(): Flow<Unit>
+    fun deleteCurrentWar(teamId: String): Flow<Unit>
     fun deleteUser(users: List<User>) : Flow<Unit>
 
     fun getDispos(): Flow<List<WarDispo>>
@@ -84,11 +84,10 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
     }
 
     override fun writeCurrentWar(war: NewWar): Flow<Unit> = flow {
-        preferencesRepository.mkcTeam?.id?.let {
             Log.d("MKDebugOnly", "FirebaseRepository writeCurrentWar ${war.mid}")
-            database.child("currentWars").child(it).setValue(war)
+            database.child("currentWars").child(war.teamHost.orEmpty()).setValue(war)
             emit(Unit)
-        }
+
     }
 
     override fun writeDispo(dispo: WarDispo) = flow {
@@ -325,10 +324,10 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
     }.flowOn(Dispatchers.IO)
 
 
-    override fun deleteCurrentWar() = flow {
+    override fun deleteCurrentWar(teamId: String) = flow {
         preferencesRepository.mkcTeam?.id?.let {
             Log.d("MKDebugOnly", "FirebaseRepository deleteCurrentWar")
-            database.child("currentWars").child(it).removeValue()
+            database.child("currentWars").child(teamId).removeValue()
             emit(Unit)
         }
     }
