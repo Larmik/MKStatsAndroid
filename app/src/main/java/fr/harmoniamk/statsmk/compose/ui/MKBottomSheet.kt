@@ -207,7 +207,7 @@ fun MKBottomSheet(
                             .size(40.dp)
                             .background(
                                 colorResource(R.color.white),
-                                shape = RoundedCornerShape(5.dp)
+                                shape = RoundedCornerShape(10.dp)
                             )
                     ) {
                         mainColor.value.text.takeIf { it.matches(hexaRegex) }?.let {
@@ -217,7 +217,7 @@ fun MKBottomSheet(
                                     .align(Alignment.Center)
                                     .background(
                                         color = Color.fromHex("#$it"),
-                                        shape = RoundedCornerShape(5.dp)
+                                        shape = RoundedCornerShape(10.dp)
                                     )
                             )
                         }
@@ -227,7 +227,7 @@ fun MKBottomSheet(
 
                 MKText(text = "Texte", modifier = Modifier.padding(top = 20.dp))
                 MKSegmentedSelector(
-                    modifier = Modifier.padding(vertical = 10.dp, horizontal = 30.dp).border(width = 1.dp, color = colorsViewModel.secondaryColor),
+                    modifier = Modifier.height(40.dp).padding(vertical = 5.dp, horizontal = 60.dp).border(width = 1.dp, color = colorsViewModel.secondaryColor),
                     buttons = listOf(
                         Pair("Noir", { mainTextColor.value = "000000" }),
                         Pair("Blanc", { mainTextColor.value = "FFFFFF" })
@@ -258,7 +258,7 @@ fun MKBottomSheet(
                             .size(40.dp)
                             .background(
                                 colorResource(R.color.white),
-                                shape = RoundedCornerShape(5.dp)
+                                shape = RoundedCornerShape(10.dp)
                             )
                     ) {
                         secondaryColor.value.text.takeIf { it.matches(hexaRegex) }?.let {
@@ -268,7 +268,7 @@ fun MKBottomSheet(
                                     .align(Alignment.Center)
                                     .background(
                                         color = Color.fromHex("#$it"),
-                                        shape = RoundedCornerShape(5.dp)
+                                        shape = RoundedCornerShape(10.dp)
                                     )
                             )
                         }
@@ -276,7 +276,7 @@ fun MKBottomSheet(
                 }
                 MKText(text = "Texte", modifier = Modifier.padding(top = 20.dp))
                 MKSegmentedSelector(
-                    modifier = Modifier.padding(vertical = 10.dp, horizontal = 30.dp).border(width = 1.dp, color = colorsViewModel.secondaryColor),
+                    modifier = Modifier.height(40.dp).padding(vertical = 5.dp, horizontal = 60.dp).border(width = 1.dp, color = colorsViewModel.secondaryColor),
                     buttons = listOf(
                         Pair("Noir", { secondaryTextColor.value = "000000" }),
                         Pair("Blanc", { secondaryTextColor.value = "FFFFFF" })
