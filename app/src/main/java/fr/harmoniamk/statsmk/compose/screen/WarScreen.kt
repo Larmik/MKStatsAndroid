@@ -95,7 +95,7 @@ fun WarScreen(
                                 item {
                                     Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier
                                         .fillMaxWidth()
-                                        .height(40.dp)
+                                        .height(30.dp)
                                         .background(color = colorResource(R.color.transparent))) {
                                         MKText(text = teamName, newTextColor = colorsViewModel.mainTextColor)
                                     }

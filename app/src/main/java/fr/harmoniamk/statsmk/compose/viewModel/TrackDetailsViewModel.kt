@@ -119,14 +119,12 @@ class TrackDetailsViewModel @AssistedInject constructor(
                 }
             }
             .onEach {
-                val isAdmin = authenticationRepository.userRole >= UserRole.ADMIN.ordinal
-                val isLeader = authenticationRepository.userRole >= UserRole.LEADER.ordinal
                 val positions = mutableListOf<MKWarPosition>()
                 it.forEach { pos ->
                     positions.add(MKWarPosition(position = pos, mkcPlayer = users.singleOrNull { it.mkcId == pos.playerId }))
                 }
                 _sharedPositions.emit(positions.sortedBy { it.position.position })
-                _sharedButtonsVisible.value = warId == "Current" && networkRepository.networkAvailable && preferencesRepository.currentWar?.playerHostId == authenticationRepository.user?.uid
+                _sharedButtonsVisible.value = warId == "Current" && networkRepository.networkAvailable && preferencesRepository.currentWar?.playerHostId == preferencesRepository.mkcPlayer?.id.toString()
             }.launchIn(viewModelScope)
     }
 

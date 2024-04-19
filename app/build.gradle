@@ -43,8 +43,8 @@ android {
         applicationId "fr.harmoniamk.statsmk"
         minSdk 26
         targetSdk 34
-        versionCode 46
-        versionName "2.8.1"
+        versionCode 48
+        versionName "2.8.3"
         multiDexEnabled true
         // read file from project root folder
         javaCompileOptions {
@@ -63,7 +63,7 @@ android {
             buildConfigField "String", "FLAVOR_NAME", '" "'
             debuggable false
             testCoverageEnabled = false
-            manifestPlaceholders = [appLabel: "Mario Kart Stats"]
+            manifestPlaceholders = [appLabel: "Stats MK8DX"]
             proguardFile "proguard-rules.pro"
             buildConfigField "boolean", "IS_DEBUG", "false"
             signingConfig signingConfigs.release
@@ -73,7 +73,7 @@ android {
             buildConfigField "String", "FLAVOR_NAME", '"debug"'
             debuggable true
             applicationIdSuffix ".debug"
-            manifestPlaceholders = [appLabel: "Mario Kart Stats (Dev)"]
+            manifestPlaceholders = [appLabel: "Stats MK8DX (Dev)"]
             buildConfigField "boolean", "IS_DEBUG", "true"
             buildConfigField 'java.util.Hashtable<String, String>', 'PropertyPairs', makePropertyHashTable(getRootDir().getPath() + File.separator + 'constants_debug.properties')
         }
