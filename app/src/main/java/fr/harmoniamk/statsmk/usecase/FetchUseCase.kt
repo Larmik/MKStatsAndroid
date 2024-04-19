@@ -193,7 +193,7 @@ class FetchUseCase @Inject constructor(
     override fun fetchAllies(forceUpdate: Boolean): Flow<Unit> {
         val alliesFlow = when {
             preferencesRepository.mkcTeam?.primary_team_id != null -> firebaseRepository.getAllies(preferencesRepository.mkcTeam?.primary_team_id.toString())
-            preferencesRepository.mkcTeam?.secondary_teams != null -> firebaseRepository.getAllies(preferencesRepository.mkcTeam?.secondary_teams!!.getOrNull(0)?.id.toString())
+            (preferencesRepository.mkcTeam?.secondary_teams?.size ?: 0) > 0 -> firebaseRepository.getAllies(preferencesRepository.mkcTeam?.secondary_teams!!.getOrNull(0)?.id.toString())
             else -> firebaseRepository.getAllies(preferencesRepository.mkcTeam?.id.orEmpty())
         }
         return alliesFlow
