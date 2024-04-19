@@ -147,9 +147,9 @@ class FetchUseCase @Inject constructor(
                         }
                     }
                 }
-                team.secondary_teams != null -> {
+                (team.secondary_teams?.size ?: 0) > 0 -> {
                     addToRosterList(forceUpdate, team).firstOrNull()
-                    team.secondary_teams.forEach { secondaryTeam ->
+                    team.secondary_teams?.forEach { secondaryTeam ->
                         mkCentralRepository.getTeam(secondaryTeam.id)
                             .mapNotNull { (it as? NetworkResponse.Success)?.response }
                             .firstOrNull()?.let {
@@ -235,7 +235,7 @@ class FetchUseCase @Inject constructor(
     override fun fetchWars(): Flow<List<MKWar>>  {
         val warFlow = when {
             preferencesRepository.mkcTeam?.primary_team_id != null -> firebaseRepository.getNewWars(preferencesRepository.mkcTeam?.primary_team_id.toString()).zip(firebaseRepository.getNewWars(preferencesRepository.mkcTeam?.id.orEmpty())) { a, b -> a + b }
-            preferencesRepository.mkcTeam?.secondary_teams != null -> firebaseRepository.getNewWars(
+            (preferencesRepository.mkcTeam?.secondary_teams?.size ?: 0) > 0 -> firebaseRepository.getNewWars(
                 preferencesRepository.mkcTeam?.secondary_teams!!.getOrNull(0)?.id.toString()).zip(firebaseRepository.getNewWars(preferencesRepository.mkcTeam?.id.orEmpty())) { a, b -> a + b }
             else -> firebaseRepository.getNewWars(preferencesRepository.mkcTeam?.id.orEmpty())
         }
