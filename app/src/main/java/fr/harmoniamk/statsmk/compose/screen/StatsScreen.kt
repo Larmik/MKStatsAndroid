@@ -50,7 +50,10 @@ fun StatsScreen(
     val subtitle = viewModel.sharedSubtitle.collectAsState()
     val period = viewModel.sharedPeriodEnabled.collectAsState()
 
-    viewModel.init(type, (type as? StatsType.MapStats)?.periodic ?: period.value)
+    LaunchedEffect(Unit) {
+        viewModel.init(type, (type as? StatsType.MapStats)?.periodic ?: period.value)
+
+    }
 
     LaunchedEffect(Unit) {
         viewModel.sharedWarDetailsClick.collect {

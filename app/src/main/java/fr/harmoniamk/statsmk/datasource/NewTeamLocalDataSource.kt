@@ -44,12 +44,9 @@ class NewTeamLocalDataSource @Inject constructor(@ApplicationContext private val
 
     private val dao = MKDatabase.getInstance(context).mkcTeamDao()
 
-    override fun getAll(): Flow<List<MKCTeam>> = dao.getAll().map { list -> list.map { MKCTeam(it) } }.flowOn(Dispatchers.IO)
-
-    override fun getById(id: String) = dao.getById(id).filterNotNull().map { MKCTeam(it) }.flowOn(Dispatchers.IO)
-
+    override fun getAll(): Flow<List<MKCTeam>> = dao.getAll().map { list -> list.map { MKCTeam(it) } }
+    override fun getById(id: String) = dao.getById(id).filterNotNull().map { MKCTeam(it) }
     override fun bulkInsert(teams: List<MKCTeam>): Flow<Unit> = flow { emit(dao.bulkInsert(teams.map { it.toEntity() })) }
-
     override fun insert(team: MKCTeam): Flow<Unit> = flow { emit(dao.insert(team.toEntity())) }
     override fun clear(): Flow<Unit> = flow { emit(dao.clear())}
 

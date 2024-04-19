@@ -55,17 +55,20 @@ fun StatsRankingScreen(
     val indiv = viewModel.sharedIndivEnabled.collectAsState()
     val newUserId = viewModel.sharedUserId.collectAsState()
     val newTeamId = viewModel.sharedTeamId.collectAsState()
+    val name = viewModel.sharedUserName.collectAsState()
     val bottomSheetState =
         rememberModalBottomSheetState(
             initialValue = ModalBottomSheetValue.Hidden,
             confirmValueChange = { it == ModalBottomSheetValue.Expanded || it == ModalBottomSheetValue.HalfExpanded })
     val list = viewModel.sharedList.collectAsState()
 
-    viewModel.init(
-        state = state,
-        indivEnabled = indiv.value,
-        periodic = periodic
-    )
+    LaunchedEffect(Unit) {
+        viewModel.init(
+            state = state,
+            indivEnabled = indiv.value,
+            periodic = periodic
+        )
+    }
 
     LaunchedEffect(Unit) {
         viewModel.sharedBottomSheetValue.collect {
@@ -82,7 +85,7 @@ fun StatsRankingScreen(
     }
 
     MKBaseScreen(title = state.title,
-        subTitle = viewModel.sharedUserName.collectAsState().value,
+        subTitle = name.value,
         state = bottomSheetState,
         sheetContent = {
             MKBottomSheet(

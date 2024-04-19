@@ -1,9 +1,7 @@
 package fr.harmoniamk.statsmk.model.firebase
 
-import android.os.Parcelable
 import com.google.firebase.auth.FirebaseUser
 import fr.harmoniamk.statsmk.model.network.MKPlayer
-import kotlinx.android.parcel.Parcelize
 
 
 data class User(

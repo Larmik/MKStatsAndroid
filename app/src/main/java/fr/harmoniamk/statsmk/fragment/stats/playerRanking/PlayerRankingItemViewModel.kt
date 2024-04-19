@@ -1,10 +1,8 @@
 package fr.harmoniamk.statsmk.fragment.stats.playerRanking
 
-import android.os.Parcelable
 import fr.harmoniamk.statsmk.model.local.RankingItemViewModel
 import fr.harmoniamk.statsmk.model.local.Stats
 import fr.harmoniamk.statsmk.model.network.MKPlayer
-import kotlinx.android.parcel.Parcelize
 
 data class PlayerRankingItemViewModel(val user: MKPlayer, override val stats: Stats) : RankingItemViewModel {
 

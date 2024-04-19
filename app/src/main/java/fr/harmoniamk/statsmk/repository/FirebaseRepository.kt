@@ -166,7 +166,7 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
                     )
                     if (isActive) trySend(war)
                 }
-            } ?: if (isActive) trySend(null)
+            } ?:  trySend(null)
         }
         awaitClose {  }
     }.flowOn(Dispatchers.IO)
@@ -261,10 +261,8 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
                           isOfficial = value["official"].toString().toBoolean()
                       ).withName(databaseRepository).firstOrNull()
                       if (isActive) trySend(war)
-
-
                   }
-              } ?: if (isActive) trySend(null)
+              } ?: trySend(null)
 
         }
         awaitClose {  }

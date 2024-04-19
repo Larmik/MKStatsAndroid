@@ -1,8 +1,5 @@
 package fr.harmoniamk.statsmk.model.firebase
 
-import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
-
 data class WarDispo(
     val dispoHour: Int,
     var dispoPlayers: List<PlayerDispo>? = null,

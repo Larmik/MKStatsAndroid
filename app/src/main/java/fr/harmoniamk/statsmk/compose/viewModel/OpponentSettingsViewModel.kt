@@ -3,8 +3,6 @@ package fr.harmoniamk.statsmk.compose.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.harmoniamk.statsmk.extension.bind
-import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.model.network.MKCTeam
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
@@ -12,7 +10,8 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @FlowPreview
@@ -29,18 +28,21 @@ class OpponentSettingsViewModel @Inject constructor(
 
     init {
         databaseRepository.getNewTeams()
-            .map {
+            .onEach {
                 teams.clear()
-                teams.addAll(it.filterNot { team -> team.team_id.toString() == preferencesRepository.mkcTeam?.id.toString() })
-                teams
-            }.bind(_sharedTeams, viewModelScope)
+                teams.addAll(it
+                    .filter { it.player_count >= 6 || it.team_color == 0 }
+                    .filter { team -> team.team_id != preferencesRepository.mkcTeam?.id  })
+                _sharedTeams.value = teams.sortedBy { it.team_name }
+            }
+            .launchIn(viewModelScope)
     }
 
-    fun onSearch(search: String) {
-        _sharedTeams.value = when (search.isNotEmpty()) {
-            true -> teams.filter { it.team_name.lowercase().contains(search).isTrue || it.team_tag.lowercase().contains(search).isTrue }
-            else -> teams
-        }
+    fun search(searched: String) {
+        _sharedTeams.value = teams.filter {
+            it.team_tag.lowercase()
+                .contains(searched.lowercase()) || it.team_name.lowercase().contains(searched.lowercase())
+        }.sortedBy { it.team_name }.filterNot { vm -> vm.team_id == preferencesRepository.mkcTeam?.id }
     }
 
 }

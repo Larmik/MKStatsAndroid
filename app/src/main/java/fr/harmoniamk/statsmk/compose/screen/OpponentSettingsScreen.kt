@@ -25,22 +25,18 @@ import kotlinx.coroutines.FlowPreview
 fun OpponentSettingsScreen(viewModel: OpponentSettingsViewModel = hiltViewModel(), onTeamClick: (String) -> Unit) {
     val searchState = remember { mutableStateOf(TextFieldValue("")) }
     val teams = viewModel.sharedTeams.collectAsState()
-
     MKBaseScreen(title = R.string.adversaires) {
         MKTextField(
             value = searchState.value,
             onValueChange = {
                 searchState.value = it
-                viewModel.onSearch(it.text)
+                viewModel.search(it.text)
             },
             placeHolderRes = R.string.rechercher_un_advsersaire
         )
         LazyColumn(Modifier.padding(vertical = 10.dp)) {
             items(items = teams.value) {
-                MKCTeamItem(
-                    team = it,
-                    onClick = onTeamClick,
-                )
+                MKCTeamItem(team = it, onClick = onTeamClick,)
             }
         }
     }

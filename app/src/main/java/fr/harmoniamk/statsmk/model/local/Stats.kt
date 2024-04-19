@@ -1,10 +1,8 @@
 package fr.harmoniamk.statsmk.model.local
 
-import android.os.Parcelable
 import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.extension.*
 import fr.harmoniamk.statsmk.model.network.MKCTeam
-import kotlinx.android.parcel.Parcelize
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import java.util.Calendar

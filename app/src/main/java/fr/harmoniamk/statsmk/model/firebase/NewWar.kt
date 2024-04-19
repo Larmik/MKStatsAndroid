@@ -1,7 +1,6 @@
 package fr.harmoniamk.statsmk.model.firebase
 
 import fr.harmoniamk.statsmk.database.entities.WarEntity
-import kotlinx.android.parcel.RawValue
 import java.io.Serializable
 
 data class NewWar(
@@ -10,8 +9,8 @@ data class NewWar(
     val teamHost: String? = null,
     val teamOpponent: String? = null,
     val createdDate: String? = null,
-    var warTracks: @RawValue List<NewWarTrack>? = null,
-    var penalties:  @RawValue List<Penalty>? = null,
+    var warTracks: List<NewWarTrack>? = null,
+    var penalties: List<Penalty>? = null,
     val isOfficial: Boolean? = null
 ) : Serializable {
 

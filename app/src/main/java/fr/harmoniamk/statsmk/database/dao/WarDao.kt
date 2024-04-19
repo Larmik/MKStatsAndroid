@@ -17,11 +17,11 @@ interface WarDao {
     suspend fun clear()
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun bulkInsert(wars: List<WarEntity?>)
+    suspend fun bulkInsert(wars: List<WarEntity>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(war: WarEntity?)
+    suspend fun insert(war: WarEntity)
 
     @Delete
-    suspend fun delete(war: WarEntity?)
+    suspend fun delete(war: WarEntity)
 }

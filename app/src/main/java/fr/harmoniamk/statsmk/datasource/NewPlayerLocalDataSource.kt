@@ -45,7 +45,6 @@ class NewPlayerLocalDataSource @Inject constructor(@ApplicationContext private v
     override fun getAll(): Flow<List<MKPlayer>> = dao.getAll().map { list -> list.map { MKPlayer(it) } }
     override fun getById(id: String): Flow<MKPlayer> = dao.getById(id).map { MKPlayer(it) }
     override fun bulkInsert(players: List<MKPlayer>): Flow<Unit> = flow { emit(dao.bulkInsert(players.map { it.toEntity() })) }
-
     override fun insert(player: MKPlayer): Flow<Unit> = flow { emit(dao.insert(player.toEntity())) }
     override fun update(player: MKPlayer): Flow<Unit>  = flow { emit(dao.update(player.toEntity())) }
     override fun clear(): Flow<Unit> = flow { emit(dao.clear())}

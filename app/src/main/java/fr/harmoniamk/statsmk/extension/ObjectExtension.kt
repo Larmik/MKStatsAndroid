@@ -4,9 +4,7 @@ import android.util.Log
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.firebase.WarDispo
 import fr.harmoniamk.statsmk.model.local.MKWar
-import fr.harmoniamk.statsmk.model.network.MKCTeam
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 
@@ -42,21 +40,4 @@ fun NewWar?.withName(databaseRepository: DatabaseRepositoryInterface) = flow {
         val opponentName = databaseRepository.getNewTeam(it.teamOpponent).firstOrNull()?.team_tag
         emit(MKWar(it).apply { this.name = "$hostName - $opponentName" })
     } ?: emit(null)
-}
-
-fun MKCTeam.withFullTeamStats(
-    wars: List<MKWar>?,
-    databaseRepository: DatabaseRepositoryInterface,
-    userId: String? = null,
-    weekOnly: Boolean = false,
-    monthOnly: Boolean = false,
-) = flow {
-    Log.d("MKDebugOnly", "ObjectExtension for MKCTeam with full team stats")
-    wars
-        ?.filter { (weekOnly && it.isThisWeek) || !weekOnly }
-        ?.filter { (monthOnly && it.isThisMonth) || !monthOnly }
-        ?.withFullStats(databaseRepository, teamId = this@withFullTeamStats.team_id, userId = userId)
-        ?.first()
-        ?.takeIf { it.warStats.list.isNotEmpty() }
-        ?.let { emit(it) }
 }

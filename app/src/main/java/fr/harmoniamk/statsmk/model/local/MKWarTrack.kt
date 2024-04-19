@@ -1,6 +1,5 @@
 package fr.harmoniamk.statsmk.model.local
 
-import android.os.Parcelable
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
@@ -9,7 +8,6 @@ import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.extension.positionToPoints
 import fr.harmoniamk.statsmk.extension.sum
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
-import kotlinx.android.parcel.Parcelize
 
 data class MKWarTrack(val track: NewWarTrack?) {
 

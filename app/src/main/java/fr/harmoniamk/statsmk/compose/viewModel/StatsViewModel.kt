@@ -7,7 +7,6 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.extension.positionToPoints
 import fr.harmoniamk.statsmk.extension.withFullStats
-import fr.harmoniamk.statsmk.extension.withFullTeamStats
 import fr.harmoniamk.statsmk.model.local.MKStats
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarPosition
@@ -38,7 +37,7 @@ import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-enum class Periodics{
+enum class Periodics {
     Week, Month, All
 }
 
@@ -47,7 +46,9 @@ sealed class StatsType(val title: Int) {
     class TeamStats : StatsType(R.string.statistiques_de_l_quipe)
     class OpponentStats(
         val teamId: String,
-        val userId: String? = null) : StatsType(R.string.statistiques_de_l_quipe)
+        val userId: String? = null
+    ) : StatsType(R.string.statistiques_de_l_quipe)
+
     class MapStats(
         val userId: String? = null,
         val teamId: String? = null,
@@ -78,9 +79,8 @@ class StatsViewModel @Inject constructor(
     private val users = mutableListOf<MKPlayer>()
     private val wars = mutableListOf<MKWar>()
     private var item: Stats? = null
-    var onlyIndiv =  preferencesRepository.mkcTeam?.id == null
+    var onlyIndiv = preferencesRepository.mkcTeam?.id == null
 
-    val pieChartBackground = preferencesRepository.mainColor
 
     fun init(type: StatsType, periodic: String) {
         _sharedPeriodEnabled.value = (type as? StatsType.MapStats)?.periodic ?: periodic
@@ -91,20 +91,29 @@ class StatsViewModel @Inject constructor(
             }
             .flatMapLatest { databaseRepository.getWars() }
             .map {
-                when  {
+                when {
                     type is StatsType.IndivStats -> it.filter { war ->
                         war.hasPlayer(type.userId.split(".").firstOrNull())
                                 && (periodic == Periodics.All.name
                                 || periodic == Periodics.Week.name && war.isThisWeek
                                 || periodic == Periodics.Month.name && war.isThisMonth)
                     }
-                    type is StatsType.TeamStats -> it.filter {
-                        war -> war.hasTeam(preferencesRepository.mkcTeam, preferencesRepository.rosterOnly)
-                            && (periodic == Periodics.All.name
-                            || periodic == Periodics.Week.name && war.isThisWeek
-                            || periodic == Periodics.Month.name && war.isThisMonth)
+
+                    type is StatsType.TeamStats -> it.filter { war ->
+                        war.hasTeam(preferencesRepository.mkcTeam, preferencesRepository.rosterOnly)
+                                && (periodic == Periodics.All.name
+                                || periodic == Periodics.Week.name && war.isThisWeek
+                                || periodic == Periodics.Month.name && war.isThisMonth)
                     }
-                    (type as? StatsType.OpponentStats)?.userId != null -> it.filter { war -> war.hasTeam((type as? StatsType.OpponentStats)?.teamId) && war.hasPlayer((type as? StatsType.OpponentStats)?.userId?.split(".")?.firstOrNull()) }
+
+                    (type as? StatsType.OpponentStats)?.userId != null -> it.filter { war ->
+                        war.hasTeam(
+                            (type as? StatsType.OpponentStats)?.teamId
+                        ) && war.hasPlayer(
+                            (type as? StatsType.OpponentStats)?.userId?.split(".")?.firstOrNull()
+                        )
+                    }
+
                     type is StatsType.OpponentStats -> it.filter { war -> war.hasTeam((type as? StatsType.OpponentStats)?.teamId) }
                     else -> it
                 }
@@ -116,10 +125,21 @@ class StatsViewModel @Inject constructor(
             }
             .flatMapLatest {
                 when {
-                    type is StatsType.IndivStats -> it.withFullStats(databaseRepository, type.userId.split(".").firstOrNull())
+                    type is StatsType.IndivStats -> it.withFullStats(
+                        databaseRepository,
+                        type.userId.split(".").firstOrNull()
+                    )
+
                     type is StatsType.OpponentStats -> databaseRepository.getNewTeam(type.teamId)
+                        .flatMapLatest {
+                            wars.withFullStats(
+                                databaseRepository,
+                                teamId = it?.team_id,
+                                userId = type.userId?.split(".")?.firstOrNull()
+                            )
+                        }
                         .filterNotNull()
-                        .flatMapLatest { it.withFullTeamStats(wars, databaseRepository, type.userId?.split(".")?.firstOrNull()) }
+
                     else -> it.withFullStats(databaseRepository)
                 }
             }
@@ -136,10 +156,20 @@ class StatsViewModel @Inject constructor(
                         warTrack.track?.warPositions?.let { warPositions ->
                             val trackPositions = mutableListOf<MKWarPosition>()
                             warPositions.forEach { position ->
-                                trackPositions.add(MKWarPosition(position = position, mkcPlayer = users.singleOrNull { it.mkcId ==  position.playerId }))
+                                trackPositions.add(
+                                    MKWarPosition(
+                                        position = position,
+                                        mkcPlayer = users.singleOrNull { it.mkcId == position.playerId })
+                                )
                             }
                             trackPositions.groupBy { it.mkcPlayer }.entries.forEach { entry ->
-                                positions.add(Pair(entry.key, entry.value.map { pos -> pos.position.position.positionToPoints() }.sum()))
+                                positions.add(
+                                    Pair(
+                                        entry.key,
+                                        entry.value.map { pos -> pos.position.position.positionToPoints() }
+                                            .sum()
+                                    )
+                                )
                             }
                         }
                     }
@@ -155,12 +185,15 @@ class StatsViewModel @Inject constructor(
                     this.lowestPlayerScore = finalList.minByOrNull { it.first }
                 })
             }
-            .flatMapLatest { databaseRepository.getNewUser((type as? StatsType.OpponentStats)?.userId).zip(databaseRepository.getNewTeam((type as? StatsType.OpponentStats)?.teamId)) { user, team ->
-                _sharedSubtitle.value = when {
-                    user != null && team != null -> "${user.name} vs ${team.team_name}"
-                    else -> team?.team_name.orEmpty()
-                }
-            } }
+            .flatMapLatest {
+                databaseRepository.getNewUser((type as? StatsType.OpponentStats)?.userId)
+                    .zip(databaseRepository.getNewTeam((type as? StatsType.OpponentStats)?.teamId)) { user, team ->
+                        _sharedSubtitle.value = when {
+                            user != null && team != null -> "${user.name} vs ${team.team_name}"
+                            else -> team?.team_name.orEmpty()
+                        }
+                    }
+            }
             .launchIn(viewModelScope)
 
         warFlow
@@ -176,33 +209,73 @@ class StatsViewModel @Inject constructor(
         warFlow
             .filter { type is StatsType.MapStats }
             .map {
-                onlyIndiv = (type as StatsType.MapStats).userId != null || preferencesRepository.mkcTeam?.id == null
+                onlyIndiv =
+                    (type as StatsType.MapStats).userId != null || preferencesRepository.mkcTeam?.id == null
                 when {
-                    onlyIndiv -> wars.filter { war -> war.hasPlayer(type.userId?.split(".")?.firstOrNull()) }
-                    type.userId != null && type.teamId?.takeIf { it.isNotEmpty() } != null -> wars.filter { war -> war.hasPlayer(type.userId.split(".").firstOrNull()) && war.hasTeam(type.teamId) }
-                    type.teamId?.takeIf { it.isNotEmpty() } != null -> wars.filter { war -> war.hasTeam(type.teamId) }
-                    else -> wars.filter { war ->  war.hasTeam(preferencesRepository.mkcTeam, preferencesRepository.rosterOnly) }
+                    onlyIndiv -> wars.filter { war ->
+                        war.hasPlayer(
+                            type.userId?.split(".")?.firstOrNull()
+                        )
+                    }
+
+                    type.userId != null && type.teamId?.takeIf { it.isNotEmpty() } != null -> wars.filter { war ->
+                        war.hasPlayer(
+                            type.userId.split(".").firstOrNull()
+                        ) && war.hasTeam(type.teamId)
+                    }
+
+                    type.teamId?.takeIf { it.isNotEmpty() } != null -> wars.filter { war ->
+                        war.hasTeam(
+                            type.teamId
+                        )
+                    }
+
+                    else -> wars.filter { war ->
+                        war.hasTeam(
+                            preferencesRepository.mkcTeam,
+                            preferencesRepository.rosterOnly
+                        )
+                    }
                 }
             }
             .filter {
-                (!onlyIndiv && it.map { war -> war.hasTeam(preferencesRepository.mkcTeam, preferencesRepository.rosterOnly) }.any { it })
+                (!onlyIndiv && it.map { war ->
+                    war.hasTeam(
+                        preferencesRepository.mkcTeam,
+                        preferencesRepository.rosterOnly
+                    )
+                }.any { it })
                         || onlyIndiv
             }
-            .mapNotNull { list -> list
-                .filter {  (onlyIndiv && it.hasPlayer((type as StatsType.MapStats).userId?.split(".")?.firstOrNull())) || !onlyIndiv && it.hasTeam(preferencesRepository.mkcTeam, preferencesRepository.rosterOnly) }
-                .filter {  periodic == Periodics.All.name || (periodic == Periodics.Week.name && it.isThisWeek) || periodic == Periodics.Month.name && it.isThisMonth }
+            .mapNotNull { list ->
+                list
+                    .filter {
+                        (onlyIndiv && it.hasPlayer(
+                            (type as StatsType.MapStats).userId?.split(
+                                "."
+                            )?.firstOrNull()
+                        )) || !onlyIndiv && it.hasTeam(
+                            preferencesRepository.mkcTeam,
+                            preferencesRepository.rosterOnly
+                        )
+                    }
+                    .filter { periodic == Periodics.All.name || (periodic == Periodics.Week.name && it.isThisWeek) || periodic == Periodics.Month.name && it.isThisMonth }
             }
             .map {
                 val finalList = mutableListOf<MapDetails>()
                 it.forEach { mkWar ->
-                    mkWar.warTracks?.filter { track -> track.index == (type as StatsType.MapStats).trackIndex }?.forEach { track ->
-                        val position = track.track?.warPositions?.singleOrNull { it.playerId == (type as StatsType.MapStats).userId }?.position?.takeIf { (type as StatsType.MapStats).userId != null }
-                        finalList.add(MapDetails(
-                            war = mkWar,
-                            warTrack = MKWarTrack(track.track),
-                            position = position
-                        ))
-                    }
+                    mkWar.warTracks?.filter { track -> track.index == (type as StatsType.MapStats).trackIndex }
+                        ?.forEach { track ->
+                            val position =
+                                track.track?.warPositions?.singleOrNull { it.playerId == (type as StatsType.MapStats).userId }?.position?.takeIf { (type as StatsType.MapStats).userId != null }
+                            finalList.add(
+                                MapDetails(
+                                    war = mkWar,
+                                    warTrack = MKWarTrack(track.track),
+                                    position = position
+                                )
+                            )
+                        }
                 }
                 finalList
             }
@@ -210,8 +283,18 @@ class StatsViewModel @Inject constructor(
             .onEach {
                 val mapDetailsList = mutableListOf<MapDetails>()
                 mapDetailsList.addAll(it
-                    .filter { !onlyIndiv || (onlyIndiv && it.war.war?.warTracks?.any { MKWarTrack(it).hasPlayer((type as StatsType.MapStats).userId?.split(".")?.firstOrNull()) }.isTrue) }
-                    .filter { (type as StatsType.MapStats).teamId?.takeIf { it.isNotEmpty() } == null || it.war.hasTeam(type.teamId) }
+                    .filter {
+                        (onlyIndiv && it.war.war?.warTracks?.any {
+                            MKWarTrack(it).hasPlayer(
+                                (type as StatsType.MapStats).userId?.split(".")?.firstOrNull()
+                            )
+                        }.isTrue) || !onlyIndiv
+                    }
+                    .filter {
+                        (type as StatsType.MapStats).teamId?.takeIf { it.isNotEmpty() } == null || it.war.hasTeam(
+                            type.teamId
+                        )
+                    }
 
                 )
                 _sharedStats.value = MapStats(
@@ -220,14 +303,17 @@ class StatsViewModel @Inject constructor(
                     userId = (type as StatsType.MapStats).userId?.split(".")?.firstOrNull()
                 )
             }
-            .flatMapLatest { databaseRepository.getNewUser((type as? StatsType.MapStats)?.userId).zip(databaseRepository.getNewTeam((type as? StatsType.MapStats)?.teamId)) { user, team ->
-                _sharedSubtitle.value = when {
-                    user != null && team != null -> "${user.name} vs ${team.team_name}"
-                    user != null  -> user.name
-                    team != null -> team.team_name
-                    else -> null
-                }
-            } }
+            .flatMapLatest {
+                databaseRepository.getNewUser((type as? StatsType.MapStats)?.userId)
+                    .zip(databaseRepository.getNewTeam((type as? StatsType.MapStats)?.teamId)) { user, team ->
+                        _sharedSubtitle.value = when {
+                            user != null && team != null -> "${user.name} vs ${team.team_name}"
+                            user != null -> user.name
+                            team != null -> team.team_name
+                            else -> null
+                        }
+                    }
+            }
             .launchIn(viewModelScope)
     }
 
@@ -236,6 +322,7 @@ class StatsViewModel @Inject constructor(
             _sharedWarDetailsClick.emit(Unit)
         }
     }
+
     fun onDetailsTrackClick() {
         viewModelScope.launch {
             _sharedTrackDetailsClick.emit(Unit)

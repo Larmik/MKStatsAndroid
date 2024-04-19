@@ -1,10 +1,8 @@
 package fr.harmoniamk.statsmk.model.local
 
-import android.os.Parcelable
 import fr.harmoniamk.statsmk.extension.*
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.network.MKCFullTeam
-import kotlinx.android.parcel.Parcelize
 import java.io.Serializable
 import java.util.*
 

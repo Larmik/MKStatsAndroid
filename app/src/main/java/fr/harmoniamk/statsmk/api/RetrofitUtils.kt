@@ -11,7 +11,7 @@ object RetrofitUtils {
 
     fun <T> createRetrofit(apiClass: Class<T>, url: String): T {
         val builder = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
-        val client = OkHttpClient.Builder().addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
+        val client = OkHttpClient.Builder().addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BASIC))
         return Retrofit.Builder()
             .baseUrl(url)
             .addConverterFactory(MoshiConverterFactory.create(builder))

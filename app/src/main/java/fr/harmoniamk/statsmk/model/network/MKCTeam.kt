@@ -1,6 +1,5 @@
 package fr.harmoniamk.statsmk.model.network
 
-import android.os.Parcelable
 import androidx.annotation.Keep
 import com.squareup.moshi.JsonClass
 import fr.harmoniamk.statsmk.database.entities.MKCTeamEntity
@@ -8,7 +7,6 @@ import fr.harmoniamk.statsmk.extension.displayedString
 import fr.harmoniamk.statsmk.extension.formatToDate
 import fr.harmoniamk.statsmk.extension.parseRoster
 import fr.harmoniamk.statsmk.model.firebase.Team
-import kotlinx.android.parcel.Parcelize
 
 @Keep
 @JsonClass(generateAdapter = true)

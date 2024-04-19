@@ -1,13 +1,11 @@
 package fr.harmoniamk.statsmk.model.network
 
-import android.os.Parcelable
 import androidx.annotation.Keep
 import com.squareup.moshi.JsonClass
 import fr.harmoniamk.statsmk.database.entities.MKCLightPlayerEntity
 import fr.harmoniamk.statsmk.extension.displayedString
 import fr.harmoniamk.statsmk.extension.formatToDate
 import fr.harmoniamk.statsmk.model.firebase.User
-import kotlinx.android.parcel.Parcelize
 
 @Keep
 @JsonClass(generateAdapter = true)
