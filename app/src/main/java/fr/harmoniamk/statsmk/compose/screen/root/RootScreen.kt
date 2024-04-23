@@ -39,7 +39,6 @@ import fr.harmoniamk.statsmk.compose.screen.WarTrackListScreen
 import fr.harmoniamk.statsmk.compose.screen.WarTrackResultScreen
 import fr.harmoniamk.statsmk.compose.ui.MKDialog
 import fr.harmoniamk.statsmk.compose.ui.MKDialogState
-import fr.harmoniamk.statsmk.compose.viewModel.CoffeePurchaseState
 import fr.harmoniamk.statsmk.compose.viewModel.StatsRankingState
 import fr.harmoniamk.statsmk.compose.viewModel.StatsType
 import fr.harmoniamk.statsmk.extension.getActivity

@@ -4,13 +4,13 @@ import fr.harmoniamk.statsmk.model.firebase.Coffee
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.firebase.Penalty
 import fr.harmoniamk.statsmk.model.firebase.Shock
+import fr.harmoniamk.statsmk.model.firebase.Tag
 import fr.harmoniamk.statsmk.model.firebase.Team
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.firebase.WarDispo
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.mock.mock
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
-import fr.harmoniamk.statsmk.usecase.Tag
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 

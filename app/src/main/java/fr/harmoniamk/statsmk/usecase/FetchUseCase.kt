@@ -5,6 +5,7 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import fr.harmoniamk.statsmk.extension.withName
+import fr.harmoniamk.statsmk.model.firebase.Tag
 import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.network.MKCFullPlayer
@@ -30,7 +31,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.zip
 import javax.inject.Inject
 import javax.inject.Singleton
-data class Tag(val tag: String, val teamId: String)
+
 
 interface FetchUseCaseInterface {
     fun fetchPlayer(mkcId: String? = null): Flow<NetworkResponse<MKCFullPlayer>>

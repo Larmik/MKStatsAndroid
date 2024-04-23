@@ -3,10 +3,10 @@ package fr.harmoniamk.statsmk.compose.viewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.harmoniamk.statsmk.compose.ui.CurrentWar
 import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.extension.formatToDate
 import fr.harmoniamk.statsmk.extension.safeSubList
+import fr.harmoniamk.statsmk.model.firebase.CurrentWar
 import fr.harmoniamk.statsmk.model.firebase.WarDispo
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.network.MKCFullTeam

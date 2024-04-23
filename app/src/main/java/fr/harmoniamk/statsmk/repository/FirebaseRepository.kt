@@ -13,7 +13,6 @@ import dagger.hilt.components.SingletonComponent
 import fr.harmoniamk.statsmk.extension.*
 import fr.harmoniamk.statsmk.model.firebase.*
 import fr.harmoniamk.statsmk.model.local.MKWar
-import fr.harmoniamk.statsmk.usecase.Tag
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*

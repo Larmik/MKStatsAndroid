@@ -11,19 +11,13 @@ import androidx.compose.material.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.viewModel.ColorsViewModel
-import fr.harmoniamk.statsmk.extension.fromHex
-import fr.harmoniamk.statsmk.model.firebase.NewWar
-import fr.harmoniamk.statsmk.model.local.MKWar
-import fr.harmoniamk.statsmk.model.mock.mock
+import fr.harmoniamk.statsmk.model.firebase.CurrentWar
 
-data class CurrentWar(val teamName: String, val war: MKWar)
 
 @Composable
 fun MKCurrentWarCell(current: CurrentWar, onClick: (String) -> Unit) {

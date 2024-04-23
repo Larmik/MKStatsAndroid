@@ -55,7 +55,7 @@ fun StatsRankingScreen(
     val indiv = viewModel.sharedIndivEnabled.collectAsState()
     val newUserId = viewModel.sharedUserId.collectAsState()
     val newTeamId = viewModel.sharedTeamId.collectAsState()
-    val name = viewModel.sharedUserName.collectAsState()
+    val subtitle = viewModel.sharedSubtitle.collectAsState()
     val bottomSheetState =
         rememberModalBottomSheetState(
             initialValue = ModalBottomSheetValue.Hidden,
@@ -85,7 +85,7 @@ fun StatsRankingScreen(
     }
 
     MKBaseScreen(title = state.title,
-        subTitle = name.value,
+        subTitle = subtitle.value,
         state = bottomSheetState,
         sheetContent = {
             MKBottomSheet(
@@ -94,7 +94,7 @@ fun StatsRankingScreen(
                 onDismiss = viewModel::dismissBottomSheet,
                 onEditPosition = {},
                 onEditTrack = {},
-                onSorted = { viewModel.onSorted(state, it, periodic) }
+                onSorted = { viewModel.onSorted(state, it) }
             )
         }) {
         state.takeIf { it !is StatsRankingState.PlayerRankingState }?.let {

@@ -8,6 +8,7 @@
         android:roundIcon="@mipmap/appicon_round"
         android:icon="@mipmap/appicon"
         android:label="${appLabel}"
+        android:hardwareAccelerated="true"
         android:supportsRtl="true"
         android:name=".application.MainApplication"
         android:theme="@style/SplashScreen"
