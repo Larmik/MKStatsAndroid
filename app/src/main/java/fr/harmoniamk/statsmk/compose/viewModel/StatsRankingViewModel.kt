@@ -242,7 +242,7 @@ class StatsRankingViewModel @AssistedInject constructor(
                                     )
                                 ),
                                 userId = finalUserId.takeIf { indivEnabled })
-                        }
+                        }.filter { vm -> vm.stats.warStats.warsPlayed > 1 }
                 }
 
                 is StatsRankingState.MapsRankingState -> {
