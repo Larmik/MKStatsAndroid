@@ -188,7 +188,7 @@ fun MKBottomSheet(
                     font = R.font.montserrat_bold
                 )
 
-                MKText(text = "Fond")
+                MKText(text = stringResource(R.string.fond))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     MKText(text = "#", fontSize = 18, font = R.font.montserrat_bold)
                     MKTextField(

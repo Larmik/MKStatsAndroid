@@ -11,7 +11,7 @@
     <string name="can" translatable="false">Can !</string>
     <string name="compose_link" translatable="false">https://developer.android.com/develop/ui/compose?hl=fr</string>
     <string name="leader" translatable="false"><![CDATA[Encore <b>%1$s café</b> pour passer au niveau suivant.]]></string>
-    <string name="mario_kart_stats" translatable="false">Mario Kart Stats</string>
+    <string name="mario_kart_stats" translatable="false">Stats MK8DX</string>
     <string name="line_up" translatable="false">Line-up :</string>
     <string name="made_with_by_larii" translatable="false">Made with ❤️ by Larii</string>
     <string name="fb_auth_link" translatable="false">https://firebase.google.com/docs/auth</string>
