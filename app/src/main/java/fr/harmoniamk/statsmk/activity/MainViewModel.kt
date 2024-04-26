@@ -37,6 +37,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.shareIn
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 @FlowPreview
@@ -129,7 +130,7 @@ class MainViewModel @Inject constructor(
                     .flatMapLatest { fetchUseCase.fetchWars() }
                     .onEach {
                         _sharedDialogValue.value = null
-                        preferencesRepository.lastUpdate = SimpleDateFormat("dd/MM/yyyy HH:mm").format(
+                        preferencesRepository.lastUpdate = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(
                             Date()
                         )
                         _sharedWelcomeScreen.emit(WelcomeScreen.Home)

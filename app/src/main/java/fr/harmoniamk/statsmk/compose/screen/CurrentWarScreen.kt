@@ -34,8 +34,6 @@ import fr.harmoniamk.statsmk.compose.ui.MKShockView
 import fr.harmoniamk.statsmk.compose.ui.MKText
 import fr.harmoniamk.statsmk.compose.ui.MKTrackItem
 import fr.harmoniamk.statsmk.compose.viewModel.CurrentWarViewModel
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.FlowPreview
 
 @Composable
 @OptIn(ExperimentalMaterialApi::class)
@@ -82,7 +80,9 @@ fun CurrentWarScreen(
     }
     BackHandler { onBack() }
     dialogState.value?.let { MKDialog(state = it) }
-    MKBaseScreen(title = war.value?.name ?: "", subTitle = war.value?.displayedState,
+    MKBaseScreen(title = war.value?.name ?: "", subTitle =war.value?.let {
+        if (it.isOver) stringResource(R.string.war_over) else "${stringResource(R.string.war_en_cours)} (${war.value?.trackPlayed}/12)"
+    },
         state = bottomSheetState,
         sheetContent = {
             MKBottomSheet(
@@ -134,7 +134,6 @@ fun CurrentWarScreen(
     }
 }
 
-@OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 @Preview
 @Composable
 fun CurrentWarScreenPreview() {

@@ -2,14 +2,11 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="mario">#F50114</color>
-    <color name="luigi">#41C05A</color>
     <color name="harmonia_clear">#B0E0E6</color>
     <color name="logo_hr_blue">#89E2D8</color>
     <color name="boo">#BB95A4AE</color>
     <color name="hint">#495057</color>
     <color name="harmonia_dark">#051C3F</color>
-    <color name="harmonia_dark_alphaed">#BB051C3F</color>
     <color name="white_alphaed">#BBFFFFFF</color>
     <color name="transparent_white">#88FFFFFF</color>
     <color name="transparent">#00FFFFFF</color>
@@ -25,9 +22,6 @@
     <color name="pos_11">#DC6601</color>
     <color name="pos_12">#D24E01</color>
     <color name="win">#008000</color>
-    <color name="win_alphaed">#aa9cffa1</color>
     <color name="lose">#ff000a</color>
-    <color name="lose_alphaed">#aaff8282</color>
     <color name="text_color">#FFF</color>
-    <color name="green">#008000</color>
 </resources>

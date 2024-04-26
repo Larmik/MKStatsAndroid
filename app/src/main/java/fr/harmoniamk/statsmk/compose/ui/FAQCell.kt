@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -38,7 +39,7 @@ import fr.harmoniamk.statsmk.compose.viewModel.ColorsViewModel
 import fr.harmoniamk.statsmk.extension.MKHtml.fromHtml
 
 
-data class FAQ(val title: String, val message: String)
+data class FAQ(val title: Int, val message: Int)
 
 @Composable
 fun FAQCell(faq: FAQ) {
@@ -77,7 +78,7 @@ fun FAQCell(faq: FAQ) {
                 Modifier
                     .fillMaxWidth()
                     .clickable { isExpanded.value = !isExpanded.value }, horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                MKText(text = faq.title, fontSize = 16)
+                MKText(text = stringResource(faq.title), fontSize = 16)
                 Image(painterResource(R.drawable.arrowdown), contentDescription = null, modifier = Modifier
                     .size(25.dp)
                     .rotate(rotation.value), colorFilter = ColorFilter.tint(colorsViewModel.mainTextColor))
@@ -87,7 +88,7 @@ fun FAQCell(faq: FAQ) {
                 enter = expandTransition,
                 exit = collapseTransition
             ) {
-                HtmlText(html = faq.message, modifier = Modifier.padding(10.dp))
+                HtmlText(html = stringResource(faq.message), modifier = Modifier.padding(10.dp))
             }
         }
     }

@@ -43,7 +43,7 @@ interface AuthenticationRepositoryModule {
 
 @FlowPreview
 @ExperimentalCoroutinesApi
-class AuthenticationRepository @Inject constructor(private val databaseRepository: DatabaseRepositoryInterface, private val preferencesRepository: PreferencesRepositoryInterface) : AuthenticationRepositoryInterface {
+class AuthenticationRepository @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface) : AuthenticationRepositoryInterface {
 
     private val auth: FirebaseAuth
         get() = FirebaseAuth.getInstance()

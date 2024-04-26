@@ -250,7 +250,7 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
         ) {
             StatsScreen(
                 type = StatsType.IndivStats(userId = it.arguments?.getString("id").orEmpty()),
-                onWarDetailsClick = { type, _ -> navController.navigate("Home/War/AllWars/Player/${(type as? StatsType.IndivStats)?.userId}") },
+                onWarDetailsClick = { type, periodic -> navController.navigate("Home/War/AllWars/Player/${(type as? StatsType.IndivStats)?.userId}/$periodic") },
                 onTrackDetailsClick = { userId, teamId, periodic ->
                     when {
                         userId?.takeIf { it.isNotEmpty() } != null -> navController.navigate("Home/Stats/Maps/Ranking/User/$userId/Periodic/$periodic")
@@ -279,7 +279,7 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
         composable(route = "Home/Stats/Team") {
             StatsScreen(
                 type = StatsType.TeamStats(),
-                onWarDetailsClick = { _, _ -> navController.navigate("Home/War/AllWars") },
+                onWarDetailsClick = { _, periodic -> navController.navigate("Home/War/AllWars/$periodic") },
                 goToWarDetails = { navController.navigate("Home/War/$it") },
                 goToOpponentStats = { teamId, userId ->
                     when {
@@ -314,7 +314,7 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
                 type = StatsType.OpponentStats(
                     teamId = it.arguments?.getString("teamId").orEmpty()
                 ),
-                onWarDetailsClick = { type, _ -> navController.navigate("Home/War/AllWars/Team/${(type as? StatsType.OpponentStats)?.teamId}") },
+                onWarDetailsClick = { type, periodic -> navController.navigate("Home/War/AllWars/Team/${(type as? StatsType.OpponentStats)?.teamId}/$periodic") },
                 goToWarDetails = { navController.navigate("Home/War/$it") },
                 goToOpponentStats = { teamId, userId ->
                     when {
@@ -351,7 +351,7 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
                     teamId = it.arguments?.getString("teamId").orEmpty(),
                     userId = it.arguments?.getString("userId").orEmpty(),
                 ),
-                onWarDetailsClick = { type, _ -> navController.navigate("Home/War/AllWars/Team/${(type as? StatsType.OpponentStats)?.teamId}/${(type as? StatsType.OpponentStats)?.userId}") },
+                onWarDetailsClick = { type, periodic -> navController.navigate("Home/War/AllWars/Team/${(type as? StatsType.OpponentStats)?.teamId}/${(type as? StatsType.OpponentStats)?.userId}/$periodic") },
                 goToWarDetails = { navController.navigate("Home/War/$it") },
                 goToOpponentStats = { teamId, userId ->
                     when {
@@ -442,9 +442,9 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
                 userId = it.arguments?.getString("userId").orEmpty(),
                 periodic = it.arguments?.getString("periodic").orEmpty()
             ),
-                onWarDetailsClick = { type, _ ->
+                onWarDetailsClick = { type, periodic ->
                     (type as? StatsType.MapStats)?.userId?.let {
-                        navController.navigate("Home/Stats/Maps/${type.trackIndex}/User/${type.userId}/Details")
+                        navController.navigate("Home/Stats/Maps/${type.trackIndex}/User/${type.userId}/periodic/$periodic/Details")
                     }
                 },
                 goToWarDetails = { navController.navigate("Home/War/$it") },
@@ -486,13 +486,13 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
                 teamId = it.arguments?.getString("teamId").orEmpty(),
                 periodic = it.arguments?.getString("periodic").orEmpty()
             ),
-                onWarDetailsClick = { type, _ ->
+                onWarDetailsClick = { type, periodic ->
                     (type as? StatsType.MapStats)?.let {
                         when {
-                            !it.userId.isNullOrEmpty() && !it.teamId.isNullOrEmpty() -> navController.navigate("Home/Stats/Maps/${type.trackIndex}/User/${type.userId}/Team/${type.teamId}/Details")
-                            !it.userId.isNullOrEmpty()  -> navController.navigate("Home/Stats/Maps/${type.trackIndex}/User/${type.userId}/Details")
-                            !it.teamId.isNullOrEmpty() -> navController.navigate("Home/Stats/Maps/${type.trackIndex}/Team/${type.teamId}/Details")
-                            else -> navController.navigate("Home/Stats/Maps/${type.trackIndex}/Details")
+                            !it.userId.isNullOrEmpty() && !it.teamId.isNullOrEmpty() -> navController.navigate("Home/Stats/Maps/${type.trackIndex}/User/${type.userId}/Team/${type.teamId}/periodic/$periodic/Details")
+                            !it.userId.isNullOrEmpty()  -> navController.navigate("Home/Stats/Maps/${type.trackIndex}/User/${type.userId}/periodic/$periodic/Details")
+                            !it.teamId.isNullOrEmpty() -> navController.navigate("Home/Stats/Maps/${type.trackIndex}/Team/${type.teamId}/periodic/$periodic/Details")
+                            else -> navController.navigate("Home/Stats/Maps/${type.trackIndex}/periodic/$periodic/Details")
                         }
                     }
                 },
@@ -534,13 +534,13 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
                     teamId = it.arguments?.getString("teamId").orEmpty(),
                     periodic = it.arguments?.getString("periodic").orEmpty()
                 ),
-                onWarDetailsClick = { type, _ ->
+                onWarDetailsClick = { type, periodic ->
                     (type as? StatsType.MapStats)?.let {
                         when {
-                            !it.teamId.isNullOrEmpty() && !it.userId.isNullOrEmpty() -> navController.navigate("Home/Stats/Maps/${it.trackIndex}/User/${it.userId}/Team/${it.teamId}/Details")
-                            !it.userId.isNullOrEmpty() -> navController.navigate("Home/Stats/Maps/${it.trackIndex}/User/${it.userId}/Details")
-                            !it.teamId.isNullOrEmpty() -> navController.navigate("Home/Stats/Maps/${it.trackIndex}/Team/${it.teamId}/Details")
-                            else -> navController.navigate("Home/Stats/Maps/${it.trackIndex}/Details")
+                            !it.teamId.isNullOrEmpty() && !it.userId.isNullOrEmpty() -> navController.navigate("Home/Stats/Maps/${it.trackIndex}/User/${it.userId}/Team/${it.teamId}/periodic/$periodic/Details")
+                            !it.userId.isNullOrEmpty() -> navController.navigate("Home/Stats/Maps/${it.trackIndex}/User/${it.userId}/periodic/$periodic/Details")
+                            !it.teamId.isNullOrEmpty() -> navController.navigate("Home/Stats/Maps/${it.trackIndex}/Team/${it.teamId}/periodic/$periodic/Details")
+                            else -> navController.navigate("Home/Stats/Maps/${it.trackIndex}/periodic/$periodic/Details")
                         }
                     }
                 },
@@ -567,36 +567,40 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
                 })
         }
         composable(
-            route = "Home/Stats/Maps/{trackId}/User/{userId}/Details",
+            route = "Home/Stats/Maps/{trackId}/User/{userId}/periodic/{periodic}/Details",
             arguments = listOf(
                 navArgument("trackId") { type = NavType.IntType },
                 navArgument("userId") { type = NavType.StringType },
+                navArgument("periodic") { type = NavType.StringType}
             )
         ) {
             WarTrackListScreen(
                 trackIndex = it.arguments?.getInt("trackId") ?: 0,
-                userId = it.arguments?.getString("userId")
+                userId = it.arguments?.getString("userId"),
+                periodic = it.arguments?.getString("periodic") ?: "All"
             )
 
         }
         composable(
-            route = "Home/Stats/Maps/{trackId}/Team/{teamId}/Details",
+            route = "Home/Stats/Maps/{trackId}/Team/{teamId}/periodic/{periodic}/Details",
             arguments = listOf(
                 navArgument("trackId") { type = NavType.IntType },
                 navArgument("teamId") {
                     type = NavType.StringType
                     nullable = true
                 },
+                navArgument("periodic") { type = NavType.StringType}
             )
         ) {
             WarTrackListScreen(
                 trackIndex = it.arguments?.getInt("trackId") ?: 0,
-                teamId = it.arguments?.getString("teamId")
+                teamId = it.arguments?.getString("teamId"),
+                periodic = it.arguments?.getString("periodic") ?: "All"
             )
 
         }
         composable(
-            route = "Home/Stats/Maps/{trackId}/User/{userId}/Team/{teamId}/Details",
+            route = "Home/Stats/Maps/{trackId}/User/{userId}/Team/{teamId}/periodic/{periodic}/Details",
             arguments = listOf(
                 navArgument("trackId") { type = NavType.IntType },
                 navArgument("teamId") {
@@ -607,81 +611,87 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
                     type = NavType.StringType
                     nullable = true
                 },
+
+                navArgument("periodic") { type = NavType.StringType}
             )
         ) {
             WarTrackListScreen(
                 trackIndex = it.arguments?.getInt("trackId") ?: 0,
                 teamId = it.arguments?.getString("teamId"),
                 userId = it.arguments?.getString("userId"),
+                periodic = it.arguments?.getString("periodic") ?: "All"
             )
         }
 
         composable(
-            route = "Home/Stats/Maps/{trackId}/Details",
+            route = "Home/Stats/Maps/{trackId}/periodic/{periodic}/Details",
             arguments = listOf(
                 navArgument("trackId") { type = NavType.IntType },
+                navArgument("periodic") { type = NavType.StringType}
             )
         ) {
             WarTrackListScreen(
                 trackIndex = it.arguments?.getInt("trackId") ?: 0,
+                periodic = it.arguments?.getString("periodic") ?: "All"
             )
 
         }
 
         /** War list navigation **/
         composable(
-            route = "Home/War/AllWars"
-        ) {
-            WarListScreen() { navController.navigate("Home/War/$it") }
-        }
-        composable(
-            route = "Home/War/AllWars/Team/{teamId}",
+            route = "Home/War/AllWars/{periodic}",
             arguments = listOf(
-                navArgument("teamId") {
-                    type = NavType.StringType
-                    nullable = true
-                },
+                navArgument("periodic") { type = NavType.StringType }
             )
         ) {
-            WarListScreen(
-                teamId = it.arguments?.getString("teamId")
-            ) { navController.navigate("Home/War/$it") }
+            WarListScreen(periodic = it.arguments?.getString("periodic") ?: "All") { navController.navigate("Home/War/$it") }
         }
-
         composable(
-            route = "Home/War/AllWars/Team/{teamId}/{userId}",
+            route = "Home/War/AllWars/Team/{teamId}/{periodic}",
             arguments = listOf(
                 navArgument("teamId") {
                     type = NavType.StringType
                     nullable = true
                 },
-                navArgument("userId") { type = NavType.StringType },
+                navArgument("periodic") { type = NavType.StringType }
+
             )
         ) {
             WarListScreen(
                 teamId = it.arguments?.getString("teamId"),
-                userId = it.arguments?.getString("userId")
+                periodic = it.arguments?.getString("periodic") ?: "All"
+            ) { navController.navigate("Home/War/$it") }
+        }
+
+        composable(
+            route = "Home/War/AllWars/Team/{teamId}/{userId}/{periodic}",
+            arguments = listOf(
+                navArgument("teamId") {
+                    type = NavType.StringType
+                    nullable = true
+                },
+                navArgument("userId") { type = NavType.StringType },
+                navArgument("periodic") { type = NavType.StringType }
+
+            )
+        ) {
+            WarListScreen(
+                teamId = it.arguments?.getString("teamId"),
+                userId = it.arguments?.getString("userId"),
+                periodic = it.arguments?.getString("periodic") ?: "All"
             )
             { navController.navigate("Home/War/$it") }
         }
         composable(
-            route = "Home/War/AllWars/Player/{userId}",
+            route = "Home/War/AllWars/Player/{userId}/{periodic}",
             arguments = listOf(
                 navArgument("userId") { type = NavType.StringType },
+                navArgument("periodic") { type = NavType.StringType },
             )
         ) {
             WarListScreen(
-                userId = it.arguments?.getString("userId")
-            ) { navController.navigate("Home/War/$it") }
-        }
-        composable(
-            route = "Home/War/AllWars/Periodic/{isWeek}",
-            arguments = listOf(
-                navArgument("isWeek") { type = NavType.BoolType },
-            )
-        ) {
-            WarListScreen(
-                isWeek = it.arguments?.getBoolean("isWeek")
+                userId = it.arguments?.getString("userId"),
+                periodic = it.arguments?.getString("periodic") ?: "All"
             ) { navController.navigate("Home/War/$it") }
         }
     }

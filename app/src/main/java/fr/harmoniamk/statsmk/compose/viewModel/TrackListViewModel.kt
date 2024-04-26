@@ -15,7 +15,6 @@ import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
-import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -29,7 +28,6 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import java.util.Locale
 
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 class TrackListViewModel @AssistedInject constructor(@Assisted private val editing: Boolean, private val preferencesRepository: PreferencesRepositoryInterface, private val firebaseRepository: FirebaseRepositoryInterface) : ViewModel() {
@@ -61,7 +59,7 @@ class TrackListViewModel @AssistedInject constructor(@Assisted private val editi
         fun create(editing: Boolean): TrackListViewModel
     }
 
-    private val _sharedSearchedItems = MutableStateFlow(Maps.values().toList())
+    private val _sharedSearchedItems = MutableStateFlow(Maps.entries.toList())
     private val _sharedQuit = MutableSharedFlow<Unit>()
     private val _sharedCurrentWar = MutableStateFlow<NewWar?>(null)
 
@@ -74,11 +72,11 @@ class TrackListViewModel @AssistedInject constructor(@Assisted private val editi
     }
 
     fun search(searched: String) {
-        _sharedSearchedItems.value = Maps.values().filter {
-            it.name.toLowerCase(Locale.ROOT)
-                .contains(searched.toLowerCase(Locale.ROOT)) || MainApplication.instance?.applicationContext?.getString(
+        _sharedSearchedItems.value = Maps.entries.filter {
+            it.name.lowercase()
+                .contains(searched.lowercase()) || MainApplication.instance?.applicationContext?.getString(
                 it.label
-            )?.toLowerCase(Locale.ROOT)?.contains(searched.toLowerCase(Locale.ROOT)) ?: true
+            )?.lowercase()?.contains(searched.lowercase()) ?: true
         }
     }
 

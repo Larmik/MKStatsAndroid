@@ -15,6 +15,6 @@ data class PlayerRankingItemViewModel(val user: MKPlayer, override val stats: St
         }
     val averageLabel: String
         get() = stats.averagePoints.toString()
-    val picture: String?
+    val picture: String
         get() = user.flag
 }

@@ -17,8 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -26,7 +24,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.viewModel.ColorsViewModel
-import fr.harmoniamk.statsmk.extension.fromHex
 import fr.harmoniamk.statsmk.extension.positionColor
 import fr.harmoniamk.statsmk.fragment.stats.playerRanking.PlayerRankingItemViewModel
 import fr.harmoniamk.statsmk.model.local.MKWarPosition
@@ -64,9 +61,9 @@ fun MKPlayerItem(
             .fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             when  {
 
-                playerRanking?.user?.flag != null ->     AsyncImage(model = playerRanking?.user.flag, contentDescription = null, modifier = Modifier.size(40.dp).clip(
+                playerRanking?.user?.flag != null ->     AsyncImage(model = playerRanking.user.flag, contentDescription = null, modifier = Modifier.size(40.dp).clip(
                         CircleShape))
-                player?.picture != null -> AsyncImage(model = player?.picture, contentDescription = null, modifier = Modifier.size(40.dp).clip(
+                player?.picture != null -> AsyncImage(model = player.picture, contentDescription = null, modifier = Modifier.size(40.dp).clip(
                     CircleShape))
                 else -> Image(painter = painterResource(R.drawable.mk_stats_logo_picture), contentDescription = null, modifier = Modifier.size(40.dp).clip(
                     CircleShape))

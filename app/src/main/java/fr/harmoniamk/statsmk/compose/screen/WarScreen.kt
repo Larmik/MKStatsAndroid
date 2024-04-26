@@ -18,6 +18,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -63,13 +64,23 @@ fun WarScreen(
     MKBaseScreen(title = R.string.team_war, subTitle = team.value?.team_name) {
         when  {
             isLoading.value -> {
-                Column(Modifier.fillMaxWidth().padding(vertical = 10.dp).verticalScroll(rememberScrollState()), horizontalAlignment = Alignment.CenterHorizontally) {
-                   MKProgress()
-                    MKText(text = "Récupération des derniers résultats...", fontSize = 12)
+                Column(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 10.dp)
+                        .verticalScroll(rememberScrollState()), horizontalAlignment = Alignment.CenterHorizontally) {
+                    MKProgress()
+                    MKText(text = stringResource(R.string.fetch_last_results), fontSize = 12)
                 }
             }
             else -> {
-                MKSegmentedButtons(buttons = newButtons.value, height = 70)
+                newButtons.value.takeIf{ it.isNotEmpty() }?.let {
+                    MKText(text = stringResource(R.string.cr_er_une_war),
+                        fontSize = 16,
+                        modifier = Modifier.padding(top = 10.dp),
+                        font = R.font.montserrat_bold)
+                    MKSegmentedButtons(buttons = it)
+                }
                 when (currentWars.value.isEmpty()) {
                     true -> {}
                     else -> {
@@ -90,7 +101,10 @@ fun WarScreen(
                             modifier = Modifier.padding(top = 10.dp),
                             font = R.font.montserrat_bold
                         )
-                        LazyColumn(Modifier.padding(10.dp).padding(bottom = 60.dp)) {
+                        LazyColumn(
+                            Modifier
+                                .padding(10.dp)
+                                .padding(bottom = 60.dp)) {
                             lastWars.value?.forEach { (teamName, wars) ->
                                 item {
                                     Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier

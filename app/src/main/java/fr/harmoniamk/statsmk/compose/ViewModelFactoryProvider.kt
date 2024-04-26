@@ -12,6 +12,8 @@ import fr.harmoniamk.statsmk.compose.viewModel.TeamProfileViewModel
 import fr.harmoniamk.statsmk.compose.viewModel.TrackDetailsViewModel
 import fr.harmoniamk.statsmk.compose.viewModel.TrackListViewModel
 import fr.harmoniamk.statsmk.compose.viewModel.WarDetailsViewModel
+import fr.harmoniamk.statsmk.compose.viewModel.WarListViewModel
+import fr.harmoniamk.statsmk.compose.viewModel.WarTrackListViewModel
 import fr.harmoniamk.statsmk.compose.viewModel.WarTrackResultViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -31,4 +33,6 @@ interface ViewModelFactoryProvider {
     val playerProfileViewModel: PlayerProfileViewModel.Factory
     val teamProfileViewModel: TeamProfileViewModel.Factory
     val currentWarViewModel: CurrentWarViewModel.Factory
+    val warTrackListViewModel: WarTrackListViewModel.Factory
+    val warListViewModel: WarListViewModel.Factory
 }

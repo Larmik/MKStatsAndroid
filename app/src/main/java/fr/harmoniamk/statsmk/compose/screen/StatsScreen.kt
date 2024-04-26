@@ -39,7 +39,7 @@ import fr.harmoniamk.statsmk.model.local.Stats
 fun StatsScreen(
     viewModel: StatsViewModel = hiltViewModel(),
     type: StatsType,
-    onWarDetailsClick: (StatsType, Boolean?) -> Unit,
+    onWarDetailsClick: (StatsType, String) -> Unit,
     onTrackDetailsClick: (String?, String?, String?) -> Unit,
     goToWarDetails: (String?) -> Unit,
     goToOpponentStats: (String?, String?) -> Unit,
@@ -57,7 +57,7 @@ fun StatsScreen(
 
     LaunchedEffect(Unit) {
         viewModel.sharedWarDetailsClick.collect {
-            onWarDetailsClick(type, period.value == Periodics.Week.name)
+            onWarDetailsClick(type, period.value)
         }
     }
     LaunchedEffect(Unit) {
@@ -69,7 +69,7 @@ fun StatsScreen(
     }
     MKBaseScreen(title = type.title, subTitle = subtitle.value) {
         (type as? StatsType.MapStats)?.trackIndex?.let {
-            MKTrackItem(map = Maps.values().getOrNull(it))
+            MKTrackItem(map = Maps.entries.getOrNull(it))
         }
         if (type is StatsType.IndivStats || type is StatsType.TeamStats) {
             MKSegmentedSelector(buttons = listOf(

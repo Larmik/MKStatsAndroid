@@ -115,6 +115,6 @@ data class MKCFullTeam(
     val rosterList =
         (((rosters as? Map<*, *>)?.get("150cc") as? Map<*, *>)?.get("members") as? List<Map<*, *>>).parseRoster()
     val createdDate = founding_date.date.split(".").first().formatToDate("yyyy-MM-dd HH:mm:ss")
-        ?.displayedString("dd MMMM yyyy")
+
 
 }

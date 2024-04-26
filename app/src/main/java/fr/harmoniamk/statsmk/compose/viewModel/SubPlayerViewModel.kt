@@ -14,9 +14,17 @@ import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import java.util.*
 import javax.inject.Inject
 
 @FlowPreview
@@ -142,8 +150,8 @@ class SubPlayerViewModel @Inject constructor(
                 _sharedAllies.value = allyList
             }
             else -> {
-                _sharedPlayers.value = playersList.filter { it.user?.name?.toLowerCase(Locale.ROOT)?.contains(searched.toLowerCase(Locale.ROOT)).isTrue }
-                _sharedAllies.value = allyList.filter { it.user?.name?.toLowerCase(Locale.ROOT)?.contains(searched.toLowerCase(Locale.ROOT)).isTrue }
+                _sharedPlayers.value = playersList.filter { it.user?.name?.lowercase()?.contains(searched.lowercase()).isTrue }
+                _sharedAllies.value = allyList.filter { it.user?.name?.lowercase()?.contains(searched.lowercase()).isTrue }
             }
         }
     }

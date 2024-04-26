@@ -9,12 +9,11 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.EntryPointAccessors
+import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ViewModelFactoryProvider
 import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.extension.isTrue
-import fr.harmoniamk.statsmk.model.firebase.User
 import fr.harmoniamk.statsmk.model.network.MKCFullPlayer
-import fr.harmoniamk.statsmk.model.network.MKCPlayer
 import fr.harmoniamk.statsmk.model.network.MKPlayer
 import fr.harmoniamk.statsmk.model.network.NetworkResponse
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
@@ -29,7 +28,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 
@@ -76,7 +74,7 @@ class PlayerProfileViewModel @AssistedInject constructor(
     private val _sharedPlayer = MutableStateFlow<MKCFullPlayer?>(null)
     private val _sharedAllyButton = MutableStateFlow<Pair<String, Boolean>?>(null)
     private val _sharedAdminButton = MutableStateFlow<Boolean?>(null)
-    private val _sharedRole = MutableStateFlow<String?>(null)
+    private val _sharedRole = MutableStateFlow<Int?>(null)
     val sharedEmail = _sharedEmail.asStateFlow()
     val sharedPlayer = _sharedPlayer.asStateFlow()
     val sharedAllyButton = _sharedAllyButton.asStateFlow()
@@ -113,10 +111,10 @@ class PlayerProfileViewModel @AssistedInject constructor(
                             else -> null
                         }
                     _sharedRole.value = when {
-                        player.role == 1 -> "Admin"
-                        player.role == 2 -> "Leader"
-                        player.role == 3 -> "Dieu"
-                        else -> "Membre"
+                        player.role == 1 -> R.string.admin
+                        player.role == 2 -> R.string.leader
+                        player.role == 3 -> R.string.god
+                        else -> R.string.membre
                     }
                 }
             }.launchIn(viewModelScope)
@@ -151,11 +149,11 @@ class PlayerProfileViewModel @AssistedInject constructor(
                         else -> null
                     }
                     _sharedRole.value = when {
-                        it.mid.toIntOrNull() != null -> "Non inscrit"
-                        it.role == 1 -> "Admin"
-                        it.role == 2 -> "Leader"
-                        it.role == 3 -> "Dieu"
-                        else -> "Membre"
+                        it.mid.toIntOrNull() != null -> R.string.non_inscrit
+                        it.role == 1 -> R.string.admin
+                        it.role == 2 -> R.string.leader
+                        it.role == 3 -> R.string.god
+                        else -> R.string.membre
                     }
                 }
                 .flatMapLatest { databaseRepository.writeUser(it) }

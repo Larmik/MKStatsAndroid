@@ -163,7 +163,7 @@ class PositionViewModel @AssistedInject constructor(
             true -> preferencesRepository.currentWar?.warTracks?.getOrNull(index)
             else -> preferencesRepository.currentWarTrack
         }
-        _sharedCurrentMap.value = Maps.values()[currentTrack?.trackIndex ?: trackIndexInMapList]
+        _sharedCurrentMap.value = Maps.entries.toTypedArray()[currentTrack?.trackIndex ?: trackIndexInMapList]
         preferencesRepository.currentWar
             ?.withName(databaseRepository)
             ?.onEach {

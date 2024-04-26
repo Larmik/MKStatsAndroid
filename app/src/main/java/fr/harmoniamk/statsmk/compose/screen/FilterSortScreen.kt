@@ -16,7 +16,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import fr.harmoniamk.statsmk.R
@@ -53,7 +53,7 @@ fun FilterSortScreen(viewModel: FilterSortViewModel = hiltViewModel(), sort: Sor
     MKBaseScreen(title = R.string.options_de_tri) {
         sort.list.takeIf { it.isNotEmpty() }?.let { list ->
             MKText(
-                text = "Trier",
+                text = stringResource(R.string.trier),
                 modifier = Modifier.padding(10.dp),
                 font = R.font.montserrat_bold,
                 fontSize = 16
@@ -77,7 +77,7 @@ fun FilterSortScreen(viewModel: FilterSortViewModel = hiltViewModel(), sort: Sor
                             .clickable {
                                 viewModel.setSortType(it)
                                 onSorted(it)
-                           },
+                            },
                         elevation = 0.dp,
                         backgroundColor = bgColor
                     ) {
@@ -95,7 +95,7 @@ fun FilterSortScreen(viewModel: FilterSortViewModel = hiltViewModel(), sort: Sor
         }
         filter.list.takeIf { it.isNotEmpty() }?.let {
             MKText(
-                text = "Filtrer",
+                text = stringResource(R.string.filtrer),
                 modifier = Modifier.padding(10.dp),
                 font = R.font.montserrat_bold,
                 fontSize = 16

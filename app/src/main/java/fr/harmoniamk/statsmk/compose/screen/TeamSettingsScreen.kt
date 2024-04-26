@@ -26,8 +26,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
@@ -35,10 +35,10 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKBaseScreen
 import fr.harmoniamk.statsmk.compose.ui.MKBottomSheet
 import fr.harmoniamk.statsmk.compose.ui.MKCPlayerItem
-import fr.harmoniamk.statsmk.compose.ui.MKSegmentedButtons
 import fr.harmoniamk.statsmk.compose.ui.MKText
 import fr.harmoniamk.statsmk.compose.viewModel.ColorsViewModel
 import fr.harmoniamk.statsmk.compose.viewModel.TeamSettingsViewModel
+import fr.harmoniamk.statsmk.extension.displayedString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 
@@ -99,7 +99,7 @@ fun TeamSettingsScreen(viewModel: TeamSettingsViewModel = hiltViewModel(), onPla
             Spacer(Modifier.width(10.dp))
             Column(Modifier.height(120.dp), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
                 team.value?.createdDate?.let {
-                    MKText(text = String.format("Date de création : %s", it), fontSize = 12, font = R.font.montserrat_bold)
+                    MKText(text = String.format(stringResource(R.string.date_de_cr_ation_s), it.displayedString(stringResource(R.string.full_date_format))), fontSize = 12, font = R.font.montserrat_bold)
                     Spacer(Modifier.height(10.dp))
                 }
                 MKText(text = team.value?.team_description.orEmpty(), fontSize = 10)

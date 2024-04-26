@@ -11,15 +11,12 @@ import dagger.assisted.AssistedInject
 import dagger.hilt.android.EntryPointAccessors
 import fr.harmoniamk.statsmk.compose.ViewModelFactoryProvider
 import fr.harmoniamk.statsmk.compose.ui.MKBottomSheetState
-import fr.harmoniamk.statsmk.enums.UserRole
-import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.extension.withName
 import fr.harmoniamk.statsmk.model.firebase.Shock
 import fr.harmoniamk.statsmk.model.local.MKWar
 import fr.harmoniamk.statsmk.model.local.MKWarPosition
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import fr.harmoniamk.statsmk.model.network.MKPlayer
-import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.NetworkRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
@@ -37,7 +34,6 @@ import kotlinx.coroutines.flow.onEach
 class TrackDetailsViewModel @AssistedInject constructor(
     @Assisted("warId") private val warId: String,
     @Assisted("warTrackId") private val warTrackId: String,
-    private val authenticationRepository: AuthenticationRepositoryInterface,
     private val databaseRepository: DatabaseRepositoryInterface,
     private val preferencesRepository: PreferencesRepositoryInterface,
     private val networkRepository: NetworkRepositoryInterface

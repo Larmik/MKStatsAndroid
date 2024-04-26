@@ -28,6 +28,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.shareIn
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
@@ -98,7 +99,7 @@ class SignupViewModel @Inject constructor(
             .onEach { _sharedDialogValue.value = MKDialogState.Loading(R.string.fetch_wars) }
             .flatMapLatest { fetchUseCase.fetchWars() }
             .onEach {
-                preferencesRepository.lastUpdate = SimpleDateFormat("dd/MM/yyyy HH:mm").format(
+                preferencesRepository.lastUpdate = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(
                     Date()
                 )
                 _sharedDialogValue.value = null
@@ -116,13 +117,13 @@ class SignupViewModel @Inject constructor(
 
         fetchPlayer
             .mapNotNull { (it as? NetworkResponse.Error) }
-            .onEach { _sharedDialogValue.value = MKDialogState.Error("Le joueur n'a pas été trouvé. Vous devez être inscrit sur MKCentral pour utiliser l'application.") {
+            .onEach { _sharedDialogValue.value = MKDialogState.Error(R.string.player_not_found) {
                 _sharedDialogValue.value = null
             } }.launchIn(viewModelScope)
 
         fetchTeam
             .mapNotNull { (it as? NetworkResponse.Error) }
-            .onEach { _sharedDialogValue.value = MKDialogState.Error("Le joueur ne fait partie d'aucune équipe. Vous devez faire partie d'une team sur MKCentral pour utiliser l'application.") {
+            .onEach { _sharedDialogValue.value = MKDialogState.Error(R.string.team_not_found) {
                 _sharedDialogValue.value = null
             } }.launchIn(viewModelScope)
     }

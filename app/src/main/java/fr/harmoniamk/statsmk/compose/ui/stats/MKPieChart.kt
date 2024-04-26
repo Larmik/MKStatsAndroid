@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -73,7 +74,7 @@ fun MKPieChart(
             }
         }
         Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center, modifier = Modifier.background(color = Color.fromHex("#${viewModel.color}"), shape = RoundedCornerShape(90.dp)).size(90.dp)) {
-            MKText(text = "Winrate:")
+            MKText(text = stringResource(R.string.winrate))
             MKText(text = (((win?.toFloat() ?: 0f) * 100) / sumOfValues).roundToInt().toString() + " %", font = R.font.orbitron_regular, fontSize = 16)
         }
     }

@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <style name="tab_text" parent="@android:style/TextAppearance.Widget.TabWidget">
-        <item name="android:fontFamily">@font/orbitron_semibold</item>
-    </style>
+
 
     <!--Custom themes here
             colorPrimary is for main background color and buttons color

@@ -7,8 +7,6 @@ import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
@@ -21,14 +19,11 @@ class EditUserViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepositoryInterface,
 ): ViewModel() {
 
-    private val _sharedDismiss = MutableSharedFlow<Unit>()
-    val sharedDismiss = _sharedDismiss.asSharedFlow()
 
     fun onValidate(value: String) {
             authenticationRepository.updateEmail(value)
                 .onEach {
                     preferencesRepository.authEmail = value
-                    _sharedDismiss.emit(Unit)
                 }.launchIn(viewModelScope)
         }
 

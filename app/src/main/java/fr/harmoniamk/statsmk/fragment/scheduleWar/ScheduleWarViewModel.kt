@@ -4,11 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.extension.bind
-import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.fragment.playerSelect.UserSelector
 import fr.harmoniamk.statsmk.model.firebase.WarDispo
-import fr.harmoniamk.statsmk.model.network.MKPlayer
 import fr.harmoniamk.statsmk.model.network.MKCTeam
+import fr.harmoniamk.statsmk.model.network.MKPlayer
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.FirebaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
@@ -24,7 +23,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
-import java.util.Locale
 import javax.inject.Inject
 
 @FlowPreview
@@ -129,10 +127,8 @@ class ScheduleWarViewModel @Inject constructor(
         onSearch
             .map { searched ->
                 teams.filter {
-                    it.team_tag?.toLowerCase(Locale.ROOT)
-                        ?.contains(searched.toLowerCase(Locale.ROOT)).isTrue || it.team_name?.toLowerCase(
-                        Locale.ROOT
-                    )?.contains(searched.toLowerCase(Locale.ROOT)) ?: true
+                    it.team_tag.lowercase()
+                        .contains(searched.lowercase()) || it.team_name.lowercase().contains(searched.lowercase())
                 }.sortedBy { it.team_name }
                     .filterNot { vm -> vm.team_id == preferencesRepository.mkcTeam?.id }
             }

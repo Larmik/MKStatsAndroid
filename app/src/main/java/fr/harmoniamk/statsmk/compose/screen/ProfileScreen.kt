@@ -1,8 +1,5 @@
 package fr.harmoniamk.statsmk.compose.screen
 
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -26,7 +23,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -42,6 +38,7 @@ import fr.harmoniamk.statsmk.compose.ui.MKText
 import fr.harmoniamk.statsmk.compose.viewModel.ColorsViewModel
 import fr.harmoniamk.statsmk.compose.viewModel.ProfileViewModel
 import fr.harmoniamk.statsmk.enums.MenuItems
+import fr.harmoniamk.statsmk.extension.displayedString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 
@@ -139,7 +136,7 @@ fun ProfileScreen(viewModel: ProfileViewModel = hiltViewModel(), onLogout: () ->
                         player.value?.createdDate?.let {
                             MKText(text = stringResource(id = R.string.inscrit_depuis))
                             MKText(
-                                text = it,
+                                text = it.displayedString(stringResource(R.string.full_date_format)),
                                 fontSize = 16,
                                 font = R.font.montserrat_bold,
                                 modifier = Modifier.padding(bottom = 15.dp)

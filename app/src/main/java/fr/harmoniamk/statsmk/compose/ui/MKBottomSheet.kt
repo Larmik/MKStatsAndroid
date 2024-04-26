@@ -5,12 +5,10 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Switch
@@ -23,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -31,7 +28,6 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.screen.EditUserScreen
 import fr.harmoniamk.statsmk.compose.screen.FilterSortScreen
 import fr.harmoniamk.statsmk.compose.screen.PenaltyScreen
-import fr.harmoniamk.statsmk.compose.screen.PlayersSettingsScreen
 import fr.harmoniamk.statsmk.compose.screen.PositionScreen
 import fr.harmoniamk.statsmk.compose.screen.ResetPasswordScreen
 import fr.harmoniamk.statsmk.compose.screen.SubPlayerScreen
@@ -140,13 +136,14 @@ fun MKBottomSheet(
 
         is MKBottomSheetState.StatsDisplayMode -> {
             val rosterOnly = remember { mutableStateOf(state.initialValue) }
-            MKBaseScreen(title = "Calcul des statistiques", subTitle = "Option multi-roster") {
-                MKText(
-                    modifier = Modifier.padding(20.dp), text = when (rosterOnly.value) {
-                        true -> "Les statistiques sont calculées en fonction des wars de votre roster actuel seulement."
-                        else -> "Les statistiques sont calculées en fonction des wars de tous les rosters de votre équipe."
-                    }
-                )
+            MKBaseScreen(title = stringResource(R.string.calcul_des_statistiques), subTitle = stringResource(
+                R.string.option_multi_roster
+            )
+            ) {
+                MKText(modifier = Modifier.padding(20.dp), text = when (rosterOnly.value) {
+                        true -> stringResource(R.string.multi_roster_disabled_label)
+                        else -> stringResource(R.string.multi_roster_enabled_label)
+                    })
                 Switch(
                     checked = !rosterOnly.value,
                     onCheckedChange = {
@@ -159,17 +156,17 @@ fun MKBottomSheet(
                 )
                 MKText(
                     modifier = Modifier.padding(20.dp), text = when (rosterOnly.value) {
-                        true -> "Activez le paramètre pour prendre en compte tous les rosters."
-                        else -> "Désactivez le paramètre pour ne prendre en compte que votre roster."
+                        true -> stringResource(R.string.enable_multi_roster)
+                        else -> stringResource(R.string.disable_multi_roster)
                     }, font = R.font.montserrat_bold
                 )
 
                 Row {
-                    MKButton(text = "Valider") {
+                    MKButton(text = stringResource(R.string.valider)) {
                         onDisplayModeValidated(rosterOnly.value)
                     }
                     MKButton(
-                        text = "Retour",
+                        text = stringResource(R.string.retour),
                         onClick = onDismiss,
                         hasBackground = false
                     )
@@ -184,7 +181,7 @@ fun MKBottomSheet(
             val mainTextColor = remember { mutableStateOf(state.initialMainText) }
             val secondaryTextColor = remember { mutableStateOf(state.initialSecondaryText) }
             val hexaRegex = Regex("[A-Fa-f0-9]{6}")
-            MKBaseScreen(title = "Thème", subTitle = "Couleurs") {
+            MKBaseScreen(title = stringResource(R.string.th_me), subTitle = stringResource(R.string.couleurs)) {
                 MKText(
                     modifier = Modifier.padding(20.dp),
                     text = stringResource(R.string.main_color),
@@ -225,12 +222,15 @@ fun MKBottomSheet(
                 }
 
 
-                MKText(text = "Texte", modifier = Modifier.padding(top = 20.dp))
+                MKText(text = stringResource(R.string.texte), modifier = Modifier.padding(top = 20.dp))
                 MKSegmentedSelector(
-                    modifier = Modifier.height(40.dp).padding(vertical = 5.dp, horizontal = 60.dp).border(width = 1.dp, color = colorsViewModel.secondaryColor),
+                    modifier = Modifier
+                        .height(40.dp)
+                        .padding(vertical = 5.dp, horizontal = 60.dp)
+                        .border(width = 1.dp, color = colorsViewModel.secondaryColor),
                     buttons = listOf(
-                        Pair("Noir", { mainTextColor.value = "000000" }),
-                        Pair("Blanc", { mainTextColor.value = "FFFFFF" })
+                        Pair(stringResource(R.string.noir), { mainTextColor.value = "000000" }),
+                        Pair(stringResource(R.string.blanc), { mainTextColor.value = "FFFFFF" })
                     ), indexSelected = when (mainTextColor.value) {
                         "000000" -> 0
                         else -> 1
@@ -242,7 +242,7 @@ fun MKBottomSheet(
                     text = stringResource(R.string.secondary_color),
                     font = R.font.montserrat_bold
                 )
-                MKText(text = "Fond")
+                MKText(text = stringResource(R.string.fond))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     MKText(text = "#", fontSize = 20, font = R.font.montserrat_bold)
                     MKTextField(
@@ -274,12 +274,15 @@ fun MKBottomSheet(
                         }
                     }
                 }
-                MKText(text = "Texte", modifier = Modifier.padding(top = 20.dp))
+                MKText(text = stringResource(R.string.texte), modifier = Modifier.padding(top = 20.dp))
                 MKSegmentedSelector(
-                    modifier = Modifier.height(40.dp).padding(vertical = 5.dp, horizontal = 60.dp).border(width = 1.dp, color = colorsViewModel.secondaryColor),
+                    modifier = Modifier
+                        .height(40.dp)
+                        .padding(vertical = 5.dp, horizontal = 60.dp)
+                        .border(width = 1.dp, color = colorsViewModel.secondaryColor),
                     buttons = listOf(
-                        Pair("Noir", { secondaryTextColor.value = "000000" }),
-                        Pair("Blanc", { secondaryTextColor.value = "FFFFFF" })
+                        Pair(stringResource(R.string.noir), { secondaryTextColor.value = "000000" }),
+                        Pair(stringResource(R.string.blanc), { secondaryTextColor.value = "FFFFFF" })
                     ), indexSelected = when (secondaryTextColor.value) {
                         "000000" -> 0
                         else -> 1
@@ -288,7 +291,7 @@ fun MKBottomSheet(
 
                 Row(modifier = Modifier.padding(top = 20.dp)) {
                     MKButton(
-                        text = "Valider",
+                        text = stringResource(R.string.valider),
                         enabled = mainColor.value.text.matches(hexaRegex) && secondaryColor.value.text.matches(
                             hexaRegex
                         )
@@ -301,7 +304,7 @@ fun MKBottomSheet(
                         )
                     }
                     MKButton(
-                        text = "Retour",
+                        text = stringResource(R.string.retour),
                         onClick = onDismiss,
                         hasBackground = false
                     )

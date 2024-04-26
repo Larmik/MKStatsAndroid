@@ -13,7 +13,6 @@ import fr.harmoniamk.statsmk.model.local.MKWarPosition
 import fr.harmoniamk.statsmk.model.local.MKWarTrack
 import fr.harmoniamk.statsmk.model.local.MapDetails
 import fr.harmoniamk.statsmk.model.local.MapStats
-import fr.harmoniamk.statsmk.model.local.Stats
 import fr.harmoniamk.statsmk.model.network.MKPlayer
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
@@ -131,7 +130,7 @@ class StatsViewModel @Inject constructor(
             .flatMapLatest {
                 when {
                     type is StatsType.IndivStats -> it.filter { war -> war.hasPlayer(type.userId.split(".").firstOrNull()) }
-                        .withFullStats(databaseRepository, userId = type.userId.split(".")?.firstOrNull())
+                        .withFullStats(databaseRepository, userId = type.userId.split(".").firstOrNull())
 
                     type is StatsType.OpponentStats -> databaseRepository.getNewTeam(type.teamId)
                         .flatMapLatest { team ->

@@ -8,7 +8,6 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.DispoItemBinding
 import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.extension.clicks
-import fr.harmoniamk.statsmk.extension.safeSubList
 import fr.harmoniamk.statsmk.model.firebase.Dispo
 import fr.harmoniamk.statsmk.model.firebase.WarDispo
 import kotlinx.coroutines.CoroutineScope

@@ -21,6 +21,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
@@ -34,7 +35,7 @@ class SettingsViewModel @Inject constructor(
 
     private val _sharedLastUpdate = MutableStateFlow(preferencesRepository.lastUpdate)
     private val _sharedDialogValue = MutableStateFlow<MKDialogState?>(null)
-    private val _sharedToast = MutableSharedFlow<String>()
+    private val _sharedToast = MutableSharedFlow<Int>()
     private val _sharedBottomSheetValue = MutableStateFlow<MKBottomSheetState?>(null)
 
     val sharedLastUpdate = _sharedLastUpdate.asStateFlow()
@@ -43,8 +44,8 @@ class SettingsViewModel @Inject constructor(
     val sharedBottomSheetValue = _sharedBottomSheetValue.asStateFlow()
     val isGod = authenticationRepository.userRole == 3
 
-    fun fetchTags() = fetchUseCase.fetchTags().onEach { _sharedToast.emit("Tags mis à jour.") }.launchIn(viewModelScope)
-    fun purgeUsers() = fetchUseCase.purgePlayers().onEach { _sharedToast.emit("Base d'utilisateurs purgée.") }.launchIn(viewModelScope)
+    fun fetchTags() = fetchUseCase.fetchTags().onEach { _sharedToast.emit(R.string.tags_mis_jour) }.launchIn(viewModelScope)
+    fun purgeUsers() = fetchUseCase.purgePlayers().onEach { _sharedToast.emit(R.string.base_d_utilisateurs_purg_e) }.launchIn(viewModelScope)
 
     fun onUpdate() {
         _sharedDialogValue.value = MKDialogState.Loading(R.string.mise_jour_des_donn_es)
@@ -60,7 +61,7 @@ class SettingsViewModel @Inject constructor(
             .onEach {  _sharedDialogValue.value = MKDialogState.Loading(R.string.fetch_wars) }
             .flatMapLatest { fetchUseCase.fetchWars() }
             .onEach {
-                preferencesRepository.lastUpdate = SimpleDateFormat("dd/MM/yyyy HH:mm").format(Date())
+                preferencesRepository.lastUpdate = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(Date())
                 _sharedDialogValue.value = null
                 _sharedLastUpdate.value = preferencesRepository.lastUpdate
             }.launchIn(viewModelScope)
@@ -79,7 +80,7 @@ class SettingsViewModel @Inject constructor(
                 preferencesRepository.mainTextColor,
                 preferencesRepository.secondaryTextColor,
             )
-            else ->  _sharedDialogValue.value = MKDialogState.Error("La personnalisation des thèmes est accessible aux utilisateurs de niveau 2. Augmente ton niveau grâce à tes contributions dans Paramètres -> Offrir un café !"){
+            else ->  _sharedDialogValue.value = MKDialogState.Error(R.string.theme_locked){
                 _sharedDialogValue.value = null
             }
         }
@@ -100,7 +101,7 @@ class SettingsViewModel @Inject constructor(
         preferencesRepository.mainTextColor = mainTextColor
         preferencesRepository.secondaryTextColor = secondaryTextColor
         _sharedBottomSheetValue.value = null
-        _sharedDialogValue.value = MKDialogState.Error("Le thème a bien été changé. Il sera effectif au prochain redémarrage de l'application.") {
+        _sharedDialogValue.value = MKDialogState.Error(R.string.theme_changed) {
             _sharedDialogValue.value = null
         }
     }

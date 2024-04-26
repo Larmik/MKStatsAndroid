@@ -3,7 +3,6 @@ package fr.harmoniamk.statsmk.model.network
 import androidx.annotation.Keep
 import com.squareup.moshi.JsonClass
 import fr.harmoniamk.statsmk.database.entities.MKCLightPlayerEntity
-import fr.harmoniamk.statsmk.extension.displayedString
 import fr.harmoniamk.statsmk.extension.formatToDate
 import fr.harmoniamk.statsmk.model.firebase.User
 
@@ -176,6 +175,6 @@ data class MKCFullPlayer(
     val current_teams: List<MKCLightTeam>
 ) {
     val createdDate = registered_at.date.split(".").first().formatToDate("yyyy-MM-dd HH:mm:ss")
-        ?.displayedString("dd MMMM yyyy")
+
     val flag = "https://www.mariokartcentral.com/mkc/images/flags/${country_code.lowercase()}.png"
 }

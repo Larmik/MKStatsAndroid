@@ -90,11 +90,6 @@ class PopupFragment(val message: Int? = null, val positiveText: Int? = null, pri
         }
     }
 
-    fun setLoading(text: Int) {
-        binding.progress.isVisible = true
-        binding.popupMessage.text = requireContext().getString(text)
-        binding.buttonsLayout.isVisible = false
-    }
 
     override val coroutineContext: CoroutineContext
         get() = Dispatchers.Main

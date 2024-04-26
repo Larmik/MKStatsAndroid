@@ -6,7 +6,6 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Intent
-import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.google.firebase.installations.FirebaseInstallations
 import com.google.firebase.messaging.FirebaseMessaging
@@ -143,10 +142,8 @@ class AlertNotificationService : FirebaseMessagingService() {
             .setAutoCancel(true)
             .setVibrate(longArrayOf(0, 500))
             .setDefaults(Notification.DEFAULT_SOUND)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            notificationManager.createNotificationChannel(NotificationChannel(channelId, "Notifications MK Stats", NotificationManager.IMPORTANCE_HIGH))
-            mBuilder.setChannelId(channelId)
-        }
+        notificationManager.createNotificationChannel(NotificationChannel(channelId, "Notifications MK Stats", NotificationManager.IMPORTANCE_HIGH))
+        mBuilder.setChannelId(channelId)
         notificationManager.notify((Date().time / 1000L % Int.MAX_VALUE).toInt(), mBuilder.build())
     }
 
@@ -157,7 +154,7 @@ class AlertNotificationService : FirebaseMessagingService() {
         awaitClose {  }
     }
 
-     fun switchNotification(topic: String, subscribed: Boolean): Flow<Pair<String, Boolean>?> = callbackFlow<Pair<String, Boolean>?>{
+     fun switchNotification(topic: String, subscribed: Boolean): Flow<Pair<String, Boolean>?> = callbackFlow {
         try {
             FirebaseMessaging.getInstance().token.addOnCompleteListener { tokenTask ->
                 if (tokenTask.isSuccessful && tokenTask.result.isNotEmpty())

@@ -15,12 +15,13 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.databinding.FragmentScheduleWarBinding
 import fr.harmoniamk.statsmk.extension.clicks
 import fr.harmoniamk.statsmk.extension.onTextChanged
-import fr.harmoniamk.statsmk.extension.safeSubList
 import fr.harmoniamk.statsmk.fragment.popup.PopupFragment
 import fr.harmoniamk.statsmk.model.firebase.WarDispo
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 
 @FlowPreview

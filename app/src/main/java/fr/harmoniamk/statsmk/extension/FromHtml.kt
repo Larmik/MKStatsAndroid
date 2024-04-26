@@ -1,12 +1,10 @@
 package fr.harmoniamk.statsmk.extension
 
 import android.content.Context
-import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Build
 import android.text.Spannable
 import android.text.TextPaint
-import android.text.style.ForegroundColorSpan
 import android.text.style.MetricAffectingSpan
 import android.text.style.StyleSpan
 import android.text.style.TypefaceSpan

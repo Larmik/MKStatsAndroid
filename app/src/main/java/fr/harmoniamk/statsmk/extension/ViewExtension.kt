@@ -1,19 +1,15 @@
 package fr.harmoniamk.statsmk.extension
 
 import android.app.Dialog
-import android.graphics.BitmapFactory
-import android.os.Handler
-import android.os.Looper
 import android.view.View
-import android.widget.*
+import android.widget.EditText
+import android.widget.RadioButton
 import androidx.core.widget.addTextChangedListener
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.isActive
-import java.net.URL
-import java.util.concurrent.Executors
 
 
 @ExperimentalCoroutinesApi
@@ -49,17 +45,4 @@ fun EditText.onTextChanged() = callbackFlow {
         if (isActive) trySend(it.toString())
     }
     awaitClose { }
-}
-
-fun ImageView.setImageURL(url: String?) {
-    Executors.newSingleThreadExecutor().execute {
-        try {
-            val `in` = URL(url).openStream()
-            val image = BitmapFactory.decodeStream(`in`)
-            Handler(Looper.getMainLooper()).post { this.setImageBitmap(image) }
-        }
-        catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
 }

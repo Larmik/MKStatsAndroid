@@ -98,15 +98,15 @@ class WarViewModel @Inject constructor(
                     when {
                         team.primary_team_id != null -> {
                             val primaryTeam = databaseRepository.getNewTeam(team.primary_team_id.toString()).firstOrNull()
-                            createWarsButtons.add(Pair("Créer une war : \n ${primaryTeam?.team_name}", { onCreateWar(primaryTeam?.team_id.orEmpty()) }))
-                            createWarsButtons.add(Pair("Créer une war : \n ${team.team_name}", { onCreateWar(team.id) }))
+                            createWarsButtons.add(Pair(primaryTeam?.team_name.orEmpty(), { onCreateWar(primaryTeam?.team_id.orEmpty()) }))
+                            createWarsButtons.add(Pair(team.team_name, { onCreateWar(team.id) }))
                         }
                         !team.secondary_teams.isNullOrEmpty() -> {
                             val secondaryTeam = databaseRepository.getNewTeam(team.secondary_teams.getOrNull(0)?.id.toString()).firstOrNull()
-                            createWarsButtons.add(Pair("Créer une war : \n ${team.team_name}", { onCreateWar(team.id) }))
-                            createWarsButtons.add(Pair("Créer une war : \n ${secondaryTeam?.team_name}", { onCreateWar(secondaryTeam?.team_id.orEmpty()) }))
+                            createWarsButtons.add(Pair(team.team_name, { onCreateWar(team.id) }))
+                            createWarsButtons.add(Pair(secondaryTeam?.team_name.orEmpty(), { onCreateWar(secondaryTeam?.team_id.orEmpty()) }))
                         }
-                        else -> createWarsButtons.add(Pair("Créer une war", { onCreateWar(team.id) }))
+                        else -> createWarsButtons.add(Pair(team.team_name, { onCreateWar(team.id) }))
                     }
                     _sharedButtons.value = createWarsButtons.filter { isAdmin }
                 }.launchIn(viewModelScope)
@@ -121,13 +121,13 @@ class WarViewModel @Inject constructor(
                     when {
                         team.primary_team_id != null -> {
                             val primaryTeam = databaseRepository.getNewTeam(team.primary_team_id.toString()).firstOrNull()
-                            createWarsButtons.takeIf{ wars.none { it.hasTeam(primaryTeam?.team_id) } }?.add(Pair("Créer une war : \n ${primaryTeam?.team_name}", { onCreateWar(primaryTeam?.team_id.orEmpty()) }))
-                            createWarsButtons.takeIf{ wars.none { it.hasTeam(team.id) } }?.add(Pair("Créer une war : \n ${team.team_name}", { onCreateWar(team.id) }))
+                            createWarsButtons.takeIf{ wars.none { it.hasTeam(primaryTeam?.team_id) } }?.add(Pair(primaryTeam?.team_name.orEmpty(), { onCreateWar(primaryTeam?.team_id.orEmpty()) }))
+                            createWarsButtons.takeIf{ wars.none { it.hasTeam(team.id) } }?.add(Pair(team.team_name, { onCreateWar(team.id) }))
                         }
                         !team.secondary_teams.isNullOrEmpty() -> {
                             val secondaryTeam = databaseRepository.getNewTeam(team.secondary_teams.getOrNull(0)?.id.toString()).firstOrNull()
-                            createWarsButtons.takeIf{ wars.none { it.hasTeam(team.id) } }?.add(Pair("Créer une war : \n ${team.team_name}", { onCreateWar(team.id) }))
-                            createWarsButtons.takeIf{ wars.none { it.hasTeam(secondaryTeam?.team_id) } }?.add(Pair("Créer une war : \n ${secondaryTeam?.team_name}", { onCreateWar(secondaryTeam?.team_id.orEmpty()) }))
+                            createWarsButtons.takeIf{ wars.none { it.hasTeam(team.id) } }?.add(Pair(team.team_name, { onCreateWar(team.id) }))
+                            createWarsButtons.takeIf{ wars.none { it.hasTeam(secondaryTeam?.team_id) } }?.add(Pair(secondaryTeam?.team_name.orEmpty(), { onCreateWar(secondaryTeam?.team_id.orEmpty()) }))
                         }
                     }
                     _sharedButtons.value = createWarsButtons.filter { isAdmin }

@@ -21,7 +21,6 @@ import fr.harmoniamk.statsmk.compose.ui.MKText
 import fr.harmoniamk.statsmk.compose.viewModel.ColorsViewModel
 import fr.harmoniamk.statsmk.compose.viewModel.StatsType
 import fr.harmoniamk.statsmk.extension.isTrue
-import fr.harmoniamk.statsmk.extension.pointsToPosition
 import fr.harmoniamk.statsmk.extension.positionColor
 import fr.harmoniamk.statsmk.extension.trackScoreToDiff
 import fr.harmoniamk.statsmk.model.local.MKStats
@@ -64,14 +63,12 @@ fun MKWarDetailsStatsView(mkStats: MKStats, type: StatsType) {
                 ) {
                     MKText(
                         text = when (type) {
-                            is StatsType.MapStats -> R.string.diff_rence_quipe
                             is StatsType.IndivStats -> R.string.score_moyen
                             else -> R.string.moyenne_war
                         }, fontSize = 12
                     )
                     MKText(
                         text = when  {
-                            type is StatsType.MapStats -> mapStats?.teamScore?.trackScoreToDiff().toString()
                             type is StatsType.IndivStats -> stats?.averagePoints.toString()
                             (type as? StatsType.OpponentStats)?.userId != null -> stats?.averagePoints.toString()
                             else -> stats?.averagePointsLabel.toString()

@@ -20,7 +20,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -33,6 +32,7 @@ import fr.harmoniamk.statsmk.compose.ui.MKProgress
 import fr.harmoniamk.statsmk.compose.ui.MKText
 import fr.harmoniamk.statsmk.compose.viewModel.ColorsViewModel
 import fr.harmoniamk.statsmk.compose.viewModel.PlayerProfileViewModel.Companion.viewModel
+import fr.harmoniamk.statsmk.extension.displayedString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 
@@ -60,7 +60,9 @@ fun PlayerProfileScreen(id: String) {
                         null -> Image(
                             painter = painterResource(R.drawable.mk_stats_logo_picture),
                             contentDescription = null,
-                            modifier = Modifier.size(120.dp).clip(CircleShape)
+                            modifier = Modifier
+                                .size(120.dp)
+                                .clip(CircleShape)
                         )
                         else -> AsyncImage(
                             model = player.value?.profile_picture, contentDescription = null, modifier = Modifier
@@ -73,7 +75,10 @@ fun PlayerProfileScreen(id: String) {
                         AsyncImage(
                             model = player.value?.flag,
                             contentDescription = null,
-                            modifier = Modifier.width(40.dp).height(30.dp).clip(CircleShape),
+                            modifier = Modifier
+                                .width(40.dp)
+                                .height(30.dp)
+                                .clip(CircleShape),
                             contentScale = ContentScale.FillBounds
                         )
                         Spacer(Modifier.width(20.dp))
@@ -106,7 +111,7 @@ fun PlayerProfileScreen(id: String) {
                         player.value?.createdDate?.let {
                             MKText(text = stringResource(id = R.string.inscrit_depuis))
                             MKText(
-                                text = it,
+                                text = it.displayedString(stringResource(R.string.full_date_format)),
                                 fontSize = 16,
                                 font = R.font.montserrat_bold,
                                 modifier = Modifier.padding(bottom = 15.dp)
@@ -157,13 +162,13 @@ fun PlayerProfileScreen(id: String) {
                     allyButton.value?.let {
                         when (it.second) {
                             true ->   MKButton(text = stringResource(R.string.ajouter_en_tant_qu_ally), onClick = viewModel::onAddAlly)
-                            else ->   MKText(text = "Ce joueur est un ally.", modifier = Modifier.padding(top = 10.dp))
+                            else ->   MKText(text = stringResource(R.string.ce_joueur_est_un_ally), modifier = Modifier.padding(top = 10.dp))
                         }
                     }
                     adminButton.value?.let {
                         when (it) {
-                            true -> MKButton(text = "Basculer en tant que membre", onClick ={ viewModel.onAdmin(false) })
-                            else -> MKButton(text = "Basculer en tant qu'admin", onClick ={ viewModel.onAdmin(true) })
+                            true -> MKButton(text = stringResource(R.string.basculer_en_tant_que_membre), onClick ={ viewModel.onAdmin(false) })
+                            else -> MKButton(text = stringResource(R.string.basculer_en_tant_qu_admin), onClick ={ viewModel.onAdmin(true) })
                         }
                     }
                 }

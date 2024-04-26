@@ -9,7 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -43,15 +43,15 @@ fun MKWinTieLossCell(stats: MKStats?) {
     ) {
         Row(Modifier.padding(5.dp)) {
             Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
-                MKText(text = "V", font = R.font.montserrat_bold, modifier = Modifier.padding(vertical = 5.dp))
+                MKText(text = stringResource(R.string.v), font = R.font.montserrat_bold, modifier = Modifier.padding(vertical = 5.dp))
                 MKText(text = win.toString(), font = R.font.orbitron_semibold, modifier = Modifier.padding(vertical = 5.dp), fontSize = 20)
             }
             Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
-                MKText(text = "N", font = R.font.montserrat_bold, modifier = Modifier.padding(vertical = 5.dp))
+                MKText(text = stringResource(R.string.n), font = R.font.montserrat_bold, modifier = Modifier.padding(vertical = 5.dp))
                 MKText(text = tie.toString(), font = R.font.orbitron_semibold, modifier = Modifier.padding(vertical = 5.dp), fontSize = 20)
             }
             Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
-                MKText(text = "D", font = R.font.montserrat_bold, modifier = Modifier.padding(vertical = 5.dp))
+                MKText(text = stringResource(R.string.d), font = R.font.montserrat_bold, modifier = Modifier.padding(vertical = 5.dp))
                 MKText(text = loss.toString(), font = R.font.orbitron_semibold, modifier = Modifier.padding(vertical = 5.dp), fontSize = 20)
             }
         }

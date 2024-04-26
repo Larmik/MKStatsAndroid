@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,7 +21,7 @@ import fr.harmoniamk.statsmk.compose.viewModel.ColorsViewModel
 @Composable
 fun MKSegmentedSelector(modifier: Modifier = Modifier, buttons: List<Pair<String, () -> Unit>>, indexSelected: Int = 0) {
     val colorsViewModel: ColorsViewModel = hiltViewModel()
-    val selectedIndex = remember { mutableStateOf(indexSelected) }
+    val selectedIndex = remember { mutableIntStateOf(indexSelected) }
     Row(modifier.fillMaxWidth()) {
         buttons.forEachIndexed { index, button ->
             Column(
@@ -31,17 +31,17 @@ fun MKSegmentedSelector(modifier: Modifier = Modifier, buttons: List<Pair<String
                     .weight(1f)
                     .height(50.dp)
                     .background(
-                        color =  when (selectedIndex.value == index) {
+                        color =  when (selectedIndex.intValue == index) {
                                 true -> colorsViewModel.secondaryColor.copy(alpha = 0.6f)
                                 else ->colorResource(R.color.transparent)
                             }
 
                     )
                     .clickable {
-                        selectedIndex.value = index
+                        selectedIndex.intValue = index
                         button.second()
                     }) {
-                val textColor =  when (selectedIndex.value == index) {
+                val textColor =  when (selectedIndex.intValue == index) {
                     true -> colorsViewModel.secondaryTextColor
                     else -> colorsViewModel.mainTextColor
                 }

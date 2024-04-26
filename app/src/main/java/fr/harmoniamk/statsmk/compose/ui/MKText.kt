@@ -14,12 +14,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.viewModel.ColorsViewModel
 
-private const val TEXT_SCALE_REDUCTION_INTERVAL = 0.9f
 @Composable
 fun MKText(modifier: Modifier = Modifier, text: Any, font: Int = R.font.montserrat_regular, fontSize: Int = 14, textColor: Int? = null, newTextColor: Color? = null, maxLines: Int = Integer.MAX_VALUE, textAlign: TextAlign = TextAlign.Center) {
     val targetTextSizeHeight = TextUnit(fontSize.toFloat(), TextUnitType.Sp)

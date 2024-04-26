@@ -3,8 +3,8 @@ package fr.harmoniamk.statsmk.extension
 import java.text.SimpleDateFormat
 import java.util.*
 
-fun Date.displayedString(pattern: String = "dd/MM/yyyy - HH'h'mm"): String = SimpleDateFormat(pattern, Locale.FRANCE).format(this)
-fun String.formatToDate(pattern: String = "dd/MM/yyyy - HH'h'mm"): Date? = SimpleDateFormat(pattern, Locale.FRANCE).parse(this)
+fun Date.displayedString(pattern: String): String = SimpleDateFormat(pattern, Locale.getDefault()).format(this)
+fun String.formatToDate(pattern: String = "dd/MM/yyyy - HH'h'mm"): Date? = SimpleDateFormat(pattern, Locale.getDefault()).parse(this)
 
 fun Date.add(field: Int = Calendar.DATE, amount: Int): Date {
     val c = Calendar.getInstance()

@@ -8,6 +8,7 @@ import java.util.*
 
 data class MKWar(val war: NewWar?) : Serializable {
 
+
     val warTracks = war?.warTracks?.map { MKWarTrack(it) }
     val trackPlayed = warTracks?.size ?: 0
     val scoreHost = warTracks?.map { it.teamScore }.sum()
@@ -17,7 +18,6 @@ data class MKWar(val war: NewWar?) : Serializable {
     val isOver = trackPlayed >= 12
     val displayedScore = "$scoreHostWithPenalties - $scoreOpponentWithPenalties"
     val mapsWon = "${war?.warTracks?.map { MKWarTrack(it) }?.filter { it.displayedDiff.contains("+") }?.size} / 12"
-    val displayedState = if (isOver) "War terminée" else "War en cours (${trackPlayed}/12)"
     val displayedDiff: String
         get() {
             val diff = scoreHostWithPenalties - scoreOpponentWithPenalties

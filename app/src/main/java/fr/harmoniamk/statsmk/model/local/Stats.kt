@@ -62,7 +62,7 @@ class TeamStats(val team: MKCTeam?, val totalPlayed: Int?) {
 class WarStats(val list : List<MKWar>) {
     private val shockFeatureDate = Date().set(Calendar.MONTH, 3).set(Calendar.DAY_OF_MONTH, 22).set(Calendar.YEAR, 2023)
     val warsPlayed = list.count()
-    val warsPlayedSinceShocks = list.filter { it.war?.createdDate?.formatToDate("dd/MM/yyyy - HH'h'mm")?.after(shockFeatureDate).isTrue }.size
+    val warsPlayedSinceShocks = list.filter { it.war?.createdDate?.formatToDate()?.after(shockFeatureDate).isTrue }.size
     val warsWon = list.count { war -> war.displayedDiff.contains('+') }
     val warsTied = list.count { war -> war.displayedDiff == "0" }
     val warsLoss = list.count { war -> war.displayedDiff.contains('-') }
@@ -90,22 +90,22 @@ class MapStats(
         .mapNotNull { it.warTrack.track?.warPositions }
         .map { it.singleOrNull { it.playerId == userId } }
         .mapNotNull { it?.position.positionToPoints() }
-    val trackPlayed = list.filter { !isIndiv || (isIndiv && it.war.war?.warTracks?.any { MKWarTrack(it).hasPlayer(userId) }.isTrue) }.size
+    val trackPlayed = list.filter {  (isIndiv && it.war.war?.warTracks?.any { MKWarTrack(it).hasPlayer(userId) }.isTrue) || !isIndiv }.size
     val trackWon = list
         .filter { pair -> pair.warTrack.displayedDiff.contains('+')}
-        .filter { !isIndiv || (isIndiv && it.war.war?.warTracks?.any { MKWarTrack(it).hasPlayer(userId) }.isTrue) }
+        .filter { (isIndiv && it.war.war?.warTracks?.any { MKWarTrack(it).hasPlayer(userId) }.isTrue) || !isIndiv }
         .size
     val trackTie = list
         .filter { pair -> pair.warTrack.displayedDiff == "0" }.count {
-            !isIndiv || (isIndiv && it.war.war?.warTracks?.any {
+             (isIndiv && it.war.war?.warTracks?.any {
                 MKWarTrack(it).hasPlayer(userId)
-            }.isTrue)
+            }.isTrue) || !isIndiv
         }
     val trackLoss = list
         .filter { pair -> pair.warTrack.displayedDiff.contains('-') }.count {
-            !isIndiv || (isIndiv && it.war.war?.warTracks?.any {
+            (isIndiv && it.war.war?.warTracks?.any {
                 MKWarTrack(it).hasPlayer(userId)
-            }.isTrue)
+            }.isTrue) || !isIndiv
         }
     val teamScore = list.map { pair -> pair.warTrack }.map { it.teamScore }.sum() / list.size
     val playerPosition = playerScoreList.takeIf { it.isNotEmpty() }?.let {  (playerScoreList.sum() / playerScoreList.size).pointsToPosition() } ?: 0
@@ -140,6 +140,6 @@ class MapStats(
         Pair("11", list.filter { isIndiv && it.warTrack.track?.warPositions?.singleOrNull { it.position == 11 }?.playerId == userId }.size),
         Pair("12", list.filter { isIndiv && it.warTrack.track?.warPositions?.singleOrNull { it.position == 12 }?.playerId == userId }.size),
     )
-    val shockCount = list.map { it.warTrack.track?.shocks?.filter { !isIndiv || (isIndiv && it.playerId == userId) }?.map { it.count }.sum() }.sum()
+    val shockCount = list.map { it.warTrack.track?.shocks?.filter { (isIndiv && it.playerId == userId) || !isIndiv }?.map { it.count }.sum() }.sum()
 
 }

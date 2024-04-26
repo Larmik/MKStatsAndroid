@@ -106,7 +106,7 @@ fun List<MKWar>.withFullStats(databaseRepository: DatabaseRepositoryInterface, u
         .filter { it.value.isNotEmpty() }
         .forEach { entry ->
             val stats = TrackStats(
-                map = Maps.values()[entry.key ?: -1],
+                map = Maps.entries[entry.key ?: -1],
                 teamScore = (entry.value.map { it.teamScore }
                     .sum() / entry.value.map { it.teamScore }.count()),
                 playerScore = (entry.value.map { it.playerScore }

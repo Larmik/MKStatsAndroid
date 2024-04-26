@@ -24,6 +24,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.viewModel.ColorsViewModel
+import fr.harmoniamk.statsmk.extension.displayedString
+import fr.harmoniamk.statsmk.extension.formatToDate
 import fr.harmoniamk.statsmk.extension.isTrue
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.local.MKWar
@@ -60,7 +62,7 @@ fun MKWarItem(war: MKWar, isForStats: Boolean = false, onClick: (String?) -> Uni
                     }
                     Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
                         war.name?.let { MKText(text = it, fontSize = 16, font = R.font.montserrat_bold) }
-                        war.war?.createdDate?.let { MKText(text = it) }
+                        war.war?.createdDate?.let { MKText(text = it.formatToDate()?.displayedString(stringResource(R.string.date_hour_format)) ?: it) }
                     }
                     Row {
                         Column {

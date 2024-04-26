@@ -23,8 +23,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.TextUnit
@@ -42,6 +42,7 @@ import fr.harmoniamk.statsmk.compose.ui.MKText
 import fr.harmoniamk.statsmk.compose.viewModel.CoffeePurchaseState
 import fr.harmoniamk.statsmk.compose.viewModel.CoffeeViewModel
 import fr.harmoniamk.statsmk.compose.viewModel.ColorsViewModel
+import fr.harmoniamk.statsmk.extension.displayedString
 import fr.harmoniamk.statsmk.extension.getActivity
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -61,12 +62,14 @@ fun CoffeeScreen(viewModel: CoffeeViewModel = hiltViewModel()) {
     val lastOwnCoffee = viewModel.lastOwnCoffee.collectAsState()
     val usersList = viewModel.coffeeUsersList.collectAsState()
 
-    MKBaseScreen(title = "Offrir un café") {
+    MKBaseScreen(title = stringResource(R.string.offrir_un_cafe)) {
         Column(Modifier.background(color = colorViewModel.secondaryColor), horizontalAlignment = Alignment.CenterHorizontally) {
             MKText(
-                text = "N'hésitez pas à me soutenir si vous aimez l'application.",
+                text = stringResource(R.string.suport_me),
                 newTextColor = colorViewModel.secondaryTextColor,
-                modifier = Modifier.padding(10.dp).fillMaxWidth(),
+                modifier = Modifier
+                    .padding(10.dp)
+                    .fillMaxWidth(),
                 textAlign = TextAlign.Center
             )
             Row {
@@ -78,7 +81,7 @@ fun CoffeeScreen(viewModel: CoffeeViewModel = hiltViewModel()) {
                 CoffeeButton(Modifier.weight(1f), "ten_coffees", viewModel::startBilling)
             }
             if (viewModel.isGod)
-                MKButton("Regarder une vidéo") {
+                MKButton(stringResource(R.string.regarder_une_vid_o)) {
                     viewModel.showAd(context)
                 }
         }
@@ -147,11 +150,11 @@ fun CoffeeScreen(viewModel: CoffeeViewModel = hiltViewModel()) {
                         }
                         MKText(
                             text = when {
-                                totalOwn < 15 -> "Niveau 1"
-                                totalOwn in 15..29 -> "Niveau 2"
-                                totalOwn in 30..59 -> "Niveau 3"
-                                totalOwn in 60..99 -> "Niveau 4"
-                                totalOwn > 100 -> "Niveau 5"
+                                totalOwn < 15 -> stringResource(R.string.niveau_1)
+                                totalOwn in 15..29 -> stringResource(R.string.niveau_2)
+                                totalOwn in 30..59 -> stringResource(R.string.niveau_3)
+                                totalOwn in 60..99 -> stringResource(R.string.niveau_4)
+                                totalOwn > 100 -> stringResource(R.string.niveau_5)
                                 else -> ""
                             }, font = R.font.montserrat_bold
                         )
@@ -165,10 +168,10 @@ fun CoffeeScreen(viewModel: CoffeeViewModel = hiltViewModel()) {
                             verticalArrangement = Arrangement.Center
                         ) {
                             val label = when {
-                                totalOwn > 1 -> "cafés ensemble"
-                                else -> "café ensemble"
+                                totalOwn > 1 -> stringResource(R.string.caf_s_ensemble)
+                                else -> stringResource(R.string.caf_ensemble)
                             }
-                            MKText(text = "Nous avons pris")
+                            MKText(text = stringResource(R.string.nous_avons_pris))
                             MKText(
                                 text = totalOwn.toString(),
                                 font = R.font.orbitron_semibold,
@@ -176,8 +179,8 @@ fun CoffeeScreen(viewModel: CoffeeViewModel = hiltViewModel()) {
                             )
                             MKText(text = label, fontSize = 12)
                             Spacer(Modifier.size(20.dp))
-                            MKText(text = "Le dernier en date était le", fontSize = 12)
-                            MKText(text = it, fontSize = 16, font = R.font.montserrat_bold)
+                            MKText(text = stringResource(R.string.le_dernier_en_date_tait_le), fontSize = 12)
+                            MKText(text = it.displayedString(stringResource(R.string.short_date_format)), fontSize = 16, font = R.font.montserrat_bold)
                         }
                     }
                 }
@@ -190,8 +193,14 @@ fun CoffeeScreen(viewModel: CoffeeViewModel = hiltViewModel()) {
                     else -> -1
                 }
                 val remainingHtml = when (remaining > 1) {
-                    true -> "Encore <b>${remaining} cafés</b> pour passer au niveau suivant."
-                    else -> "Encore <b>${remaining} café</b> pour passer au niveau suivant."
+                    true -> stringResource(
+                        R.string.encore_b_caf_s_b_pour_passer_au_niveau_suivant,
+                        remaining
+                    )
+                    else -> stringResource(
+                        R.string.encore_b_caf_b_pour_passer_au_niveau_suivant,
+                        remaining
+                    )
                 }
                 HtmlText(
                     html = remainingHtml,
@@ -228,11 +237,11 @@ fun CoffeeScreen(viewModel: CoffeeViewModel = hiltViewModel()) {
                     MKText(text = it.toString(), font = R.font.orbitron_semibold, fontSize = 18)
                     MKText(
                         text = when (it > 1) {
-                            true -> "cafés offerts"
-                            else -> "café offert"
+                            true -> stringResource(R.string.caf_s_offerts)
+                            else -> stringResource(R.string.caf_offert)
                         }, font = R.font.montserrat_bold
                     )
-                    MKText(text = "par la communauté", fontSize = 12)
+                    MKText(text = stringResource(R.string.par_la_communaut), fontSize = 12)
                 }
             }
             lastCoffee.value?.let {
@@ -248,15 +257,15 @@ fun CoffeeScreen(viewModel: CoffeeViewModel = hiltViewModel()) {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
-                    MKText(text = "Dernier café offert le", fontSize = 12)
-                    MKText(text = it.second, fontSize = 16, font = R.font.montserrat_bold)
-                    MKText(text = "par", fontSize = 12)
+                    MKText(text = stringResource(R.string.dernier_caf_offert_le), fontSize = 12)
+                    MKText(text = it.second.displayedString(stringResource(R.string.short_date_format)), fontSize = 16, font = R.font.montserrat_bold)
+                    MKText(text = stringResource(R.string.par), fontSize = 12)
                     MKText(text = it.first, font = R.font.montserrat_bold)
                 }
             }
         }
         usersList.value.takeIf { it.isNotEmpty() }?.let { list ->
-            MKText(text = "Merci à tous ceux qui soutiennent le projet :")
+            MKText(text = stringResource(R.string.merci_tous_ceux_qui_soutiennent_le_projet))
             LazyColumn {
                 items(list) {
                     CoffeeUserItem(it)
@@ -282,10 +291,10 @@ fun CoffeeButton(
         else -> ""
     }
     val label = when (productId) {
-        "a_coffee" -> "Offrir un café"
-        "three_coffees" -> "Offrir trois cafés"
-        "five_coffees" -> "Offrir cinq cafés"
-        "ten_coffees" -> "Offrir dix cafés"
+        "a_coffee" -> stringResource(R.string.offrir_un_caf)
+        "three_coffees" -> stringResource(R.string.offrir_trois_caf_s)
+        "five_coffees" -> stringResource(R.string.offrir_cinq_caf_s)
+        "ten_coffees" -> stringResource(R.string.offrir_dix_caf_s)
         else -> ""
     }
     Column(
@@ -369,11 +378,11 @@ fun CoffeeUserItem(pair: Pair<String, Int>) {
             }
             MKText(
                 text = when {
-                    pair.second < 15 -> "Niveau 1"
-                    pair.second in 15..29 -> "Niveau 2"
-                    pair.second in 30..59 -> "Niveau 3"
-                    pair.second in 60..99 -> "Niveau 4"
-                    pair.second > 100 -> "Niveau 5"
+                    pair.second < 15 -> stringResource(R.string.niveau_1)
+                    pair.second in 15..29 -> stringResource(R.string.niveau_2)
+                    pair.second in 30..59 -> stringResource(R.string.niveau_3)
+                    pair.second in 60..99 -> stringResource(R.string.niveau_4)
+                    pair.second > 100 -> stringResource(R.string.niveau_5)
                     else -> ""
                 }, fontSize = 10
             )

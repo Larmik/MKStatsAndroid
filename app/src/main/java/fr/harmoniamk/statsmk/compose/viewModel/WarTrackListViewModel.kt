@@ -1,8 +1,15 @@
 package fr.harmoniamk.statsmk.compose.viewModel
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
+import dagger.hilt.android.EntryPointAccessors
+import fr.harmoniamk.statsmk.compose.ViewModelFactoryProvider
 import fr.harmoniamk.statsmk.compose.ui.MKBottomSheetState
 import fr.harmoniamk.statsmk.enums.FilterType
 import fr.harmoniamk.statsmk.enums.SortType
@@ -22,21 +29,49 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import javax.inject.Inject
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
-@HiltViewModel
-class WarTrackListViewModel @Inject constructor(
+class WarTrackListViewModel @AssistedInject constructor(
+    @Assisted("periodic") val periodic: String,
     private val preferencesRepository: PreferencesRepositoryInterface,
     private val databaseRepository: DatabaseRepositoryInterface
 ) : ViewModel() {
+
+    companion object {
+        @Suppress("UNCHECKED_CAST")
+        fun provideFactory(
+            assistedFactory: Factory,
+            periodic: String
+        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return assistedFactory.create(periodic) as T
+            }
+        }
+
+        @Composable
+        fun viewModel(periodic: String): WarTrackListViewModel {
+            val factory: Factory = EntryPointAccessors.fromApplication<ViewModelFactoryProvider>(context = LocalContext.current).warTrackListViewModel
+            return androidx.lifecycle.viewmodel.compose.viewModel(
+                factory = provideFactory(
+                    assistedFactory = factory,
+                    periodic = periodic
+                )
+            )
+        }
+    }
+
+    @AssistedFactory
+    interface Factory {
+        fun create(@Assisted("periodic") periodic: String): WarTrackListViewModel
+    }
     var onlyIndiv = preferencesRepository.mkcTeam?.id == null
 
     private val teams = mutableListOf<MKCTeam>()
 
     private val _sharedMapStats = MutableStateFlow<List<MapDetails>?>(null)
-    private val _sharedTrackIndex = MutableStateFlow<Int>(-1)
+    private val _sharedTrackIndex = MutableStateFlow(-1)
     private val _sharedUserId = MutableStateFlow<String?>(null)
     private val _sharedTeamId = MutableStateFlow<String?>(null)
     private val _sharedSortTypeSelected = MutableStateFlow<SortType>(WarSortType.DATE)
@@ -69,6 +104,11 @@ class WarTrackListViewModel @Inject constructor(
                 teams.addAll(it)
             }
             .flatMapLatest { databaseRepository.getWars() }
+            .map { it.filter { war ->
+                periodic == Periodics.All.name
+                        || (periodic == Periodics.Week.name && war.isThisWeek)
+                        || (periodic == Periodics.Month.name && war.isThisMonth)
+            } }
             .onEach {
                 wars.clear()
                 wars.addAll(it)
@@ -85,8 +125,8 @@ class WarTrackListViewModel @Inject constructor(
         val filteredWars = mutableListOf<MKWar>()
         when (search.isNotEmpty()) {
             true -> teams
-                .filter { it.team_name.lowercase()?.contains(search.lowercase()).isTrue || it.team_tag.lowercase()?.contains(search.lowercase()).isTrue }
-                .mapNotNull { it.team_tag }
+                .filter { it.team_name.lowercase().contains(search.lowercase()) || it.team_tag.lowercase().contains(search.lowercase()) }
+                .map { it.team_tag }
                 .forEach { tag -> filteredWars.addAll(wars.filter { it.name?.lowercase()?.contains(tag.lowercase()).isTrue }) }
             else -> filteredWars.addAll(wars)
         }
@@ -95,7 +135,7 @@ class WarTrackListViewModel @Inject constructor(
             .launchIn(viewModelScope)
     }
 
-    private fun applyFilters(list: List<MapDetails>, filters: List<FilterType>): List<MapDetails> {
+    private fun applyFilters(list: Set<MapDetails>, filters: List<FilterType>): List<MapDetails> {
         val filtered = mutableListOf<MapDetails>()
         filtered.addAll(list)
         if (filters.contains(WarFilterType.WEEK)) filtered.removeAll(list.filterNot { it.war.isThisWeek })
@@ -130,11 +170,11 @@ class WarTrackListViewModel @Inject constructor(
         }
         mapDetailsList.addAll(
             finalList
-                .filter { !onlyIndiv || (onlyIndiv && it.war.war?.warTracks?.any { MKWarTrack(it).hasPlayer(userId) }.isTrue) }
+                .filter { (onlyIndiv && it.war.war?.warTracks?.any { MKWarTrack(it).hasPlayer(userId) }.isTrue) || !onlyIndiv }
                 .filter { teamId == null || it.war.hasTeam(teamId) }
                 .sortedByDescending { it.warTrack.track?.mid }
         )
-        val filteredMaps = applyFilters(list = mapDetailsList, filters)
+        val filteredMaps = applyFilters(list = mapDetailsList.toSet(), filters)
         emit(when (sort) {
             WarSortType.DATE -> filteredMaps.sortedByDescending { it.war.war?.mid }
             WarSortType.SCORE -> filteredMaps.sortedByDescending { it.warTrack.diffScore }

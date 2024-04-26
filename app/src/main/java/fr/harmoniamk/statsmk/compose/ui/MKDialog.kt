@@ -11,7 +11,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -26,7 +25,6 @@ sealed class MKDialogState(
     val isLoading: Boolean? = null,
     val positiveButtonText: Int? = null,
     val positiveButtonClick: () -> Unit = { },
-    val negativeButtonText: Int = R.string.retour,
     val negativeButtonClick: () -> Unit = { }
 ) {
     class LeaveTeam(onTeamLeft: () -> Unit, onDismiss: () -> Unit) : MKDialogState(
@@ -48,7 +46,7 @@ sealed class MKDialogState(
         negativeButtonClick = onDismiss
     )
     class ValidateWar(onValidateWar: () -> Unit, onDismiss: () -> Unit): MKDialogState(
-        text = "Une fois la war validée, vous ne pourrez plus la modifier.",
+        text = R.string.une_fois_la_war_valid_e_vous_ne_pourrez_plus_la_modifier,
         positiveButtonText = R.string.valider,
         positiveButtonClick = onValidateWar,
         negativeButtonClick = onDismiss
@@ -73,7 +71,7 @@ sealed class MKDialogState(
         negativeButtonClick = onDismiss
     )
 
-    class Error(message: String, onDismiss: () -> Unit) : MKDialogState(
+    class Error(message: Any, onDismiss: () -> Unit) : MKDialogState(
         text = message,
         negativeButtonClick = onDismiss
     )
@@ -117,7 +115,7 @@ fun MKDialog(state: MKDialogState) {
                 }
                 state.takeIf { !it.isLoading.isTrue }?.let {
                     MKButton(
-                        text = state.negativeButtonText,
+                        text = R.string.retour,
                         onClick = state.negativeButtonClick,
                         hasBackground = false
                     )

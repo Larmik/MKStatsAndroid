@@ -64,7 +64,7 @@ interface FirebaseRepositoryModule {
 
 @FlowPreview
 @ExperimentalCoroutinesApi
-class FirebaseRepository @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface, private val remoteConfigRepository: RemoteConfigRepositoryInterface) : FirebaseRepositoryInterface, CoroutineScope {
+class FirebaseRepository @Inject constructor(private val preferencesRepository: PreferencesRepositoryInterface, private val databaseRepository: DatabaseRepositoryInterface) : FirebaseRepositoryInterface, CoroutineScope {
 
     private val database  = Firebase.database.reference
 
@@ -185,7 +185,7 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
         awaitClose {  }
     }.flowOn(Dispatchers.IO)
 
-    override fun getAllies(teamId: String): Flow<List<String>> = callbackFlow<List<String>> {
+    override fun getAllies(teamId: String): Flow<List<String>> = callbackFlow {
         Log.d("MKDebugOnly", "FirebaseRepository getAllies")
         database.child("allies").child(teamId).get().addOnSuccessListener { snapshot ->
             val teams: List<String> = snapshot.children.map { it.value as String }

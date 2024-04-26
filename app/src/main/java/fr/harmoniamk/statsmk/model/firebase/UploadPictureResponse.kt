@@ -6,6 +6,6 @@ sealed class UploadPictureResponse {
 }
 
 sealed class PictureResponse {
-    class Success(val url: String?) : PictureResponse()
+    class Success : PictureResponse()
     class Error: PictureResponse()
 }

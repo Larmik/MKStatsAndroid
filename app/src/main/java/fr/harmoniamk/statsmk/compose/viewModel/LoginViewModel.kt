@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.shareIn
 import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 import javax.inject.Inject
 
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
@@ -66,7 +67,7 @@ class LoginViewModel @Inject constructor(
             .onEach {  _sharedDialogValue.value = MKDialogState.Loading(R.string.fetch_wars) }
             .flatMapLatest { fetchUseCase.fetchWars() }
             .onEach {
-                preferencesRepository.lastUpdate = SimpleDateFormat("dd/MM/yyyy HH:mm").format(
+                preferencesRepository.lastUpdate = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault()).format(
                     Date()
                 )
                 _sharedNext.value = Unit

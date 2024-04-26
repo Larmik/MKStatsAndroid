@@ -13,13 +13,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 sealed class Sort(val list: List<SortType>) {
-    class TrackSort : Sort(TrackSortType.values().toList())
-    class WarSort : Sort(WarSortType.values().toList())
-    class PlayerSort : Sort(PlayerSortType.values().toList())
+    class TrackSort : Sort(TrackSortType.entries)
+    class WarSort : Sort(WarSortType.entries)
+    class PlayerSort : Sort(PlayerSortType.entries)
 }
 
 sealed class Filter(val list: List<FilterType>) {
-    class WarFilter : Filter(WarFilterType.values().toList())
+    class WarFilter : Filter(WarFilterType.entries)
     class None : Filter(listOf())
 }
 

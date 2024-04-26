@@ -90,7 +90,7 @@ fun SignupScreen(
                 placeHolderRes = R.string.id_mkc,
                 keyboardType = KeyboardType.Number
             )
-            MKText(text = "L'identifiant MKCentral correspond au numéro à la fin de la barre d'adresse lorsque tu es sur ton profil MKCentral. \n (ex: https://www.mariokartcentral.com/mkc/registry/players/40840)", fontSize = 10)
+            MKText(text = stringResource(R.string.mkc_id_tuto), fontSize = 10)
             MKButton(
                 text = R.string.suivant,
                 enabled = emailValue.value.text.isNotEmpty()

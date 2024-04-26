@@ -22,20 +22,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKBaseScreen
 import fr.harmoniamk.statsmk.compose.ui.MKBottomSheet
+import fr.harmoniamk.statsmk.compose.ui.MKProgress
 import fr.harmoniamk.statsmk.compose.ui.MKTextField
 import fr.harmoniamk.statsmk.compose.ui.MKTrackItem
 import fr.harmoniamk.statsmk.compose.ui.MKWarTrackItem
 import fr.harmoniamk.statsmk.compose.viewModel.WarTrackListViewModel
+import fr.harmoniamk.statsmk.compose.viewModel.WarTrackListViewModel.Companion.viewModel
 import fr.harmoniamk.statsmk.enums.Maps
 import fr.harmoniamk.statsmk.enums.WarSortType
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun WarTrackListScreen(viewModel: WarTrackListViewModel = hiltViewModel(), trackIndex: Int, userId: String? = null, teamId: String? = null) {
+fun WarTrackListScreen(trackIndex: Int, userId: String? = null, teamId: String? = null, periodic: String = "All") {
+
+    val viewModel: WarTrackListViewModel = viewModel(periodic)
 
     val stats = viewModel.sharedMapStats.collectAsState()
     val searchState = remember { mutableStateOf(TextFieldValue("")) }
@@ -67,7 +70,7 @@ fun WarTrackListScreen(viewModel: WarTrackListViewModel = hiltViewModel(), track
                 onFiltered = { viewModel.onFiltered(it) }
             )
         }) {
-        Maps.values().getOrNull(trackIndex)?.let {
+        Maps.entries.getOrNull(trackIndex)?.let {
             MKTrackItem(map = it)
         }
         Row(
@@ -93,11 +96,15 @@ fun WarTrackListScreen(viewModel: WarTrackListViewModel = hiltViewModel(), track
                 contentDescription = null
             )
         }
-        LazyColumn {
-            items(items = stats.value.orEmpty()) {
-                MKWarTrackItem(details = it, isIndiv = userId != null)
+        when (stats.value.isNullOrEmpty()) {
+            true -> MKProgress()
+            else -> LazyColumn {
+                items(items = stats.value.orEmpty()) {
+                    MKWarTrackItem(details = it, isIndiv = userId != null)
+                }
             }
         }
+
     }
 
 }

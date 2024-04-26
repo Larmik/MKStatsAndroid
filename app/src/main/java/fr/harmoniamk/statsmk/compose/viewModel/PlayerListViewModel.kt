@@ -158,8 +158,8 @@ class PlayerListViewModel @AssistedInject constructor(
             .launchIn(viewModelScope)
 
         databaseRepository.getNewTeam(teamHostId)
-            .zip( databaseRepository.getNewTeam(teamOpponentId)) { host, oponent ->
-                _sharedWarName.value = "${host?.team_tag} - ${oponent?.team_tag}"
+            .zip( databaseRepository.getNewTeam(teamOpponentId)) { host, opponent ->
+                _sharedWarName.value = "${host?.team_tag} - ${opponent?.team_tag}"
             }.launchIn(viewModelScope)
     }
 

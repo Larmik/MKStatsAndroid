@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import fr.harmoniamk.statsmk.R
@@ -95,7 +96,7 @@ fun MKCurrentWarCell(current: CurrentWar, onClick: (String) -> Unit) {
                     }
                 }
                 MKText(
-                    text = "Maps restantes: $remaining",
+                    text = "${stringResource(R.string.maps_restantes)} $remaining",
                     font = R.font.montserrat_regular,
                     fontSize = 12,
                     newTextColor = colorsViewModel.secondaryTextColor

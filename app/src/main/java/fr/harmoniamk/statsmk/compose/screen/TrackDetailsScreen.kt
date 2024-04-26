@@ -75,7 +75,7 @@ fun TrackDetailsScreen(warId: String, warTrackId: String, onBack: () -> Unit) {
             )
         },
         content = {
-            currentTrack.value?.index?.let { MKTrackItem(map = Maps.values()[it]) }
+            currentTrack.value?.index?.let { MKTrackItem(map = Maps.entries[it]) }
             when (buttonsVisible.value) {
                 true -> MKSegmentedButtons(buttons = buttons)
                 else -> Spacer(modifier = Modifier.height(10.dp))

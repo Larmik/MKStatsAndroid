@@ -43,7 +43,6 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import java.util.Locale
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 class CurrentWarViewModel @AssistedInject constructor(
@@ -89,7 +88,6 @@ class CurrentWarViewModel @AssistedInject constructor(
     private val _sharedDialogValue = MutableStateFlow<MKDialogState?>(null)
     private val _sharedGoToWarResume = MutableSharedFlow<String>()
     private val _sharedBackToWars = MutableSharedFlow<Unit>()
-    private val _sharedTrackClick = MutableSharedFlow<Int>()
 
     val sharedCurrentWar = _sharedCurrentWar.asStateFlow()
     val sharedButtonVisible = _sharedButtonVisible.asStateFlow()
@@ -99,7 +97,6 @@ class CurrentWarViewModel @AssistedInject constructor(
     val sharedDialogValue = _sharedDialogValue.asStateFlow()
     val sharedGoToWarResume = _sharedGoToWarResume.asSharedFlow()
     val sharedBackToWars = _sharedBackToWars.asSharedFlow()
-    val sharedTrackClick = _sharedTrackClick.asSharedFlow()
 
     val users = mutableListOf<User>()
     val currentPlayers = mutableListOf<MKPlayer>()
@@ -115,7 +112,7 @@ class CurrentWarViewModel @AssistedInject constructor(
                 val warTracksList = it.war?.warTracks.orEmpty().map { MKWarTrack(it) }
                 users.clear()
                 currentPlayers.clear()
-                users.addAll(firebaseRepository.getUsers().firstOrNull()?.filter { user -> user.currentWar == it.war?.mid }?.sortedBy { it.name?.toLowerCase(Locale.ROOT) }.orEmpty())
+                users.addAll(firebaseRepository.getUsers().firstOrNull()?.filter { user -> user.currentWar == it.war?.mid }?.sortedBy { it.name?.lowercase() }.orEmpty())
                 currentPlayers.addAll(databaseRepository.getRoster().firstOrNull().orEmpty())
                 _sharedCurrentWar.emit(warWithPenas)
                 _sharedTracks.emit(warWithPenas?.war?.warTracks.orEmpty().map { MKWarTrack(it) })

@@ -6,7 +6,6 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -27,7 +26,6 @@ interface RemoteConfigRepositoryModule {
     fun bind(impl: RemoteConfigRepository): RemoteConfigRepositoryInterface
 }
 
-@OptIn(ExperimentalCoroutinesApi::class)
 class RemoteConfigRepository @Inject constructor() : RemoteConfigRepositoryInterface {
 
     private val remoteConfig = FirebaseRemoteConfig.getInstance()

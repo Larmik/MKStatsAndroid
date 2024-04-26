@@ -2,7 +2,6 @@ package fr.harmoniamk.statsmk.compose.screen
 
 import android.widget.Toast
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetValue
@@ -12,6 +11,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import fr.harmoniamk.statsmk.R
@@ -49,7 +49,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = hiltViewModel(), onSettingsIte
     }
     LaunchedEffect(Unit) {
         viewModel.sharedToast.collect {
-            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(it), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -86,7 +86,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = hiltViewModel(), onSettingsIte
             })
         }
         Spacer(Modifier.weight(1f))
-        MKText(text =" Dernière mise à jour : ${lastUpdate.value}", modifier = Modifier.padding(bottom = 10.dp))
+        MKText(text ="${stringResource(R.string.derni_re_mise_jour)} ${lastUpdate.value}", modifier = Modifier.padding(bottom = 10.dp))
 
     }
 }

@@ -21,11 +21,6 @@ data class OpponentRankingItemViewModel(val team: MKCTeam?, override val stats: 
             else -> stats.averagePointsLabel
         }
 
-    val averageMapLabel: String
-        get() = when (userId != null) {
-            true -> stats.averagePlayerPosition.toString()
-            else -> stats.averageMapPointsLabel
-        }
 
 
 

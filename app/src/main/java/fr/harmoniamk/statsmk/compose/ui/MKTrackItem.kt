@@ -65,7 +65,7 @@ fun MKTrackItem(
             track?.track?.mid?.let { goToDetails(it) }
         }) {
         when {
-            track?.index != null -> Maps.values()[track.index ?: 0]
+            track?.index != null -> Maps.entries[track.index ?: 0]
             map != null -> map
             trackRanking != null -> trackRanking.map
             else -> null

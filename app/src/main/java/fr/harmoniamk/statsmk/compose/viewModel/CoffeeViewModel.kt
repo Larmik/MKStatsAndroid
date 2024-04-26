@@ -9,11 +9,10 @@ import com.google.android.gms.ads.AdError
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.FullScreenContentCallback
 import com.google.android.gms.ads.LoadAdError
-import com.google.android.gms.ads.OnUserEarnedRewardListener
 import com.google.android.gms.ads.rewarded.RewardedAd
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback
 import dagger.hilt.android.lifecycle.HiltViewModel
-import fr.harmoniamk.statsmk.extension.displayedString
+import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.extension.getActivity
 import fr.harmoniamk.statsmk.model.firebase.Coffee
 import fr.harmoniamk.statsmk.model.firebase.User
@@ -31,24 +30,24 @@ import java.util.Date
 import javax.inject.Inject
 
 
-sealed class CoffeePurchaseState(val message: String) {
-    class Success(val coffee: Coffee) : CoffeePurchaseState("Café bien reçu ! Merci infiniment du soutien.")
-    object Pending : CoffeePurchaseState("Il y a du monde au comptoir pour récupérer le café. Il sera disponible dans quelques minutes.")
-    class Error(code: Int) : CoffeePurchaseState("Une erreur est survenue lors de la distribution du café. Veuillez réessayer plus tard. \n \n Votre achat a été annulé. \n \n Code d'erreur : $code")
+sealed class CoffeePurchaseState(val message: Int) {
+    class Success(val coffee: Coffee) : CoffeePurchaseState(R.string.coffee_success_message)
+    object Pending : CoffeePurchaseState(R.string.coffee_pending_message)
+    class Error(code: Int) : CoffeePurchaseState(R.string.coffee_error_message)
 }
 
 @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
 @HiltViewModel
 class CoffeeViewModel @Inject constructor(
     private val billingRepository: BillingRepositoryInterface,
-    private val firebaseRepository: FirebaseRepositoryInterface,
+    firebaseRepository: FirebaseRepositoryInterface,
     private val preferencesRepository: PreferencesRepositoryInterface,
     private val authenticationRepository: AuthenticationRepositoryInterface): ViewModel() {
 
     private val _total = MutableStateFlow<Int?>(null)
     private val _ownTotal = MutableStateFlow<Int?>(null)
-    private val _lastCoffee = MutableStateFlow<Pair<String, String>?>(null)
-    private val _lastOwnCoffee = MutableStateFlow<String?>(null)
+    private val _lastCoffee = MutableStateFlow<Pair<String, Date>?>(null)
+    private val _lastOwnCoffee = MutableStateFlow<Date?>(null)
     private val _coffeeUsersList = MutableStateFlow<List<Pair<String, Int>>>(listOf())
 
     val total = _total.asStateFlow()
@@ -103,10 +102,10 @@ class CoffeeViewModel @Inject constructor(
                 _ownTotal.value = ownTotal
                 coffees.maxByOrNull { it.date }?.let { coffee ->
                     val user = users.singleOrNull { it.mid == coffee.userId }
-                    _lastCoffee.value = Pair(user?.name.orEmpty(), Date(coffee.date).displayedString("dd/MM/yyyy"))
+                    _lastCoffee.value = Pair(user?.name.orEmpty(), Date(coffee.date))
                 }
                 coffees.filter { it.userId == authenticationRepository.user?.uid }.maxByOrNull { it.date }?.let { coffee ->
-                    _lastOwnCoffee.value =  Date(coffee.date).displayedString("dd/MM/yyyy")
+                    _lastOwnCoffee.value =  Date(coffee.date)
                 }
                 coffees.groupBy { it.userId }.forEach { map ->
                     val userName = users.singleOrNull { it.mid == map.key }?.name.orEmpty()

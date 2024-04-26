@@ -43,7 +43,8 @@
         android:gravity="center"
         android:id="@+id/popup_et"
         android:layout_marginHorizontal="40dp"
-        android:importantForAutofill="no" />
+        android:importantForAutofill="no"
+        tools:ignore="LabelFor" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"

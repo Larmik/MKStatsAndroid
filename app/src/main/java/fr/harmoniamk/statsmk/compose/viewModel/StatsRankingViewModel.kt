@@ -41,6 +41,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.launch
 
 sealed class StatsRankingState(val title: Int, val placeholderRes: Int, val sort: Sort) {
@@ -217,10 +218,19 @@ class StatsRankingViewModel @AssistedInject constructor(
         finalUserId = (userId ?: preferencesRepository.mkcPlayer?.id.toString()).split(".").firstOrNull().orEmpty()
         _sharedUserId.value = finalUserId.takeIf { indivEnabled || onlyIndiv }
         _sharedTeamId.value = teamId
+        databaseRepository.getNewUser(userId).zip(databaseRepository.getNewTeam(teamId)) { user, team ->
+            _sharedSubtitle.value = when {
+                user != null && team != null -> "${user.name} vs ${team.team_name}"
+                user != null -> user.name
+                team != null -> team.team_name
+                else -> null
+            }
+        }.launchIn(viewModelScope)
         viewModelScope.launch {
             if (warList.isEmpty()) {
                 initWars()
-                delay(500)
+                while (warList.isEmpty())
+                    delay(100)
             }
             when (state) {
                 is StatsRankingState.PlayerRankingState -> {

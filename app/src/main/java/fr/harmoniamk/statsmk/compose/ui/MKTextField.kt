@@ -114,10 +114,3 @@ fun MKTextField(
 fun MKTextFieldPreview() {
     MKTextField(value = TextFieldValue(""), placeHolderRes = R.string.rechercher_un_advsersaire, onValueChange = {})
 }
-
-@Preview
-@Composable
-@ExperimentalMaterialApi
-fun MKTextFieldPreviewHint() {
-    MKTextField(value = TextFieldValue("Rechercher un adversaire..."), placeHolderRes = R.string.rechercher_un_advsersaire, onValueChange = {})
-}
