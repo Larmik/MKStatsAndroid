@@ -121,11 +121,8 @@ fun RootScreen(startDestination: String = "Login", onBack: () -> Unit) {
                 onBack = { navController.popBackStack("Home", inclusive = false) },
                 onTrackClick = { navController.navigate("Home/War/Current/TrackDetails/$it") },
                 onRedirectToResume = { warId ->
-                    navController.navigate(route = "Home/War/$warId") {
-                        popUpTo("Home/War/Current/${it.arguments?.getString("teamId").orEmpty()}") {
-                            inclusive = true
-                        }
-                    }
+                    navController.popBackStack("Home", inclusive = false)
+                    navController.navigate(route = "Home/War/$warId")
                 }
             )
         }

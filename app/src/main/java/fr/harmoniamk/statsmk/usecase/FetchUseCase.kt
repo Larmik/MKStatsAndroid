@@ -21,6 +21,7 @@ import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
@@ -74,11 +75,9 @@ class FetchUseCase @Inject constructor(
         when (mkcId) {
             null ->
                 firebaseRepository.getUser(authenticationRepository.user?.uid.orEmpty())
-                    .onEach {
-                        preferencesRepository.role = it?.role ?: 0
-
-                    }
-                    .flatMapLatest {  mkCentralRepository.getPlayer(it?.mkcId.orEmpty()) }
+                    .filterNotNull()
+                    .onEach { it.role?.let { role -> preferencesRepository.role = role } }
+                    .flatMapLatest {  mkCentralRepository.getPlayer(it.mkcId.orEmpty()) }
             else ->  mkCentralRepository.getPlayer(mkcId)
         }.onEach {
             preferencesRepository.mkcPlayer = (it as? NetworkResponse.Success)?.response
@@ -169,7 +168,7 @@ class FetchUseCase @Inject constructor(
                 val fbUser = users.lastOrNull { item -> item.mkcId == it.mkcId.split(".").first() }
                 val mkcPlayer = when (forceUpdate || !players.map { it.mkcId }.contains(it.mkcId)) {
                     false -> players.firstOrNull { player -> player.mkcId == it.mkcId }?.copy(
-                        role = fbUser?.role ?: 0,
+                        role = fbUser?.role ?: it.role,
                         isLeader = it.isLeader,
                         currentWar = fbUser?.currentWar ?: "-1",
                         rosterId = team.id
@@ -262,7 +261,7 @@ class FetchUseCase @Inject constructor(
 
     override fun purgePlayers(): Flow<Unit> =
         firebaseRepository.getUsers()
-            .map { it.filter { user -> user.mid.toIntOrNull() != null && (user.discordId?.length ?: 0) < 10  && user.currentWar == "-1"} }
+            .map { it.filter { user -> user.mid == user.mkcId && (user.discordId?.length ?: 0) < 10 } }
             .flatMapLatest { firebaseRepository.deleteUser(it) }
 
 }

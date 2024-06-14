@@ -140,7 +140,7 @@ class CurrentWarViewModel @AssistedInject constructor(
                     it.filter { it.currentWar != "-1" }.forEach { user ->
                         val newUser = user.copy(currentWar = "-1")
                         val fbUser = users.singleOrNull { it.mkcId == user.mkcId }
-                        firebaseRepository.writeUser(User(newUser, fbUser?.mid, fbUser?.discordId)).firstOrNull()
+                        firebaseRepository.writeUser(User(newUser, fbUser)).firstOrNull()
                         databaseRepository.updateUser(newUser).firstOrNull()
                     }
                     firebaseRepository.deleteCurrentWar(teamId).firstOrNull()
@@ -164,9 +164,9 @@ class CurrentWarViewModel @AssistedInject constructor(
                         currentPlayers
                             .filter { player -> users.singleOrNull { it.mkcId == player.mkcId }?.currentWar == war.mid }
                             .forEach {user ->
-                                val new = user.apply { this.currentWar = "-1" }
+                                val new = user.copy(currentWar = "-1")
                                 val fbUser = firebaseRepository.getUsers().firstOrNull()?.singleOrNull { it.mkcId == user.mkcId }
-                                firebaseRepository.writeUser(User(new, fbUser?.mid, fbUser?.discordId)).first()
+                                firebaseRepository.writeUser(User(new, fbUser)).first()
                                 databaseRepository.updateUser(new).first()
                             }
                         war.withName(databaseRepository)

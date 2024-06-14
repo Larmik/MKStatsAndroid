@@ -109,12 +109,12 @@ class SubPlayerViewModel @Inject constructor(
     fun onSubClick() {
         oldPlayer?.apply { this.currentWar = "-1" }?.let { old ->
             val fbOld = fbUsers.singleOrNull { it.mkcId == old.mkcId }
-            firebaseRepository.writeUser(User(old, fbOld?.mid, fbOld?.discordId))
+            firebaseRepository.writeUser(User(old, fbOld))
                 .flatMapLatest { databaseRepository.updateUser(old) }
                 .mapNotNull { newPlayer?.apply { this.currentWar = preferencesRepository.currentWar?.mid.orEmpty()} }
                 .map { new ->
                     val fbNew = fbUsers.singleOrNull { it.mkcId == new.mkcId }
-                    firebaseRepository.writeUser(User(new, fbNew?.mid, fbNew?.discordId)).first()
+                    firebaseRepository.writeUser(User(new, fbNew)).first()
                     databaseRepository.updateUser(new).first()
                 }
                 .onEach {

@@ -1,6 +1,5 @@
 package fr.harmoniamk.statsmk.model.firebase
 
-import com.google.firebase.auth.FirebaseUser
 import fr.harmoniamk.statsmk.model.network.MKPlayer
 
 
@@ -15,24 +14,14 @@ data class User(
     var rosterId: String? = null
 )  {
 
-    constructor(player: MKPlayer?, mid: String?, discordId: String?) : this(
-        mid = mid ?: player?.mkcId.orEmpty(),
-        name = player?.name,
+    constructor(player: MKPlayer?, user: User?) : this(
+        mid = user?.mid ?: player?.mkcId.orEmpty(),
+        name = user?.name ?: player?.name,
         currentWar = player?.currentWar,
-        role = player?.role,
-        picture = player?.picture,
-        mkcId = player?.mkcId,
-        discordId = discordId
-    )
-
-    constructor(user: FirebaseUser, picture: String) : this(
-        mid = user.uid,
-        name = user.displayName,
-        currentWar = "-1",
-        role = 0,
-        picture = picture,
-        mkcId = user.uid,
-        discordId = null
+        role = user?.role ?: player?.role,
+        picture = user?.picture ?: player?.picture,
+        mkcId = user?.mkcId ?: player?.mkcId,
+        discordId = user?.discordId
     )
 
 }
