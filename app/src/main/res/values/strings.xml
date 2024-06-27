@@ -367,7 +367,7 @@
     <string name="statistiques_des_joueurs">Statistiques des joueurs</string>
     <string name="statistiques_du_joueur">Statistiques du joueur</string>
     <string name="statistiques_individuelles">Statistiques individuelles</string>
-    <string name="stats_display_mode">Calcul des statistiques</string>
+    <string name="stats_display_mode">Option multi-roster</string>
     <string name="stats">Statistiques</string>
     <string name="sub_confirm">Remplacer %s</string>
     <string name="suite_firebase">Suite Firebase</string>
@@ -415,4 +415,5 @@
     <string name="war_over">War terminée</string>
     <string name="wars_jou_es">Wars jouées</string>
     <string name="wp">Parc Gloogloop</string>
+    <string name="single_roster_label">Cette option est inactive car votre équipe ne comporte qu\'un seul roster.</string>
 </resources>

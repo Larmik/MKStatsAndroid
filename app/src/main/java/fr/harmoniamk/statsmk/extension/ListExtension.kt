@@ -23,13 +23,17 @@ import fr.harmoniamk.statsmk.model.local.WarStats
 import fr.harmoniamk.statsmk.model.network.MKCTeam
 import fr.harmoniamk.statsmk.model.network.MKPlayer
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.withContext
 import kotlin.collections.count
 import kotlin.collections.map
 
@@ -135,21 +139,24 @@ fun List<MKWar>.withFullStats(databaseRepository: DatabaseRepositoryInterface, u
         }
 }
 
-fun List<MKWar?>.withName(databaseRepository: DatabaseRepositoryInterface) = flow {
+fun List<MKWar>.withName(databaseRepository: DatabaseRepositoryInterface) = flow {
     val temp = mutableListOf<MKWar>()
+    val results = mutableListOf<Deferred<MKWar>>()
     this@withName.forEach { war ->
-        war?.let {
-            Log.d(
-                "MKDebugOnly",
-                "withName: using firstOrNull() (x2) flow method, maybe blocking thread"
-            )
-            val hostName = databaseRepository.getNewTeam(it.war?.teamHost).firstOrNull()?.team_tag
-            val opponentName =
-                databaseRepository.getNewTeam(it.war?.teamOpponent).firstOrNull()?.team_tag
-            temp.add(it.apply { this.name = "$hostName - $opponentName" })
+        results += withContext(Dispatchers.IO) {
+            async {
+                val hostName = databaseRepository.getNewTeam(war.war?.teamHost).firstOrNull()?.team_tag
+                val opponentName = databaseRepository.getNewTeam(war.war?.teamOpponent).firstOrNull()?.team_tag
+                return@async war.apply { this.name = "$hostName - $opponentName" }
+            }
         }
     }
-    emit(temp)
+    results.forEach {
+        val war = it.await()
+        temp.add(war)
+        if (temp.size == this@withName.size)
+            emit(temp)
+    }
 }
 
 /** LISTE MKCTEAM **/

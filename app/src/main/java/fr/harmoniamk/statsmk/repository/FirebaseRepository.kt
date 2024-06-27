@@ -121,7 +121,7 @@ class FirebaseRepository @Inject constructor(private val preferencesRepository: 
     override fun writeAlly(teamId: String, ally: String): Flow<Unit>  =
         getAllies(teamId)
             .map {
-                database.child("allies").child(preferencesRepository.mkcTeam?.id.orEmpty()).child(it.size.toString()).setValue(ally)
+                database.child("allies").child(teamId).child(it.size.toString()).setValue(ally)
             }
 
     override fun writeTags(tags: List<Tag>): Flow<Unit> = flow {

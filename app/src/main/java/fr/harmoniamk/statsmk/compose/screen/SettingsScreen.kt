@@ -22,6 +22,7 @@ import fr.harmoniamk.statsmk.compose.ui.MKListItem
 import fr.harmoniamk.statsmk.compose.ui.MKText
 import fr.harmoniamk.statsmk.compose.viewModel.SettingsViewModel
 import fr.harmoniamk.statsmk.enums.MenuItems
+import fr.harmoniamk.statsmk.model.local.TeamType
 
 @Composable
 @OptIn(ExperimentalMaterialApi::class)
@@ -79,7 +80,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = hiltViewModel(), onSettingsIte
                     is MenuItems.Refresh -> viewModel.onUpdate()
                     is MenuItems.PurgeUsers -> viewModel.purgeUsers()
                     is MenuItems.FetchTags -> viewModel.fetchTags()
-                    is MenuItems.StatsDisplayMode -> viewModel.showStatsDisplay()
+                    is MenuItems.StatsDisplayMode ->  viewModel.showStatsDisplay()
                     is MenuItems.Theme -> viewModel.showTheme()
                     else -> { }
                 }

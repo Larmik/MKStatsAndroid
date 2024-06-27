@@ -42,8 +42,8 @@ android {
         applicationId "fr.harmoniamk.statsmk"
         minSdk 26
         targetSdk 34
-        versionCode 50
-        versionName "2.8.5"
+        versionCode 52
+        versionName "2.8.7"
         multiDexEnabled true
         // read file from project root folder
         javaCompileOptions {

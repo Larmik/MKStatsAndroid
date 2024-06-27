@@ -6,6 +6,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKBottomSheetState
 import fr.harmoniamk.statsmk.compose.ui.MKDialogState
+import fr.harmoniamk.statsmk.model.local.TeamType
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
@@ -44,6 +45,16 @@ class SettingsViewModel @Inject constructor(
     val sharedBottomSheetValue = _sharedBottomSheetValue.asStateFlow()
     val isGod = authenticationRepository.userRole == 3
 
+    val type: TeamType
+        get()  {
+            val team = preferencesRepository.mkcTeam
+            return  when {
+                team?.primary_team_id != null -> TeamType.MultiRoster(teamId = team.primary_team_id.toString().takeIf { it != team.id }, secondaryTeamsId = null)
+                !team?.secondary_teams.isNullOrEmpty() -> TeamType.MultiRoster(teamId = team?.id, secondaryTeamsId = team?.secondary_teams?.map { it.id })
+                else -> TeamType.SingleRoster(teamId = team?.id.toString())
+            }
+        }
+
     fun fetchTags() = fetchUseCase.fetchTags().onEach { _sharedToast.emit(R.string.tags_mis_jour) }.launchIn(viewModelScope)
     fun purgeUsers() = fetchUseCase.purgePlayers().onEach { _sharedToast.emit(R.string.base_d_utilisateurs_purg_e) }.launchIn(viewModelScope)
 
@@ -69,7 +80,13 @@ class SettingsViewModel @Inject constructor(
 
     fun showStatsDisplay()
     {
-        _sharedBottomSheetValue.value = MKBottomSheetState.StatsDisplayMode(preferencesRepository.rosterOnly)
+        when (type) {
+            is TeamType.SingleRoster -> _sharedDialogValue.value = MKDialogState.Error(R.string.single_roster_label) {
+                _sharedDialogValue.value = null
+            }
+            else ->  _sharedBottomSheetValue.value = MKBottomSheetState.StatsDisplayMode(preferencesRepository.rosterOnly)
+        }
+
     }
 
     fun showTheme() {
