@@ -13,6 +13,7 @@ import dagger.hilt.components.SingletonComponent
 import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.model.firebase.NewWar
 import fr.harmoniamk.statsmk.model.firebase.NewWarTrack
+import fr.harmoniamk.statsmk.model.local.TeamType
 import fr.harmoniamk.statsmk.model.network.MKCFullPlayer
 import fr.harmoniamk.statsmk.model.network.MKCFullTeam
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -42,6 +43,7 @@ interface PreferencesRepositoryInterface {
     var secondaryTextColor: String
     var isPendingPurchase: Boolean
     var coffees: Int
+    val teamType: TeamType
 }
 
 @FlowPreview
@@ -125,4 +127,12 @@ class PreferencesRepository @Inject constructor(
     override var coffees: Int
         get() = preferences.getInt("coffees", 0)
         set(value) {preferences.edit().putInt("coffees", value).apply()}
+    override val teamType: TeamType
+        get() =  when {
+                mkcTeam?.primary_team_id != null -> TeamType.MultiRoster(teamId = mkcTeam?.primary_team_id.toString().takeIf { it != mkcTeam?.id }, secondaryTeamsId = null)
+                !mkcTeam?.secondary_teams.isNullOrEmpty() -> TeamType.MultiRoster(teamId = mkcTeam?.id, secondaryTeamsId = mkcTeam?.secondary_teams?.map { it.id })
+                else -> TeamType.SingleRoster(teamId = mkcTeam?.id.toString())
+            }
+
+
 }

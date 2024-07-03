@@ -42,7 +42,7 @@ import fr.harmoniamk.statsmk.extension.MKHtml.fromHtml
 data class FAQ(val title: Int, val message: Int)
 
 @Composable
-fun FAQCell(faq: FAQ) {
+fun FAQCell(faq: FAQ, onClick: (() -> Unit)? = null) {
     val colorsViewModel: ColorsViewModel = hiltViewModel()
     val expandTransition = remember {
         expandVertically(
@@ -77,7 +77,7 @@ fun FAQCell(faq: FAQ) {
             Row(
                 Modifier
                     .fillMaxWidth()
-                    .clickable { isExpanded.value = !isExpanded.value }, horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                    .clickable(onClick = onClick ?: { isExpanded.value = !isExpanded.value}), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
                 MKText(text = stringResource(faq.title), fontSize = 16)
                 Image(painterResource(R.drawable.arrowdown), contentDescription = null, modifier = Modifier
                     .size(25.dp)

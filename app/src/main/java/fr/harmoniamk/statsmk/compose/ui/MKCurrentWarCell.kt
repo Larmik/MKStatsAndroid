@@ -21,7 +21,7 @@ import fr.harmoniamk.statsmk.model.firebase.CurrentWar
 
 
 @Composable
-fun MKCurrentWarCell(current: CurrentWar, onClick: (String) -> Unit) {
+fun MKCurrentWarCell(current: CurrentWar, showTeamName: Boolean, onClick: (String) -> Unit) {
     val colorsViewModel: ColorsViewModel = hiltViewModel()
     val war = current.war
     val teamName = war.name?.split("-")?.getOrNull(0)?.trim().toString()
@@ -40,67 +40,70 @@ fun MKCurrentWarCell(current: CurrentWar, onClick: (String) -> Unit) {
         backgroundColor = colorsViewModel.secondaryColor,
         contentColor = colorsViewModel.secondaryTextColor,
         elevation = 0.dp,
-        modifier = Modifier.padding(10.dp).clickable { onClick(war.war?.teamHost.orEmpty()) }
+        modifier = Modifier
+            .padding(10.dp)
+            .clickable { onClick(war.war?.teamHost.orEmpty()) }
     ) {
-       Column(
-                horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
-                    .padding(10.dp)
-                    .fillMaxWidth()
-            ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
+                .padding(10.dp)
+                .fillMaxWidth()
+        ) {
+            if (showTeamName)
                 MKText(
                     text = current.teamName,
                     font = R.font.montserrat_regular,
                     fontSize = 12,
                     newTextColor = colorsViewModel.secondaryTextColor
                 )
-                Row(
-                    horizontalArrangement = Arrangement.SpaceAround,
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        MKText(
-                            text = teamName,
-                            font = R.font.montserrat_bold,
-                            modifier = Modifier.padding(vertical = 5.dp),
-                            fontSize = 16,
-                            newTextColor = colorsViewModel.secondaryTextColor
-                        )
-                        MKText(
-                            text = teamScore,
-                            font = R.font.orbitron_semibold,
-                            fontSize = 22,
-                            newTextColor = colorsViewModel.secondaryTextColor
-                        )
-                    }
+            Row(
+                horizontalArrangement = Arrangement.SpaceAround,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     MKText(
-                        text = diff,
-                        font = R.font.orbitron_semibold,
-                        fontSize = 18,
-                        newTextColor = diffColor
+                        text = teamName,
+                        font = R.font.montserrat_bold,
+                        modifier = Modifier.padding(vertical = 5.dp),
+                        fontSize = 16,
+                        newTextColor = colorsViewModel.secondaryTextColor
                     )
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        MKText(
-                            text = opponentName,
-                            font = R.font.montserrat_bold,
-                            modifier = Modifier.padding(vertical = 5.dp),
-                            fontSize = 16,
-                            newTextColor = colorsViewModel.secondaryTextColor
-                        )
-                        MKText(
-                            text = opponentScore,
-                            font = R.font.orbitron_semibold,
-                            fontSize = 22,
-                            newTextColor = colorsViewModel.secondaryTextColor
-                        )
-                    }
+                    MKText(
+                        text = teamScore,
+                        font = R.font.orbitron_semibold,
+                        fontSize = 22,
+                        newTextColor = colorsViewModel.secondaryTextColor
+                    )
                 }
                 MKText(
-                    text = "${stringResource(R.string.maps_restantes)} $remaining",
-                    font = R.font.montserrat_regular,
-                    fontSize = 12,
-                    newTextColor = colorsViewModel.secondaryTextColor
+                    text = diff,
+                    font = R.font.orbitron_semibold,
+                    fontSize = 18,
+                    newTextColor = diffColor
                 )
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    MKText(
+                        text = opponentName,
+                        font = R.font.montserrat_bold,
+                        modifier = Modifier.padding(vertical = 5.dp),
+                        fontSize = 16,
+                        newTextColor = colorsViewModel.secondaryTextColor
+                    )
+                    MKText(
+                        text = opponentScore,
+                        font = R.font.orbitron_semibold,
+                        fontSize = 22,
+                        newTextColor = colorsViewModel.secondaryTextColor
+                    )
+                }
             }
+            MKText(
+                text = "${stringResource(R.string.maps_restantes)} $remaining",
+                font = R.font.montserrat_regular,
+                fontSize = 12,
+                newTextColor = colorsViewModel.secondaryTextColor
+            )
+        }
     }
 }

@@ -4,11 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.harmoniamk.statsmk.compose.ui.MKBottomSheetState
+import fr.harmoniamk.statsmk.model.local.TeamType
 import fr.harmoniamk.statsmk.model.network.MKCFullTeam
 import fr.harmoniamk.statsmk.model.network.MKPlayer
-import fr.harmoniamk.statsmk.model.network.NetworkResponse
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
-import fr.harmoniamk.statsmk.repository.MKCentralRepositoryInterface
 import fr.harmoniamk.statsmk.repository.PreferencesRepositoryInterface
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
@@ -26,8 +25,7 @@ import javax.inject.Inject
 @HiltViewModel
 class TeamSettingsViewModel @Inject constructor(
     databaseRepository: DatabaseRepositoryInterface,
-    mkCentralRepository: MKCentralRepositoryInterface,
-    preferencesRepository: PreferencesRepositoryInterface
+    private val preferencesRepository: PreferencesRepositoryInterface
 ) : ViewModel() {
 
     private val _sharedPlayers = MutableStateFlow<Map<String, List<MKPlayer>>>(mapOf())
@@ -41,7 +39,7 @@ class TeamSettingsViewModel @Inject constructor(
     val sharedBottomSheetValue = _sharedBottomSheetValue.asSharedFlow()
 
     init {
-        databaseRepository.getRoster()
+        databaseRepository.getPlayers()
             .filterNotNull()
             .onEach { list ->
                 preferencesRepository.mkcTeam?.let {
@@ -51,10 +49,13 @@ class TeamSettingsViewModel @Inject constructor(
                     list.groupBy { it.rosterId }.forEach { rosterId, players ->
                         when (rosterId) {
                             "-1" -> rosters["Allies"] = players.sortedBy { it.name.lowercase() }
-                            else ->  mkCentralRepository.getTeam(rosterId)
-                                .mapNotNull { (it as? NetworkResponse.Success)?.response }
+                            else ->  databaseRepository.getRosters()
+                                .mapNotNull { it.singleOrNull { team -> team.teamId == rosterId } }
                                 .onEach {
-                                    rosters[it.team_name] = players.sortedBy { it.name.lowercase() }
+                                    when (preferencesRepository.teamType) {
+                                        is TeamType.SingleRoster ->  rosters["Equipe"] = players.sortedBy { it.name.lowercase() }
+                                        else -> rosters[it.name] = players.sortedBy { it.name.lowercase() }
+                                    }
                                     _sharedPlayers.value = rosters.toSortedMap(compareByDescending { it })
                                 }.launchIn(viewModelScope)
                         }

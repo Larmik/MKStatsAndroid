@@ -67,7 +67,7 @@ fun SettingsScreen(viewModel: SettingsViewModel = hiltViewModel(), onSettingsIte
         }) {
         listOfNotNull(
             MenuItems.Theme(),
-            MenuItems.StatsDisplayMode(),
+            MenuItems.StatsDisplayMode().takeIf { viewModel.type is TeamType.MultiRoster },
             MenuItems.Refresh(),
             MenuItems.PurgeUsers().takeIf { viewModel.isGod },
             MenuItems.FetchTags().takeIf { viewModel.isGod },

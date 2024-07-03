@@ -202,7 +202,7 @@
     <string name="faq_6_title">Leaders: Ajouter un admin</string>
     <string name="faq_7_content"><![CDATA[La liste des bugs ci-dessous est connue, inutile de faire un report si vous en rencontrez un : <br> <br> - Lors de deux pénalités à la suite, l\'équipe sélectionnée précédemment est gardée en mémoire, mais l\'affichage est réinitialisé. <b>Il faut recliquer sur la bonne équipe, même si l\'affichage correspond.</b> <br> <br> - Des ralentisements ou plantages peuvent avoir lieu lorsque l\'on navigue dans le détails des wars et qu\'on en consulte beaucoup à la suite. <br> <br> - Parfois des rôles se réinitialisent et des admins ou leaders perdent leurs droits. N\'hésitez pas à le signaler dans le salon <b>application</b> sur <b>Discord</b>, ou demandez à un leader de vous réattribuer votre rôle.<br> <br> - Sur cetains téléphones la popup de chargement au démarrage ne s\'affiche pas.]]></string>
     <string name="faq_7_title">Bugs connus</string>
-    <string name="faq_8_content"><![CDATA[Si vous rencontrez des bugs non mentionnés ci-dessus ou que quelque chose cloche, postez-le dans le topic <b>Reports</b> du salon <b>faq-application</b> sur <b>Discord</b>. <br> Vous aiderez ainsi à accroitre la qualité du projet, et je vous en remercie grandement. <br> <br> Vous pouvez également apporter des suggestions d\'amélioration si vous avez des idées (ajout de nouvelles fonctionnalité, calcul d\'autres statistiques qui peuvent vous être utiles, etc…)]]></string>
+    <string name="faq_8_content"><![CDATA[Si vous rencontrez des bugs non mentionnés ci-dessus ou que quelque chose cloche, postez-le dans le salon <b>issue-reports-mobile</b> du serveur Discord <b>Stats MK8DX App</b>. <br> Vous aiderez ainsi à accroitre la qualité du projet, et je vous en remercie grandement. <br> <br> Vous pouvez également apporter des suggestions d\'amélioration si vous avez des idées (ajout de nouvelles fonctionnalité, calcul d\'autres statistiques qui peuvent vous être utiles, etc…)]]></string>
     <string name="faq_8_title">Reports et suggestions</string>
     <string name="faq_9_content"><![CDATA[Etant moi-même grand passioné du jeu ainsi que joueur compétitif, je développe ce projet avec beaucoup d\'amour et de passion, et je suis fier de le mettre à disposition gratuitement à la communauté. <br> <br> Toutefois, si vous souhaitez contribuer au projet, vous pouvez toujours <b>m\'offrir un café.</b> A l\'instar d\'un abonnement sur une chaîne Twitch, vous pourrez monter de niveau et débloquer du contenu dans l\'application en montrant votre soutien tout en participant aux frais de services de l\'application. <br> Ce soutien permettra le développement sur d\'autres plateformes et aidera grandement le projet à avancer pour peut-être un jour être reconnu par la majorité de la communauté MK8DX.]]></string>
     <string name="faq_9_title">Soutenir l\'application</string>
@@ -410,10 +410,12 @@
     <string name="victory_placeholder">%s victoires</string>
     <string name="voir_le_d_tail_map">Détail des circuits</string>
     <string name="voir_le_d_tail">Détail des wars</string>
-    <string name="war_en_cours">Wars en cours</string>
+    <string name="wars_en_cours">Wars en cours</string>
+    <string name="war_en_cours">War en cours</string>
     <string name="war_officielle">War officielle</string>
     <string name="war_over">War terminée</string>
     <string name="wars_jou_es">Wars jouées</string>
     <string name="wp">Parc Gloogloop</string>
-    <string name="single_roster_label">Cette option est inactive car votre équipe ne comporte qu\'un seul roster.</string>
+    <string name="faq_10_title">Serveur Discord</string>
+    <string name="empty" translatable="false"></string>
 </resources>

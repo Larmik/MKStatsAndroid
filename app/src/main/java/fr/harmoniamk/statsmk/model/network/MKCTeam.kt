@@ -3,7 +3,6 @@ package fr.harmoniamk.statsmk.model.network
 import androidx.annotation.Keep
 import com.squareup.moshi.JsonClass
 import fr.harmoniamk.statsmk.database.entities.MKCTeamEntity
-import fr.harmoniamk.statsmk.extension.displayedString
 import fr.harmoniamk.statsmk.extension.formatToDate
 import fr.harmoniamk.statsmk.extension.parseRoster
 import fr.harmoniamk.statsmk.model.firebase.Team
@@ -115,6 +114,7 @@ data class MKCFullTeam(
     val rosterList =
         (((rosters as? Map<*, *>)?.get("150cc") as? Map<*, *>)?.get("members") as? List<Map<*, *>>).parseRoster()
     val createdDate = founding_date.date.split(".").first().formatToDate("yyyy-MM-dd HH:mm:ss")
+
 
 
 }

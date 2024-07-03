@@ -16,6 +16,7 @@ import javax.inject.Singleton
 interface RemoteConfigRepositoryInterface {
     val loadConfig: Flow<Unit>
     val minimumVersion: Int
+    val discordCode: String
 }
 
 @Module
@@ -47,5 +48,7 @@ class RemoteConfigRepository @Inject constructor() : RemoteConfigRepositoryInter
 
     override val minimumVersion: Int
         get() = remoteConfig.getString("minimum_version").toIntOrNull() ?: 0
+    override val discordCode: String
+        get() = remoteConfig.getString("discord_code")
 
 }

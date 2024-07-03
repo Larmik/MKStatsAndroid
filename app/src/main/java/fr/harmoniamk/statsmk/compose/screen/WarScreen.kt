@@ -31,6 +31,7 @@ import fr.harmoniamk.statsmk.compose.ui.MKText
 import fr.harmoniamk.statsmk.compose.ui.MKWarItem
 import fr.harmoniamk.statsmk.compose.viewModel.ColorsViewModel
 import fr.harmoniamk.statsmk.compose.viewModel.WarViewModel
+import fr.harmoniamk.statsmk.model.local.TeamType
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -44,7 +45,7 @@ fun WarScreen(
     onWarClick: (String?) -> Unit,
     onCreateWarClick: (String) -> Unit
 ) {
-    val colorsViewModel : ColorsViewModel = hiltViewModel()
+    val colorsViewModel: ColorsViewModel = hiltViewModel()
     val currentWars = viewModel.sharedCurrentWars.collectAsState()
     val isLoading = viewModel.sharedLoading.collectAsState()
     val lastWars = viewModel.sharedLastWars.collectAsState()
@@ -56,36 +57,50 @@ fun WarScreen(
     val newButtons = viewModel.sharedButtons.collectAsState()
 
     LaunchedEffect(Unit) {
-       viewModel.sharedCreateWar.distinctUntilChanged().filterNotNull().collect {
-           onCreateWarClick(it)
-       }
+        viewModel.sharedCreateWar.distinctUntilChanged().filterNotNull().collect {
+            onCreateWarClick(it)
+        }
     }
 
     MKBaseScreen(title = R.string.team_war, subTitle = team.value?.team_name) {
-        when  {
+        when {
             isLoading.value -> {
                 Column(
                     Modifier
                         .fillMaxWidth()
                         .padding(vertical = 10.dp)
-                        .verticalScroll(rememberScrollState()), horizontalAlignment = Alignment.CenterHorizontally) {
+                        .verticalScroll(rememberScrollState()),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
                     MKProgress()
                     MKText(text = stringResource(R.string.fetch_last_results), fontSize = 12)
                 }
             }
+
             else -> {
-                newButtons.value.takeIf{ it.isNotEmpty() }?.let {
-                    MKText(text = stringResource(R.string.cr_er_une_war),
-                        fontSize = 16,
-                        modifier = Modifier.padding(top = 10.dp),
-                        font = R.font.montserrat_bold)
+                newButtons.value.takeIf { it.isNotEmpty() }?.let {
+                    if (viewModel.type is TeamType.MultiRoster)
+                        MKText(
+                            text = stringResource(R.string.cr_er_une_war),
+                            fontSize = 16,
+                            modifier = Modifier.padding(top = 10.dp),
+                            font = R.font.montserrat_bold
+                        )
                     MKSegmentedButtons(buttons = it)
                 }
                 when (currentWars.value.isEmpty()) {
                     true -> {}
                     else -> {
-                        MKText(modifier = Modifier.padding(top = 10.dp), fontSize = 16, text = R.string.war_en_cours, font = R.font.montserrat_bold)
-                        currentWars.value.forEach { MKCurrentWarCell(it, onCurrentWarClick) }
+                        MKText(
+                            modifier = Modifier.padding(top = 10.dp),
+                            fontSize = 16,
+                            text = when (viewModel.type) {
+                                is TeamType.SingleRoster -> R.string.war_en_cours
+                                else -> R.string.wars_en_cours
+                            },
+                            font = R.font.montserrat_bold
+                        )
+                        currentWars.value.forEach { MKCurrentWarCell(it, viewModel.type is TeamType.MultiRoster, onCurrentWarClick) }
                     }
                 }
                 when (lastWars.value.isNullOrEmpty()) {
@@ -94,6 +109,7 @@ fun WarScreen(
                         modifier = Modifier.padding(top = 10.dp),
                         font = R.font.montserrat_bold
                     )
+
                     else -> {
                         MKText(
                             text = R.string.derni_res_wars,
@@ -104,16 +120,25 @@ fun WarScreen(
                         LazyColumn(
                             Modifier
                                 .padding(10.dp)
-                                .padding(bottom = 60.dp)) {
+                                .padding(bottom = 60.dp)
+                        ) {
                             lastWars.value?.forEach { (teamName, wars) ->
-                                item {
-                                    Row(horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically, modifier = Modifier
-                                        .fillMaxWidth()
-                                        .height(30.dp)
-                                        .background(color = colorResource(R.color.transparent))) {
-                                        MKText(text = teamName, newTextColor = colorsViewModel.mainTextColor)
+                                if (viewModel.type is TeamType.MultiRoster)
+                                    item {
+                                        Row(
+                                            horizontalArrangement = Arrangement.Center,
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(30.dp)
+                                                .background(color = colorResource(R.color.transparent))
+                                        ) {
+                                            MKText(
+                                                text = teamName,
+                                                newTextColor = colorsViewModel.mainTextColor
+                                            )
+                                        }
                                     }
-                                }
                                 items(items = wars) {
                                     MKWarItem(war = it, onClick = onWarClick)
                                 }

@@ -87,7 +87,7 @@ class TrackDetailsViewModel @AssistedInject constructor(
     private val users = mutableListOf<MKPlayer>()
 
     init {
-        databaseRepository.getRoster()
+        databaseRepository.getPlayers()
             .onEach {
                 users.clear()
                 users.addAll(it)

@@ -7,23 +7,26 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import fr.harmoniamk.statsmk.database.converters.*
 import fr.harmoniamk.statsmk.database.dao.MKCLightPlayerDao
+import fr.harmoniamk.statsmk.database.dao.MKCRosterDao
 import fr.harmoniamk.statsmk.database.dao.MKCTeamDao
 import fr.harmoniamk.statsmk.database.dao.TopicDao
 import fr.harmoniamk.statsmk.database.dao.WarDao
 import fr.harmoniamk.statsmk.database.entities.MKCLightPlayerEntity
+import fr.harmoniamk.statsmk.database.entities.MKCRosterEntity
 import fr.harmoniamk.statsmk.database.entities.MKCTeamEntity
 import fr.harmoniamk.statsmk.database.entities.TopicEntity
 import fr.harmoniamk.statsmk.database.entities.WarEntity
 import kotlinx.coroutines.FlowPreview
 
-@TypeConverters(value = [WarTrackConverter::class, WarPositionConverter::class, ShockConverter::class, PenaltyConverter::class, ListConverter::class])
-@Database(entities = [WarEntity::class, TopicEntity::class, MKCTeamEntity::class, MKCLightPlayerEntity::class], version = 7)
+@TypeConverters(value = [WarTrackConverter::class, WarPositionConverter::class, ShockConverter::class, PenaltyConverter::class, ListConverter::class, SecondaryTeamConverter::class])
+@Database(entities = [WarEntity::class, TopicEntity::class, MKCTeamEntity::class, MKCLightPlayerEntity::class, MKCRosterEntity::class], version = 8)
 abstract class MKDatabase : RoomDatabase() {
 
     abstract fun warDao(): WarDao
     abstract fun topicDao(): TopicDao
     abstract fun mkcTeamDao(): MKCTeamDao
     abstract fun mkcLightPlayerDao(): MKCLightPlayerDao
+    abstract fun mkcRosterDao(): MKCRosterDao
 
     @FlowPreview
     companion object {

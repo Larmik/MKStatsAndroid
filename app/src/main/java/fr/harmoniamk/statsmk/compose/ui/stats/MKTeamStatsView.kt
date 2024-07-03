@@ -26,17 +26,23 @@ fun MKTeamStatsView(stats: Stats, userId: String? = null, onMostPlayedClick: (St
             MKText(text = stats.mostPlayedTeam?.teamName.toString(), font = R.font.montserrat_bold)
             MKText(text = String.format(stringResource(id = R.string.matchs_played), stats.mostPlayedTeam?.totalPlayed.toString()), fontSize = 12)
         }
+
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Column(Modifier.weight(1f).clickable { onMostDefeatedClick(stats.mostDefeatedTeam?.team?.team_id.toString(), userId) }, horizontalAlignment = Alignment.CenterHorizontally) {
-                MKText(text = R.string.la_plus_gagn_e, fontSize = 12)
-                MKText(text = stats.mostDefeatedTeam?.teamName.toString(), font = R.font.montserrat_bold)
-                MKText(text = String.format(stringResource(id = R.string.victory_placeholder), stats.mostDefeatedTeam?.totalPlayed.toString()), fontSize = 12)
+            stats.mostDefeatedTeam?.team?.let {
+                Column(Modifier.weight(1f).clickable { onMostDefeatedClick(stats.mostDefeatedTeam?.team?.team_id.toString(), userId) }, horizontalAlignment = Alignment.CenterHorizontally) {
+                    MKText(text = R.string.la_plus_gagn_e, fontSize = 12)
+                    MKText(text = stats.mostDefeatedTeam?.teamName.toString(), font = R.font.montserrat_bold)
+                    MKText(text = String.format(stringResource(id = R.string.victory_placeholder), stats.mostDefeatedTeam?.totalPlayed.toString()), fontSize = 12)
+                }
             }
-            Column(Modifier.weight(1f).clickable { onLessDefeatedClick(stats.lessDefeatedTeam?.team?.team_id.toString(), userId) }, horizontalAlignment = Alignment.CenterHorizontally) {
-                MKText(text = R.string.la_plus_perdue, fontSize = 12)
-                MKText(text = stats.lessDefeatedTeam?.teamName.toString(), font = R.font.montserrat_bold)
-                MKText(text = String.format(stringResource(id = R.string.defeat_placeholder), stats.lessDefeatedTeam?.totalPlayed.toString()), fontSize = 12)
+            stats.lessDefeatedTeam?.team?.let {
+                Column(Modifier.weight(1f).clickable { onLessDefeatedClick(stats.lessDefeatedTeam?.team?.team_id.toString(), userId) }, horizontalAlignment = Alignment.CenterHorizontally) {
+                    MKText(text = R.string.la_plus_perdue, fontSize = 12)
+                    MKText(text = stats.lessDefeatedTeam?.teamName.toString(), font = R.font.montserrat_bold)
+                    MKText(text = String.format(stringResource(id = R.string.defeat_placeholder), stats.lessDefeatedTeam?.totalPlayed.toString()), fontSize = 12)
+                }
             }
+
         }
     }
 }

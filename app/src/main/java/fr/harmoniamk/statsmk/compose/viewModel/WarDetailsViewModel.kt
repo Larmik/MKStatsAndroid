@@ -79,7 +79,7 @@ class WarDetailsViewModel  @AssistedInject constructor(
             .mapNotNull { it?.warTracks }
             .onEach {
                 val positions = mutableListOf<Pair<MKPlayer?, Int>>()
-                val players = databaseRepository.getRoster().firstOrNull()
+                val players = databaseRepository.getPlayers().firstOrNull()
                 val shocks = mutableStateListOf<Shock>()
                 _sharedTracks.emit(it)
                 it.forEach {

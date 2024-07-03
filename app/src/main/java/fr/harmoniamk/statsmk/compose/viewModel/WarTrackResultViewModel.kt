@@ -108,7 +108,7 @@ class WarTrackResultViewModel @AssistedInject constructor(
             ?.withName(databaseRepository)
             ?.onEach {
                 users.clear()
-                users.addAll(databaseRepository.getRoster().first())
+                users.addAll(databaseRepository.getPlayers().first())
                 _sharedWar.value = it
                     val trackIndexInWarTracks = when (editing) {
                         true -> trackResultIndex + 1

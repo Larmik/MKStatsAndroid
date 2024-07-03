@@ -9,6 +9,7 @@ import fr.harmoniamk.statsmk.extension.safeSubList
 import fr.harmoniamk.statsmk.model.firebase.CurrentWar
 import fr.harmoniamk.statsmk.model.firebase.WarDispo
 import fr.harmoniamk.statsmk.model.local.MKWar
+import fr.harmoniamk.statsmk.model.local.TeamType
 import fr.harmoniamk.statsmk.model.network.MKCFullTeam
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.DatabaseRepositoryInterface
@@ -20,7 +21,6 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
@@ -30,7 +30,6 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.flow.zip
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -40,7 +39,7 @@ import javax.inject.Inject
 @HiltViewModel
 class WarViewModel @Inject constructor(
     private val firebaseRepository: FirebaseRepositoryInterface,
-    preferencesRepository: PreferencesRepositoryInterface,
+    private val preferencesRepository: PreferencesRepositoryInterface,
     private val authenticationRepository: AuthenticationRepositoryInterface,
     private val databaseRepository: DatabaseRepositoryInterface,
     private val networkRepository: NetworkRepositoryInterface,
@@ -69,7 +68,9 @@ class WarViewModel @Inject constructor(
     private var scheduledWar: WarDispo? = null
     private val dispoList = mutableListOf<WarDispo>()
 
-    fun onCreateWar(teamId: String) {
+    val type = preferencesRepository.teamType
+
+    private fun onCreateWar(teamId: String) {
         viewModelScope.launch {
             _sharedCreateWar.emit(teamId)
         }
@@ -77,94 +78,82 @@ class WarViewModel @Inject constructor(
 
 
     init {
-        preferencesRepository.mkcTeam?.takeIf { networkRepository.networkAvailable }?.let { team ->
+        preferencesRepository.mkcTeam?.let { team ->
             _sharedTeam.value = team
             val isAdmin = authenticationRepository.userRole >= UserRole.ADMIN.ordinal
+            if (networkRepository.networkAvailable) {
+                val currentWarsFlow =  when  {
+                    preferencesRepository.teamType.mainTeamId != team.id -> firebaseRepository.listenToCurrentWar(preferencesRepository.teamType.mainTeamId.orEmpty()).zip(firebaseRepository.listenToCurrentWar(team.id)) { a, b -> listOf(a, b) }
+                    else -> firebaseRepository.listenToCurrentWar(team.id).map { listOf(it) }
+                }
 
-            val currentWarsFlow = when {
-                team.primary_team_id != null -> firebaseRepository.listenToCurrentWar(team.id)
-                    .zip(firebaseRepository.listenToCurrentWar(team.primary_team_id.toString())) { first, second -> listOf(first, second) }
-                !team.secondary_teams.isNullOrEmpty() -> firebaseRepository.listenToCurrentWar(team.id)
-                    .zip(firebaseRepository.listenToCurrentWar(team.secondary_teams.getOrNull(0)?.id.toString())) { first, second -> listOf(first, second) }
-                else -> firebaseRepository.listenToCurrentWar(team.id).map { listOf(it) }
-            }.shareIn(viewModelScope, SharingStarted.Eagerly)
-
-            currentWarsFlow
-                .filter { it.filterNotNull().isEmpty() }
-                .onEach {
-                    _sharedLoading.value = false
-                    _sharedCurrentWars.value = listOf()
-                    val createWarsButtons = mutableListOf<Pair<String, () -> Unit>>()
-                    when {
-                        team.primary_team_id != null -> {
-                            val primaryTeam = databaseRepository.getNewTeam(team.primary_team_id.toString()).firstOrNull()
-                            createWarsButtons.add(Pair(primaryTeam?.team_name.orEmpty(), { onCreateWar(primaryTeam?.team_id.orEmpty()) }))
-                            createWarsButtons.add(Pair(team.team_name, { onCreateWar(team.id) }))
-                        }
-                        !team.secondary_teams.isNullOrEmpty() -> {
-                            val secondaryTeam = databaseRepository.getNewTeam(team.secondary_teams.getOrNull(0)?.id.toString()).firstOrNull()
-                            createWarsButtons.add(Pair(team.team_name, { onCreateWar(team.id) }))
-                            createWarsButtons.add(Pair(secondaryTeam?.team_name.orEmpty(), { onCreateWar(secondaryTeam?.team_id.orEmpty()) }))
-                        }
-                        else -> createWarsButtons.add(Pair(team.team_name, { onCreateWar(team.id) }))
-                    }
-                    _sharedButtons.value = createWarsButtons.filter { isAdmin }
-                }.launchIn(viewModelScope)
-
-            currentWarsFlow
-                .debounce(500)
-                .map { it.filterNotNull() }
-                .filter { it.isNotEmpty() }
-                .onEach { wars ->
-                    _sharedLoading.value = true
-                    val createWarsButtons = mutableListOf<Pair<String, () -> Unit>>()
-                    when {
-                        team.primary_team_id != null -> {
-                            val primaryTeam = databaseRepository.getNewTeam(team.primary_team_id.toString()).firstOrNull()
-                            createWarsButtons.takeIf{ wars.none { it.hasTeam(primaryTeam?.team_id) } }?.add(Pair(primaryTeam?.team_name.orEmpty(), { onCreateWar(primaryTeam?.team_id.orEmpty()) }))
-                            createWarsButtons.takeIf{ wars.none { it.hasTeam(team.id) } }?.add(Pair(team.team_name, { onCreateWar(team.id) }))
-                        }
-                        !team.secondary_teams.isNullOrEmpty() -> {
-                            val secondaryTeam = databaseRepository.getNewTeam(team.secondary_teams.getOrNull(0)?.id.toString()).firstOrNull()
-                            createWarsButtons.takeIf{ wars.none { it.hasTeam(team.id) } }?.add(Pair(team.team_name, { onCreateWar(team.id) }))
-                            createWarsButtons.takeIf{ wars.none { it.hasTeam(secondaryTeam?.team_id) } }?.add(Pair(secondaryTeam?.team_name.orEmpty(), { onCreateWar(secondaryTeam?.team_id.orEmpty()) }))
-                        }
-                    }
-                    _sharedButtons.value = createWarsButtons.filter { isAdmin }
-                    val currentWars = mutableListOf<CurrentWar>()
-                    wars.forEach { war ->
-                        val refreshPlayers = fetchUseCase.fetchPlayers(forceUpdate = false)
-                            .flatMapLatest { fetchUseCase.fetchAllies(false) }
-                            .takeIf { war.warTracks.isNullOrEmpty() }
-                        when (refreshPlayers) {
-                            null -> {
-                                databaseRepository
-                                    .takeIf { _sharedLoading.value }
-                                    ?.getNewTeam(war.war?.teamHost.orEmpty())
-                                    ?.firstOrNull()?.let {
-                                        currentWars.add(CurrentWar(it.team_name, war))
-                                        if (currentWars.size == wars.size) {
-                                            _sharedLoading.value = false
-                                            _sharedCurrentWars.value = currentWars
-                                        }
-                                    }
+                currentWarsFlow
+                    .filter { it.filterNotNull().isEmpty() }
+                    .onEach {
+                        _sharedLoading.value = false
+                        _sharedCurrentWars.value = listOf()
+                        databaseRepository.getRosters()
+                            .firstOrNull()
+                            ?.map { team ->
+                                when (preferencesRepository.teamType) {
+                                    is TeamType.SingleRoster ->  Pair("Créer une war") { onCreateWar(team.teamId) }
+                                    else ->  Pair(team.name) { onCreateWar(team.teamId) }
+                                }
                             }
+                            ?.let { _sharedButtons.value = it.filter { isAdmin } }
+                    }.launchIn(viewModelScope)
 
-                            else -> refreshPlayers.onEach {
-                                databaseRepository
-                                    .takeIf { _sharedLoading.value }
-                                    ?.getNewTeam(war.war?.teamHost.orEmpty())
-                                    ?.firstOrNull()?.let {
-                                        currentWars.add(CurrentWar(it.team_name, war))
-                                        if (currentWars.size == wars.size) {
-                                            _sharedLoading.value = false
-                                            _sharedCurrentWars.value = currentWars
+                currentWarsFlow
+                    .debounce(500)
+                    .map { it.filterNotNull() }
+                    .filter { it.isNotEmpty() }
+                    .onEach { wars ->
+                        _sharedLoading.value = true
+                        databaseRepository.getRosters()
+                            .firstOrNull()
+                            ?.filter { team -> wars.none { it.hasTeam(team.teamId) } }
+                            ?.map { team ->  when (preferencesRepository.teamType) {
+                                is TeamType.SingleRoster ->  Pair("Créer une war") { onCreateWar(team.teamId) }
+                                else ->  Pair(team.name) { onCreateWar(team.teamId) }
+                            }
+                            }
+                            ?.let { _sharedButtons.value = it.filter { isAdmin } }
+                        val currentWars = mutableListOf<CurrentWar>()
+                        wars.forEach { war ->
+                            val refreshPlayers = fetchUseCase.fetchPlayers(forceUpdate = false)
+                                .flatMapLatest { fetchUseCase.fetchAllies(false) }
+                                .takeIf { war.warTracks.isNullOrEmpty() }
+                            when (refreshPlayers) {
+                                null -> {
+                                    databaseRepository
+                                        .takeIf { _sharedLoading.value }
+                                        ?.getNewTeam(war.war?.teamHost.orEmpty())
+                                        ?.firstOrNull()?.let {
+                                            currentWars.add(CurrentWar(it.team_name, war))
+                                            if (currentWars.size == wars.size) {
+                                                _sharedLoading.value = false
+                                                _sharedCurrentWars.value = currentWars
+                                            }
                                         }
-                                    }
-                            }.launchIn(viewModelScope)
+                                }
+
+                                else -> refreshPlayers.onEach {
+                                    databaseRepository
+                                        .takeIf { _sharedLoading.value }
+                                        ?.getNewTeam(war.war?.teamHost.orEmpty())
+                                        ?.firstOrNull()?.let {
+                                            currentWars.add(CurrentWar(it.team_name, war))
+                                            if (currentWars.size == wars.size) {
+                                                _sharedLoading.value = false
+                                                _sharedCurrentWars.value = currentWars
+                                            }
+                                        }
+                                }.launchIn(viewModelScope)
+                            }
                         }
-                    }
-                }.launchIn(viewModelScope)
+                    }.launchIn(viewModelScope)
+            }
+            else _sharedLoading.value = false
         }
 
         databaseRepository.getWars()

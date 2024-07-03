@@ -20,6 +20,8 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNot
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
@@ -50,8 +52,14 @@ class SignupViewModel @Inject constructor(
 
     fun onSignup(email: String, password: String, mkcId: String) {
         _sharedDialogValue.value = MKDialogState.Loading(R.string.fetch_player)
-        val fetchPlayer = fetchUseCase.fetchPlayer(mkcId)
+        val checkDoubleAccount = firebaseRepository
+            .getUsers()
+            .map { it.any { user -> user.mkcId == mkcId } }
             .shareIn(viewModelScope, SharingStarted.Lazily)
+
+        val fetchPlayer = checkDoubleAccount
+            .filterNot { it }
+            .flatMapLatest {  fetchUseCase.fetchPlayer(mkcId) }
 
         val fetchTeam = fetchPlayer
             .mapNotNull { (it as? NetworkResponse.Success)?.response }
@@ -63,6 +71,7 @@ class SignupViewModel @Inject constructor(
             .onEach { _sharedDialogValue.value = MKDialogState.Loading(R.string.creating_user) }
             .flatMapLatest { authenticationRepository.createUser(email, password) }
             .shareIn(viewModelScope, SharingStarted.Lazily)
+
 
         createUser
             .mapNotNull { (it as? AuthUserResponse.Success)?.user }
@@ -105,6 +114,13 @@ class SignupViewModel @Inject constructor(
                 _sharedDialogValue.value = null
                 _sharedNext.emit(Unit)
             }
+            .launchIn(viewModelScope)
+
+        checkDoubleAccount
+            .filter { it }
+            .onEach { _sharedDialogValue.value = MKDialogState.Error("Le joueur possède déjà un compte") {
+                _sharedDialogValue.value = null
+            } }
             .launchIn(viewModelScope)
 
         createUser

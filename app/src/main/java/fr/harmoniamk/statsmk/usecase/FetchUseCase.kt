@@ -132,7 +132,7 @@ class FetchUseCase @Inject constructor(
     }
 
     override fun fetchPlayers(forceUpdate: Boolean): Flow<MKCFullTeam> = firebaseRepository.getUsers()
-        .zip(databaseRepository.getRoster()) { userList, playerList ->
+        .zip(databaseRepository.getPlayers()) { userList, playerList ->
             finalRoster.clear()
             finalRosterWithCurrentWar.clear()
             users.clear()
@@ -142,23 +142,21 @@ class FetchUseCase @Inject constructor(
         }
         .mapNotNull { preferencesRepository.mkcTeam }
         .onEach { team ->
-            val type =  when {
-                team.primary_team_id != null -> TeamType.MultiRoster(teamId = team.primary_team_id.toString().takeIf { it != team.id }, secondaryTeamsId = null)
-                !team.secondary_teams.isNullOrEmpty() -> TeamType.MultiRoster(teamId = null, secondaryTeamsId = team.secondary_teams.map { it.id })
-                else -> TeamType.SingleRoster(teamId = team.id)
-            }
-            when (type) {
+
+            when (preferencesRepository.teamType) {
                 is TeamType.MultiRoster -> {
                     //Joueur dans roster secondaire,
                     // on fetch le roster principal et ses joueurs et on boucle
                     // sur son tableau secondaire en répétant l'opération
-                    type.mainTeamId?.let {
+                    preferencesRepository.teamType.mainTeamId?.let {
                         mkCentralRepository.getTeam(it).mapNotNull { (it as? NetworkResponse.Success)?.response }.firstOrNull()?.let {
+                            databaseRepository.writeRoster(it).firstOrNull()
                             addToRosterList(forceUpdate, team = it).firstOrNull()
                             it.secondary_teams?.map { it.id }?.forEach {
                                 mkCentralRepository.getTeam(team.id)
                                     .mapNotNull { (it as? NetworkResponse.Success)?.response }
                                     .firstOrNull()?.let {
+                                        databaseRepository.writeRoster(it).firstOrNull()
                                         addToRosterList(forceUpdate, team = it).firstOrNull()
                                     }
                             }
@@ -167,19 +165,24 @@ class FetchUseCase @Inject constructor(
                     // Joueur dans roster principal
                     //On commence par ajouter celui ci puis
                     // on fetch son tableau secondaire en bouclant dessus
-                    type.secondaryTeamsId?.let { teamsId ->
+                    (preferencesRepository.teamType as? TeamType.MultiRoster)?.secondaryTeamsId?.let { teamsId ->
+                        databaseRepository.writeRoster(team).firstOrNull()
                         addToRosterList(forceUpdate, team = team).firstOrNull()
                         teamsId.forEach {
                             mkCentralRepository.getTeam(it)
                                 .mapNotNull { (it as? NetworkResponse.Success)?.response }
                                 .firstOrNull()?.let {
+                                    databaseRepository.writeRoster(it).firstOrNull()
                                     addToRosterList(forceUpdate, team = it).firstOrNull()
                                 }
                         }
                     }
                 }
                 //Roster unique, on l'ajoute
-                else -> addToRosterList(forceUpdate, team = team).firstOrNull()
+                else -> {
+                    databaseRepository.writeRoster(team).firstOrNull()
+                    addToRosterList(forceUpdate, team = team).firstOrNull()
+                }
             }
         }
 
@@ -246,13 +249,9 @@ class FetchUseCase @Inject constructor(
 
     override fun fetchAllies(forceUpdate: Boolean): Flow<Unit> {
         val team = preferencesRepository.mkcTeam
-        val type: TeamType =  when {
-            team?.primary_team_id != null -> TeamType.MultiRoster(teamId = team.primary_team_id.toString().takeIf { it != team.id }, secondaryTeamsId = null)
-            !team?.secondary_teams.isNullOrEmpty() -> TeamType.MultiRoster(teamId = team?.id, secondaryTeamsId = team?.secondary_teams?.map { it.id })
-            else -> TeamType.SingleRoster(teamId = team?.id.toString())
-        }
+
         val alliesFlow = when  {
-            type.mainTeamId != team?.id -> firebaseRepository.getAllies(type.mainTeamId.orEmpty()).zip(firebaseRepository.getAllies(team?.id.orEmpty())) { a, b -> a + b }
+            preferencesRepository.teamType.mainTeamId != team?.id -> firebaseRepository.getAllies(preferencesRepository.teamType.mainTeamId.orEmpty()).zip(firebaseRepository.getAllies(team?.id.orEmpty())) { a, b -> a + b }
             else -> firebaseRepository.getAllies(team?.id.orEmpty())
         }
 
@@ -264,18 +263,14 @@ class FetchUseCase @Inject constructor(
                     val currentWar = users.firstOrNull { it.mkcId == player.mkcId }?.currentWar
                     finalRosterWithCurrentWar.add(player.apply { this.currentWar = currentWar ?: "-1" })
                 }
-            }.flatMapLatest { databaseRepository.writeRoster(finalRosterWithCurrentWar) }
+            }.flatMapLatest { databaseRepository.writePlayers(finalRosterWithCurrentWar) }
     }
 
     override fun fetchWars(): Flow<List<MKWar>>  {
         val team = preferencesRepository.mkcTeam
-        val type: TeamType =  when {
-            team?.primary_team_id != null -> TeamType.MultiRoster(teamId = team.primary_team_id.toString().takeIf { it != team.id }, secondaryTeamsId = null)
-            !team?.secondary_teams.isNullOrEmpty() -> TeamType.MultiRoster(teamId = team?.id, secondaryTeamsId = team?.secondary_teams?.map { it.id })
-            else -> TeamType.SingleRoster(teamId = team?.id.toString())
-        }
+
         val warFlow = when {
-            type.mainTeamId != team?.id -> firebaseRepository.getNewWars(team?.id.orEmpty()).zip(firebaseRepository.getNewWars(type.mainTeamId.orEmpty())) { a, b -> a + b }
+            preferencesRepository.teamType.mainTeamId != team?.id -> firebaseRepository.getNewWars(team?.id.orEmpty()).zip(firebaseRepository.getNewWars(preferencesRepository.teamType.mainTeamId.orEmpty())) { a, b -> a + b }
             else -> firebaseRepository.getNewWars(team?.id.orEmpty())
         }
         return warFlow

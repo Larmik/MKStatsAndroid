@@ -113,7 +113,7 @@ class CurrentWarViewModel @AssistedInject constructor(
                 users.clear()
                 currentPlayers.clear()
                 users.addAll(firebaseRepository.getUsers().firstOrNull()?.filter { user -> user.currentWar == it.war?.mid }?.sortedBy { it.name?.lowercase() }.orEmpty())
-                currentPlayers.addAll(databaseRepository.getRoster().firstOrNull().orEmpty())
+                currentPlayers.addAll(databaseRepository.getPlayers().firstOrNull().orEmpty())
                 _sharedCurrentWar.emit(warWithPenas)
                 _sharedTracks.emit(warWithPenas?.war?.warTracks.orEmpty().map { MKWarTrack(it) })
                 _sharedWarPlayers.takeIf { warWithPenas?.war?.warTracks == null }?.emit(currentPlayers.filter { player -> users.singleOrNull { it.mkcId == player.mkcId }?.currentWar == it.war?.mid }.map { CurrentPlayerModel(it, 0, tracksPlayed = 0) })
@@ -135,9 +135,9 @@ class CurrentWarViewModel @AssistedInject constructor(
         _sharedDialogValue.value = MKDialogState.CancelWar(
             onWarCancelled = {
                 _sharedDialogValue.value = MKDialogState.Loading(R.string.delete_war_in_progress)
-                databaseRepository.getRoster()
+                databaseRepository.getPlayers()
                     .onEach {
-                    it.filter { it.currentWar != "-1" }.forEach { user ->
+                    it.filter { it.currentWar == preferencesRepository.currentWar?.mid }.forEach { user ->
                         val newUser = user.copy(currentWar = "-1")
                         val fbUser = users.singleOrNull { it.mkcId == user.mkcId }
                         firebaseRepository.writeUser(User(newUser, fbUser)).firstOrNull()

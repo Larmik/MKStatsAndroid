@@ -13,7 +13,6 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ViewModelFactoryProvider
 import fr.harmoniamk.statsmk.enums.UserRole
 import fr.harmoniamk.statsmk.extension.isTrue
-import fr.harmoniamk.statsmk.model.local.TeamType
 import fr.harmoniamk.statsmk.model.network.MKCFullPlayer
 import fr.harmoniamk.statsmk.model.network.MKPlayer
 import fr.harmoniamk.statsmk.model.network.NetworkResponse
@@ -122,13 +121,7 @@ class PlayerProfileViewModel @AssistedInject constructor(
     }
 
     fun onAddAlly() {
-        val team = preferencesRepository.mkcTeam
-        val type: TeamType =  when {
-            team?.primary_team_id != null -> TeamType.MultiRoster(teamId = team.primary_team_id.toString().takeIf { it != team.id }, secondaryTeamsId = null)
-            !team?.secondary_teams.isNullOrEmpty() -> TeamType.MultiRoster(teamId = team?.id, secondaryTeamsId = team?.secondary_teams?.map { it.id })
-            else -> TeamType.SingleRoster(teamId = team?.id.toString())
-        }
-      firebaseRepository.writeAlly(type.mainTeamId.orEmpty(), player?.id.toString())
+        firebaseRepository.writeAlly(preferencesRepository.teamType.mainTeamId.orEmpty(), player?.id.toString())
             .flatMapLatest { databaseRepository.writeUser(MKPlayer(player).copy(rosterId = "-1")) }
             .onEach { _sharedAllyButton.value = null }
             .launchIn(viewModelScope)

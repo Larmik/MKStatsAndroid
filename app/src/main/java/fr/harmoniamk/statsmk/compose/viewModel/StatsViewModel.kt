@@ -79,6 +79,7 @@ class StatsViewModel @Inject constructor(
     private var onlyIndiv = preferencesRepository.mkcTeam?.id == null
 
     fun init(type: StatsType, periodic: String) {
+        _sharedStats.value = null
         _sharedPeriodEnabled.value = (type as? StatsType.MapStats)?.periodic ?: periodic
         when (type) {
             is StatsType.TeamStats -> _sharedSubtitle.value = preferencesRepository.mkcTeam?.team_name
@@ -149,7 +150,7 @@ class StatsViewModel @Inject constructor(
 
         warFlow
             .filter { type is StatsType.OpponentStats }
-            .zip(databaseRepository.getRoster()) { stats, users ->
+            .zip(databaseRepository.getPlayers()) { stats, users ->
                 val finalList = mutableListOf<Pair<Int, String?>>()
                 stats.warStats.list.forEach { war ->
                     val positions = mutableListOf<Pair<MKPlayer?, Int>>()

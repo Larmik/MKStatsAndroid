@@ -104,7 +104,7 @@ class WarListViewModel @AssistedInject constructor(
         databaseRepository.getNewTeam(teamId)
             .onEach { _sharedTeamName.value = it?.team_name }
             .launchIn(viewModelScope)
-        databaseRepository.getRoster()
+        databaseRepository.getPlayers()
             .onEach { _sharedUserName.value = it.singleOrNull { it.mkcId == userId }?.name }
             .launchIn(viewModelScope)
         databaseRepository.getNewTeams()

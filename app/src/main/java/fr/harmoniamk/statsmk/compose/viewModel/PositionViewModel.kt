@@ -186,7 +186,7 @@ class PositionViewModel @AssistedInject constructor(
                         2 -> R.string.track_2
                         else -> R.string.track_1
                     }
-            }?.flatMapLatest { databaseRepository.getRoster() }
+            }?.flatMapLatest { databaseRepository.getPlayers() }
             ?.onEach {
                 currentUsers = it.filter { user ->
                     user.currentWar == _sharedWar.value?.war?.mid

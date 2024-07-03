@@ -1,0 +1,360 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 8,
+    "identityHash": "778cc55f0e6f76a704eacf3c9776ba10",
+    "entities": [
+      {
+        "tableName": "WarEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`mid` TEXT NOT NULL, `name` TEXT, `playerHostId` TEXT, `teamHost` TEXT, `teamOpponent` TEXT, `createdDate` TEXT, `warTracks` TEXT, `penalties` TEXT, `isOfficial` INTEGER, PRIMARY KEY(`mid`))",
+        "fields": [
+          {
+            "fieldPath": "mid",
+            "columnName": "mid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "entityName",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "playerHostId",
+            "columnName": "playerHostId",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "teamHost",
+            "columnName": "teamHost",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "teamOpponent",
+            "columnName": "teamOpponent",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "createdDate",
+            "columnName": "createdDate",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "warTracks",
+            "columnName": "warTracks",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "penalties",
+            "columnName": "penalties",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "isOfficial",
+            "columnName": "isOfficial",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "mid"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "TopicEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`topic` TEXT NOT NULL, PRIMARY KEY(`topic`))",
+        "fields": [
+          {
+            "fieldPath": "topic",
+            "columnName": "topic",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "topic"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "MKCTeamEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `founding_date` TEXT, `team_name` TEXT, `team_tag` TEXT, `team_color` TEXT, `recruitment_status` TEXT, `team_status` TEXT, `is_shadow` TEXT, `player_count` TEXT, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "founding_date",
+            "columnName": "founding_date",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "team_name",
+            "columnName": "team_name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "team_tag",
+            "columnName": "team_tag",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "team_color",
+            "columnName": "team_color",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "recruitment_status",
+            "columnName": "recruitment_status",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "team_status",
+            "columnName": "team_status",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "is_shadow",
+            "columnName": "is_shadow",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "player_count",
+            "columnName": "player_count",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "MKCLightPlayerEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`mid` TEXT NOT NULL, `mkcId` TEXT NOT NULL, `name` TEXT NOT NULL, `fc` TEXT NOT NULL, `status` TEXT NOT NULL, `registerDate` TEXT NOT NULL, `country` TEXT NOT NULL, `isLeader` TEXT NOT NULL, `role` INTEGER NOT NULL, `currentWar` TEXT NOT NULL, `picture` TEXT NOT NULL, `rosterId` TEXT NOT NULL, PRIMARY KEY(`mid`))",
+        "fields": [
+          {
+            "fieldPath": "mid",
+            "columnName": "mid",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mkcId",
+            "columnName": "mkcId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fc",
+            "columnName": "fc",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "registerDate",
+            "columnName": "registerDate",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "country",
+            "columnName": "country",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isLeader",
+            "columnName": "isLeader",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "role",
+            "columnName": "role",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "currentWar",
+            "columnName": "currentWar",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "picture",
+            "columnName": "picture",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rosterId",
+            "columnName": "rosterId",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "mid"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "MKCRosterEntity",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `primary_team_id` INTEGER, `primary_team_name` TEXT, `secondary_teams` TEXT, `founding_date` TEXT NOT NULL, `team_category` TEXT NOT NULL, `team_name` TEXT NOT NULL, `team_tag` TEXT NOT NULL, `team_color` INTEGER NOT NULL, `team_description` TEXT NOT NULL, `team_logo` TEXT NOT NULL, `main_language` TEXT NOT NULL, `recruitment_status` TEXT NOT NULL, `team_status` TEXT NOT NULL, `is_historical` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "teamId",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "primaryTeamId",
+            "columnName": "primary_team_id",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "primaryTeamName",
+            "columnName": "primary_team_name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "secondaryTeams",
+            "columnName": "secondary_teams",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "foundingDate",
+            "columnName": "founding_date",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "category",
+            "columnName": "team_category",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "team_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tag",
+            "columnName": "team_tag",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "color",
+            "columnName": "team_color",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "team_description",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "logo",
+            "columnName": "team_logo",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "language",
+            "columnName": "main_language",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "recruitmentStatus",
+            "columnName": "recruitment_status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "team_status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "historical",
+            "columnName": "is_historical",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '778cc55f0e6f76a704eacf3c9776ba10')"
+    ]
+  }
+}

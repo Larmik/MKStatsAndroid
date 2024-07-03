@@ -183,12 +183,12 @@ class StatsRankingViewModel @AssistedInject constructor(
                             vm.userId
                         )
                     })
-                }.filter { vm -> vm.stats.warStats.warsPlayed > 1 }
+                }
             }.launchIn(viewModelScope)
     }
 
     private fun initPlayers() {
-        databaseRepository.getRoster()
+        databaseRepository.getPlayers()
             .mapNotNull { it.filter { it.rosterId != "-1" }.sortedBy { it.name } }
             .onEach { userList ->
                 userList.forEach { user ->

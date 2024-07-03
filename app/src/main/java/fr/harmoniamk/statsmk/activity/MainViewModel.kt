@@ -8,6 +8,7 @@ import fr.harmoniamk.statsmk.R
 import fr.harmoniamk.statsmk.compose.ui.MKDialogState
 import fr.harmoniamk.statsmk.compose.viewModel.CoffeePurchaseState
 import fr.harmoniamk.statsmk.enums.WelcomeScreen
+import fr.harmoniamk.statsmk.extension.bind
 import fr.harmoniamk.statsmk.model.firebase.AuthUserResponse
 import fr.harmoniamk.statsmk.repository.AuthenticationRepositoryInterface
 import fr.harmoniamk.statsmk.repository.BillingRepositoryInterface
@@ -95,17 +96,14 @@ class MainViewModel @Inject constructor(
             .filterNot { it }
             .flatMapLatest { databaseRepository.getWars() }
             .map {
-                val screen = when (preferencesRepository.authEmail) {
+                when (preferencesRepository.authEmail) {
                     null -> WelcomeScreen.Login
                     else -> WelcomeScreen.Home
-
                 }
-                Pair(screen, it)
-            }
-            //.bind(_sharedShowPopup, viewModelScope)
+            }.bind(_sharedWelcomeScreen, viewModelScope)
 
         isConnected
-            .filter { it }
+            .filter { it && BuildConfig.VERSION_CODE >= remoteConfigRepository.minimumVersion }
             .onEach {
                 flowOf(preferencesRepository.authEmail)
                     .filterNotNull()

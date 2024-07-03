@@ -56,14 +56,14 @@ class SubPlayerViewModel @Inject constructor(
     var newPlayer: MKPlayer? = null
 
     fun refresh() {
-        databaseRepository.getRoster()
+        databaseRepository.getPlayers()
             .onEach {
                 playersList.clear()
                 allyList.clear()
                 currentPlayersList.clear()
 
-                playersList.addAll(it.filter { user -> user.currentWar == "-1" && user.rosterId != "-1" }.map { UserSelector(user = it, isSelected = false) })
-                allyList.addAll(it.filter { user -> user.currentWar == "-1" &&  user.rosterId == "-1" }.map { UserSelector(user = it, isSelected = false) })
+                playersList.addAll(it.filter { user -> user.currentWar != preferencesRepository.currentWar?.mid && user.rosterId != "-1" }.map { UserSelector(user = it, isSelected = false) }.filter { !it.user?.name.isNullOrEmpty() })
+                allyList.addAll(it.filter { user -> user.currentWar != preferencesRepository.currentWar?.mid &&  user.rosterId == "-1" }.map { UserSelector(user = it, isSelected = false) })
                 currentPlayersList.addAll(it.filter { user -> user.currentWar == preferencesRepository.currentWar?.mid }.map { UserSelector(user = it, isSelected = false) } )
 
                 _sharedPlayers.value = currentPlayersList
@@ -82,7 +82,6 @@ class SubPlayerViewModel @Inject constructor(
         _sharedPlayers.value = playersList
         _sharedAllies.value = allyList
         _sharedTitle.value = R.string.joueur_entrant
-
         _sharedPlayerSelected.value = user
     }
 
