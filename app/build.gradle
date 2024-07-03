@@ -58,9 +58,9 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             buildConfigField "String", "FLAVOR_NAME", '" "'
-            debuggable true
+            debuggable false
             testCoverageEnabled = false
             manifestPlaceholders = [appLabel: "Stats MK8DX"]
             proguardFile "proguard-rules.pro"
